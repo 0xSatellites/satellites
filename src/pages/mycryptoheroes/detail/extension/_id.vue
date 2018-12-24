@@ -7,12 +7,12 @@
           </div>
       </v-flex>
       <v-flex xs12 lg6>
-        <v-card class="mx-1 my-2 pa-1">
+        <v-card class="mx-1 my-4 pa-1">
           <v-card-title primary-title>
             <div>
               <div class="headline">{{extension.attributes.extension_name}}</div>
               <div class="grey--text">{{extension.name}}</div>
-              <div><a :href="extension.external_url"> {{extension.external_url}}</a></div>
+              <div class="caption"><a :href="extension.external_url"> {{extension.external_url}}</a></div>
             </div>
           </v-card-title>
           <v-card-text>

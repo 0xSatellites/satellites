@@ -29,16 +29,15 @@
       app
     >
       <v-toolbar-side-icon @click="drawer = !drawer" />
-      <img src="logo.png" height="60%" class="hidden-md-and-up">
-      <v-toolbar-title v-text="title" class="hidden-sm-and-down"/>
+      <img src="logo.png" height="60%">
+      <v-toolbar-title v-text="title"  class="hidden-sm-and-down"/>
       <v-spacer></v-spacer>
 
     <v-toolbar-items 
       v-for="(item, i) in items"
-      :to="item.to"
       :key="i"
     >
-      <v-btn flat :to="item.to" v-text="item.title"></v-btn>
+      <v-btn flat :to="item.to">{{item.title}}</v-btn>
     </v-toolbar-items>
 
     </v-toolbar>
@@ -69,8 +68,9 @@
       return {
         drawer: false,
         items: [
-          { icon: 'apps', title: 'Hero', to: '/hero' },
-          { icon: 'bubble_chart', title: 'Extension', to: '/extension' }
+          { icon: 'apps', title: 'Hero', to: '/onsale/hero' },
+          { icon: 'bubble_chart', title: 'Extension', to: '/onsale/extension' },
+          { icon: 'bubble_chart', title: 'Inventory', to: '/inventory' }
         ],
         title: 'bazaar.io'
       }

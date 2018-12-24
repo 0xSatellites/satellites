@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
 
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
+import "../node_modules/openzeppelin-solidity/contracts/access/roles/SignerRole.sol";
 
-contract Bazaaar {
+contract Bazaaar is SignerRole {
 
     struct Item {
         address seller;
@@ -10,13 +11,21 @@ contract Bazaaar {
         bool    exist;
     }    
 
+    event WhiteList(address indexed _contract, bool _status);
     event Sell(address indexed _contract, uint _tokenId, uint _price);
     event Cancel(address indexed _contract, uint _tokenId);
     event Purchase(address indexed _contract, uint _tokenId, uint _price);
 
+    mapping (address=>bool) public whitelisted; 
     mapping (address=>mapping(uint => Item)) public items;
 
-    function sell(address _contract, uint _tokenId, uint128 _price) public {
+    function whitelist(address _contract, bool _status) public onlySigner {
+        whitelisted[_contract] = _status;
+        emit WhiteList(_contract, _status);
+    }
+
+    function sell(address _contract, uint _tokenId, uint _price) public {
+        require(whitelisted[_contract]);
         require(!items[_contract][_tokenId].exist);
         Item memory _item = Item(msg.sender, _price, true);
         items[_contract][_tokenId] = _item;

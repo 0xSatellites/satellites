@@ -1,13 +1,13 @@
 <template>
-  <v-layout>
+  <v-layout> 
     <v-layout row wrap v-for="(item,i) in heroes" :key="i">
-      <v-flex xs12 md6>
-          <div class="ma-5 pa-3">
+      <v-flex xs12 lg6>
+          <div class="mx-5 my-2 pa-3">
             <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
           </div>
       </v-flex>
-      <v-flex xs12 md6>
-        <v-card class="ma-5 pa-3">
+      <v-flex xs12 lg6>
+        <v-card class="mx-1 my-2 pa-3">
           <v-card-title primary-title>
             <div>
               <div class="headline">{{item.attributes.hero_name}}</div>
@@ -36,15 +36,13 @@
           </v-card-text>
 
           <v-card-actions>
-            <v-btn dark @click="purchase">
-              <v-icon dark>shopping_cart</v-icon>
-              BUY NOW
+            <v-btn dark large @click="purchase">
+              Buy Now
+              <v-icon right>shopping_cart</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
-
-
     </v-layout>
   </v-layout>
 </template>
@@ -58,28 +56,30 @@
   export default {
     data() {
       return {
-        heroes: [{"name":"MCH Hero: #30040157 Lv.1","description":"HeroName: Mata Hari","image":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","attributes":{"active_skill":"Rest","agi":20,"hero_name":"Mata Hari","hp":45,"id":30040157,"int":19,"lv":1,"passive_skill":"Eye of the day","phy":14,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/heroes/30040157","image_url":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","home_url":"https://www.mycryptoheroes.net"}],
+        //This is sample data for testing
+        //heroes: [{"name":"MCH Hero: #30040157 Lv.1","description":"HeroName: Mata Hari","image":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","attributes":{"active_skill":"Rest","agi":20,"hero_name":"Mata Hari","hp":45,"id":30040157,"int":19,"lv":1,"passive_skill":"Eye of the day","phy":14,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/heroes/30040157","image_url":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","home_url":"https://www.mycryptoheroes.net"}],
       }
+    },
+
+    async asyncData({ store, params }) {
+      await store.dispatch('heroes/detail', params.id)
     },
 
     mounted() {
       contract.hero.setProvider(web3.currentProvider)      
     },
 
+    computed: {
+      heroes() {
+        return this.$store.getters['heroes/heroes']
+      }
+    },
+
     methods: {
       async purchase() {
-        //console.log(contract)
         api.hero.bazaar()
       }
-    }
+    },
 
-
-/*
-    mounted: async function() {
-      const response = await axios.get('http://localhost:3001/hero/token?id=' + this.$route.params.id);
-      this.item = response.data
-    }
-
-*/
   }
 </script>

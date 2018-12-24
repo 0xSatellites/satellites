@@ -12,24 +12,36 @@ const tokenURIPrefix = "https://www.mycryptoheroes.net/metadata/hero/"
 
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
-router.get("/token", async (req, res) => {
-
-    var euery = req.query
-    var uri = tokenURIPrefix + euery.id
-    var response = await axios.get(uri)
-    res.json(response.data)
-
+router.get("/balance", async (req, res) => {
+    var query = req.query
+    var balance = await contract.methods.balanceOf(query.address).call()
+    res.json(balance)    
 });
 
+
+//Param
+//if
+router.get("/token", async (req, res) => {
+    var query = req.query
+    var uri = tokenURIPrefix + query.id
+    var response = await axios.get(uri)
+    var metadata = [];
+    metadata.push(response.data);
+    res.json(metadata)
+});
+
+//Param
+//id
+//from
 router.get("/ownedTokens", async (req, res) => {
 
-    var euery = req.query
-    var balance = await contract.methods.balanceOf(euery.address).call()
+    var query = req.query
+    var balance = await contract.methods.balanceOf(query.address).call()
 
     var tokenOfOwnerByIndexPromises = [];
 
     for (var i=0; i<balance; i++){
-        tokenOfOwnerByIndexPromises.push(contract.methods.tokenOfOwnerByIndex(euery.address ,i).call())
+        tokenOfOwnerByIndexPromises.push(contract.methods.tokenOfOwnerByIndex(query.address ,i).call())
     }
 
     var tokens = []
@@ -48,9 +60,20 @@ router.get("/ownedTokens", async (req, res) => {
 
     var metadataPromises = [];    
 
-    for (var i=0; i<tokenURIs.length; i++){
+    var from = 0;
+    var to = tokenURIs.length;
+
+    if (query.from < to) { 
+        from = parseInt(query.from)
+    }
+
+    if (from + 12 < to) {
+        to = from + 12;
+    }
+
+    for (var i=from; i<to; i++){
         metadataPromises.push(axios.get(tokenURIs[i]))
-    }    
+    }
 
     var metadata = []
 

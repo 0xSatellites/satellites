@@ -1,16 +1,16 @@
 <template>
   <v-layout>
     <v-layout row wrap v-for="(item,i) in extensions" :key="i">
-      <v-flex xs12 md6>
-          <div class="ma-5 pa-3">
+      <v-flex xs12 lg6>
+          <div class="mx-5 my-2 pa-3">
             <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
           </div>
       </v-flex>
-      <v-flex xs12 md6>
-        <v-card class="ma-5 pa-3">
+      <v-flex xs12 lg6>
+        <v-card class="mx-1 my-2 pa-3">
           <v-card-title primary-title>
             <div>
-              <div class="headline">{{item.attributes.hero_name}}</div>
+              <div class="headline">{{item.attributes.extension_name}}</div>
               <span class="grey--text">{{item.name}}</span>
             </div>
           </v-card-title>
@@ -34,16 +34,11 @@
               <v-flex xs12>Price: 0.002 ETH</v-flex>
             </v-layout>
           </v-card-text>
-          <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12>Price: 0.002 ETH</v-flex>
-            </v-layout>
-          </v-card-text>
 
           <v-card-actions>
-            <v-btn dark @click="purchase">
-              <v-icon dark>shopping_cart</v-icon>
-              BUY NOW
+            <v-btn dark large @click="purchase">
+              Buy Now
+              <v-icon right>shopping_cart</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>

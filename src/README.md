@@ -1,4 +1,4 @@
-# mch-market
+# bazaaar.io
 
 > This is market place for mch digital assets
 

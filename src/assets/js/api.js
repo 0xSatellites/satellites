@@ -1,3 +1,4 @@
+//This is not used
 import axios from 'axios'
 import contract from '~/assets/js/contract';
 
@@ -41,7 +42,6 @@ hero.bazaar = async function (data) {
 
     var metadata = []
     
-    console.log("go")
     await Promise.all(metadataPromises)
     .then(function (results) {
         for(var i=0; i<results.length; i++){
@@ -49,7 +49,7 @@ hero.bazaar = async function (data) {
         }
     });        
 
-    console.log(metadata)
+    return metadata
 
 }
 

@@ -2,8 +2,8 @@
 <template>
   <v-layout>
     <v-layout row wrap>
-      <v-flex xs6 md2 v-for="(item,i) in extensions" :key="i">
-          <v-card class="rounded ma-2" :to="'../detail/extension/' + item.attributes.id">
+      <v-flex xs6 sm4 lg2 v-for="(item,i) in heroes" :key="i">
+          <v-card class="rounded ma-2" :to="'./detail/hero/' + item.attributes.id">
             <v-card-title primary-title>
               <div>
                 <div class="headline">{{item.attributes.rarity}}</div>
@@ -13,9 +13,9 @@
             <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
             <v-card-text>{{item.attributes.hero_name}}</v-card-text>
           </v-card>
-      </v-flex>
-      <v-flex xs6 md2 v-for="(item,i) in heroes" :key="i">
-          <v-card class="rounded ma-2" :to="'../detail/hero/' + item.attributes.id">
+      </v-flex>    
+      <v-flex xs6 sm4 lg2 v-for="(item,i) in extensions" :key="i">
+          <v-card class="rounded ma-2" :to="'./detail/extension/' + item.attributes.id">
             <v-card-title primary-title>
               <div>
                 <div class="headline">{{item.attributes.rarity}}</div>
@@ -23,7 +23,7 @@
               </div>
             </v-card-title>
             <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
-            <v-card-text>{{item.attributes.hero_name}}</v-card-text>
+            <v-card-text>{{item.attributes.extension_name}}</v-card-text>
           </v-card>
       </v-flex>
 

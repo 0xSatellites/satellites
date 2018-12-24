@@ -1,5 +1,7 @@
 <template>
   <v-app dark>
+
+  <!--
     <v-navigation-drawer
       disable-resize-watcher
       v-model="drawer"
@@ -23,21 +25,24 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    -->
 
     <v-toolbar
       fixed
       app
     >
+      <!--
       <v-toolbar-side-icon @click="drawer = !drawer" />
-      <img src="logo.png" height="60%">
-      <v-toolbar-title v-text="title"  class="hidden-sm-and-down"/>
+      -->
+      <img src="~/assets/img/bazaaar/icon.png" height="40%">
+      <v-toolbar-title v-text="title" class="hidden-sm-and-down"/>
       <v-spacer></v-spacer>
 
     <v-toolbar-items 
       v-for="(item, i) in items"
       :key="i"
     >
-      <v-btn flat :to="item.to">{{item.title}}</v-btn>
+      <v-btn small flat :to="item.to">{{item.title}}</v-btn>
     </v-toolbar-items>
 
     </v-toolbar>
@@ -68,9 +73,9 @@
       return {
         drawer: false,
         items: [
-          { icon: 'apps', title: 'Hero', to: '/onsale/hero' },
-          { icon: 'bubble_chart', title: 'Extension', to: '/onsale/extension' },
-          { icon: 'bubble_chart', title: 'Inventory', to: '/inventory' }
+          { icon: 'apps', title:"Hero", to: '/mycryptoheroes/onsale/hero' },
+          { icon: 'bubble_chart', title:"Extension", to: '/mycryptoheroes/onsale/extension' },
+          { icon: 'bubble_chart', title:"Invenrory", to: '/mycryptoheroes/inventory' }
         ],
         title: 'bazaar.io'
       }

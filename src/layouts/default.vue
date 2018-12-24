@@ -42,7 +42,7 @@
       v-for="(item, i) in items"
       :key="i"
     >
-      <v-btn small flat :to="item.to">{{item.title}}</v-btn>
+      <v-btn flat :to="item.to">{{item.title}}</v-btn>
     </v-toolbar-items>
 
     </v-toolbar>

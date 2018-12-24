@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
-import "./openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
+import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
 
-contract Market {
+contract Bazaaar {
 
     struct Item {
         address seller;

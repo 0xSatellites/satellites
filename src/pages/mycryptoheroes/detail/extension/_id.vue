@@ -7,31 +7,30 @@
           </div>
       </v-flex>
       <v-flex xs12 lg6>
-        <v-card class="mx-1 my-2 pa-3">
+        <v-card class="mx-1 my-2 pa-1">
           <v-card-title primary-title>
             <div>
               <div class="headline">{{extension.attributes.extension_name}}</div>
-              <span class="grey--text">{{extension.name}}</span>
+              <div class="grey--text">{{extension.name}}</div>
+              <div><a :href="extension.external_url"> {{extension.external_url}}</a></div>
             </div>
           </v-card-title>
           <v-card-text>
-
             <v-layout row wrap>
-              <v-flex xs3>HP: {{extension.attributes.hp}}</v-flex>
-              <v-flex xs3>PHY: {{extension.attributes.phy}}</v-flex>
-              <v-flex xs3>INT: {{extension.attributes.int}}</v-flex>
-              <v-flex xs3>AGI: {{extension.attributes.agi}}</v-flex>
+              <v-flex xs3>HP:<span class="title font-weight-light"> {{extension.attributes.hp}}</span></v-flex>
+              <v-flex xs3>PHY:<span class="title font-weight-light"> {{extension.attributes.phy}}</span></v-flex>
+              <v-flex xs3>INT:<span class="title font-weight-light"> {{extension.attributes.int}}</span></v-flex>
+              <v-flex xs3>AGI:<span class="title font-weight-light"> {{extension.attributes.agi}}</span></v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12>Passive Skill: {{extension.attributes.passive_skill}}</v-flex>
-              <v-flex xs12>Active Skill: {{extension.attributes.active_skill}}</v-flex>
+              <v-flex xs12><v-chip>Active : {{extension.attributes.active_skill}}</v-chip></v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12>Price: 0.002 ETH</v-flex>
+              <v-flex xs12>Price : <span class="headline font-weight-light">0.002 ETH</span></v-flex>
             </v-layout>
           </v-card-text>
 

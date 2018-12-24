@@ -7,31 +7,32 @@
           </div>
       </v-flex>
       <v-flex xs12 lg6>
-        <v-card class="mx-1 my-2 pa-3">
+        <v-card class="mx-1 my-2 pa-1">
           <v-card-title primary-title>
             <div>
               <div class="headline">{{hero.attributes.hero_name}}</div>
-              <span class="grey--text">{{hero.name}}</span>
+              <div class="grey--text">{{hero.name}}</div>
+              <div><a :href="hero.external_url"> {{hero.external_url}}</a></div>           
             </div>
           </v-card-title>
           <v-card-text>
 
             <v-layout row wrap>
-              <v-flex xs3>HP: {{hero.attributes.hp}}</v-flex>
-              <v-flex xs3>PHY: {{hero.attributes.phy}}</v-flex>
-              <v-flex xs3>INT: {{hero.attributes.int}}</v-flex>
-              <v-flex xs3>AGI: {{hero.attributes.agi}}</v-flex>
+              <v-flex xs3>HP :<span class="title font-weight-light"> {{hero.attributes.hp}}</span></v-flex>
+              <v-flex xs3>PHY :<span class="title font-weight-light"> {{hero.attributes.phy}}</span></v-flex>
+              <v-flex xs3>INT :<span class="title font-weight-light"> {{hero.attributes.int}}</span></v-flex>
+              <v-flex xs3>AGI :<span class="title font-weight-light"> {{hero.attributes.agi}}</span></v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12>Passive Skill: {{hero.attributes.passive_skill}}</v-flex>
-              <v-flex xs12>Active Skill: {{hero.attributes.active_skill}}</v-flex>
+              <v-flex xs12><v-chip>Passive : {{hero.attributes.passive_skill}}</v-chip></v-flex>
+              <v-flex xs12><v-chip>Active : {{hero.attributes.active_skill}}</v-chip></v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12>Price: 0.002 ETH</v-flex>
+              <v-flex xs12>Price : <span class="headline font-weight-light">0.002 ETH</span></v-flex>
             </v-layout>
           </v-card-text>
 

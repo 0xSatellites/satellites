@@ -1,7 +1,7 @@
 {
-  "name": "nft-market",
+  "name": "bazaaar.io",
   "version": "1.0.0",
-  "description": "This is market place for mch digital assets",
+  "description": "This is an opensource digital assets matching service",
   "author": "ookimaki",
   "private": true,
   "scripts": {

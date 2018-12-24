@@ -2,7 +2,7 @@ const pkg = require('./package')
 require('dotenv').config()
 
 module.exports = {
-  mode: 'universal',
+  mode: 'spa',
 
   /*
   ** Headers of the page
@@ -23,7 +23,8 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  //loading: { color: '#fff' },
+  loading: false,
 
   /*
   ** Global CSS

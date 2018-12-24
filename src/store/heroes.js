@@ -11,6 +11,11 @@ export const getters = {
 }
 
 export const mutations = {
+
+  clearHeroes(state) {
+    state.heroes = []
+  },
+
   setHeroes(state, heroes) {
     state.heroes = heroes
   },
@@ -26,6 +31,11 @@ export const mutations = {
 }
 
 export const actions = {
+
+  async clear({ state, commit }) {
+    commit('clearHeroes')    
+  },
+
   async initial({ state, commit }, from) {
     var response = await axios.get(process.env.API + "hero/ownedTokens?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224&from=" + from);
     commit('setHeroes', response.data)    
@@ -43,7 +53,7 @@ export const actions = {
   },
 
   async balance({ state, commit }) {
-    var response = await axios.get(process.env.API + "hero/balance?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224&");
+    var response = await axios.get(process.env.API + "hero/balance?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224");
     commit('setBalance', response.data)    
   },  
 

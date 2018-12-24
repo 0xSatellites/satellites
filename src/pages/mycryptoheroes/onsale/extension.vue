@@ -1,8 +1,14 @@
 
 <template>
   <v-layout>
+    <div class="text-xs-center centered-element" v-if="initialising">
+      <v-progress-circular
+        indeterminate
+      ></v-progress-circular>
+    </div>
+
     <v-layout row wrap>
-      <v-flex xs6 sm4 lg2 v-for="(item,i) in items" :key="i">
+      <v-flex xs6 sm4 lg2 v-for="(item,i) in extensions" :key="i">
           <v-card class="rounded ma-2" :to="'../detail/extension/' + item.attributes.id">
             <v-card-title primary-title>
               <div>
@@ -14,6 +20,12 @@
             <v-card-text>{{item.attributes.extension_name}}</v-card-text>
           </v-card>
       </v-flex>
+      <v-btn block color="grey darken-3 rounded" @click="load" v-if="0 < extensions.length && extensions.length < balance">
+      Load More
+      <v-progress-circular size=18 class="ma-2" v-if="loading"
+        indeterminate
+      ></v-progress-circular>      
+      </v-btn>
     </v-layout>
   </v-layout>
 </template>
@@ -25,8 +37,58 @@
   export default {
     data() {
       return {
-        items: [{"name":"MCH Extension: #30020200 Lv.68","description":"ExtensionName: Brave Musket\nNickname: Brave Musket","image":"https://www.mycryptoheroes.net/images/extensions/2000/3002.png","attributes":{"active_skill":"Brave Shots","agi":26,"extension_name":"Brave Musket","hp":3,"int":77,"lv":68,"phy":1,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30020200","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3002.png","home_url":"https://www.mycryptoheroes.net"},{"name":"MCH Extension: #30010296 Lv.64","description":"ExtensionName: Brave Blade\nNickname: ","image":"https://www.mycryptoheroes.net/images/extensions/2000/3001.png","attributes":{"active_skill":"Brave Slash","agi":0,"extension_name":"Brave Blade","hp":75,"int":0,"lv":64,"phy":74,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30010296","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3001.png","home_url":"https://www.mycryptoheroes.net"},{"name":"MCH Extension: #30040692 Lv.1","description":"ExtensionName: Brave Armor\nNickname: ","image":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","attributes":{"active_skill":"Brave Protection","agi":0,"extension_name":"Brave Armor","hp":81,"int":0,"lv":1,"phy":9,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30040692","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","home_url":"https://www.mycryptoheroes.net"},{"name":"MCH Extension: #30040749 Lv.1","description":"ExtensionName: Brave Armor\nNickname: ","image":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","attributes":{"active_skill":"Brave Protection","agi":0,"extension_name":"Brave Armor","hp":81,"int":0,"lv":1,"phy":9,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30040749","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","home_url":"https://www.mycryptoheroes.net"},{"name":"MCH Extension: #30020376 Lv.53","description":"ExtensionName: Brave Musket\nNickname: ","image":"https://www.mycryptoheroes.net/images/extensions/2000/3002.png","attributes":{"active_skill":"Brave Shots","agi":22,"extension_name":"Brave Musket","hp":0,"int":66,"lv":53,"phy":0,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30020376","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3002.png","home_url":"https://www.mycryptoheroes.net"},{"name":"MCH Extension: #30040662 Lv.1","description":"ExtensionName: Brave Armor\nNickname: ","image":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","attributes":{"active_skill":"Brave Protection","agi":0,"extension_name":"Brave Armor","hp":81,"int":0,"lv":1,"phy":9,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/extensions/30040662","image_url":"https://www.mycryptoheroes.net/images/extensions/2000/3004.png","home_url":"https://www.mycryptoheroes.net"}]
+        initialising: true,
+        loading: false
+        //extensions: [{"name":"MCH Hero: #30040157 Lv.1","description":"HeroName: Mata Hari","image":"https://www.mycryptoextensions.net/images/extensions/2000/3004.png","attributes":{"active_skill":"Rest","agi":20,"hero_name":"Mata Hari","hp":45,"id":30040157,"int":19,"lv":1,"passive_skill":"Eye of the day","phy":14,"rarity":"Rare"},"external_url":"https://www.mycryptoextensions.net/extensions/30040157","image_url":"https://www.mycryptoextensions.net/images/extensions/2000/3004.png","home_url":"https://www.mycryptoextensions.net"},{"name":"MCH Hero: #30050132 Lv.1","description":"HeroName: ETHEREMON-BLUE","image":"https://www.mycryptoextensions.net/images/extensions/2000/3005.png","attributes":{"active_skill":"Rest","agi":17,"hero_name":"ETHEREMON-BLUE","hp":57,"id":30050132,"int":19,"lv":1,"passive_skill":"Omnom Tactics","phy":13,"rarity":"Rare"},"external_url":"https://www.mycryptoextensions.net/extensions/30050132","image_url":"https://www.mycryptoextensions.net/images/extensions/2000/3005.png","home_url":"https://www.mycryptoextensions.net"},{"name":"MCH Hero: #20020031 Lv.1","description":"HeroName: Spartacus","image":"https://www.mycryptoextensions.net/images/extensions/2000/2002.png","attributes":{"active_skill":"Rest","agi":12,"hero_name":"Spartacus","hp":63,"id":20020031,"int":12,"lv":1,"passive_skill":"Gladiator War","phy":13,"rarity":"Uncommon"},"external_url":"https://www.mycryptoextensions.net/extensions/20020031","image_url":"https://www.mycryptoextensions.net/images/extensions/2000/2002.png","home_url":"https://www.mycryptoextensions.net"},{"name":"MCH Hero: #20020353 Lv.3","description":"HeroName: Spartacus","image":"https://www.mycryptoextensions.net/images/extensions/2000/2002.png","attributes":{"active_skill":"Rest","agi":13,"hero_name":"Spartacus","hp":78,"id":20020353,"int":13,"lv":3,"passive_skill":"Gladiator War","phy":14,"rarity":"Uncommon"},"external_url":"https://www.mycryptoextensions.net/extensions/20020353","image_url":"https://www.mycryptoextensions.net/images/extensions/2000/2002.png","home_url":"https://www.mycryptoextensions.net"}],
       }
+    },
+/*
+    async asyncData({ store, params }) {
+
+      await Promise.all(
+        [
+         store.dispatch('extensions/initial', 0),
+         store.dispatch('extensions/balance')
+         ]
+      )
+
+    },
+*/
+
+    mounted: async function() {
+
+      if(!this.$store.getters['extensions/extensions'].length) {
+
+        await Promise.all(
+          [
+          this.$store.dispatch('extensions/initial', 0),
+          this.$store.dispatch('extensions/balance')
+          ]
+        )
+      }
+      
+      this.initialising = false;
+    },
+
+    computed: {
+      // ...mapGetters('questions', ['questions'])
+      extensions() {
+        return this.$store.getters['extensions/extensions']
+      },
+
+      balance() {
+        return this.$store.getters['extensions/balance']
+      }
+    },
+
+    methods: {
+      // ...mapGetters('questions', ['questions'])
+      async load() {
+        this.loading = true
+        await this.$store.dispatch('extensions/load', this.$store.getters['extensions/extensions'].length)
+        this.loading = false
+      }
+
     },
 
   }

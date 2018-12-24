@@ -1,32 +1,32 @@
 <template>
   <v-layout> 
-    <v-layout row wrap v-for="(item,i) in heroes" :key="i">
+    <v-layout row wrap>
       <v-flex xs12 lg6>
           <div class="mx-5 my-2 pa-3">
-            <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
+            <v-card-text><img v-bind:src="hero.image" width="100%" alt=""></v-card-text>
           </div>
       </v-flex>
       <v-flex xs12 lg6>
         <v-card class="mx-1 my-2 pa-3">
           <v-card-title primary-title>
             <div>
-              <div class="headline">{{item.attributes.hero_name}}</div>
-              <span class="grey--text">{{item.name}}</span>
+              <div class="headline">{{hero.attributes.hero_name}}</div>
+              <span class="grey--text">{{hero.name}}</span>
             </div>
           </v-card-title>
           <v-card-text>
 
             <v-layout row wrap>
-              <v-flex xs3>HP: {{item.attributes.hp}}</v-flex>
-              <v-flex xs3>PHY: {{item.attributes.phy}}</v-flex>
-              <v-flex xs3>INT: {{item.attributes.int}}</v-flex>
-              <v-flex xs3>AGI: {{item.attributes.agi}}</v-flex>
+              <v-flex xs3>HP: {{hero.attributes.hp}}</v-flex>
+              <v-flex xs3>PHY: {{hero.attributes.phy}}</v-flex>
+              <v-flex xs3>INT: {{hero.attributes.int}}</v-flex>
+              <v-flex xs3>AGI: {{hero.attributes.agi}}</v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12>Passive Skill: {{item.attributes.passive_skill}}</v-flex>
-              <v-flex xs12>Active Skill: {{item.attributes.active_skill}}</v-flex>
+              <v-flex xs12>Passive Skill: {{hero.attributes.passive_skill}}</v-flex>
+              <v-flex xs12>Active Skill: {{hero.attributes.active_skill}}</v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
@@ -62,16 +62,16 @@
     },
 
     async asyncData({ store, params }) {
-      await store.dispatch('heroes/detail', params.id)
+      await store.dispatch('hero/detail', params.id)
     },
 
     mounted() {
-      contract.hero.setProvider(web3.currentProvider)      
+      contract.hero.setProvider(web3.currentProvider) 
     },
 
     computed: {
-      heroes() {
-        return this.$store.getters['heroes/heroes']
+      hero() {
+        return this.$store.getters['hero/hero']
       }
     },
 

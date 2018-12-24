@@ -18,15 +18,13 @@ router.get("/balance", async (req, res) => {
     res.json(balance)    
 });
 
-
 //Param
 //if
 router.get("/token", async (req, res) => {
     var query = req.query
     var uri = tokenURIPrefix + query.id
     var response = await axios.get(uri)
-    var metadata = [];
-    metadata.push(response.data);
+    var metadata = response.data;
     res.json(metadata)
 });
 

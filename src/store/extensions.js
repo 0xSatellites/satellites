@@ -42,7 +42,6 @@ export const actions = {
   },
 
   async load({ state, commit }, from) {
-    console.log("load:" + from)
     var response = await axios.get(process.env.API + "extension/ownedTokens?address=0x112ab3e7440b6e6b5c0fe0245579755dd78285b3&from=" + from);
     commit('pushExtensions', response.data)    
   },  

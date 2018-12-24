@@ -6,10 +6,9 @@
         indeterminate
       ></v-progress-circular>
     </div>
-
     <v-layout row wrap>
       <v-flex xs6 sm4 lg2 v-for="(item,i) in extensions" :key="i">
-          <v-card class="rounded ma-2" :to="'../detail/extension/' + item.attributes.id">
+          <v-card class="rounded ma-2" :to="'../detail/extension/' + item.name.substring(16, 24)">
             <v-card-title primary-title>
               <div>
                 <div class="headline">{{item.attributes.rarity}}</div>

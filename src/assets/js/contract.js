@@ -14,4 +14,5 @@ const extension = new web3.eth.Contract(extensionABI, extensionAddress);
 export default {
     hero: hero,
     extension: extension,
+    web3:web3
 };

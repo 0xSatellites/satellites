@@ -6,7 +6,6 @@
         indeterminate
       ></v-progress-circular>
     </div>
-
     <v-flex xs6 sm4 lg2 v-for="(item,i) in heroes" :key="i">
         <v-card class="rounded ma-2" :to="'../detail/hero/' + item.attributes.id">
           <v-card-title primary-title>
@@ -58,7 +57,6 @@
 
       if(!this.$store.getters['heroes/heroes'].length) {
 
-        this.$store.dispatch('heroes/clear', 0),
         await Promise.all(
           [
           this.$store.dispatch('heroes/initial', 0),

@@ -51,7 +51,6 @@
 
   import axios from 'axios'
   import contract from '~/assets/js/contract';
-  import api from '~/assets/js/api';
 
   export default {
     data() {
@@ -65,8 +64,24 @@
       await store.dispatch('hero/detail', params.id)
     },
 
-    mounted() {
-      contract.hero.setProvider(web3.currentProvider) 
+    async mounted() {
+      var self = this
+      if(typeof web3 !== 'undefined') {
+        contract.web3.setProvider(web3.currentProvider)
+        await contract.web3.eth.getAccounts().then(async function(val){
+            if(self.$store.getters['account/account'] != val[0]){
+              var userAccount = val[0];              
+              self.$store.dispatch('account/setAccount', userAccount )
+            }
+        })
+
+        contract.web3.currentProvider.publicConfigStore.on('update', async function(val){
+          var userAccount = val.selectedAddress;
+          if(self.$store.getters['account/account'].toLowerCase() != userAccount){
+            self.$store.dispatch('account/setAccount', userAccount)        
+          }
+        });
+      }
     },
 
     computed: {

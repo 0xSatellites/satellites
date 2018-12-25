@@ -5,11 +5,8 @@ contract('Test Extension', async function(accounts) {
   
     const PRICE = 1000000000;
 
-    const EXTENSIONID1 = 30040001;
-    const EXTENSIONID2 = 30040002;
-    const EXTENSIONID3 = 30040003;
-    const EXTENSIONID4 = 30040004;
-    const EXTENSIONID5 = 30040005;
+    const EXTENSIONID1 = 10012160;
+    const EXTENSIONID2 = 10012161;
 
     var extensionAsset;
 
@@ -17,23 +14,19 @@ contract('Test Extension', async function(accounts) {
       extensionAsset = await ExtensionAsset.new();   
       await extensionAsset.mint(accounts[0], EXTENSIONID1);
       await extensionAsset.mint(accounts[0], EXTENSIONID2);
-      await extensionAsset.mint(accounts[0], EXTENSIONID3);
-      await extensionAsset.mint(accounts[0], EXTENSIONID4);
-      await extensionAsset.mint(accounts[0], EXTENSIONID5);
-      assert.equal(await extensionAsset.balanceOf(accounts[0]), 5);
-      assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[0]);
-      assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[0]);
-      assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[0]);
-      assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[0]);
+      assert.equal(await extensionAsset.balanceOf(accounts[0]), 2);
       assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[0]);
     })
 
     it('whitelist', async function() {
         bazaaar = await Bazaaar.deployed();        
+        console.log("Address:" + bazaaar.address)
         await bazaaar.whitelist(extensionAsset.address, true);
         assert.equal(await bazaaar.whitelisted(extensionAsset.address), true);                
     })
 
+
+    /*
     it('sell', async function() {
         bazaaar = await Bazaaar.deployed();
         await extensionAsset.approve(bazaaar.address, EXTENSIONID1);
@@ -57,6 +50,7 @@ contract('Test Extension', async function(accounts) {
         await bazaaar.sell(extensionAsset.address, EXTENSIONID1, PRICE, {from: accounts[1]});
         await bazaaar.cancel(extensionAsset.address, EXTENSIONID1, {from: accounts[1]});
         assert.equal(await extensionAsset.ownerOf(EXTENSIONID1), accounts[1]);        
-    })       
+    })
+    */       
 
 })

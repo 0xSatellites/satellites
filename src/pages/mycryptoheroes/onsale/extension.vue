@@ -17,6 +17,7 @@
             </v-card-title>
             <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
             <v-card-text>{{item.attributes.extension_name}}</v-card-text>
+            <v-card-actions><v-btn block>0.002ETH</v-btn></v-card-actions>
           </v-card>
       </v-flex>
       <v-btn block color="grey darken-3 rounded" @click="load" v-if="0 < extensions.length && extensions.length < balance">

@@ -37,13 +37,13 @@ export const actions = {
   },
 
   async initial({ state, commit }, from) {
-    var response = await axios.get(process.env.API + "hero/ownedTokens?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224&from=" + from);
+    var response = await axios.get(process.env.API + "hero/ownedTokens?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3&from=" + from);
     commit('setHeroes', response.data)    
   },
 
   async load({ state, commit }, from) {
     console.log("load:" + from)
-    var response = await axios.get(process.env.API + "hero/ownedTokens?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224&from=" + from);
+    var response = await axios.get(process.env.API + "hero/ownedTokens?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3&from=" + from);
     commit('pushHeroes', response.data)    
   },  
 
@@ -53,7 +53,7 @@ export const actions = {
   },
 
   async balance({ state, commit }) {
-    var response = await axios.get(process.env.API + "hero/balance?address=0x08dd65737605b29e24f18981b4e0c5552c8eb224");
+    var response = await axios.get(process.env.API + "hero/balance?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3");
     commit('setBalance', response.data)    
   },  
 

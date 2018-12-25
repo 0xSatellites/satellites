@@ -82,3 +82,8 @@ dist
 
 # Truffle
 build
+
+# PrivKey
+.secret
+
+.DS_Store

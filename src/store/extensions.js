@@ -37,12 +37,12 @@ export const actions = {
   },
 
   async initial({ state, commit }, from) {
-    var response = await axios.get(process.env.API + "extension/ownedTokens?address=0x112ab3e7440b6e6b5c0fe0245579755dd78285b3&from=" + from);
+    var response = await axios.get(process.env.API + "extension/ownedTokens?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3&from=" + from);
     commit('setExtensions', response.data)    
   },
 
   async load({ state, commit }, from) {
-    var response = await axios.get(process.env.API + "extension/ownedTokens?address=0x112ab3e7440b6e6b5c0fe0245579755dd78285b3&from=" + from);
+    var response = await axios.get(process.env.API + "extension/ownedTokens?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3&from=" + from);
     commit('pushExtensions', response.data)    
   },  
 
@@ -52,7 +52,7 @@ export const actions = {
   },
 
   async balance({ state, commit }) {
-    var response = await axios.get(process.env.API + "extension/balance?address=0x112ab3e7440b6e6b5c0fe0245579755dd78285b3");
+    var response = await axios.get(process.env.API + "extension/balance?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3");
     commit('setBalance', response.data)    
   },  
 

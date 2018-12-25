@@ -2,12 +2,13 @@ import axios from 'axios'
 
 export const state = () => ({
   hero: {},
-  balance: 0
+  balance: 0,
+  selling:false
 })
 
 export const getters = {
     hero: state => state.hero,
-    balance: state => state.balance
+    balance: state => state.balance,
 }
 
 export const mutations = {

@@ -2,15 +2,15 @@
   <v-layout>
     <v-layout row wrap>
       <v-flex xs12 lg6>
-          <div class="mx-5 my-2 pa-3">
+          <div class="mx-5">
             <v-card-text><img v-bind:src="extension.image" width="100%" alt=""></v-card-text>
           </div>
       </v-flex>
       <v-flex xs12 lg6>
-        <v-card class="mx-1 my-4 pa-1">
+        <v-card class="my-3 pa-2">
           <v-card-title primary-title>
             <div>
-              <div class="headline">{{extension.attributes.extension_name}}</div>
+              <div class="headline">{{extension.attributes.extension_name}} - Lv.{{extension.attributes.lv}}</div>
               <div class="grey--text">{{extension.name}}</div>
               <div class="caption"><a :href="extension.external_url"> {{extension.external_url}}</a></div>
             </div>
@@ -25,18 +25,12 @@
           </v-card-text>
           <v-card-text>
             <v-layout row wrap>
-              <v-flex xs12><v-chip>Active : {{extension.attributes.active_skill}}</v-chip></v-flex>
+              <v-flex xs12><v-chip color="red lighten-4">Active : {{extension.attributes.active_skill}}</v-chip></v-flex>
             </v-layout>
-          </v-card-text>
-          <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12>Price : <span class="headline font-weight-light">0.002 ETH</span></v-flex>
-            </v-layout>
-          </v-card-text>
-
+          </v-card-text>   
           <v-card-actions>
-            <v-btn dark large @click="purchase">
-              Buy Now
+            <v-btn block dark large @click="purchase">
+              0.01ETH
               <v-icon right>shopping_cart</v-icon>
             </v-btn>
           </v-card-actions>
@@ -72,7 +66,7 @@
         await contract.web3.eth.getAccounts().then(async function(val){
             if(self.$store.getters['account/account'] != val[0]){
               var userAccount = val[0];              
-              self.$store.dispatch('account/setAccount', userAccount )
+              self.$store.dispatch('account/setAccount', userAccount.toLowerCase() )
             }
         })
 

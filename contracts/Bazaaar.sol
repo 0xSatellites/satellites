@@ -13,6 +13,7 @@ contract Bazaaar is SignerRole {
 
     event WhiteList(address indexed _contract, bool _status);
     event Sell(address indexed _contract, uint _tokenId, uint _price);
+    event Change(address indexed _contract, uint _tokenId, uint _price);
     event Cancel(address indexed _contract, uint _tokenId);
     event Purchase(address indexed _contract, uint _tokenId, uint _price);
 
@@ -31,6 +32,13 @@ contract Bazaaar is SignerRole {
         items[_contract][_tokenId] = _item;
         IERC721(_contract).transferFrom(msg.sender, address(this), _tokenId);
         emit Sell(_contract, _tokenId, _price);
+    }
+
+    function change(address _contract, uint _tokenId, uint _price) public {
+        require(items[_contract][_tokenId].exist);
+        require(items[_contract][_tokenId].seller == msg.sender);
+        items[_contract][_tokenId].price = _price;
+        emit Change(_contract, _tokenId, _price);
     }
 
     function cancel(address _contract, uint _tokenId) public {

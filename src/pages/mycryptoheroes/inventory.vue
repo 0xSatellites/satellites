@@ -72,7 +72,7 @@
         await contract.web3.eth.getAccounts().then(async function(val){
             if(self.$store.getters['account/account'] != val[0]){
               var userAccount = val[0];              
-              self.$store.dispatch('account/setAccount', userAccount )
+              self.$store.dispatch('account/setAccount', userAccount.toLowerCase() )
               self.$store.dispatch('inventory/clear', userAccount)
               await Promise.all(
                 [

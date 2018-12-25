@@ -7,19 +7,34 @@ contract('Test Hero', async function(accounts) {
 
     const HEROID1 = 40090001;
     const HEROID2 = 40090002;
+    const HEROID3 = 40090003;
+    const HEROID4 = 40090004;
+    const HEROID5 = 40090005;
+    const HEROID6 = 40090006;
+    const HEROID7 = 40090007;
+    const HEROID8 = 40090008;
+    const HEROID9 = 40090009;    
     var heroAsset;
 
     it('Mint initial token', async function() {
       heroAsset = await HeroAsset.new();   
+      console.log("Hero:" + heroAsset.address)       
       await heroAsset.mint(accounts[0], HEROID1);
       await heroAsset.mint(accounts[0], HEROID2);
+      await heroAsset.mint(accounts[0], HEROID3);
+      await heroAsset.mint(accounts[0], HEROID4);
+      await heroAsset.mint(accounts[0], HEROID5);
+      await heroAsset.mint(accounts[0], HEROID6);
+      await heroAsset.mint(accounts[0], HEROID7);
+      await heroAsset.mint(accounts[0], HEROID8);
+      await heroAsset.mint(accounts[0], HEROID9);      
       assert.equal(await heroAsset.balanceOf(accounts[0]), 2);
       assert.equal(await heroAsset.ownerOf(HEROID1), accounts[0]);
     })
 
     it('whitelist', async function() {
         bazaaar = await Bazaaar.deployed();       
-        console.log("Address:" + bazaaar.address) 
+        console.log("Bazaaar:" + bazaaar.address) 
         await bazaaar.whitelist(heroAsset.address, true);
         assert.equal(await bazaaar.whitelisted(heroAsset.address), true);                
     })

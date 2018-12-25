@@ -1,4 +1,6 @@
 <template>
+<div>
+    <h2>MyItems</h2>
   <v-layout row wrap>
     <div class="text-xs-center centered-element" v-if="initialising">
       <v-progress-circular
@@ -34,6 +36,7 @@
       ></v-progress-circular>       
     </v-btn>
   </v-layout>
+</div>  
 </template>
 
 <script>

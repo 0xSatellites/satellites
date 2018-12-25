@@ -75,7 +75,7 @@
         items: [
           { icon: 'apps', title:"Hero", to: '/mycryptoheroes/onsale/hero' },
           { icon: 'bubble_chart', title:"Extension", to: '/mycryptoheroes/onsale/extension' },
-          { icon: 'bubble_chart', title:"Invenrory", to: '/mycryptoheroes/inventory' }
+          { icon: 'bubble_chart', title:"MyItems", to: '/mycryptoheroes/myitems' }
         ],
         title: 'bazaar.io'
       }

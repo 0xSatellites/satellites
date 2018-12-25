@@ -1,5 +1,8 @@
 
 <template>
+<div>
+  <h2>Market: Hero</h2>
+
   <v-layout row wrap>
     <div class="text-xs-center centered-element" v-if="initialising">
       <v-progress-circular
@@ -26,13 +29,14 @@
       ></v-progress-circular>       
     </v-btn>
   </v-layout>
+</div>  
 </template>
 
 <script>
 
   import axios from 'axios'
   import contract from '~/assets/js/contract';
-  
+
   export default {
     data() {
       return {

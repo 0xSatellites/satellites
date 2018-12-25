@@ -33,7 +33,7 @@
 
           <v-card-actions v-if="hero.onSale && hero.seller != userAccount">
             <v-btn block dark large @click="purchase" :disabled="loading">
-              {{hero.price / 1000000000000000000}}　ETH
+              {{hero.price / 1000000000000000000}} ETH
               <v-icon right>shopping_cart</v-icon>
               <v-progress-circular size=18 class="ma-2" v-if="loading"
                 indeterminate
@@ -49,7 +49,7 @@
               ></v-progress-circular>  
             </v-btn>
             <v-btn block dark large @click="change" :disabled="loading">
-              {{hero.price / 1000000000000000000}}　ETH
+              {{hero.price / 1000000000000000000}} ETH
               <v-icon right>cached</v-icon>
               <v-progress-circular size=18 class="ma-2" v-if="loading"
                 indeterminate
@@ -80,11 +80,8 @@
   export default {
     data() {
       return {
-        selling:false,
-        having:false,
         loading:false, 
-        approved:false
-
+        approved:false 
         //This is sample data for testing
         //heroes: [{"name":"MCH Hero: #30040157 Lv.1","description":"HeroName: Mata Hari","image":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","attributes":{"active_skill":"Rest","agi":20,"hero_name":"Mata Hari","hp":45,"id":30040157,"int":19,"lv":1,"passive_skill":"Eye of the day","phy":14,"rarity":"Rare"},"external_url":"https://www.mycryptoheroes.net/heroes/30040157","image_url":"https://www.mycryptoheroes.net/images/heroes/2000/3004.png","home_url":"https://www.mycryptoheroes.net"}],
       }
@@ -134,13 +131,16 @@
           console.log(hash)
           alert("This item will be yours. Please wait for the confirmation. Tx: " + hash)
           self.approved = false;            
-          self.loading = false
         })
         .on('confirmation', function(confirmationNumber, receipt){
-          window.location.reload(true)
+          self.$store.dispatch('hero/detail', self.$route.params.id),
+          self.$store.dispatch('heroes/initial'),
+          self.$store.dispatch('heroes/balance'),          
+          self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])        
         })
         .on('receipt', function(receipt){
           console.log(receipt)
+          self.loading = false          
         })
         .on('error', function(err){
             console.error(err)
@@ -151,9 +151,8 @@
         var self = this
         this.loading = true;
 
-        await contract.hero.methods.getApproved(this.$route.params.id).call().then(function(val){
-            console.log(val)
-            if(contract.bazaaar._address == val){
+        await contract.hero.methods.isApprovedForAll(this.$store.getters['account/account'], contract.bazaaar._address).call().then(function(val){
+            if(val){
               self.approved = true;
             }
         })
@@ -174,13 +173,17 @@
           .on('transactionHash', function(hash){
             console.log(hash)
             alert("Your item will be on bazaaar. Please wait for the confirmation. Tx: " + hash)
-            self.loading = false
           })
           .on('confirmation', function(confirmationNumber, receipt){
-            window.location.reload(true)
+            self.$store.dispatch('hero/detail', self.$route.params.id),
+            self.$store.dispatch('heroes/initial'),
+            self.$store.dispatch('heroes/balance'),  
+            self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])                
+
           })
           .on('receipt', function(receipt){
             console.log(receipt)
+            self.loading = false             
           })
           .on('error', function(err){
               console.error(err)
@@ -189,18 +192,18 @@
 
         } else {
             alert("You must approve bazaaar contract for the sale")
-            contract.hero.methods.approve(contract.bazaaar._address , this.$route.params.id)
+            contract.hero.methods.setApprovalForAll(contract.bazaaar._address , true)
             .send({from: this.$store.getters['account/account']})
             .on('transactionHash', function(hash){
               console.log(hash)
               alert("Now you can sell your asset on bazaaar. Tx: " + hash)
               self.approved = true;
-              self.loading = false
             })
             .on('confirmation', function(confirmationNumber, receipt){
             })
             .on('receipt', function(receipt){
               console.log(receipt)
+              self.loading = false                 
             })
             .on('error', function(err){
               console.error(err)
@@ -219,13 +222,15 @@
             console.log(hash)
             alert("Your selling is cannceled. Please wait for the confirmation. Tx: " + hash)
             self.approved = false;            
-            self.loading = false
           })
           .on('confirmation', function(confirmationNumber, receipt){
-            window.location.reload(true)
+            self.$store.dispatch('hero/detail', self.$route.params.id),
+            self.$store.dispatch('heroes/initial'),
+            self.$store.dispatch('heroes/balance'),              
+            self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])                 
           })
           .on('receipt', function(receipt){
-            console.log(receipt)
+            self.loading = false
           })
           .on('error', function(err){
               console.error(err)
@@ -252,13 +257,13 @@
           console.log(hash)
           alert("Your selling is updated. Please wait for the confirmation. Tx: " + hash)
           self.approved = false;            
-          self.loading = false
         })
         .on('confirmation', function(confirmationNumber, receipt){
-          window.location.reload(true)
+          self.$store.dispatch('hero/detail', self.$route.params.id)
         })
         .on('receipt', function(receipt){
           console.log(receipt)
+          this.loading = false;            
         })
         .on('error', function(err){
             console.error(err)

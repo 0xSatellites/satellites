@@ -28,12 +28,43 @@
               <v-flex xs12><v-chip color="red lighten-4">Active : {{extension.attributes.active_skill}}</v-chip></v-flex>
             </v-layout>
           </v-card-text>   
-          <v-card-actions>
-            <v-btn block dark large @click="purchase">
-              0.01ETH
+
+          <v-card-actions v-if="extension.onSale && extension.seller != userAccount">
+            <v-btn block dark large @click="purchase" :disabled="loading">
+              {{extension.price / 1000000000000000000}} ETH
               <v-icon right>shopping_cart</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>  
             </v-btn>
           </v-card-actions>
+          <v-card-actions v-if="extension.onSale && extension.seller == userAccount">
+            <v-btn block dark large @click="cancel" :disabled="loading">
+              Cancel
+              <v-icon right>undo</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>  
+            </v-btn>
+            <v-btn block dark large @click="change" :disabled="loading">
+              {{extension.price / 1000000000000000000}} ETH
+              <v-icon right>cached</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>    
+            </v-btn>
+          </v-card-actions>          
+          <v-card-actions v-if="extension.owner == userAccount">
+            <v-btn block dark large @click="sell" :disabled="loading">
+              Sell
+              <v-icon right v-if="!loading">store</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>                
+            </v-btn>
+          </v-card-actions>
+
+
         </v-card>
       </v-flex>
 
@@ -50,6 +81,8 @@
   export default {
     data() {
       return {
+        loading:false, 
+        approved:false        
         //This is sample data for testing
         //extensions: [{"name":"MCH Extension: #30020200 Lv.68","description":"ExtensionName: Brave Musket\nNickname: Brave Musket","image":"https://www.mycryptoextensiones.net/images/extensions/2000/3002.png","attributes":{"active_skill":"Brave Shots","agi":26,"extension_name":"Brave Musket","hp":3,"int":77,"lv":68,"phy":1,"rarity":"Rare"},"external_url":"https://www.mycryptoextensiones.net/extensions/30020200","image_url":"https://www.mycryptoextensiones.net/images/extensions/2000/3002.png","home_url":"https://www.mycryptoextensiones.net"}]
       }
@@ -82,12 +115,162 @@
     computed: {
       extension() {
         return this.$store.getters['extension/extension']
+      },
+      userAccount() {
+        return this.$store.getters['account/account']
       }
     },
 
     methods: {
       async purchase() {
-        api.extension.bazaar()
+        var self = this
+        this.loading = true
+
+        contract.bazaaar.methods.purchase(contract.extension._address , this.$route.params.id)
+        .send({from: this.$store.getters['account/account'], value: this.$store.getters['extension/extension'].price})
+        .on('transactionHash', function(hash){
+          console.log(hash)
+          alert("This item will be yours. Please wait for the confirmation. Tx: " + hash)
+          self.approved = false;            
+        })
+        .on('confirmation', function(confirmationNumber, receipt){
+          self.$store.dispatch('extension/detail', self.$route.params.id)
+          self.$store.dispatch('extensions/initial'),
+          self.$store.dispatch('extensions/balance'),
+          self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])
+        })
+        .on('receipt', function(receipt){
+          console.log(receipt)
+          self.loading = false          
+        })
+        .on('error', function(err){
+            console.error(err)
+            self.loading = false
+            
+        });　       
+      },
+      async sell() {
+        var self = this
+        this.loading = true;
+
+        await contract.extension.methods.isApprovedForAll(this.$store.getters['account/account'], contract.bazaaar._address).call().then(function(val){
+            if(val){
+              self.approved = true;
+            }
+        })
+
+        if(this.approved) {
+
+          var price = prompt("Please enter price.", "ETH")
+          try {
+            var wei = contract.web3.utils.toWei(price)
+          } catch {
+            alert("Please input ETH amount in number.") 
+            this.loading = false;            
+            return
+          }
+
+          contract.bazaaar.methods.sell(contract.extension._address , this.$route.params.id, wei)
+          .send({from: this.$store.getters['account/account']})
+          .on('transactionHash', function(hash){
+            console.log(hash)
+            alert("Your item will be on bazaaar. Please wait for the confirmation. Tx: " + hash)
+          })
+          .on('confirmation', function(confirmationNumber, receipt){ 
+            self.$store.dispatch('extension/detail', self.$route.params.id)
+            self.$store.dispatch('extensions/initial'),
+            self.$store.dispatch('extensions/balance'),            
+            self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])        
+          })
+          .on('receipt', function(receipt){
+            console.log(receipt)
+            self.loading = false              
+          })
+          .on('error', function(err){
+              console.error(err)
+              self.loading = false
+          });　         
+
+        } else {
+            alert("You must approve bazaaar contract for the sale")
+            contract.extension.methods.setApprovalForAll(contract.bazaaar._address , true)
+            .send({from: this.$store.getters['account/account']})
+            .on('transactionHash', function(hash){
+              console.log(hash)
+              alert("Now you can sell your asset on bazaaar. Tx: " + hash)
+              self.approved = true;            
+            })
+            .on('confirmation', function(confirmationNumber, receipt){             
+            })
+            .on('receipt', function(receipt){
+              console.log(receipt)
+              self.loading = false              
+            })
+            .on('error', function(err){
+              console.error(err)           
+              self.loading = false
+            });　         
+        }
+          
+      },
+      async cancel() {
+        var self = this   
+        this.loading = true
+
+          contract.bazaaar.methods.cancel(contract.extension._address , this.$route.params.id)
+          .send({from: this.$store.getters['account/account']})
+          .on('transactionHash', function(hash){
+            console.log(hash)
+            alert("Your selling is cannceled. Please wait for the confirmation. Tx: " + hash)
+            self.approved = false;            
+          })
+          .on('confirmation', function(confirmationNumber, receipt){
+            self.$store.dispatch('extension/detail', self.$route.params.id)
+            self.$store.dispatch('extensions/initial'),
+            self.$store.dispatch('extensions/balance'),            
+            self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])            
+          })
+          .on('receipt', function(receipt){
+            console.log(receipt)
+            self.loading = false            
+          })
+          .on('error', function(err){
+              console.error(err)           
+              self.loading = false              
+          });　       
+      },
+
+      async change() {
+        var self = this       
+        this.loading = true
+
+        var price = prompt("Please enter price.", "ETH")
+        try {
+          var wei = contract.web3.utils.toWei(price)
+        } catch {
+          alert("Please input ETH amount in number.")         
+          this.loading = false;                    
+          return
+        }
+
+        contract.bazaaar.methods.change(contract.extension._address , this.$route.params.id, price)
+        .send({from: this.$store.getters['account/account']})
+        .on('transactionHash', function(hash){
+          console.log(hash)
+          alert("Your selling is updated. Please wait for the confirmation. Tx: " + hash)
+          self.approved = false;            
+        })
+        .on('confirmation', function(confirmationNumber, receipt){
+          self.$store.dispatch('extension/detail', self.$route.params.id)
+        })
+        .on('receipt', function(receipt){
+          console.log(receipt)
+          self.loading = false                
+        })
+        .on('error', function(err){
+            console.error(err)                        
+            self.loading = false
+        });　       
       }
     },
   }

@@ -16,7 +16,7 @@
           </v-card-title>
           <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
           <v-card-text>{{item.attributes.hero_name}}</v-card-text>
-          <v-card-actions><v-btn block>0.002ETH</v-btn></v-card-actions>
+          <v-card-actions><v-btn  :disabled="item.seller == userAccount" block>{{item.price / 1000000000000000000}} ETH</v-btn></v-card-actions>
         </v-card>
     </v-flex>
     <v-btn block color="grey darken-3 rounded" @click="load" v-if="0 < heroes.length && heroes.length < balance">
@@ -31,7 +31,8 @@
 <script>
 
   import axios from 'axios'
-
+  import contract from '~/assets/js/contract';
+  
   export default {
     data() {
       return {
@@ -55,12 +56,12 @@
     */
 
     mounted: async function() {
-
+      var self = this
       if(!this.$store.getters['heroes/heroes'].length) {
 
         await Promise.all(
           [
-          this.$store.dispatch('heroes/initial', 0),
+          this.$store.dispatch('heroes/initial'),
           this.$store.dispatch('heroes/balance')
           ]
         )
@@ -68,6 +69,24 @@
       }
 
       this.initialising = false;
+
+      if(typeof web3 !== 'undefined') {
+        contract.web3.setProvider(web3.currentProvider)
+        await contract.web3.eth.getAccounts().then(async function(val){
+            if(self.$store.getters['account/account'] != val[0]){
+              var userAccount = val[0];              
+              self.$store.dispatch('account/setAccount', userAccount.toLowerCase() )
+            }
+        })
+
+        contract.web3.currentProvider.publicConfigStore.on('update', async function(val){
+          var userAccount = val.selectedAddress;
+          if(self.$store.getters['account/account'].toLowerCase() != userAccount){
+            self.$store.dispatch('account/setAccount', userAccount)        
+          }
+        });
+      }
+
     },    
 
     computed: {
@@ -78,6 +97,10 @@
 
       balance() {
         return this.$store.getters['heroes/balance']
+      },
+
+      userAccount() {
+        return this.$store.getters['account/account']
       }
     },
 

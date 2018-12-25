@@ -3,7 +3,6 @@ import axios from 'axios'
 export const state = () => ({
   hero: {},
   balance: 0,
-  selling:false
 })
 
 export const getters = {

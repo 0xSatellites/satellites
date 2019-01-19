@@ -23,6 +23,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "openzeppelin-solidity": "2.0.0",
-    "truffle-hdwallet-provider": "^1.0.1"
+    "truffle-hdwallet-provider": "1.0.1",
+    "web3": "1.0.0-beta.37"
   }
 }

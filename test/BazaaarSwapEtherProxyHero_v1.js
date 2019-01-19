@@ -1,4 +1,5 @@
 var bazaaarSwapEtherProxyHero_v1 = artifacts.require('BazaaarSwapEtherProxyHero_v1')
+var HeroAsset = artifacts.require('tokens/MyCryptoHeroes/HeroAsset')
 
 var Web3 = require('web3');
 
@@ -7,24 +8,35 @@ const Web3Utils = new Web3(web3.currentProvider).utils;
 const Web3Personal = new Web3(web3.currentProvider).personal ;
 
 contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
-  
-    it('Signature recovery', async function() {
-        var contract = await bazaaarSwapEtherProxyHero_v1.deployed();
+
+    const HEROID1 = 40090001;
+    var heroAsset;
+    var contract;
+
+    it('Mint initial token', async function() {
+        heroAsset = await HeroAsset.new();
+        
+        await heroAsset.mint(accounts[0], HEROID1);
+        var result = await heroAsset.ownerOf(HEROID1);
+        assert.equal(result, accounts[0]);             
+
+        contract = await bazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
+        await heroAsset.approve(contract.address, HEROID1);
+
+        var salt = Math.floor(Math.random() * 1000000000);
 
         var order = {
             proxy: contract.address,
             maker: "0x74b0edfbb5698ad379a7b4592c3993b4857b59d6",
-            taker: "0x74b0edfbb5698ad379a7b4592c3993b4857b59d6", 
             address: "0x74b0edfbb5698ad379a7b4592c3993b4857b59d6",
-            id: 10,
-            price: 1000,
-            salt: 1000            
+            id: HEROID1,
+            price: 10000,
+            salt: salt            
         }
 
         var data = Web3Utils.soliditySha3(
             order.proxy, 
             order.maker, 
-            order.taker, 
             order.address, 
             order.id, 
             order.price, 
@@ -35,7 +47,6 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
 
         var result = await contract.orderMatch_([
             order.maker, 
-            order.taker, 
             order.address, 
         ], [
             order.id, 
@@ -43,10 +54,11 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
             order.salt
         ], sig.v,
            sig.r,
-           sig.s
+           sig.s,
+           { from: accounts[1] }
         )
 
-        console.log(result.logs)
-
+        var result = await heroAsset.ownerOf(HEROID1);
+        assert.equal(result, accounts[1]);        
     })
 })

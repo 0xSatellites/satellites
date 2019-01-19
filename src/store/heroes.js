@@ -38,6 +38,7 @@ export const actions = {
 
   async initial({ state, commit }) {
     var response = await axios.get(process.env.API + "hero/ownedTokens?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3&from=" + 0);
+    // var response = await axios.get(process.env.DB + "getAll");
     commit('setHeroes', response.data)    
   },
 

@@ -63,6 +63,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    vendor: ['firebase'],
     extend(config, ctx) {
       
     }

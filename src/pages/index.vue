@@ -27,7 +27,7 @@
     <v-flex xs12 md4>
       <v-card class="elevation-0 transparent">
         <v-card-text class="text-xs-center">
-          <v-icon　large color="blue">flash_on</v-icon>
+          <v-icon large color="blue">flash_on</v-icon>
         </v-card-text>
         <v-card-title class="justify-center">
           <div class="headline">ホワイトリスト</div>

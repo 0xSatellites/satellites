@@ -22,7 +22,7 @@
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
     "fs": "0.0.1-security",
-    "openzeppelin-solidity": "^2.0.0",
+    "openzeppelin-solidity": "2.0.0",
     "truffle-hdwallet-provider": "^1.0.1"
   }
 }

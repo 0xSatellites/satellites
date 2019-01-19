@@ -1,5 +1,5 @@
-var Bazaaar = artifacts.require("./Bazaaar.sol");
+var BazaaarSwapEtherProxyHero = artifacts.require("./BazaaarSwapEtherProxyHero.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Bazaaar);
+  deployer.deploy(BazaaarSwapEtherProxyHero);
 };

@@ -39,6 +39,15 @@
                 indeterminate
               ></v-progress-circular>  
             </v-btn>
+
+            <v-btn block dark large @click="sell" :disabled="loading">
+             test
+              <v-icon right>shopping_cart</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>  
+            </v-btn>
+            
           </v-card-actions>
           <v-card-actions v-if="hero.onSale && hero.seller == userAccount">
             <v-btn block dark large @click="cancel" :disabled="loading">
@@ -145,17 +154,45 @@
         .on('error', function(err){
             console.error(err)
             self.loading = false
-        });　       
+        });      
+      },
+      async sell_test() {
+        console.log(process.env.API + "hero/check?id=" + this.$route.params.id)
+        var response = await axios.get(process.env.API + "hero/check?id=" + this.$route.params.id);
+        if(response.data.status){
+          console.log("success")
+          console.log(response)
+          console.log(response.data.msg)
+
+        }else{
+          console.log("error")
+        }
+          
       },
       async sell() {
         var self = this
         this.loading = true;
 
-        await contract.hero.methods.isApprovedForAll(this.$store.getters['account/account'], contract.bazaaar._address).call().then(function(val){
-            if(val){
-              self.approved = true;
-            }
-        })
+        //アートエディット取得
+        var lv = this.$store.getters['hero/hero'].attributes.lv
+        console.log(this.$store.getters['hero/hero'])
+        console.log(lv)
+
+        //TODO アートエディット、二つ名
+        if(!lv > 1){
+          alert("アートエディットを行うことが必要です")
+          return false;
+        }
+
+
+        self.approved = true;
+
+        // await contract.hero.methods.getApproved(this.$route.params.id).call().then(function(val){
+        //     //TODO swapAddress定義する store
+        //     if(val.toLowerCase() === contract.bazaaar._address){
+        //       self.approved = true;
+        //     }
+        // })
 
         if(this.approved) {
 
@@ -168,31 +205,71 @@
             return
           }
 
-          contract.bazaaar.methods.sell(contract.hero._address , this.$route.params.id, wei)
-          .send({from: this.$store.getters['account/account']})
-          .on('transactionHash', function(hash){
-            console.log(hash)
-            alert("Your item will be on bazaaar. Please wait for the confirmation. Tx: " + hash)
-          })
-          .on('confirmation', function(confirmationNumber, receipt){
-            self.$store.dispatch('hero/detail', self.$route.params.id),
-            self.$store.dispatch('heroes/initial'),
-            self.$store.dispatch('heroes/balance'),  
-            self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])                
+          var date = new Date();
+          //TODO nonce変更
+          // var nonce = await contract.bazaaar.methods.getNonce(this.$store.getters['account/account']).call()
+          var nonce = 1
+          var salt = date.getTime();
 
-          })
-          .on('receipt', function(receipt){
-            console.log(receipt)
-            self.loading = false             
-          })
-          .on('error', function(err){
-              console.error(err)
+          var data = contract.web3.utils.soliditySha3(contract.hero._address, this.$route.params.id, price, nonce, salt);
+          console.log(data)
+          var sig = await contract.web3.eth.personal.sign(data, this.$store.getters['account/account']);
+
+          const body ={
+            "order": data,
+            "contract": contract.hero._address,
+            "id" : this.$route.params.id,
+            "price": price,
+            "sig": sig,
+            "metadata": this.$store.getters['hero/hero'],
+            "flag": 1,
+            "nonce": nonce,
+            "salt": salt,
+            
+          }
+
+          console.log(body)
+
+          try {
+            this.$axios.$post(process.env.DB +'set', body)
+            .then(response => {
+              console.log(response)
+
+              //TODO sellボタン表示変更
               self.loading = false
-          });　         
+              
+            })
+            } catch (error) {
+              console.error(error)
+              self.loading = false
+            }
+
+
+          // contract.bazaaar.methods.sell(contract.hero._address , this.$route.params.id, wei)
+          // .send({from: this.$store.getters['account/account']})
+          // .on('transactionHash', function(hash){
+          //   console.log(hash)
+          //   alert("Your item will be on bazaaar. Please wait for the confirmation. Tx: " + hash)
+          // })
+          // .on('confirmation', function(confirmationNumber, receipt){
+          //   self.$store.dispatch('hero/detail', self.$route.params.id),
+          //   self.$store.dispatch('heroes/initial'),
+          //   self.$store.dispatch('heroes/balance'),  
+          //   self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])                
+
+          // })
+          // .on('receipt', function(receipt){
+          //   console.log(receipt)
+          //   self.loading = false             
+          // })
+          // .on('error', function(err){
+          //     console.error(err)
+          //     self.loading = false
+          // });         
 
         } else {
             alert("You must approve bazaaar contract for the sale")
-            contract.hero.methods.setApprovalForAll(contract.bazaaar._address , true)
+            contract.hero.methods.approve(contract.bazaaar._address , this.$route.params.id)
             .send({from: this.$store.getters['account/account']})
             .on('transactionHash', function(hash){
               console.log(hash)
@@ -208,11 +285,12 @@
             .on('error', function(err){
               console.error(err)
               self.loading = false
-            });　         
+            });       
         }
           
       },
       async cancel() {
+        // TODO署名無効化
         var self = this
         this.loading = true
 
@@ -235,7 +313,7 @@
           .on('error', function(err){
               console.error(err)
               self.loading = false
-          });　       
+          });     
       },
 
       async change() {
@@ -268,7 +346,7 @@
         .on('error', function(err){
             console.error(err)
             self.loading = false
-        });　       
+        });     
       }
       
     },

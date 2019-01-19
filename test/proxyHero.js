@@ -2,15 +2,15 @@ var bazaaarSwapEtherProxyHero_v1 = artifacts.require('BazaaarSwapEtherProxyHero_
 var testBazaaarSwapEtherProxyHero_v1 = artifacts.require('TestBazaaarSwapEtherProxyHero_v1')
 var HeroAsset = artifacts.require('tokens/MyCryptoHeroes/HeroAsset')
 
+var Web3 = require('web3');
+
+const web3Eth = new Web3(web3.currentProvider).eth;
+const Web3Utils = new Web3(web3.currentProvider).utils;
+const Web3Personal = new Web3(web3.currentProvider).personal;
+
 contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
 
-    var Web3 = require('web3');
-
-    const web3Eth = new Web3(web3.currentProvider).eth;
-    const Web3Utils = new Web3(web3.currentProvider).utils;
-    const Web3Personal = new Web3(web3.currentProvider).personal ;
-
-    var heroAsset = await HeroAsset.new();  
+    var heroAsset = await HeroAsset.new();
     var contract =  await bazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
     var test =  await TestBazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
 

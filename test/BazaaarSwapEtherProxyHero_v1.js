@@ -46,7 +46,5 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
            sig.s
         )
 
-        console.log(result.logs)
-
     })
 })

@@ -21,7 +21,6 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
     struct Order {
         address proxy;
         address maker;
-        address taker;
         address feeRecipient;
         uint id;
         uint price;
@@ -32,7 +31,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         asset = IERC721(assetAddress);
     }
 
-    function orderMatch_(address[3] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
+    function orderMatch_(address[2] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
         orderMatch(
             Order(address(this), addrs[0], addrs[1], addrs[2], uints[0], uints[1], uints[2]),
             Sig(v, r, s)
@@ -42,10 +41,11 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
     function orderMatch(Order order, Sig sig) internal {
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
+        asset.transferFrom(order.maker, msg.sender, id);
         emit OrdersMatched(hash);
     }
 
-    function orderCancell_(address[3] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) public payable {
+    function orderCancell_(address[2] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) public payable {
         orderCancell(
             Order(address(this), addrs[0], addrs[1], addrs[2], uints[0], uints[1], uints[2]),
             Sig(v, r, s)
@@ -84,7 +84,6 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         }
         return false;
     }
-
 
     function validateOrderParameters(Order memory order)
         internal

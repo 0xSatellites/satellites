@@ -1142,7 +1142,7 @@ contract ExtensionAsset is ERC721Mintable, ERC721Pausable {
         require(extensionTypeToSupplyLimit[_extensionType] == 0 || _supplyLimit < extensionTypeToSupplyLimit[_extensionType],
             "_supplyLimit is bigger");
         extensionTypeToSupplyLimit[_extensionType] = _supplyLimit;
-    }
+    } 
 
     function setTokenURIPrefix(string _tokenURIPrefix) external onlyMinter {
         tokenURIPrefix = _tokenURIPrefix;

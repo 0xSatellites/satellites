@@ -10,10 +10,11 @@ firebase.initializeApp({
 });
 
 // Initialize Cloud Firestore through Firebase
+console.log(firebase)
 var db = firebase.firestore();
 
 export const state = () => ({
-  orders: "test",
+  orders: [],
   balance: 0
 })
 
@@ -60,6 +61,7 @@ export const actions = {
         });
         commit('setOrders', list)
     });
+
   },
 
   async load({ state, commit }, from) {

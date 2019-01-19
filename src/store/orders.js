@@ -3,7 +3,6 @@ import * as firebase from 'firebase';
 // import firebase from 'firebase';
 import 'firebase/firestore';
 
-
 firebase.initializeApp({
   apiKey: "AIzaSyDmvuJJL7dmVeDb52Xo6Ou5gLSRTu2FQr0",
   authDomain: "bazaaar-test.firebaseapp.com",
@@ -13,12 +12,8 @@ firebase.initializeApp({
 // Initialize Cloud Firestore through Firebase
 var db = firebase.firestore();
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
 export const state = () => ({
-  orders: [],
+  orders: "test",
   balance: 0
 })
 
@@ -34,6 +29,7 @@ export const mutations = {
   },
 
   setOrders(state, orders) {
+    console.log(orders)
     state.orders = orders
   },
 
@@ -54,18 +50,16 @@ export const actions = {
   },
 
   async initial({ state, commit }) {
-
-    var response =[]
-    // var response = await db.collection('order').doc('1')
-    //   db.collection("order").get().then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${doc.data()}`);
-    //         response.push(doc.data())
-    //     });
-    // });
-  
-
-    commit('setOrders', response.data)
+    
+      var list = []
+      db.collection("order").get().then((querySnapshot) => {
+        
+        querySnapshot.forEach((doc) => {
+            list.push(doc.data())
+            
+        });
+        commit('setOrders', list)
+    });
   },
 
   async load({ state, commit }, from) {
@@ -74,10 +68,10 @@ export const actions = {
     commit('pushOrders', response.data)    
   },  
 
-  async detail({ state, commit }, id) {
-    var response = await axios.get(process.env.API + "hero/token?id=" + id);
-    commit('setOrders', response.data)    
-  },
+  // async detail({ state, commit }, id) {
+  //   var response = await axios.get(process.env.API + "hero/token?id=" + id);
+  //   commit('setOrders', response.data)    
+  // },
 
   async balance({ state, commit }) {
     var response = await axios.get(process.env.API + "hero/balance?address=0xaA64dd8e189b067A82Ea66C523CdDA19F6f0E9e3");

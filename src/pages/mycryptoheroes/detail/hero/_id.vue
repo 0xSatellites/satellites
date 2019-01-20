@@ -231,7 +231,7 @@
           console.log(body)
 
           try {
-            this.$axios.$post(process.env.DB +'set', body)
+            this.$axios.$post(process.env.API +'orders/set', body)
             .then(response => {
               console.log(response)
 

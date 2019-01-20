@@ -9,9 +9,6 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
     event OrderCancelled(bytes32 indexed hash);
     event OrdersMatched(bytes32 indexed hash);
 
-    mapping(bytes32 => bool) public cancelledOrFinalized;
-    IERC721 asset;
-
     struct Sig {
         uint8 v;
         bytes32 r;
@@ -26,6 +23,9 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         uint price;
         uint salt;
     }
+
+    mapping(bytes32 => bool) public cancelledOrFinalized;
+    IERC721 public asset;
 
     constructor(address assetAddress) public {
         asset = IERC721(assetAddress);
@@ -56,7 +56,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         );
     }
 
-    function orderMatch(Order order, Sig sig) internal {
+    function orderMatch(Order memory order, Sig memory sig) internal {
         require(order.maker != msg.sender);
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
@@ -64,7 +64,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         emit OrdersMatched(hash);
     }
 
-    function orderCancell(Order order, Sig sig) internal {
+    function orderCancell(Order memory order, Sig memory sig) internal {
         require(order.maker == msg.sender);
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
@@ -124,7 +124,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
     function hashOrder(Order memory order)
         internal
         pure
-        returns (bytes32 hash)
+        returns (bytes32)
     {
         return keccak256(
             abi.encodePacked(

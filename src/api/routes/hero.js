@@ -46,7 +46,7 @@ router.get("/token", async (req, res) => {
         metadata.price = item.price
         metadata.onSale = true 
     } else {
-        metadata.onSale = false 
+        metadata.onSale = false
     }
     metadata.owner = owner.toLowerCase()
     res.json(metadata)

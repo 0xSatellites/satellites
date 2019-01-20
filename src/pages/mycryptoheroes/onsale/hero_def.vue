@@ -2,6 +2,7 @@
 <template>
 <div>
   <h2>Market: Hero</h2>
+
   <v-layout row wrap>
     <div class="text-xs-center centered-element" v-if="initialising">
       <v-progress-circular
@@ -9,17 +10,16 @@
       ></v-progress-circular>
     </div>
     <v-flex xs6 sm4 lg2 v-for="(item,i) in heroes" :key="i">
-        <v-card class="rounded ma-2" :to="'../detail/hero/' + item.metadata.attributes.id">
+        <v-card class="rounded ma-2" :to="'../detail/hero/' + item.attributes.id">
           <v-card-title primary-title>
             <div>
-              <div class="headline">{{item.metadata.attributes.rarity}}</div>
-              <span class="grey--text">Lv. {{item.metadata.attributes.lv}}</span>
+              <div class="headline">{{item.attributes.rarity}}</div>
+              <span class="grey--text">Lv. {{item.attributes.lv}}</span>
             </div>
           </v-card-title>
-          <v-card-text><img v-bind:src="item.metadata.image" width="100%" alt=""></v-card-text>
-          <v-card-text>{{item.metadata.attributes.hero_name}}</v-card-text>
-          <v-card-text>{{item.price }} ETH</v-card-text>
-          <!-- <v-card-actions><v-btn  :disabled="item.seller == userAccount" block>{{item.price / 1000000000000000000}} ETH</v-btn></v-card-actions> -->
+          <v-card-text><img v-bind:src="item.image" width="100%" alt=""></v-card-text>
+          <v-card-text>{{item.attributes.hero_name}}</v-card-text>
+          <v-card-actions><v-btn  :disabled="item.seller == userAccount" block>{{item.price / 1000000000000000000}} ETH</v-btn></v-card-actions>
         </v-card>
     </v-flex>
     <v-btn block color="grey darken-3 rounded" @click="load" v-if="0 < heroes.length && heroes.length < balance">
@@ -67,7 +67,7 @@
           [
           this.$store.dispatch('heroes/initial'),
           this.$store.dispatch('heroes/balance'),
-          this.$store.dispatch('heroes/initial')
+          this.$store.dispatch('orders/initial')
           ]
         )
 

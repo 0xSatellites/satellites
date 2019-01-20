@@ -156,19 +156,7 @@
             self.loading = false
         });      
       },
-      async sell_test() {
-        console.log(process.env.API + "hero/check?id=" + this.$route.params.id)
-        var response = await axios.get(process.env.API + "hero/check?id=" + this.$route.params.id);
-        if(response.data.status){
-          console.log("success")
-          console.log(response)
-          console.log(response.data.msg)
-
-        }else{
-          console.log("error")
-        }
-          
-      },
+      
       async sell() {
         var self = this
         this.loading = true;
@@ -178,21 +166,40 @@
         console.log(this.$store.getters['hero/hero'])
         console.log(lv)
 
-        //TODO アートエディット、二つ名
+        //TODO アートエディット
         if(!lv > 1){
-          alert("アートエディットを行うことが必要です")
+          alert("出品するにはアートエディットを行うことが必要です")
           return false;
         }
 
+        await contract.hero.methods.getApproved(this.$route.params.id).call().then(function(val){
+            //TODO swapAddress定義する store
+            self.val = val
+        })
 
         self.approved = true;
-
-        // await contract.hero.methods.getApproved(this.$route.params.id).call().then(function(val){
-        //     //TODO swapAddress定義する store
-        //     if(val.toLowerCase() === contract.bazaaar._address){
-        //       self.approved = true;
-        //     }
-        // })
+        // if(self.val.toLowerCase() === contract.bazaaar._address){
+        //   self.approved = true;
+        // }else{
+        //   alert("You must approve bazaaar contract for the sale")
+        //   contract.hero.methods.approve(contract.bazaaar._address , this.$route.params.id)
+        //   .send({from: this.$store.getters['account/account']})
+        //   .on('transactionHash', function(hash){
+        //     console.log(hash)
+        //     alert("Now you can sell your asset on bazaaar. Tx: " + hash)
+        //     self.approved = true;
+        //   })
+        //   .on('confirmation', function(confirmationNumber, receipt){
+        //   })
+        //   .on('receipt', function(receipt){
+        //     console.log(receipt)
+        //     self.loading = false                 
+        //   })
+        //   .on('error', function(err){
+        //     console.error(err)
+        //     self.loading = false
+        //   });       
+        // }
 
         if(this.approved) {
 
@@ -205,27 +212,38 @@
             return
           }
 
-          var date = new Date();
-          //TODO nonce変更
-          // var nonce = await contract.bazaaar.methods.getNonce(this.$store.getters['account/account']).call()
-          var nonce = 1
-          var salt = date.getTime();
+          //Swap contractのアドレス
+          var proxy = contract.bazaaar._address
+          //売る人
+          var maker = this.$store.getters['account/account']
+          //印税受け取る人
+          var feeRecipient = "0x"
+          // var feeRecipient = this.$store.getters['hero/hero'].arteditaddress
+          //トークンのID
+          var id = this.$route.params.id
+          //価格
+          // var price = 
+          //hashを都度作成するためのデータ
+          var salt = ""
 
-          var data = contract.web3.utils.soliditySha3(contract.hero._address, this.$route.params.id, price, nonce, salt);
+
+          var data = contract.web3.utils.soliditySha3(proxy, maker, feeRecipient, id, price, salt);
           console.log(data)
           var sig = await contract.web3.eth.personal.sign(data, this.$store.getters['account/account']);
 
+
+
           const body ={
-            "order": data,
-            "contract": contract.hero._address,
-            "id" : this.$route.params.id,
+            "proxy": proxy,
+            "maker": maker,
+            "feeRecipient": feeRecipient,
+            "id": id,
             "price": price,
-            "sig": sig,
-            "metadata": this.$store.getters['hero/hero'],
-            "flag": 1,
-            "nonce": nonce,
             "salt": salt,
-            
+            "data": data,
+            "sig": sig,
+            // "metadata": this.$store.getters['hero/hero'],
+            // "flag": 1,
           }
 
           console.log(body)
@@ -268,24 +286,7 @@
           // });         
 
         } else {
-            alert("You must approve bazaaar contract for the sale")
-            contract.hero.methods.approve(contract.bazaaar._address , this.$route.params.id)
-            .send({from: this.$store.getters['account/account']})
-            .on('transactionHash', function(hash){
-              console.log(hash)
-              alert("Now you can sell your asset on bazaaar. Tx: " + hash)
-              self.approved = true;
-            })
-            .on('confirmation', function(confirmationNumber, receipt){
-            })
-            .on('receipt', function(receipt){
-              console.log(receipt)
-              self.loading = false                 
-            })
-            .on('error', function(err){
-              console.error(err)
-              self.loading = false
-            });       
+           
         }
           
       },

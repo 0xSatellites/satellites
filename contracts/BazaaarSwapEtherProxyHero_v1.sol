@@ -31,28 +31,41 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         asset = IERC721(assetAddress);
     }
 
-    function orderMatch_(address[2] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
+    function orderMatch_(address[3] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
         orderMatch(
-            Order(address(this), addrs[0], addrs[1], uints[0], uints[1], uints[2]),
+            Order(addrs[0], addrs[1], addrs[2], uints[0], uints[1], uints[2]),
+            Sig(v, r, s)
+        );
+    }
+
+    function orderCancell_(address[3] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
+        orderCancell(
+            Order(addrs[0], addrs[1], addrs[2], uints[0], uints[1], uints[2]),
+            Sig(v, r, s)
+        );
+    }
+
+    function requireValidOrder_(address[3] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s)
+        public
+        view
+        returns (bytes32)
+    {
+        return requireValidOrder(
+            Order(addrs[0], addrs[1], addrs[2], uints[0], uints[1], uints[2]),
             Sig(v, r, s)
         );
     }
 
     function orderMatch(Order order, Sig sig) internal {
+        require(order.maker != msg.sender);
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
         asset.transferFrom(order.maker, msg.sender, order.id);
         emit OrdersMatched(hash);
     }
 
-    function orderCancell_(address[2] addrs, uint[3] uints, uint8 v, bytes32 r, bytes32 s) public payable {
-        orderCancell(
-            Order(address(this), addrs[0], addrs[1], uints[0], uints[1], uints[2]),
-            Sig(v, r, s)
-        );
-    }
-
     function orderCancell(Order order, Sig sig) internal {
+        require(order.maker == msg.sender);
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
         emit OrderCancelled(hash);
@@ -79,12 +92,11 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         if (cancelledOrFinalized[hash]) {
             return false;
         }
-        if (recover(hash, sig.v, sig.r, sig.s) == order.maker) {
+        if (ecrecover(hash, sig.v, sig.r, sig.s) == order.maker) {
             return true;
         }
         return false;
     }
-
 
     function validateOrderParameters(Order memory order)
         internal
@@ -97,20 +109,16 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         return true;
     }
 
-    function recover(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
-        internal
-        pure
-        returns (address)
-    {
-        return ecrecover(hash, v, r, s);
-    }
-
     function hashToSign(Order memory order)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hashOrder(order)));
+        return keccak256(
+            abi.encodePacked(
+                "\x19Ethereum Signed Message:\n32",
+                hashOrder(order)
+            ));
     }
 
     function hashOrder(Order memory order)

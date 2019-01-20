@@ -5,7 +5,7 @@ import "../node_modules/openzeppelin-solidity/contracts/access/roles/SignerRole.
 import "../node_modules/openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
 contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
-        
+
     event OrderCancelled(bytes32 indexed hash);
     event OrdersMatched(bytes32 indexed hash);
 
@@ -15,7 +15,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
     struct Sig {
         uint8 v;
         bytes32 r;
-        bytes32 s;        
+        bytes32 s;
     }
 
     struct Order {
@@ -50,7 +50,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
             Order(address(this), addrs[0], addrs[1], uints[0], uints[1], uints[2]),
             Sig(v, r, s)
         );
-    }    
+    }
 
     function orderCancell(Order order, Sig sig) internal {
         bytes32 hash = requireValidOrder(order, sig);
@@ -68,7 +68,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         return hash;
     }
 
-    function validateOrder(bytes32 hash, Order memory order, Sig memory sig) 
+    function validateOrder(bytes32 hash, Order memory order, Sig memory sig)
         internal
         view
         returns (bool)
@@ -79,7 +79,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         if (cancelledOrFinalized[hash]) {
             return false;
         }
-        if (ecrecover(hash, sig.v, sig.r, sig.s) == order.maker) {
+        if (recover(hash, sig.v, sig.r, sig.s) == order.maker) {
             return true;
         }
         return false;
@@ -97,6 +97,14 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         return true;
     }
 
+    function recover(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
+        internal
+        pure
+        returns (address)
+    {
+        return ecrecover(hash, v, r, s);
+    }
+
     function hashToSign(Order memory order)
         internal
         pure
@@ -110,13 +118,14 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, ReentrancyGuard {
         pure
         returns (bytes32 hash)
     {
-        return keccak256(abi.encodePacked(
-            order.proxy, 
-            order.maker, 
-            order.feeRecipient,
-            order.id,
-            order.price,
-            order.salt
+        return keccak256(
+            abi.encodePacked(
+                order.proxy,
+                order.maker,
+                order.feeRecipient,
+                order.id,
+                order.price,
+                order.salt
         ));
     }
 

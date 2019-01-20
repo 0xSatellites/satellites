@@ -1,5 +1,5 @@
 var bazaaarSwapEtherProxyHero_v1 = artifacts.require('BazaaarSwapEtherProxyHero_v1')
-var testBazaaarSwapEtherProxyHero_v1 = artifacts.require('TestBazaaarSwapEtherProxyHero_v1')
+var testBazaaarSwapEtherProxyHero_v1 = artifacts.require('test/TestBazaaarSwapEtherProxyHero_v1')
 var HeroAsset = artifacts.require('tokens/MyCryptoHeroes/HeroAsset')
 
 var Web3 = require('web3');
@@ -12,7 +12,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
 
     var heroAsset = await HeroAsset.new();
     var contract =  await bazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
-    var test =  await TestBazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
+    var test =  await testBazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
 
     const HEROID1 = 40090001;
     const HEROID2 = 40090002;
@@ -22,13 +22,13 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
     const HEROID6 = 40090006;
     const HEROID7 = 40090007;
     const HEROID8 = 40090008;
-    const HEROID9 = 40090009;    
+    const HEROID9 = 40090009;
 
     it('Scenario: purchase hero', async function() {
-        
+
         await heroAsset.mint(accounts[0], HEROID1);
         var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, accounts[0]);             
+        assert.equal(result, accounts[0]);
 
         contract = await bazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
         await heroAsset.approve(contract.address, HEROID1);
@@ -45,22 +45,22 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
         }
 
         var data = Web3Utils.soliditySha3(
-            order.proxy, 
-            order.maker, 
-            order.address, 
-            order.id, 
-            order.price, 
+            order.proxy,
+            order.maker,
+            order.address,
+            order.id,
+            order.price,
             order.salt
         );
 
         var sig = web3Eth.accounts.sign(data, "0xddff83537c186192c39d7db961a606096592792e3b1daeeae490eb5e3b9e2186");
 
         var result = await contract.orderMatch_([
-            order.maker, 
-            order.address, 
+            order.maker,
+            order.address,
         ], [
-            order.id, 
-            order.price, 
+            order.id,
+            order.price,
             order.salt
         ], sig.v,
            sig.r,
@@ -69,7 +69,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
         )
 
         var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, accounts[1]);        
+        assert.equal(result, accounts[1]);
     })
 
 
@@ -87,25 +87,24 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
         }
 
         var data = Web3Utils.soliditySha3(
-            order.proxy, 
-            order.maker, 
-            order.address, 
-            order.id, 
-            order.price, 
+            order.proxy,
+            order.maker,
+            order.address,
+            order.id,
+            order.price,
             order.salt
         );
 
         var result = await test.hashOrder_([
-            order.maker, 
-            order.address, 
+            order.maker,
+            order.address,
         ], [
-            order.id, 
-            order.price, 
+            order.id,
+            order.price,
             order.salt
         ])
 
-        assert.equal(data, result);        
+        assert.equal(data, result);
     })
-    
-    
+
 })

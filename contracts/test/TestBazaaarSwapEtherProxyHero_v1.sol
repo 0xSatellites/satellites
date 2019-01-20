@@ -4,6 +4,9 @@ import "../BazaaarSwapEtherProxyHero_v1.sol";
 
 contract TestBazaaarSwapEtherProxyHero_v1 is BazaaarSwapEtherProxyHero_v1 {
 
+    constructor(address assetAddress) BazaaarSwapEtherProxyHero_v1(assetAddress) public {
+    }
+
     function hashOrder_ (address[2] addrs, uint[3] uints)
         public
         view

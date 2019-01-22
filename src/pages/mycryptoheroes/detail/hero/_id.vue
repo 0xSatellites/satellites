@@ -29,8 +29,9 @@
               <v-flex xs12><v-chip color="blue lighten-4">Passive : {{hero.attributes.passive_skill}}</v-chip></v-flex>
               <v-flex xs12><v-chip color="red lighten-4">Active : {{hero.attributes.active_skill}}</v-chip></v-flex>
             </v-layout>
-          </v-card-text>   
-
+          </v-card-text>
+         
+         
           <v-card-actions v-if="hero.onSale && hero.seller != userAccount">
             <v-btn block dark large @click="purchase" :disabled="loading">
               {{hero.price / 1000000000000000000}} ETH
@@ -97,7 +98,7 @@
     },
 
     async asyncData({ store, params }) {
-      await store.dispatch('hero/detail', params.id)
+      await store.dispatch('hero/detail', params)
     },
 
     async mounted() {
@@ -133,8 +134,15 @@
       async purchase() {
         var self = this
         this.loading = true
+        // address proxy;
+        // address maker;
+        // address feeRecipient;
+        // uint id;
+        // uint price;
+        // uint salt;
+        console.log(this.$store.getters['account/account'])
 
-        contract.bazaaar.methods.purchase(contract.hero._address , this.$route.params.id)
+        contract.bazaaar.methods.orderMatch_(contract.hero._address , this.$route.params.id)
         .send({from: this.$store.getters['account/account'], value: this.$store.getters['hero/hero'].price})
         .on('transactionHash', function(hash){
           console.log(hash)

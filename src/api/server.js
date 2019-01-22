@@ -7,7 +7,7 @@ var index = require('./routes/index');
 var hero = require('./routes/hero');  
 var extension = require('./routes/extension');
 var inventory = require('./routes/inventory');
-var orders = require('./routes/orders');
+var order = require('./routes/order');
 
 var app = express();
 app.use(bodyParser.json());
@@ -23,7 +23,7 @@ app.use('/', index);
 app.use('/hero', hero);
 app.use('/extension', extension);   
 app.use('/inventory', inventory);
-app.use('/orders', orders);  
+app.use('/order', order);  
 
 var listener = app.listen(process.env.PORT, function() {
     console.log('Your app is listening on port ' + listener.address().port);

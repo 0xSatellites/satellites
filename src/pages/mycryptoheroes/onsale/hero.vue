@@ -9,7 +9,7 @@
       ></v-progress-circular>
     </div>
     <v-flex xs6 sm4 lg2 v-for="(item,i) in heroes" :key="i">
-        <v-card class="rounded ma-2" :to="'../detail/hero/' + item.metadata.attributes.id">
+        <v-card class="rounded ma-2" :to="'../detail/hero/' + item.data">
           <v-card-title primary-title>
             <div>
               <div class="headline">{{item.metadata.attributes.rarity}}</div>

@@ -40,21 +40,9 @@ export const actions = {
     commit('clearHero')    
   },
 
-  async detail({ state, commit }, data) {
+  async detail({ state, commit }, id) {
     var response = await axios.get(process.env.API + "hero/token?id=" + id);
-
-    // db.collection("order").where("data", "==", data)
-    // .get()
-    // .then(function(querySnapshot) {
-    //     querySnapshot.forEach(function(doc) {
-    //         // doc.data() is never undefined for query doc snapshots
-    //         console.log(doc.id, " => ", doc.data());
-    //     });
-    // })
-    // .catch(function(error) {
-    //     console.log("Error getting documents: ", error);
-    // });
-
+    console.log(response)
 
     commit('setHero', response.data)    
   },

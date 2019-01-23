@@ -335,22 +335,34 @@
           
       },
       async cancel() {
-        // TODO署名無効化
         var self = this
         this.loading = true
+        var userAccount = this.$store.getters['account/account']
+        var match = this.$store.getters['order/order']
 
-        contract.bazaaar.methods.cancel(contract.hero._address , this.$route.params.id)
-        .send({from: this.$store.getters['account/account']})
+        await contract.bazaaar.methods.orderCancell_(
+            [
+              match.proxy,
+              match.maker,
+              match.artEditRoyaltyRecipient,
+              userAccount
+          ], [
+              match.id,
+              match.price,
+              match.artEditRoyaltyRatio,
+              match.salt
+          ],  match.v,
+              match.r,
+              match.s
+        )
+        .send({from: userAccount})
         .on('transactionHash', function(hash){
           console.log(hash)
           alert("Your selling is cannceled. Please wait for the confirmation. Tx: " + hash)
           self.approved = false;            
         })
         .on('confirmation', function(confirmationNumber, receipt){
-          self.$store.dispatch('hero/detail', self.$route.params.id),
-          self.$store.dispatch('heroes/initial'),
-          self.$store.dispatch('heroes/balance'),              
-          self.$store.dispatch('inventory/initial', self.$store.getters['account/account'])                 
+          self.$store.dispatch('hero/detail', self.$route.params.id)
         })
         .on('receipt', function(receipt){
           self.loading = false

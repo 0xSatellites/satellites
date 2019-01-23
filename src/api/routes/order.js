@@ -74,6 +74,56 @@ router.post('/set', async function(req, res) {
 
 });
 
+router.post('/cancel', async function(req, res) {
+  
+  const param = req.body;
+  console.log(param)
+
+  // var owner = await contract.methods.ownerOf(param.id).call()
+  // var approved = await contract.methods.getApproved(param.id).call()
+  // if(true){
+  // if(owner == param.maker || approved == bazaaarAddress){
+    console.log(1)
+    var uri = tokenURIPrefix + param.id
+    var response = await axios.get(uri)
+    console.log(response)
+    var metadata = response.data;
+    console.log(metadata)
+    var date = new Date();
+    var time = date.getTime();
+    console.log(time)
+
+    var data = {
+      proxy: param.proxy,
+      maker: param.maker,
+      artEditRoyaltyRecipient: param.artEditRoyaltyRecipient,
+      id: param.id,
+      price: param.price,
+      artEditRoyaltyRatio: param.artEditRoyaltyRatio,
+      salt: param.salt,
+      v:param.v,
+      r:param.r,
+      s:param.s,
+      hash:param.hash,
+      metadata: metadata,
+      status: true,
+      timestamp: time,
+    };
+    
+    console.log(data)
+
+
+    orderid = String(param.hash)
+    var setDoc = db.collection('order').doc(orderid).set(data);
+    res.json({status: true})
+  // }else{
+  //   res.json({status: false})
+  //   console.log(err)
+  // }
+  
+
+});
+
 router.get('/get', async function(req, res) {
   
     var urlParts = url.parse(req.url, true);

@@ -78,7 +78,6 @@
             match.proxy,
             match.maker,
             match.artEditRoyaltyRecipient,
-            userAccount
         ], [
             match.id,
             match.price,

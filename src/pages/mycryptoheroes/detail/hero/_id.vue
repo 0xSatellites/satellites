@@ -78,6 +78,14 @@
             </v-btn>
           </v-card-actions>
 
+          <v-btn block dark large @click="cancel" :disabled="loading">
+              Cancel
+              <v-icon right>undo</v-icon>
+              <v-progress-circular size=18 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>  
+            </v-btn>
+          
         </v-card>
       </v-flex>
     </v-layout>
@@ -339,13 +347,12 @@
         this.loading = true
         var userAccount = this.$store.getters['account/account']
         var match = this.$store.getters['order/order']
-
+        console.log(match)
         await contract.bazaaar.methods.orderCancell_(
             [
               match.proxy,
               match.maker,
               match.artEditRoyaltyRecipient,
-              userAccount
           ], [
               match.id,
               match.price,
@@ -359,7 +366,7 @@
         .on('transactionHash', function(hash){
           console.log(hash)
           alert("Your selling is cannceled. Please wait for the confirmation. Tx: " + hash)
-          self.approved = false;            
+          self.approved = false;      
         })
         .on('confirmation', function(confirmationNumber, receipt){
           self.$store.dispatch('hero/detail', self.$route.params.id)
@@ -370,7 +377,7 @@
         .on('error', function(err){
             console.error(err)
             self.loading = false
-        });     
+        });
       },
 
       async change() {

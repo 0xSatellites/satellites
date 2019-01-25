@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export const state = () => ({
   account: "",
 })
@@ -21,13 +19,11 @@ export const mutations = {
 }
 
 export const actions = {
-
   async clear({ state, commit }) {
-    commit('clearAccount')    
+    commit('clearAccount')
   },
 
   async setAccount({ state, commit }, account) {
-    commit('setAccount', account)    
+    commit('setAccount', account)
   },
-
 }

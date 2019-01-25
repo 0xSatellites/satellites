@@ -1,4 +1,3 @@
-import axios from 'axios'
 import firebase from 'firebase';
 import 'firebase/firestore';
 
@@ -10,8 +9,6 @@ if (!firebase.apps.length) {
       });
  }
 
-// Initialize Cloud Firestore through Firebase
-console.log(firebase)
 var db = firebase.firestore();
 
 export const state = () => ({
@@ -32,12 +29,12 @@ export const mutations = {
     state.order = {}
   },
 
-  setOrder(state, orderlist) {
-    state.orderlist = orderlist
+  setOrder(state, order) {
+    state.order = order
   },
 
-  searchOrder(state, order) {
-    state.order = order
+  setOrderList(state, orderList) {
+    state.orderList = orderList
   }
 
 }
@@ -45,44 +42,28 @@ export const mutations = {
 export const actions = {
 
   async clear({ state, commit }) {
-    commit('clearOrder')    
+    commit('clearOrder')
   },
 
-  async detail({ state, commit }, id) {
-    
-    var list = ""
-    // var list = []
-    // db.collection("order").orderBy("price", "desc").limit(2)
-    db.collection("order").where("id", "==", String(id)).where("status", "==", true)
-    .get()
-    .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            list = doc.data()
-            // list.push(doc.data())
-        });
-        commit('setOrder', list)
+  async detail({ state, commit }, query) {
+    console.log(query)
+    await db.collection("order").where(query.key, "==", String(query.value)).get()
+    .then(function(querySnapshot){
+      querySnapshot.forEach(function(doc) {
+        commit('setOrder', doc.data());
+      });
     })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });  
   },
 
-  async search({ state, commit }, hash) {
-    
-    var order = ""
-    await db.collection("order").where("hash", "==", hash)
-    .get()
-    .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            order = doc.data()
-        });
-        commit('searchOrder', order)
+  async list({ state, commit }, key, value) {
+    var list = []
+    await db.collection("order").where(String(key), "==", String(value)).get()
+    .then(function(querySnapshot){
+      querySnapshot.forEach(function(doc) {
+        list.push(doc.data())
+      });
     })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });  
-  },
+    commit('setOrderList', list);
+  }
 
 }

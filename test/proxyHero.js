@@ -849,10 +849,13 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
         var result = await heroAsset.ownerOf(HEROID9);
         assert.equal(result, account1);
 
+        /*
         await heroAsset.approve(contract.address, HEROID9);
         var result = await heroAsset.getApproved(HEROID9)
         assert.equal(result, contract.address);
+        */
 
+        await heroAsset.setApprovalForAll(contract.address, true)
         var salt = Math.floor(Math.random() * 1000000000);
 
         var order = {

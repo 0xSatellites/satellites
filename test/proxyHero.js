@@ -858,7 +858,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
         var order = {
             proxy: contract.address,
             maker: account1,
-            taker: account1,
+            taker: "0x0000000000000000000000000000000000000000",
             address: artEditRoyaltyRecipient,
             id: HEROID9,
             price: PRICE,

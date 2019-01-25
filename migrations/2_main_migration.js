@@ -1,5 +1,12 @@
 var BazaaarSwapEtherProxyHero_v1 = artifacts.require("./BazaaarSwapEtherProxyHero_v1.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(BazaaarSwapEtherProxyHero_v1, "0xA217212236c24834eD1648fD20da869F686C96A7");
+  Ratios = [
+    10000,  //ratioBase
+    1000,   //feeRatio
+    100,    //referralRatio
+    500,    //assetRoyaltyRatio
+    600     //artEditRoyaltyRatioLimit
+  ]
+  deployer.deploy(BazaaarSwapEtherProxyHero_v1, "0x8C213a6B185FE83383d03421aC058772F842De7D", "0x8C213a6B185FE83383d03421aC058772F842De7D", Ratios);
 };

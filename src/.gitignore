@@ -82,3 +82,7 @@ dist
 
 # Service worker
 sw.*
+
+.secret
+.DS_Store
+.serviceAccountKey.json

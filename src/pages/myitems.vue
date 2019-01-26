@@ -4,11 +4,10 @@
             <p>アドレス:{{account.address}}</p>
             <p>残高:{{account.balance}}</p>
         </div>
-        <div>
-            <div class="card">
-                <a href="./detail.html">
-                    <img src="https://www.mycryptoheroes.net/images/heroes/2000/4009.png" alt="" width="100">
-                    <p>Lv:70</p>
+        <div v-for="(mchh, i) in myitems.mchh" :key="i">
+            <div>
+                <a :href="'/mchh/' + mchh">
+                    {{mchh}}
                 </a>
             </div>
         </div>
@@ -28,22 +27,15 @@
     },
 
     mounted: async function() {
-      if(typeof web3 != 'undefined'){
-        const account = await client.activate(web3.currentProvider)
-        console.log(account)
-        this.$store.dispatch('account/setAccount', account)
-
-
-
-      } else {
-
-      }
     },
 
     computed: {
       account() {
         return this.$store.getters['account/account']
       },
+      myitems() {
+        return this.$store.getters['myitems/myitems']
+      }
     },
 
     methods: {

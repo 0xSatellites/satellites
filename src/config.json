@@ -1,5 +1,8 @@
 {
   "api": {
+    "bazaaar":{
+      "v1":"http://localhost:8080/order/v1/"
+    },
     "mch":{
       "extension":"https://www.mycryptoheroes.net/metadata/extension/",
       "hero":"https://www.mycryptoheroes.net/metadata/hero/"
@@ -16,7 +19,7 @@
   },
   "node": {
     "https":"https://rinkeby.infura.io",
-    "ws":"wss://rinkeby.infura.io/ws"
+    "wss":"wss://rinkeby.infura.io/ws"
   },
   "contract":{
     "bazaaar":{
@@ -26,5 +29,16 @@
       "hero":"0x8C213a6B185FE83383d03421aC058772F842De7D",
       "extension":"0xEE68Cd45D55278306B9AA1d142d9bE5272FC3C45"
     }
+  },
+  "constant":{
+    "nulladdress": "0x0000000000000000000000000000000000000000"
+  },
+  "firebase":{
+    "apiKey": "AIzaSyA-7TvSTEopJ9bpVd-AwCaSbrD2iyGUIk0",
+    "authDomain": "blockbase-bazaaar.firebaseapp.com",
+    "databaseURL": "https://blockbase-bazaaar.firebaseio.com",
+    "projectId": "blockbase-bazaaar",
+    "storageBucket": "blockbase-bazaaar.appspot.com",
+    "messagingSenderId": "307672265180"
   }
 }

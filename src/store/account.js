@@ -14,10 +14,6 @@ export const getters = {
 }
 
 export const mutations = {
-  clearAccount(state) {
-    state.address = ''
-    state.balance = 0
-  },
   setAccount(state, account) {
     state.address = account.address
     state.balance = account.balance
@@ -25,11 +21,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async clearAll({ state, commit }) {
-    commit('clearAccount')
-  },
-
   async setAccount({ state, commit }, account) {
     commit('setAccount', account)
-  },
+  }
 }

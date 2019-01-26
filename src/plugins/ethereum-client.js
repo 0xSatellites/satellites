@@ -1,20 +1,12 @@
 const Web3 = require('web3')
-const config = require('../../config.json')
+const config = require('../config.json')
 
 const web3 = new Web3(config.node.https)
 
-const bazaaar = {
-  v1:new web3.eth.Contract(config.abi.bazaaar.proxy_v1, config.contract.bazaaar.proxy_v1)
-}
-
-const mch = {
-  hero:new web3.eth.Contract(config.abi.mch.hero, config.contract.mch.hero),
-  extension:new web3.eth.Contract(config.abi.mch.extension, config.contract.mch.extension),
-}
-
 const contract = {
-  bazaaar:bazaaar,
-  mch:mch
+  bazaaar_v1:new web3.eth.Contract(config.abi.bazaaar.proxy_v1, config.contract.bazaaar.proxy_v1),
+  mche:new web3.eth.Contract(config.abi.mch.extension, config.contract.mch.extension),
+  mchh:new web3.eth.Contract(config.abi.mch.hero, config.contract.mch.hero),
 }
 
 const account = {
@@ -39,10 +31,27 @@ const activate = async (provider) => {
   return account
 }
 
+const ownedTokens = async (name) => {
+  const methods = contract[name].methods
+  const balance = await methods.balanceOf(account.address).call()
+  if(balance == 0){
+    return []
+  }
+  const tokenOfOwnerByIndexPromises = []
+  for (var i=0; i<balance; i++){
+      tokenOfOwnerByIndexPromises.push(methods.tokenOfOwnerByIndex(account.address ,i).call())
+  }
+  return await Promise.all(tokenOfOwnerByIndexPromises)
+
+}
+
 const client = {
-  contract:contract,
   account:account,
-  activate:activate
+  activate:activate,
+  contract:contract,
+  ownedTokens:ownedTokens,
+  utils:web3.utils,
+  eth:web3.eth
 }
 
 export default client

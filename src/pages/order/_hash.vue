@@ -26,7 +26,7 @@
 <script>
 
   import axios from 'axios'
-  import contract from '~/assets/js/account';
+  import client from '~/assets/js/ethereum-client';
 
   export default {
     data() {

@@ -18,7 +18,7 @@
 <script>
 
   import axios from 'axios'
-  import account from '~/assets/js/contract'
+  import client from '~/assets/js/ethereum-client'
 
   export default {
 
@@ -29,7 +29,7 @@
 
     mounted: async function() {
       if(typeof web3 != 'undefined'){
-        const account = await contract.activate(web3.currentProvider)
+        const account = await client.activate(web3.currentProvider)
         this.$store.dispatch('account/setAccount', account)
       } else {
 

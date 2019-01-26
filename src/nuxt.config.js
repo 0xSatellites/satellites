@@ -65,7 +65,7 @@ module.exports = {
     */
     vendor: ['firebase'],
     extend(config, ctx) {
-      
+
     }
   }
 }

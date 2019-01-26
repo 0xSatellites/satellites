@@ -76,7 +76,7 @@
 <script>
 
   import axios from 'axios'
-  import contract from '~/assets/js/contract';
+  import contract from '~/assets/js/account';
 
   export default {
     data() {

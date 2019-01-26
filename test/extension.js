@@ -2,7 +2,7 @@ var ExtensionAsset = artifacts.require('token/mycryptoextensionAssetes/Extension
 var Bazaaar = artifacts.require('Bazaaar')
 
 contract('Deploy Extension', async function(accounts) {
-  
+
     const EXTENSIONID1 = 10012160;
     const EXTENSIONID2 = 10012161;
     const EXTENSIONID3 = 10012162;
@@ -15,7 +15,7 @@ contract('Deploy Extension', async function(accounts) {
 
     it('Mint initial token', async function() {
       var extensionAsset = await ExtensionAsset.new();
-      console.log("Extension Address: " + extensionAsset.address)         
+      console.log("Extension Address: " + extensionAsset.address)
       await extensionAsset.mint(accounts[0], EXTENSIONID1);
       await extensionAsset.mint(accounts[0], EXTENSIONID2);
       await extensionAsset.mint(accounts[0], EXTENSIONID3);
@@ -24,7 +24,7 @@ contract('Deploy Extension', async function(accounts) {
       await extensionAsset.mint(accounts[0], EXTENSIONID6);
       await extensionAsset.mint(accounts[0], EXTENSIONID7);
       await extensionAsset.mint(accounts[0], EXTENSIONID8);
-      await extensionAsset.mint(accounts[0], EXTENSIONID9);      
+      await extensionAsset.mint(accounts[0], EXTENSIONID9);
 
     })
 

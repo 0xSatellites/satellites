@@ -13,6 +13,7 @@
       return {
         drawer: false,
         items: [
+          { title:"Home", to: '/' },
           { title:"MyItems", to: '/myitems' }
         ],
         title: 'bazaar.io'

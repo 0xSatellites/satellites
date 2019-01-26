@@ -40,5 +40,9 @@
     "projectId": "blockbase-bazaaar",
     "storageBucket": "blockbase-bazaaar.appspot.com",
     "messagingSenderId": "307672265180"
+  },
+  "discord":{
+    "endpoint":"http://localhost:3000/order/"
   }
+
 }

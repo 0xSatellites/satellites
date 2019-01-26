@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/block-base/mch-api#readme",
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "^0.18.0",
     "dotenv": "6.2.0",
     "express": "4.16.4",
     "firebase-admin": "6.5.1",

@@ -1,5 +1,7 @@
 const config = require('../../config.json')
 
+var axios = require("axios");
+
 var express = require('express')
 const router = express.Router()
 
@@ -41,6 +43,15 @@ router.post('/v1', async function(req, res) {
   order.modified = time
 
   await db.collection('order').doc(key).set(order)
+
+  await axios({
+    method:'post',
+    url: process.env.DISCORD_WEBHOOK,
+    data: {
+      content: '出品: '+ config.discord.endpoint + key
+    }
+  })
+
   res.json({status: true})
 });
 

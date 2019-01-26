@@ -12,7 +12,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-var db = admin.firestore();
+var bucket = admin.storage().bucket('blockbase-bazaaar.appspot.com');
+
+var file = "https://www.origin.sand.mch.djty.co/images/heroes/2000/5002.png" // use the Blob or File API
+
+bucket.upload(file).then(function(snapshot) {
+  console.log('Uploaded a blob or file!');
+});
 
 const Web3 = require('web3');
 const web3 = new Web3(config.infura);

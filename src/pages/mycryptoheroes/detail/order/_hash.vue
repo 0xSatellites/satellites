@@ -8,9 +8,14 @@
     <p>{{order.metadata.attributes.int}}</p>
     <p>{{order.metadata.attributes.agi}}</p>
 
-    <v-btn block dark large @click="purchase" :disabled="loading">
-            {{order.price / 1000000000000000000 }}    ETH
-        <v-icon right>shopping_cart</v-icon>
+    <v-btn block dark large @click="purchase" :disabled="loading" v-if="userAccount != order.maker">
+            {{order.price / 1000000000000000000 }} ETH
+        <v-progress-circular size=18 class="ma-2" v-if="loading"
+        indeterminate
+        ></v-progress-circular>
+    </v-btn>
+    <v-btn block dark large @click="cancel" :disabled="loading" v-if="userAccount == order.maker">
+            Cancel
         <v-progress-circular size=18 class="ma-2" v-if="loading"
         indeterminate
         ></v-progress-circular>
@@ -69,33 +74,54 @@
 
     methods: {
       async purchase() {
-        var self = this
-        this.loading = true
-
         var userAccount = this.$store.getters['account/account']
-        var match = this.$store.getters['order/order']
-        console.log(match)
+        var order = this.$store.getters['order/order']
 
         await contract.bazaaar.methods.orderMatch_([
-            match.proxy,
-            match.maker,
-            match.taker,
-            match.artEditRoyaltyRecipient,
-            match.maker
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.artEditRoyaltyRecipient,
+            order.maker
         ], [
-            match.id,
-            match.price,
-            match.artEditRoyaltyRatio,
-            match.salt
-        ],  match.v,
-            match.r,
-            match.s
+            order.id,
+            order.price,
+            order.artEditRoyaltyRatio,
+            order.salt
+        ],  order.v,
+            order.r,
+            order.s
         )
-        .send({ from: userAccount, value: match.price})
+        .send({ from: userAccount, value: order.price})
         .on('transactionHash', function(hash){
           console.log(hash)
         })
-      }
+      },
+
+      async cancel() {
+        var userAccount = this.$store.getters['account/account']
+        var order = this.$store.getters['order/order']
+
+        await contract.bazaaar.methods.orderCancell_([
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.artEditRoyaltyRecipient,
+        ], [
+            order.id,
+            order.price,
+            order.artEditRoyaltyRatio,
+            order.salt
+        ],  order.v,
+            order.r,
+            order.s
+        )
+        .send({ from: userAccount})
+        .on('transactionHash', function(hash){
+          console.log(hash)
+        })
+      },
+
     }
   }
 </script>

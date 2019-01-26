@@ -85,7 +85,5 @@ build
 
 # PrivKey
 .secret
-
 .DS_Store
-
-.serviceAccountKey.json
+.serviceAccountKey.jso

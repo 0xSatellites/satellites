@@ -83,8 +83,8 @@ dist
 # Truffle
 build
 
+.DS_Store
+
 # PrivKey
 .secret
-
-.DS_Store
 .serviceAccountKey.json

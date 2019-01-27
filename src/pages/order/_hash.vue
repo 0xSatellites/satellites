@@ -1,6 +1,7 @@
 <template>
     <div>
         <div>{{order}}</div>
+        <div><img :src="order.ogp"></div>
         <input type ="button" @click="purchase" value="purchase">
         <input type ="button" @click="cancel" value="cancel">
     </div>
@@ -25,7 +26,17 @@
         await store.dispatch('order/setOrder', order)
     },
 
+    head () {
+      var order = this.order
+      return {
+        meta: [
+        { hid: 'og:image', property: 'og:image', content: order.ogp },
+        ]
+      }
+    },
+
     mounted: async function() {
+
     },
 
     computed: {

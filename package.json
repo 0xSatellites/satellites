@@ -1,7 +1,7 @@
 {
   "name": "bazaaar.io",
   "version": "1.0.0",
-  "description": "",
+  "description": "bazaaar.io",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"

@@ -36,12 +36,11 @@ router.post('/v1', async function(req, res) {
       order.s
   ).call()
 
-  const key = hash.toString()
-
   order.status = "selling"
   order.created = time
   order.modified = time
 
+  const key = hash.toString()
   await db.collection('order').doc(key).set(order)
 
   await axios({

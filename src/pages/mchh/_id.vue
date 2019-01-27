@@ -1,5 +1,5 @@
 <template>
-    <div @click="generate">
+    <div>
       <p>{{asset}}</p>
       <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
@@ -44,12 +44,6 @@
     },
 
     methods: {
-
-      async generate(){
-        const base64 = canvas.generate('generate', template, this.asset).substr(22)
-        storage.ogp("test", base64)
-      },
-
       async order_v1() {
         const address = this.account.address
         const id = this.$route.params.id
@@ -99,6 +93,9 @@
               order.s
           ).call()
 
+          const base64 = canvas.generate().substr(22)
+          const ogp = await storage.ogp(hash, base64)
+          order.ogp = ogp
           await this.$axios.post(config.api.bazaaar.v1, order)
 
         } else {

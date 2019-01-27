@@ -46,10 +46,26 @@ const getAssetListByKey = async key => {
   return result
 }
 
+const getPastOrderByType = async type => {
+  console.log('db:getPastOrderByType')
+  const result = {
+    labels:[],
+    total_prices:[]
+  }
+  const snapshots = await db.collection("order_opensea").where("type", "==", type).get()
+  snapshots.forEach((doc) => {
+    const data = doc.data()
+    result.labels.push("")
+    result.total_prices.push(data.total_price / 1000000000000000000)
+  });
+  return result
+}
+
 const client = {
   getAssetListByKey: getAssetListByKey,
   getOrderByKey: getOrderByKey,
-  getAssetByKey: getAssetByKey
+  getAssetByKey: getAssetByKey,
+  getPastOrderByType:getPastOrderByType
 }
 
 export default client

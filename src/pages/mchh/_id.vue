@@ -4,6 +4,7 @@
       <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
       <input type ="button" @click="order_v1" value=Sell>
+      <line-chart :chart-data="datacollection"></line-chart>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>
     </div>
 </template>
@@ -11,6 +12,7 @@
 <script>
 import db from '~/plugins/db'
 import canvas from '~/plugins/canvas'
+import LineChart from '~/plugins/chart'
 import client from '~/plugins/ethereum-client'
 import storage from '~/plugins/storage'
 import template from '~/assets/ogp_template.svg'
@@ -18,12 +20,23 @@ import template from '~/assets/ogp_template.svg'
 const config = require('../../config.json')
 
 export default {
+  components: {
+    LineChart
+  },
+  data () {
+    return {
+      datacollection: null
+    }
+  },
   async asyncData({ store, params }) {
     const asset = await db.getAssetByKey('mchh_' + params.id)
     await store.dispatch('asset/setMchh', asset)
   },
   mounted: async function() {
     const store = this.$store
+    const prams = this.$route.params
+    const asset = this.asset.mchh
+    console.log(asset)
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
@@ -32,6 +45,17 @@ export default {
       }
       //initialize canvas client
       canvas.initialize('ogp');
+    }
+    //chart
+    const history = await db.getPastOrderByType(prams.id.substring(0,4))
+    this.datacollection = {
+      labels: history.labels,
+      datasets: [
+        {
+          label: asset.attributes.hero_name,
+          data: history.total_prices
+        }
+      ]
     }
   },
   computed: {

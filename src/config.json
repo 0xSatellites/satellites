@@ -31,7 +31,11 @@
     }
   },
   "constant":{
-    "nulladdress": "0x0000000000000000000000000000000000000000"
+    "nulladdress": "0x0000000000000000000000000000000000000000",
+    "order": "order",
+    "selling": "selling",
+    "cancelled": "cancelled",
+    "matched": "matched"
   },
   "firebase":{
     "apiKey": "AIzaSyA-7TvSTEopJ9bpVd-AwCaSbrD2iyGUIk0",
@@ -42,7 +46,7 @@
     "messagingSenderId": "307672265180"
   },
   "discord":{
-    "endpoint":"http://13161b93.ngrok.io/order/"
+    "endpoint":"https://8a9e40a2.ngrok.io/order/"
   }
 
 }

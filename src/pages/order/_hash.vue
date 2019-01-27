@@ -48,13 +48,7 @@ export default {
       const order = this.order
       await client.contract.bazaaar_v1.methods
         .orderMatch_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.artEditRoyaltyRecipient,
-            order.maker
-          ],
+          [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient, order.maker],
           [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
           order.v,
           order.r,
@@ -70,12 +64,7 @@ export default {
       const order = this.order
       await client.contract.bazaaar_v1.methods
         .orderCancell_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.artEditRoyaltyRecipient
-          ],
+          [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient],
           [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
           order.v,
           order.r,

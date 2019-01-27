@@ -30,6 +30,8 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
       }
+      //initialize canvas client
+      canvas.initialize('ogp');
     }
   },
   computed: {
@@ -44,12 +46,14 @@ export default {
     async order_v1() {
       const address = this.account.address
       const id = this.$route.params.id
+      const asset = this.asset
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
         .isApprovedForAll(address, client.contract.bazaaar_v1._address)
         .call()
       if (approved) {
+        canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)
         const order = {
           proxy: client.contract.bazaaar_v1._address,
@@ -79,22 +83,18 @@ export default {
 
         const hash = await client.contract.bazaaar_v1.methods
           .requireValidOrder_(
-            [
-              order.proxy,
-              order.maker,
-              order.taker,
-              order.artEditRoyaltyRecipient
-            ],
+            [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient],
             [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
             order.v,
             order.r,
             order.s
           )
           .call()
-        //const base64 = canvas.generate().substr(22)
-        //const ogp = await storage.ogp(hash, base64)
-        //order.ogp = ogp
-        await this.$axios.post(config.api.bazaaar.v1, order)
+        const base64 = canvas.generate().substr(22)
+        order.ogp = await storage.ogp(hash, base64)
+        console.log("api:post")
+        const response = await this.$axios.post(config.api.bazaaar.v1, order)
+        console.log(response)
       } else {
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)

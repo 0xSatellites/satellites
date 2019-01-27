@@ -4,7 +4,7 @@
       <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
       <input type ="button" @click="order_v1" value=Sell>
-      <canvas crossOrigin = 'anonymous' id="ogp" width="1200" height="630" hidden></canvas>
+      <canvas id="ogp" width="1200" height="630" hidden></canvas>
     </div>
 </template>
 

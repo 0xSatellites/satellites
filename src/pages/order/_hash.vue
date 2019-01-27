@@ -21,7 +21,7 @@
     },
 
     async asyncData({ store, params }) {
-        const order = await db.getDocByKey(params.hash)
+        const order = await db.getOrderByKey(params.hash)
         await store.dispatch('order/setOrder', order)
     },
 

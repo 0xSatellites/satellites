@@ -7,13 +7,33 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
-const getDocByKey = async (key) => {
+const getOrderByKey = async (key) => {
   const doc = await db.collection('order').doc(key).get();
   return doc.data();
 }
 
+const getAssetByKey = async (key) => {
+  const doc = await db.collection('metadata').doc(key).get();
+  return doc.data();
+}
+
+const getAssetListByKey = async (key) => {
+  const promises = []
+  for(var i=0; i<key.length; i++){
+    promises.push(db.collection('metadata').doc(key[i]).get())
+  }
+  const snapshots = await Promise.all(promises)
+  const result = []
+  for(var i=0; i<snapshots.length; i++){
+    result.push(snapshots[i].data())
+  }
+  return result
+}
+
 const client = {
-    getDocByKey:getDocByKey
+  getAssetListByKey:getAssetListByKey,
+  getOrderByKey:getOrderByKey,
+  getAssetByKey:getAssetByKey
 }
 
 export default client

@@ -37,12 +37,15 @@ const ownedTokens = async (name) => {
   if(balance == 0){
     return []
   }
-  const tokenOfOwnerByIndexPromises = []
+  const promises = []
   for (var i=0; i<balance; i++){
-      tokenOfOwnerByIndexPromises.push(methods.tokenOfOwnerByIndex(account.address ,i).call())
+      promises.push(methods.tokenOfOwnerByIndex(account.address ,i).call())
   }
-  return await Promise.all(tokenOfOwnerByIndexPromises)
-
+  const result = await Promise.all(promises)
+  for (var i=0; i<result.length; i++){
+    result[i] = name + '_' + result[i]
+  }
+  return result
 }
 
 const client = {

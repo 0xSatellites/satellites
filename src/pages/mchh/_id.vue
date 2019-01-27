@@ -1,13 +1,19 @@
 <template>
     <div>
+      <p>{{asset}}</p>
+      <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
-      <input type ="button" @click="order_v1" :value=asset.mchh>
+      <input type ="button" @click="order_v1" value=Sell>
+      <canvas id="c" width="1200" height="630"></canvas>
     </div>
 </template>
 
 <script>
 
   import client from '~/plugins/ethereum-client'
+  import db from '~/plugins/db'
+  import template from '~/assets/ogp_template.svg'
+
   const config = require('../../config.json')
 
   export default {
@@ -18,10 +24,28 @@
     },
 
     async asyncData({ store, params }) {
-      await store.dispatch('asset/setMchh', params.id)
+      const asset = await db.getAssetByKey('mchh_' + params.id)
+      await store.dispatch('asset/setMchh', asset)
     },
 
     mounted: async function() {
+      const asset = this.asset
+      var c = document.getElementById('c');
+      var ctx = c.getContext('2d');
+      var bg = new Image()
+      bg.src = template
+      bg.onload = function() {
+          ctx.drawImage(bg, 0, 0, 1200, 630)
+          ctx.font = "30px Arial";
+          ctx.fillStyle = 'rgba(255, 255, 255)';
+          ctx.fillText(asset.mchh.attributes.hero_name, 50, 50);
+
+      }
+      var img = new Image()
+      img.src = asset.mchh.cache_image;
+      img.onload = function() {
+          ctx.drawImage(img, 200, 100, 300, 300);
+      }
     },
 
     computed: {

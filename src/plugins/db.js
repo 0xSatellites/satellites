@@ -1,4 +1,6 @@
-const firebase = require('firebase');
+import  firebase from 'firebase/app';
+import 'firebase/firestore';
+
 const config = require('../config.json')
 
 if (!firebase.apps.length) {

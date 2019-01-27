@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div @click="generate">
       <p>{{asset}}</p>
       <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
       <input type ="button" @click="order_v1" value=Sell>
-      <canvas id="c" width="1200" height="630"></canvas>
+      <canvas crossOrigin = 'anonymous' id="ogp" width="1200" height="630" hidden></canvas>
     </div>
 </template>
 
@@ -12,6 +12,8 @@
 
   import client from '~/plugins/ethereum-client'
   import db from '~/plugins/db'
+  import storage from '~/plugins/storage'
+  import canvas from '~/plugins/canvas'
   import template from '~/assets/ogp_template.svg'
 
   const config = require('../../config.json')
@@ -29,23 +31,7 @@
     },
 
     mounted: async function() {
-      const asset = this.asset
-      var c = document.getElementById('c');
-      var ctx = c.getContext('2d');
-      var bg = new Image()
-      bg.src = template
-      bg.onload = function() {
-          ctx.drawImage(bg, 0, 0, 1200, 630)
-          ctx.font = "30px Arial";
-          ctx.fillStyle = 'rgba(255, 255, 255)';
-          ctx.fillText(asset.mchh.attributes.hero_name, 50, 50);
-
-      }
-      var img = new Image()
-      img.src = asset.mchh.cache_image;
-      img.onload = function() {
-          ctx.drawImage(img, 200, 100, 300, 300);
-      }
+      canvas.draw('ogp', template, this.asset)
     },
 
     computed: {
@@ -58,6 +44,12 @@
     },
 
     methods: {
+
+      async generate(){
+        const base64 = canvas.generate('generate', template, this.asset).substr(22)
+        storage.ogp("test", base64)
+      },
+
       async order_v1() {
         const address = this.account.address
         const id = this.$route.params.id

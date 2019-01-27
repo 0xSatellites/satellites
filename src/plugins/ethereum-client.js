@@ -15,6 +15,7 @@ const account = {
 }
 
 const activate = async (provider) => {
+  console.log("ethereum-client:activate")
   web3.setProvider(provider)
   const accounts = await web3.eth.getAccounts()
   const address = accounts[0]
@@ -32,6 +33,7 @@ const activate = async (provider) => {
 }
 
 const ownedTokens = async (name) => {
+  console.log("ethereum-client:ownedTokens:" + name)
   const methods = contract[name].methods
   const balance = await methods.balanceOf(account.address).call()
   if(balance == 0){

@@ -10,30 +10,29 @@
 
 <script>
 
-  import client from '~/plugins/ethereum-client'
   import db from '~/plugins/db'
-  import storage from '~/plugins/storage'
   import canvas from '~/plugins/canvas'
+  import client from '~/plugins/ethereum-client'
+  import storage from '~/plugins/storage'
   import template from '~/assets/ogp_template.svg'
 
   const config = require('../../config.json')
 
   export default {
-
-    data: function () {
-      return {
-      }
-    },
-
     async asyncData({ store, params }) {
       const asset = await db.getAssetByKey('mchh_' + params.id)
       await store.dispatch('asset/setMchh', asset)
     },
-
     mounted: async function() {
-      canvas.draw('ogp', template, this.asset)
+      const store = this.$store
+      if(typeof web3 != 'undefined'){
+        if(!client.account.address){
+          //initialize web3 client
+          const account = await client.activate(web3.currentProvider)
+          store.dispatch('account/setAccount', account)
+        }
+      }
     },
-
     computed: {
       account() {
         return this.$store.getters['account/account']
@@ -42,7 +41,6 @@
         return this.$store.getters['asset/asset']
       }
     },
-
     methods: {
       async order_v1() {
         const address = this.account.address
@@ -92,12 +90,10 @@
               order.r,
               order.s
           ).call()
-
-          const base64 = canvas.generate().substr(22)
-          const ogp = await storage.ogp(hash, base64)
-          order.ogp = ogp
+          //const base64 = canvas.generate().substr(22)
+          //const ogp = await storage.ogp(hash, base64)
+          //order.ogp = ogp
           await this.$axios.post(config.api.bazaaar.v1, order)
-
         } else {
           client.contract.mchh.methods.setApprovalForAll(client.contract.bazaaar_v1._address, true).send({from:this.account.address})
         }

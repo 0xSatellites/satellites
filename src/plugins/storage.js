@@ -10,6 +10,7 @@ if (!firebase.apps.length) {
 const storageRef = firebase.storage().ref();
 
 const ogp = async (key, base64) => {
+    console.log("storage:ogp")
     const ref = storageRef.child('ogp/' + key + '.png');
     await ref.putString(base64, 'base64', {contentType:'image/png'})
     return await ref.getDownloadURL()

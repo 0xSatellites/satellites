@@ -21,16 +21,7 @@
       }
     },
     mounted: async function() {
-      const store = this.$store
-      if(typeof web3 != 'undefined'){
-        const account = await client.activate(web3.currentProvider)
-        store.dispatch('account/setAccount', account)
-        client.ownedTokens('mchh').then(function(tokens){
-          db.getAssetListByKey(tokens).then(function(val){
-            store.dispatch('myitems/setMchh', val)
-          })
-        })
-      }
+
     },
 
   }

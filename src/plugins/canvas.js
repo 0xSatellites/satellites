@@ -14,13 +14,13 @@ const draw = (template, asset, price) => {
     ctx.drawImage(bg, 0, 0, 1200, 630)
     const img = new Image()
     img.crossOrigin = 'anonymous'
-    img.src = asset.mchh.cache_image
+    img.src = asset.cache_image
     img.onload = function() {
       ctx.drawImage(img, 120, 150, 400, 400)
       ctx.font = '40px Arial'
       ctx.fillStyle = 'rgba(255, 255, 255)'
-      ctx.fillText(asset.mchh.attributes.hero_name, 620, 200)
-      ctx.fillText('Lv. ' + asset.mchh.attributes.lv, 620, 250)
+      ctx.fillText(asset.attributes.hero_name, 620, 200)
+      ctx.fillText('Lv. ' + asset.attributes.lv, 620, 250)
       ctx.fillText(price + ' ETH', 620, 300)
     }
   }

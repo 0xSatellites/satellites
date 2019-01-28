@@ -28,7 +28,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         uint maker;
         uint referral;
         uint creatorRoyalty;
-        uint assetRoyalty;
+        //uint assetRoyalty;
     }
 
     struct Sig {
@@ -40,22 +40,22 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
     mapping(bytes32 => bool) public cancelledOrFinalized;
 
     uint public ratioBase;
-    uint public feeRatio;
-    uint public referralRatio;
-    uint public assetRoyaltyRatio;
-    uint public creatorRoyaltyRatioLimit;
+    //uint public feeRatio;
+    //uint public referralRatio;
+    //uint public assetRoyaltyRatio;
+    //uint public creatorRoyaltyRatioLimit;
 
     //address assetRoyaltyRecipient;
     //IERC721 public asset;
 
-    constructor(/*address assetAddress, address assetRoyaltyRecipientAddress, */uint[5] uints) public {
+    constructor(/*address assetAddress, address assetRoyaltyRecipientAddress, */uint[1] uints) public {
         //asset = IERC721(assetAddress);
         //assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
         ratioBase = uints[0];
-        feeRatio = uints[1];
-        referralRatio = uints[2];
-        assetRoyaltyRatio = uints[3];
-        creatorRoyaltyRatioLimit = uints[4];
+        //feeRatio = uints[1];
+        //referralRatio = uints[2];
+        //assetRoyaltyRatio = uints[3];
+        //creatorRoyaltyRatioLimit = uints[4];
     }
 
     function withdraw() external onlySigner {
@@ -70,37 +70,37 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         assetRoyaltyRatio = uints[3];
     }
 
-    function orderMatch_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
+    function orderMatch_(address[6] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
         orderMatch(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
         distribute(
             Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
-            addrs[4]
+            addrs[5]
         );
     }
 
-    function orderCancell_(address[4] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
+    function orderCancell_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
         orderCancell(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
     }
 
-    function requireValidOrder_(address[4] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
+    function requireValidOrder_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bytes32)
     {
         return requireValidOrder(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
     }
 
     function distribute(Order memory order, address referralRecipient) internal {
-        asset.transferFrom(order.maker, msg.sender, order.id);
+        IERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
         Amount memory amount = computeAmount(order);
         order.maker.transfer(amount.maker);
         referralRecipient.transfer(amount.referral);
@@ -174,10 +174,10 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         view
         returns (bool)
     {
-        if (asset.ownerOf(order.id) != order.maker) {
+        if (IERC721(asset).ownerOf(order.id) != order.maker) {
             return false;
         }
-        if (asset.getApproved(order.id) != address(this) && !asset.isApprovedForAll(order.maker, address(this)) ) {
+        if (IERC721(asset).getApproved(order.id) != address(this) && !IERC721(asset).isApprovedForAll(order.maker, address(this)) ) {
             return false;
         }
         return true;

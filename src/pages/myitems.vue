@@ -20,7 +20,7 @@
           <li v-for="(mchh, i) in myitems.mchh" :key="i">
           <div>
               <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
-                  <!--  -->
+                  <!-- 出品可能 -->
                   <div class="c-card__label c-card__label__rarity--1">★1</div>
                   <div class="c-card__label--exhibit">出品可能</div>
                   <div class="c-card__img"><img :src="mchh.cache_image"></div>
@@ -32,6 +32,23 @@
           </li>
         </ul>
       </section>
+
+      <!-- <section>
+        <div>
+          <div v-for="(order, i) in order" :key="i">
+            <div class="l-personal__frame">
+              <dl class="l-personal__address">
+              <dt>オーダー内容：</dt>
+              <dd>
+                <nuxt-link :to="'/order/' + order.proxy">
+                 {{order.proxy}}
+                 </nuxt-link>
+              </dd>
+              </dl>
+              </div>
+          </div>
+        </div>
+      </section> -->
     </div>
 </template>
 
@@ -48,6 +65,9 @@ export default {
         //initialize web3 client
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
+
+        const order = await db.getOrderMyHistory(account)
+        await store.dispatch('order/setOrder', order)
       }
       if (!myitems.mchh.length) {
         //get myitems:mchh
@@ -73,6 +93,9 @@ export default {
     },
     myitems() {
       return this.$store.getters['myitems/myitems']
+    },
+    order() {
+      return this.$store.getters['order/order']
     }
   }
 }

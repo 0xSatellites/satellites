@@ -117,6 +117,7 @@ export default {
         const hash = await client.finalizeOrder(order)
         const base64 = canvas.generate().substr(22)
         order.ogp = await storage.ogp(hash, base64)
+        order.hash = hash
         order.metadata = asset;
         console.log(order)
         console.log("api:post")

@@ -24,8 +24,6 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700,900&amp;subset=japanese'},
-      { rel: 'stylesheet', href: '~/assets/style/style.css'},
-      // { rel: 'stylesheet', href: '~/assets/style/style_sp.css'},
     ]
   },
 
@@ -38,8 +36,8 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    "~/assets/style/style.css",
-    // "~/assets/style/style_sp.css"
+    "@/assets/style/style.css",
+    "@/assets/style/style_sp.css"
   ],
 
   /*

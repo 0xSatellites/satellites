@@ -1,7 +1,7 @@
 <template>
 <div>
     <section class="l-information">
-      <div><img :src="order.ogp"></div>
+      <div><img :src="order.ogp" width=100%></div>
       <div class="l-information__frame">
         <div class="l-information__name">{{ order.metadata.attributes.hero_name}} / LV.{{ order.metadata.attributes.lv}}</div>
         <div class="l-information__txt"># {{ order.metadata.attributes.id}}</div>

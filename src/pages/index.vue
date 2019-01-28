@@ -33,7 +33,7 @@
         <li>
         <a href="#" class="c-card">
         <div class="c-card__label c-card__label__rarity--1">★1</div>
-        <div class="c-card__img"><img src="img/card/sample_img.png" alt=""></div>
+        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
         <div class="c-card__name">Masamune Date / LV.99</div>
         <div class="c-card__txt">#30010206</div>
         <div class="c-card__txt">My Crypto Heores</div>
@@ -43,7 +43,7 @@
         <li>
         <a href="#" class="c-card">
         <div class="c-card__label c-card__label__rarity--2">★2</div>
-        <div class="c-card__img"><img src="img/card/sample_img.png" alt=""></div>
+        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
         <div class="c-card__name">Masamune Date / LV.99</div>
         <div class="c-card__txt">#30010206</div>
         <div class="c-card__txt">My Crypto Heores</div>
@@ -53,7 +53,7 @@
         <li>
         <a href="#" class="c-card">
         <div class="c-card__label c-card__label__rarity--3">★3</div>
-        <div class="c-card__img"><img src="img/card/sample_img.png" alt=""></div>
+        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
         <div class="c-card__name">Masamune Date / LV.99</div>
         <div class="c-card__txt">#30010206</div>
         <div class="c-card__txt">My Crypto Heores</div>
@@ -63,7 +63,7 @@
         <li>
         <a href="#" class="c-card">
         <div class="c-card__label c-card__label__rarity--4">★4</div>
-        <div class="c-card__img"><img src="img/card/sample_img.png" alt=""></div>
+        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
         <div class="c-card__name">Masamune Date / LV.99</div>
         <div class="c-card__txt">#30010206</div>
         <div class="c-card__txt">My Crypto Heores</div>

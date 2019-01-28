@@ -43,6 +43,23 @@
 
   }
 </script>
-<style scoped>
+<style>
+
+
+
+/* @media screen and (min-width: 768px){
+  @import '~/assets/style/style.css';
+} */
+/*
+@media (max-width: 700px){
+  @import '~/assets/style/style_sp.css';
+} */
+
+/* @media screen and (max-width:767px) {
+  @import '~/assets/style/style_sp.css';
+} */
+
+
+
 
 </style>

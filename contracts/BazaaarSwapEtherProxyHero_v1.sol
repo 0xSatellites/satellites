@@ -16,17 +16,18 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         address proxy;
         address maker;
         address taker;
-        address artEditRoyaltyRecipient;
+        address creatorRoyaltyRecipient;
+        address asset;
         uint id;
         uint price;
-        uint artEditRoyaltyRatio;
+        uint creatorRoyaltyRatio;
         uint salt;
     }
 
     struct Amount {
         uint maker;
         uint referral;
-        uint artEditRoyalty;
+        uint creatorRoyalty;
         uint assetRoyalty;
     }
 
@@ -42,27 +43,27 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
     uint public feeRatio;
     uint public referralRatio;
     uint public assetRoyaltyRatio;
-    uint public artEditRoyaltyRatioLimit;
+    uint public creatorRoyaltyRatioLimit;
 
-    address assetRoyaltyRecipient;
-    IERC721 public asset;
+    //address assetRoyaltyRecipient;
+    //IERC721 public asset;
 
-    constructor(address assetAddress, address assetRoyaltyRecipientAddress, uint[5] uints) public {
-        asset = IERC721(assetAddress);
-        assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
+    constructor(/*address assetAddress, address assetRoyaltyRecipientAddress, */uint[5] uints) public {
+        //asset = IERC721(assetAddress);
+        //assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
         ratioBase = uints[0];
         feeRatio = uints[1];
         referralRatio = uints[2];
         assetRoyaltyRatio = uints[3];
-        artEditRoyaltyRatioLimit = uints[4];
+        creatorRoyaltyRatioLimit = uints[4];
     }
 
     function withdraw() external onlySigner {
         msg.sender.transfer(address(this).balance);
     }
 
-    function update(address assetRoyaltyRecipientAddress, uint[4] uints) external whenPaused onlySigner {
-        assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
+    function update(/*address assetRoyaltyRecipientAddress,*/ uint[4] uints) external whenPaused onlySigner {
+        //assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
         ratioBase = uints[0];
         feeRatio = uints[1];
         referralRatio = uints[2];
@@ -103,7 +104,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         Amount memory amount = computeAmount(order);
         order.maker.transfer(amount.maker);
         referralRecipient.transfer(amount.referral);
-        order.artEditRoyaltyRecipient.transfer(amount.artEditRoyalty);
+        order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
         assetRoyaltyRecipient.transfer(amount.assetRoyalty);
     }
 
@@ -115,10 +116,10 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         uint fee = order.price.mul(feeRatio).div(ratioBase);
         uint maker = order.price.sub(fee);
         uint referral = order.price.mul(referralRatio).div(ratioBase);
-        uint arteditRoyalty = order.price.mul(order.artEditRoyaltyRatio).div(ratioBase);
-        uint remaining = fee.sub(arteditRoyalty).sub(referral);
+        uint creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
+        uint remaining = fee.sub(creatorRoyalty).sub(referral);
         uint assetRoyalty = remaining.mul(assetRoyaltyRatio).div(ratioBase);
-        return (Amount(maker, referral, arteditRoyalty, assetRoyalty));
+        return (Amount(maker, referral, creatorRoyalty, assetRoyalty));
     }
 
     function orderMatch(Order memory order, Sig memory sig) internal {
@@ -190,7 +191,7 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         if (order.proxy != address(this)) {
             return false;
         }
-        if (order.artEditRoyaltyRatio > artEditRoyaltyRatioLimit) {
+        if (order.creatorRoyaltyRatio > creatorRoyaltyRatioLimit) {
             return false;
         }
         return true;
@@ -218,10 +219,11 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
                 order.proxy,
                 order.maker,
                 order.taker,
-                order.artEditRoyaltyRecipient,
+                order.creatorRoyaltyRecipient,
+                order.asset,
                 order.id,
                 order.price,
-                order.artEditRoyaltyRatio,
+                order.creatorRoyaltyRatio,
                 order.salt
         ));
     }

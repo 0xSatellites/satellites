@@ -97,7 +97,7 @@ export default {
     async order_v1() {
       const address = this.account.address
       const params = this.$route.params
-      const asset = this.asset
+      const asset = this.asset.mchh
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
@@ -120,6 +120,8 @@ export default {
         const hash = await client.finalizeOrder(order)
         const base64 = canvas.generate().substr(22)
         order.ogp = await storage.ogp(hash, base64)
+        order.metadata = asset;
+        console.log(order)
         console.log("api:post")
         const response = await this.$axios.post(config.api.bazaaar.v1, order)
         if(response.data.status){

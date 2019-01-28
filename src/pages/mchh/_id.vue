@@ -36,8 +36,8 @@
         <div class="l-item__action__btns">
           <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1" value=Sell>出品する</div>
           <!-- TODOキャンセル、金額変更処理 -->
-          <div class="l-item__action__btn l-item__action__btn--type1">金額変更する</div>
-          <div class="l-item__action__btn l-item__action__btn--type2" @click="cancel" value="cancel">キャンセルする</div>
+          <!-- <div class="l-item__action__btn l-item__action__btn--type1">金額変更する</div> -->
+          <!-- <div class="l-item__action__btn l-item__action__btn--type2" @click="cancel" value="cancel">キャンセルする</div> -->
         </div>
 
         </div>

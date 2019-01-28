@@ -121,7 +121,9 @@ export default {
         order.ogp = await storage.ogp(hash, base64)
         console.log("api:post")
         const response = await this.$axios.post(config.api.bazaaar.v1, order)
-        console.log(response)
+        if(response.data.status){
+          window.location.href = config.bazaaar.host + 'order/' + hash
+        }
       } else {
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)

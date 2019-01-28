@@ -56,11 +56,41 @@ const ownedTokens = async name => {
   return result
 }
 
+const finalizeOrder = async order => {
+  const data = client.utils.soliditySha3(
+    order.proxy,
+    order.maker,
+    order.taker,
+    order.artEditRoyaltyRecipient,
+    order.id,
+    order.price,
+    order.artEditRoyaltyRatio,
+    order.salt
+  )
+  const sig = await client.eth.personal.sign(data, order.maker)
+
+  order.r = sig.substring(0, 66)
+  order.s = '0x' + sig.substring(66, 130)
+  order.v = '0x' + sig.substring(130, 132)
+
+  const hash = await client.contract.bazaaar_v1.methods
+    .requireValidOrder_(
+      [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient],
+      [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
+      order.v,
+      order.r,
+      order.s
+    )
+    .call()
+  return hash
+}
+
 const client = {
   account: account,
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
+  finalizeOrder:finalizeOrder,
   utils: web3.utils,
   eth: web3.eth
 }

@@ -4,12 +4,14 @@
         <div><img :src="order.ogp"></div>
         <input type ="button" @click="purchase" value="purchase">
         <input type ="button" @click="cancel" value="cancel">
+        <price-chart-component></price-chart-component>
     </div>
 </template>
 
 <script>
 import client from '~/plugins/ethereum-client'
 import db from '~/plugins/db'
+import PriceChartComponent from '~/components/pricechart'
 
 const config = require('../../config.json')
 
@@ -19,6 +21,9 @@ export default {
     return {
       meta: [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
     }
+  },
+  components: {
+    PriceChartComponent
   },
   async asyncData({ store, params }) {
     const order = await db.getOrderByKey(params.hash)

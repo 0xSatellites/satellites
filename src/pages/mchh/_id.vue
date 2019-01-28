@@ -12,7 +12,6 @@
 <script>
 import db from '~/plugins/db'
 import canvas from '~/plugins/canvas'
-//import LineChart from '~/plugins/chart'
 import PriceChartComponent from '~/components/pricechart'
 import client from '~/plugins/ethereum-client'
 import storage from '~/plugins/storage'
@@ -51,7 +50,7 @@ export default {
   methods: {
     async order_v1() {
       const address = this.account.address
-      const id = this.$route.params.id
+      const params = this.$route.params
       const asset = this.asset
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
@@ -66,36 +65,13 @@ export default {
           maker: address,
           taker: config.constant.nulladdress,
           artEditRoyaltyRecipient: address,
-          id: id,
+          id: params.id,
           price: wei,
           artEditRoyaltyRatio: 600,
           salt: salt
         }
-        const data = client.utils.soliditySha3(
-          order.proxy,
-          order.maker,
-          order.taker,
-          order.artEditRoyaltyRecipient,
-          order.id,
-          order.price,
-          order.artEditRoyaltyRatio,
-          order.salt
-        )
-        const sig = await client.eth.personal.sign(data, address)
 
-        order.r = sig.substring(0, 66)
-        order.s = '0x' + sig.substring(66, 130)
-        order.v = '0x' + sig.substring(130, 132)
-
-        const hash = await client.contract.bazaaar_v1.methods
-          .requireValidOrder_(
-            [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient],
-            [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
-            order.v,
-            order.r,
-            order.s
-          )
-          .call()
+        const hash = await client.finalizeOrder(order)
         const base64 = canvas.generate().substr(22)
         order.ogp = await storage.ogp(hash, base64)
         console.log("api:post")

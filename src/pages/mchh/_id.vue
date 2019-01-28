@@ -1,11 +1,5 @@
 <template>
     <div>
-      <!-- <div><img :src="asset.mchh.cache_image" width="200"></div>
-      <input type="text" id="amount">
-      <input type ="button" @click="order_v1" value=Sell>
-      <price-chart-component></price-chart-component>
-      <canvas id="ogp" width="1200" height="630" hidden></canvas> -->
-
       <section class="l-item">
         <div class="l-item__frame">
         <div>
@@ -40,7 +34,10 @@
         <div class="l-item__action__price"><label><input type="text" value="" id="amount"> ETH</label></div>
 
         <div class="l-item__action__btns">
-        <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1" value=Sell>出品する</div>
+          <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1" value=Sell>出品する</div>
+          <!-- TODOキャンセル、金額変更処理 -->
+          <div class="l-item__action__btn l-item__action__btn--type1">金額変更する</div>
+          <div class="l-item__action__btn l-item__action__btn--type2" @click="cancel" value="cancel">キャンセルする</div>
         </div>
 
         </div>

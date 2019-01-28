@@ -47,7 +47,6 @@ contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
 
 contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderCancelled')
-  console.log(result)
   if (error) return
   const date = new Date()
   const time = date.getTime()

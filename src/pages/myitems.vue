@@ -11,7 +11,7 @@
 
         <dl class="l-personal__balance">
         <dt>残高：</dt>
-        <dd>Ξ {{account.balance}}</dd>
+        <dd>{{account.balance}} ETH</dd>
         </dl>
         </div>
       </section>
@@ -20,13 +20,13 @@
           <li v-for="(mchh, i) in myitems.mchh" :key="i">
           <div>
               <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+                  <!--  -->
                   <div class="c-card__label c-card__label__rarity--1">★1</div>
                   <div class="c-card__label--exhibit">出品可能</div>
                   <div class="c-card__img"><img :src="mchh.cache_image"></div>
                   <div class="c-card__name">{{mchh.attributes.hero_name}} / LV.{{mchh.attributes.lv}}</div>
                   <div class="c-card__txt"># {{mchh.attributes.id}}</div>
                   <div class="c-card__txt">My Crypto Heores</div>
-                  <!-- <div class="c-card__eth">Ξ 0.45</div> -->
               </nuxt-link>
             </div>
           </li>

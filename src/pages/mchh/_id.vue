@@ -7,10 +7,12 @@
       <canvas id="ogp" width="1200" height="630" hidden></canvas> -->
 
       <section class="l-item">
-
         <div class="l-item__frame">
         <div>
-        <div class="l-item__img"><img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""><img src="https://www.mycryptoheroes.net/images/heroes/2000/4009.png" alt=""></div>
+        <div class="l-item__img">
+          <img :src="asset.mchh.cache_image" alt="">
+          <!-- <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""> -->
+          </div>
         </div>
         <div>
         <div class="l-item__name">{{asset.mchh.attributes.hero_name }} / LV.{{asset.mchh.attributes.lv }}</div>
@@ -35,10 +37,10 @@
         <form>
         <div class="l-item__action">
 
-        <div class="l-item__action__price"><label><input type="text" value=""> ETH</label></div>
+        <div class="l-item__action__price"><label><input type="text" value="" id="amount"> ETH</label></div>
 
         <div class="l-item__action__btns">
-        <div class="l-item__action__btn l-item__action__btn--type1">出品する</div>
+        <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1" value=Sell>出品する</div>
         </div>
 
         </div>
@@ -47,7 +49,6 @@
       </div>
       </section>
       <section class="c-price">
-        <h2 class="c-price__title">価格推移</h2>
         <price-chart-component id="myChart"></price-chart-component>
       </section>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>

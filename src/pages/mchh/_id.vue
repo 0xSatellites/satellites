@@ -1,10 +1,55 @@
 <template>
     <div>
-      <p>{{asset}}</p>
-      <div><img :src="asset.mchh.cache_image" width="200"></div>
+      <!-- <div><img :src="asset.mchh.cache_image" width="200"></div>
       <input type="text" id="amount">
       <input type ="button" @click="order_v1" value=Sell>
       <price-chart-component></price-chart-component>
+      <canvas id="ogp" width="1200" height="630" hidden></canvas> -->
+
+      <section class="l-item">
+
+        <div class="l-item__frame">
+        <div>
+        <div class="l-item__img"><img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""><img src="https://www.mycryptoheroes.net/images/heroes/2000/4009.png" alt=""></div>
+        </div>
+        <div>
+        <div class="l-item__name">{{asset.mchh.attributes.hero_name }} / LV.{{asset.mchh.attributes.lv }}</div>
+        <div class="l-item__txt"># {{asset.mchh.attributes.id }}</div>
+        <div class="l-item__txt">My Crypto Heores</div>
+
+        <ul class="l-item__data">
+        <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.mchh.attributes.rarity }}</li>
+        </ul>
+        <ul class="l-item__data">
+        <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
+        <li><strong>PHY：</strong> {{asset.mchh.attributes.phy }}</li>
+        <li><strong>INT：</strong> {{asset.mchh.attributes.int }}</li>
+        <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
+        </ul>
+        <ul class="l-item__data">
+          <!-- TODO 条件分岐 Active有無 -->
+        <li><span class="l-item__skill--type">Active</span></li>
+        <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
+        </ul>
+
+        <form>
+        <div class="l-item__action">
+
+        <div class="l-item__action__price"><label><input type="text" value=""> ETH</label></div>
+
+        <div class="l-item__action__btns">
+        <div class="l-item__action__btn l-item__action__btn--type1">出品する</div>
+        </div>
+
+        </div>
+        </form>
+      </div>
+      </div>
+      </section>
+      <section class="c-price">
+        <h2 class="c-price__title">価格推移</h2>
+        <price-chart-component id="myChart"></price-chart-component>
+      </section>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>
     </div>
 </template>

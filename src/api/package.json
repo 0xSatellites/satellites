@@ -24,6 +24,6 @@
     "express": "4.16.4",
     "firebase-admin": "6.5.1",
     "nodemon": "1.18.9",
-    "web3": "1.0.0-beta.37"
+    "web3": "1.0.0-beta.39"
   }
 }

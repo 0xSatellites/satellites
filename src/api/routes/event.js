@@ -7,7 +7,7 @@ const admin = require('firebase-admin')
 const db = admin.firestore()
 
 const Web3 = require('web3')
-const web3 = new Web3(config.node.wss)
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node.wss))
 
 const contract = {
   bazaaar_v1: new web3.eth.Contract(
@@ -38,7 +38,7 @@ contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
   if (error) return
   const date = new Date()
   const time = date.getTime()
-  const key = result.returnValues.hash
+  const key = result.raw.topics[1]
   console.log('db:update')
   db.collection(config.constant.order)
     .doc(key)
@@ -47,10 +47,11 @@ contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
 
 contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderCancelled')
+  console.log(result)
   if (error) return
   const date = new Date()
   const time = date.getTime()
-  const key = result.returnValues.hash
+  const key = result.raw.topics[1]
   console.log('db:update')
   db.collection(config.constant.order)
     .doc(key)

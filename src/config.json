@@ -1,4 +1,7 @@
 {
+  "bazaaar":{
+    "host": "http://localhost:3000/"
+  },
   "api": {
     "bazaaar":{
       "v1":"http://localhost:8080/order/v1/"

@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+//Foundation：初期設定
+@import 'foundation/normalize';
+@import 'foundation/tool';
+@import 'foundation/base';
+
+
+//Object - Component：共通パーツ用
+@import 'object/component/index-sp';
+@import 'object/component/card-sp';
+@import 'object/component/price-sp';
+
+
+//Layout：フレーム
+//共通
+@import 'layout/header-sp';
+@import 'layout/footer-sp';
+
+
+//Object - Project：個別ページ用
+@import 'object/project/top-sp';
+@import 'object/project/mypage-sp';
+@import 'object/project/detail-sp';
+@import 'object/project/order-sp';
+
+
+//Object - Utility：個別設定用
+@import 'object/utility/utility-sp';

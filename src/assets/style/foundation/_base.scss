@@ -1,0 +1,35 @@
+@charset "UTF-8";
+
+body{
+//padding-top: 80px;
+background-color: #fff;
+//background-color: rgba(255,0,0,0.5);
+color: #000;
+font-family: $fontGothic;
+-webkit-text-size-adjust: 100%;
+-webkit-print-color-adjust: exact;
+}
+
+h1,h2,h3,h4,h5,h6,p{
+margin: 0;
+}
+ul,ol{
+margin-top: 0;
+margin-bottom: 0;
+}
+
+em{
+font-style: normal;
+color: #d70000;
+}
+
+img{
+vertical-align: top;
+user-select:none;
+-webkit-user-select:none;
+-ms-user-select: none;
+-moz-user-select:none;
+-khtml-user-select:none;
+-webkit-user-drag:none;
+-khtml-user-drag:none;
+}

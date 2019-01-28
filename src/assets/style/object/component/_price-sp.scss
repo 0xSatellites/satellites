@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+.c-price{
+width: floor-decimal(348vw * 100 / 375, 2);
+margin: floor-decimal(50vw * 100 / 375, 2) auto 0;
+
+  &__title{
+  margin-bottom: floor-decimal(10vw * 100 / 375, 2);
+  font-size: floor-decimal(20vw * 100 / 375, 2);
+  line-height: 1.7;
+  text-align: center;
+  color: #575656;
+  font-weight: bold;
+  }
+
+}

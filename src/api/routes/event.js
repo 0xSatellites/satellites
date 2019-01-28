@@ -42,7 +42,7 @@ contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
   console.log('db:update')
   db.collection(config.constant.order)
     .doc(key)
-    .update({status:config.constant.mathced, modified:time})
+    .update({status:config.constant.matched, modified:time})
 })
 
 contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {

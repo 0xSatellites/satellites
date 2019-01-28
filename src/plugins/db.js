@@ -46,8 +46,8 @@ const getAssetListByKey = async key => {
   return result
 }
 
-const getPastOrderByType = async type => {
-  console.log('db:getPastOrderByType')
+const getOrderHistoryByType = async type => {
+  console.log('db:getOrderHistoryByType')
   const result = {
     labels:[],
     total_prices:[]
@@ -65,7 +65,7 @@ const client = {
   getAssetListByKey: getAssetListByKey,
   getOrderByKey: getOrderByKey,
   getAssetByKey: getAssetByKey,
-  getPastOrderByType:getPastOrderByType
+  getOrderHistoryByType:getOrderHistoryByType
 }
 
 export default client

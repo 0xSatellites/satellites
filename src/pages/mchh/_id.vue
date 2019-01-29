@@ -98,6 +98,7 @@ export default {
   },
   methods: {
     async order_v1() {
+      console.log("order_v1")
       const address = this.account.address
       const params = this.$route.params
       const asset = this.asset.mchh
@@ -125,12 +126,8 @@ export default {
         order.ogp = await storage.ogp(hash, base64)
         order.hash = hash
         order.metadata = asset;
-        console.log(order)
-        console.log("api:post")
-        const response = await this.$axios.post(config.api.bazaaar.v1, order)
-        if(response.data.status){
-          window.location.href = config.bazaaar.host + 'order/' + hash
-        }
+        await db.set(config.constant.order, hash, order)
+        window.location.href = config.bazaaar.host + 'order/' + hash
       } else {
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)

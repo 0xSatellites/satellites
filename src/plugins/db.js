@@ -76,12 +76,17 @@ const getOrderHistoryByType = async type => {
   return result
 }
 
+const set = async (collection, hash, order) => {
+  await db.collection(collection).doc(hash).set(order)
+}
+
 const client = {
   getAssetListByKey: getAssetListByKey,
   getOrderByKey: getOrderByKey,
   getOrderHistoryByAccount: getOrderHistoryByAccount,
   getAssetByKey: getAssetByKey,
-  getOrderHistoryByType:getOrderHistoryByType
+  getOrderHistoryByType:getOrderHistoryByType,
+  set:set
 }
 
 export default client

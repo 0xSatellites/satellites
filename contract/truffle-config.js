@@ -78,7 +78,7 @@ module.exports = {
       provider: function() {
         return new HDWalletProvider(
           mnemonic,
-          "https://rinkeby.infura.io/" + infuraKey 
+          "https://rinkeby.infura.io/" + infuraKey
         );
       },
       network_id: 4

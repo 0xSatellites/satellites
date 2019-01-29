@@ -14,16 +14,16 @@
     "url": "git+https://github.com/block-base/bazaaar.io.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "BlockBase",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/block-base/bazaaar.io/issues"
   },
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
-    "fs": "0.0.1-security",
-    "openzeppelin-solidity": "2.0.0",
-    "truffle-hdwallet-provider": "1.0.1",
-    "web3": "1.0.0-beta.37"
+    "fs": "^0.0.1-security",
+    "openzeppelin-solidity": "^2.0.0",
+    "truffle-hdwallet-provider": "^1.0.1",
+    "web3": "^1.0.0-beta.37"
   }
 }

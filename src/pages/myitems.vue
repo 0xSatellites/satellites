@@ -11,7 +11,7 @@
 
         <dl class="l-personal__balance">
         <dt>残高：</dt>
-        <dd>{{account.balance}} ETH</dd>
+        <dd>{{account.balance / 1000000000000000000 }}  ETH</dd>
         </dl>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        const order = await db.getOrderMyHistory(account)
+        const order = await db.getOrderHistoryByAccount(account)
         await store.dispatch('order/setOrder', order)
       }
       if (!myitems.mchh.length) {

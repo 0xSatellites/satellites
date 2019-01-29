@@ -77,6 +77,9 @@ export default {
         //initialize web3 client
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
+
+        // const order = await db.getOrderMyHistory(account)
+        // await store.dispatch('order/setOrder', order)
       }
       //initialize canvas client
       canvas.initialize('ogp');
@@ -88,7 +91,10 @@ export default {
     },
     asset() {
       return this.$store.getters['asset/asset']
-    }
+    },
+    // order() {
+    //   return this.$store.getters['order/order']
+    // }
   },
   methods: {
     async order_v1() {

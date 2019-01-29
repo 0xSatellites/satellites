@@ -49,7 +49,7 @@
     "messagingSenderId": "307672265180"
   },
   "discord":{
-    "endpoint":"localhost:3000/order/"
+    "endpoint":"http://localhost:3000/order/"
   }
 
 }

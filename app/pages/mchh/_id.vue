@@ -5,7 +5,7 @@
         <div>
         <div class="l-item__img">
           <img :src="asset.mchh.cache_image" alt="">
-          <!-- <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""> -->
+          <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt="">
           </div>
         </div>
         <div>
@@ -82,7 +82,7 @@ export default {
         // await store.dispatch('order/setOrder', order)
       }
       //initialize canvas client
-      canvas.initialize('ogp');
+      canvas.initialize('ogp')
     }
   },
   computed: {
@@ -91,14 +91,15 @@ export default {
     },
     asset() {
       return this.$store.getters['asset/asset']
-    },
+    }
     // order() {
     //   return this.$store.getters['order/order']
     // }
   },
   methods: {
     async order_v1() {
-      console.log("order_v1")
+      console.log('order_v1')
+      const router = this.$router
       const address = this.account.address
       const params = this.$route.params
       const asset = this.asset.mchh
@@ -125,9 +126,10 @@ export default {
         const base64 = canvas.generate().substr(22)
         order.ogp = await storage.ogp(hash, base64)
         order.hash = hash
-        order.metadata = asset;
+        order.metadata = asset
         await db.set(config.constant.order, hash, order)
         window.location.href = config.bazaaar.host + 'order/' + hash
+        //router.push({ name: './../order', params: { hash }})
       } else {
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)

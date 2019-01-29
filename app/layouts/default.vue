@@ -18,48 +18,26 @@
   </div>
 </template>
 <script>
+import client from '~/plugins/ethereum-client'
+import db from '~/plugins/db'
+import FooterTemp from '~/components/footer'
 
-  import client from '~/plugins/ethereum-client'
-  import db from '~/plugins/db'
-  import FooterTemp from '~/components/footer'
-
-  export default {
-    components: {
-      FooterTemp
-    },
-    data() {
-      return {
-        drawer: false,
-        items: [
-          { title:"マイページ", to: '/myitems' },
-          { title:"使い方", to: '/howto' }
-        ],
-        title: 'bazaar.io'
-      }
-    },
-    mounted: async function() {
-
-    },
-
-  }
+export default {
+  components: {
+    FooterTemp
+  },
+  data() {
+    return {
+      drawer: false,
+      items: [
+        { title: 'マイページ', to: '/myitems' },
+        { title: '使い方', to: '/howto' }
+      ],
+      title: 'bazaar.io'
+    }
+  },
+  mounted: async function() {}
+}
 </script>
 <style>
-
-
-
-/* @media screen and (min-width: 768px){
-  @import '~/assets/style/style.css';
-} */
-/*
-@media (max-width: 700px){
-  @import '~/assets/style/style_sp.css';
-} */
-
-/* @media screen and (max-width:767px) {
-  @import '~/assets/style/style_sp.css';
-} */
-
-
-
-
 </style>

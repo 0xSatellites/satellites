@@ -15,7 +15,7 @@ export default {
   components: {
     LineChart
   },
-  data () {
+  data() {
     return {
       datacollection: null
     }
@@ -23,11 +23,11 @@ export default {
   mounted: async function() {
     const params = this.$route.params
     var history
-    if(params.id){
-      history = await db.getOrderHistoryByType(params.id.substring(0,4))
+    if (params.id) {
+      history = await db.getOrderHistoryByType(params.id.substring(0, 4))
     } else if (params.hash) {
       const order = await db.getOrderByKey(params.hash)
-      history = await db.getOrderHistoryByType(order.id.substring(0,4))
+      history = await db.getOrderHistoryByType(order.id.substring(0, 4))
     }
 
     this.datacollection = {

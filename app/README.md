@@ -1,6 +1,6 @@
 # src
 
-> My badass Nuxt.js project
+> bazaaar.io
 
 ## Build Setup
 

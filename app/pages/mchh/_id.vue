@@ -60,7 +60,7 @@ import client from '~/plugins/ethereum-client'
 import storage from '~/plugins/storage'
 import template from '~/assets/ogp_template.svg'
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 
 export default {
   components: {

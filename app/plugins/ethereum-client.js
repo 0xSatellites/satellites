@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const config = require('../config.json')
+const config = require('../../config.json')
 
 const web3 = new Web3(config.node.https)
 

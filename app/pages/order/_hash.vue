@@ -38,7 +38,7 @@ import client from '~/plugins/ethereum-client'
 import db from '~/plugins/db'
 import PriceChartComponent from '~/components/pricechart'
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 
 export default {
   head() {

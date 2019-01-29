@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "bazaaar.io",
   "author": "blockbase",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",

@@ -4,26 +4,22 @@
   "description": "bazaaar.io",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "nodemon index.js"
+    "dev": "node index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/block-base/mch-api.git"
+    "url": "git+https://github.com/block-base/bazaaar.io.git"
   },
   "keywords": [],
   "author": "BlockBase",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/block-base/mch-api/issues"
+    "url": "https://github.com/block-base/bazaaar.io/issues"
   },
-  "homepage": "https://github.com/block-base/mch-api#readme",
+  "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
-    "axios": "^0.18.0",
-    "dotenv": "^6.2.0",
-    "express": "^4.16.4",
     "firebase-admin": "^6.5.1",
-    "nodemon": "^1.18.9",
     "web3": "^1.0.0-beta.39"
   }
 }

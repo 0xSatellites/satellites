@@ -15,13 +15,12 @@
   },
   "keywords": [],
   "author": "BlockBase",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/block-base/bazaaar.io/issues"
   },
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
-    "fs": "^0.0.1-security",
     "openzeppelin-solidity": "^2.0.0",
     "truffle-hdwallet-provider": "^1.0.1",
     "web3": "^1.0.0-beta.37"

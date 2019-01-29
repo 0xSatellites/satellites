@@ -16,18 +16,29 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         address proxy;
         address maker;
         address taker;
-        address artEditRoyaltyRecipient;
+        address creatorRoyaltyRecipient;
+        address asset;
         uint id;
         uint price;
-        uint artEditRoyaltyRatio;
+        uint creatorRoyaltyRatio;
         uint salt;
+    }
+
+    struct AssetRoyalty {
+        address recipient;
+        uint ratio;
+    }
+
+    struct Referral {
+        address recipient;
+        uint ratio;
     }
 
     struct Amount {
         uint maker;
-        uint referral;
-        uint artEditRoyalty;
+        uint creatorRoyalty;
         uint assetRoyalty;
+        uint referral;
     }
 
     struct Sig {
@@ -37,30 +48,25 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
     }
 
     mapping(bytes32 => bool) public cancelledOrFinalized;
+    mapping(address => AssetRoyalty) public assetRoyalties;
 
-    uint public ratioBase;
-    uint public feeRatio;
-    uint public referralRatio;
-    uint public assetRoyaltyRatio;
-    uint public artEditRoyaltyRatioLimit;
+    uint public ratioBase = 10000;
 
-    address assetRoyaltyRecipient;
-    IERC721 public asset;
-
-    constructor(address assetAddress, address assetRoyaltyRecipientAddress, uint[5] uints) public {
-        asset = IERC721(assetAddress);
-        assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
-        ratioBase = uints[0];
-        feeRatio = uints[1];
-        referralRatio = uints[2];
-        assetRoyaltyRatio = uints[3];
-        artEditRoyaltyRatioLimit = uints[4];
+    constructor(/*address assetAddress, address assetRoyaltyRecipientAddress, uint[1] uints*/) public {
+        //asset = IERC721(assetAddress);
+        //assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
+        //ratioBase = uints[0];
+        //feeRatio = uints[1];
+        //referralRatio = uints[2];
+        //assetRoyaltyRatio = uints[3];
+        //creatorRoyaltyRatioLimit = uints[4];
     }
 
     function withdraw() external onlySigner {
         msg.sender.transfer(address(this).balance);
     }
 
+    /*
     function update(address assetRoyaltyRecipientAddress, uint[4] uints) external whenPaused onlySigner {
         assetRoyaltyRecipient = assetRoyaltyRecipientAddress;
         ratioBase = uints[0];
@@ -68,57 +74,83 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         referralRatio = uints[2];
         assetRoyaltyRatio = uints[3];
     }
+    */
 
-    function orderMatch_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
+    function orderMatch_(address[7] addrs, uint[6] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
         orderMatch(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
         distribute(
             Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
-            addrs[4]
+            Referral(addrs[6], uints[5])
         );
     }
 
-    function orderCancell_(address[4] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
+    function orderCancell_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
         orderCancell(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
     }
 
-    function requireValidOrder_(address[4] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
+    function requireValidOrder_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bytes32)
     {
         return requireValidOrder(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
             Sig(v, r, s)
         );
     }
 
-    function distribute(Order memory order, address referralRecipient) internal {
-        asset.transferFrom(order.maker, msg.sender, order.id);
-        Amount memory amount = computeAmount(order);
-        order.maker.transfer(amount.maker);
-        referralRecipient.transfer(amount.referral);
-        order.artEditRoyaltyRecipient.transfer(amount.artEditRoyalty);
-        assetRoyaltyRecipient.transfer(amount.assetRoyalty);
+    function distribute(Order memory order, Referral memory referral) internal {
+        IERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
+        Amount memory amount = computeAmount(order, referral);
+        address assetRoyalties = assetRoyalties[order.asset];
+        if(amount.maker > 0 ){
+            order.maker.transfer(amount.maker);
+        }
+        if(amount.creatorRoyalty > 0){
+            order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
+        }
+        if(amount.assetRoyalty > 0){
+            assetRoyalties.recipient.transfer(amount.assetRoyalty);
+        }
+        if(amount.referral > 0){
+            referral.recipient.transfer(amount.referral);
+        }
     }
 
-    function computeAmount(Order memory order)
-        internal
-        view
-        returns (Amount)
-    {
+    struct Amount {
+        uint maker;
+        uint creatorRoyalty;
+        uint assetRoyalty;
+        uint referral;
+    }
+
+    function computeAmount(Order memory order, Referral memory referral) internal view returns (Amount memory amount) {
+
+        if(order.creatorRoyaltyRecipient != address(this)){
+            ammount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
+        }
+        if(amount.assetRoyalty > 0 && assetRoyalties.recipient != address(0x0) && assetRoyalties.recipient != address(this)){
+            assetRoyalties.recipient.transfer(amount.assetRoyalty);
+        }
+        if(referral.recipient != address(this)) {
+            ammount.referral = order.price.mul(referral.ratio).div(ratioBase);
+        }
         uint fee = order.price.mul(feeRatio).div(ratioBase);
         uint maker = order.price.sub(fee);
-        uint referral = order.price.mul(referralRatio).div(ratioBase);
-        uint arteditRoyalty = order.price.mul(order.artEditRoyaltyRatio).div(ratioBase);
-        uint remaining = fee.sub(arteditRoyalty).sub(referral);
+
+
+        
+
+
+        uint creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
+        uint remaining = fee.sub(creatorRoyalty).sub(referral);
         uint assetRoyalty = remaining.mul(assetRoyaltyRatio).div(ratioBase);
-        return (Amount(maker, referral, arteditRoyalty, assetRoyalty));
     }
 
     function orderMatch(Order memory order, Sig memory sig) internal {
@@ -173,10 +205,10 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         view
         returns (bool)
     {
-        if (asset.ownerOf(order.id) != order.maker) {
+        if (IERC721(asset).ownerOf(order.id) != order.maker) {
             return false;
         }
-        if (asset.getApproved(order.id) != address(this) && !asset.isApprovedForAll(order.maker, address(this)) ) {
+        if (IERC721(asset).getApproved(order.id) != address(this) && !IERC721(asset).isApprovedForAll(order.maker, address(this)) ) {
             return false;
         }
         return true;
@@ -190,9 +222,11 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
         if (order.proxy != address(this)) {
             return false;
         }
-        if (order.artEditRoyaltyRatio > artEditRoyaltyRatioLimit) {
+        /*
+        if (order.creatorRoyaltyRatio > creatorRoyaltyRatioLimit) {
             return false;
         }
+        */
         return true;
     }
 
@@ -218,10 +252,11 @@ contract BazaaarSwapEtherProxyHero_v1 is SignerRole, Pausable, ReentrancyGuard {
                 order.proxy,
                 order.maker,
                 order.taker,
-                order.artEditRoyaltyRecipient,
+                order.creatorRoyaltyRecipient,
+                order.asset,
                 order.id,
                 order.price,
-                order.artEditRoyaltyRatio,
+                order.creatorRoyaltyRatio,
                 order.salt
         ));
     }

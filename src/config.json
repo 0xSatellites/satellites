@@ -49,7 +49,7 @@
     "messagingSenderId": "307672265180"
   },
   "discord":{
-    "endpoint":"https://8a9e40a2.ngrok.io/order/"
+    "endpoint":"http://localhost:3000/order/"
   }
 
 }

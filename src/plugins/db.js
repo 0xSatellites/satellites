@@ -18,6 +18,21 @@ const getOrderByKey = async key => {
   return doc.data()
 }
 
+const getOrderHistoryByAccount = async key => {
+  console.log('db:getOrderHistoryByAccount')
+  const result = []
+  const snapshots = await db.collection("order")
+  .where("maker", "==", key.address)
+  // .where("status", "==", "selling")
+  .get()
+  snapshots.forEach((doc) => {
+    const data = doc.data()
+    result.push(data)
+  });
+  return result
+}
+
+
 const getAssetByKey = async key => {
   console.log('db:getAssetByKey')
   const doc = await db
@@ -64,6 +79,7 @@ const getOrderHistoryByType = async type => {
 const client = {
   getAssetListByKey: getAssetListByKey,
   getOrderByKey: getOrderByKey,
+  getOrderHistoryByAccount: getOrderHistoryByAccount,
   getAssetByKey: getAssetByKey,
   getOrderHistoryByType:getOrderHistoryByType
 }

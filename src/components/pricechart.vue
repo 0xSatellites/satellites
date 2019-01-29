@@ -1,6 +1,9 @@
 <template>
   <div>
-    <line-chart :chart-data="datacollection"></line-chart>
+    <section class="c-price">
+      <h2 class="c-price__title">価格推移</h2>
+      <line-chart :chart-data="datacollection"></line-chart>
+    </section>
   </div>
 </template>
 

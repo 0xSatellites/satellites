@@ -22,7 +22,8 @@ module.exports = {
       { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image'}
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700,900&amp;subset=japanese'},
     ]
   },
 
@@ -35,6 +36,8 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    "@/assets/style/style.css",
+    "@/assets/style/style_sp.css"
   ],
 
   /*

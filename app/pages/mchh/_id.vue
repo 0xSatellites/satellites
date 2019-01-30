@@ -105,26 +105,14 @@ export default {
       const asset = this.asset.mchh
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
-      console.log("test")
-      console.log(client.contract.mchh.methods)
-      console.log(this.account)
-      console.log(client.contract)
-
-      const test = new client.eth.Contract(
-        config.abi.mchh,
-        config.contract.rinkeby.mchh
-      )
-
-      //const approved = await client.contract.mchh.methods
-        const approved = await test.methods
-        .isApprovedForAll(address, client.contract.bazaaar_v1._address)
-        .call()
-      console.log("test")
+      const approved = await client.contract.mchh.methods
+        .isApprovedForAll(address, client.contract.bazaaar_v1.options.address)
+        .call({from:this.account.address})
       if (approved) {
         canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)
         const order = {
-          proxy: client.contract.bazaaar_v1._address,
+          proxy: client.contract.bazaaar_v1.options.address,
           maker: address,
           taker: config.constant.nulladdress,
           artEditRoyaltyRecipient: address,

@@ -6,7 +6,7 @@ const web3 = new Web3(config.node.rinkeby.https)
 const contract = {
   bazaaar_v1: new web3.eth.Contract(
     config.abi.bazaaar_v1,
-    config.contract.bazaaar_v1
+    config.contract.rinkeby.bazaaar_v1
   ),
   mche: new web3.eth.Contract(
     config.abi.mchh,
@@ -69,7 +69,7 @@ const finalizeOrder = async order => {
     order.artEditRoyaltyRatio,
     order.salt
   )
-  const sig = await client.eth.personal.sign(data, order.maker)
+  const sig = await client.eth.personal.sign(data, order.maker, '')
 
   order.r = sig.substring(0, 66)
   order.s = '0x' + sig.substring(66, 130)
@@ -86,7 +86,6 @@ const finalizeOrder = async order => {
     .call()
   return hash
 }
-
 const client = {
   account: account,
   activate: activate,

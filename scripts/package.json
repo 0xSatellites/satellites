@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "firebase-admin": "^6.5.1",
-    "uuid-v4": "^0.1.0"
+    "uuid-v4": "^0.1.0",
+    "web3": "^1.0.0-beta.37"
   }
 }

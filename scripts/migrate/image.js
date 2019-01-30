@@ -1,18 +1,20 @@
-const config = require('../config.json')
+const config = require('../../config.json')
 const admin = require('firebase-admin')
-const serviceAccount = require('../.serviceAccountKey.json');
+const serviceAccount = require('../../.serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const bucket = admin.storage().bucket('blockbase-bazaaar-sand.appspot.com');
+const bucket = admin.storage().bucket(config.bucket.sand);
 const db = admin.firestore()
 
 const UUID = require("uuid-v4");
 
-const mchh_path = "https://www.origin.sand.mch.djty.co/images/heroes/2000/"
-const mche_path = "https://www.origin.sand.mch.djty.co/images/extensions/2000/"
+
+const mchh_image = config.api.mch.image + "heroes/2000/"
+const mche_image = config.api.mch.image + "extensions/2000/"
+
 const mchh_range_2 = [2001, 2009]
 const mchh_range_3 = [3001, 3018]
 const mchh_range_4 = [4001, 4020]
@@ -25,7 +27,7 @@ const mche_range_4 = [4001, 4014]
 const mche_range_5 = [5001, 5014]
 
 //mchh()
-//mche()
+mche()
 
 async function mchh(){
   var list = []
@@ -41,7 +43,7 @@ async function mchh(){
   for(var i=mchh_range_2[0]; i<=mchh_range_2[1]; i++){
     list.push(i)
   }
-  bulk(mchh_path, list, "png", "mchh")
+  bulk(mchh_image, list, "png", "mchh")
 }
 
 async function mche(){
@@ -61,7 +63,7 @@ async function mche(){
   for(var i=mche_range_1[0]; i<=mche_range_1[1]; i++){
     list.push(i)
   }
-  bulk(mche_path, list, "png", "mche")
+  bulk(mche_image, list, "png", "mche")
 }
 
 async function bulk(path, list, format, category){
@@ -75,10 +77,10 @@ async function single(path, i, format, category){
   console.log("start single: " + path, i, format, category)
   var uuid = UUID();
   var data = await bucket.upload(path + i + "." + format,{
-    destination: "/" + category + "/" + i + ".png",
+    destination: "/" + category + "/" + i + "." + format,
     uploadType: "media",
     metadata: {
-      contentType: 'image/' + format,
+      contentType: config.constant.image + '/' + format,
       metadata: {
         firebaseStorageDownloadTokens: uuid
       }
@@ -88,6 +90,6 @@ async function single(path, i, format, category){
   var record = {
     url:"https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid,
   }
-  db.collection('image').doc(category + '_' + i.toString()).set(record)
+  db.collection(config.constant.image).doc(category + '_' + i.toString()).set(record)
 
 }

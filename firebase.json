@@ -5,6 +5,11 @@
   },
   "hosting": {
     "public": "public",
+
+    "rewrites": [ {
+      "source": "/order/*", "function": "order"
+    } ],
+
     "ignore": [
       "firebase.json",
       "**/.*",

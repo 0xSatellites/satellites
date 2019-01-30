@@ -1,0 +1,25 @@
+{
+  "name": "bazaaar.io",
+  "version": "1.0.0",
+  "description": "bazaaar.io",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/block-base/bazaaar.io.git"
+  },
+  "keywords": [],
+  "author": "BlockBase",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/block-base/bazaaar.io/issues"
+  },
+  "homepage": "https://github.com/block-base/bazaaar.io#readme",
+  "dependencies": {
+    "firebase-admin": "^6.5.1",
+    "uuid-v4": "^0.1.0"
+  }
+}

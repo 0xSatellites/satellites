@@ -128,8 +128,7 @@ export default {
         order.hash = hash
         order.metadata = asset
         await db.set(config.constant.order, hash, order)
-        window.location.href = config.bazaaar.host + 'order/' + hash
-        //router.push({ name: './../order', params: { hash }})
+        router.push({ path: '/order/' + hash})
       } else {
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)

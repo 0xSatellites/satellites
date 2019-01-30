@@ -21,6 +21,7 @@ const mch_skill = config.api.mch.metadata + "skill/"
 
 //mchh()
 //mche()
+custom()
 
 async function mchh(){
   const contract = new web3.eth.Contract(
@@ -86,6 +87,51 @@ async function mche(){
 
   for (var i=0; i<limit; i++){
     const result = await contract.methods.tokenByIndex(i).call()
+    try {
+      const general = await axios({
+        method:'get',
+        url:mche_meta + result,
+        responseType:'json'
+      })
+      const extension_type_id = general.data.extra_data.extension_type
+      const skill_id = general.data.extra_data.skill_id
+
+      const extension_type = await axios({
+        method:'get',
+        url:mche_type_meta + extension_type_id,
+        responseType:'json'
+      })
+
+      const skill = await axios({
+        method:'get',
+        url:mch_skill + skill_id,
+        responseType:'json'
+      })
+
+      general.data.extension_type = extension_type.data
+      general.data.skill = skill.data
+
+      const doc = await db.collection(config.constant.image).doc('mche' + '_' + result.toString().substring(0,4)).get();
+      const image = doc.data();
+      general.data.cache_image = image.url
+      console.log("done:" + result)
+      await db.collection(config.constant.metadata).doc('mche' + '_' + result.toString()).set(general.data)
+    } catch (err){
+        console.log("error:" + result)
+    }
+  }
+}
+
+
+async function mche(){
+  const contract = new web3.eth.Contract(
+    config.abi.mche,
+    config.contract.mainnet.mche
+  )
+  
+  const data = ["mche_10012160", "mche_10012161", "mche_10012162", "mche_10012163", "mche_10012164", "mche_10012165", "10012166", "10012167", "10012168"]
+
+  for (var i=0; i<limit; i++){
     try {
       const general = await axios({
         method:'get',

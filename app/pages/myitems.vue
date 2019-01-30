@@ -17,7 +17,7 @@
       </section>
       <section class="c-index c-index--mypage">
         <ul>
-          <li v-for="(mchh, i) in myitems.mchh" :key="i">
+          <li v-for="(mchh, i) in myitems.mchh" :key="i + '-mchh'">
           <div>
               <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
                   <!-- 出品可能 -->
@@ -26,6 +26,19 @@
                   <div class="c-card__img"><img :src="mchh.cache_image"></div>
                   <div class="c-card__name">{{mchh.attributes.hero_name}} / LV.{{mchh.attributes.lv}}</div>
                   <div class="c-card__txt"># {{mchh.attributes.id}}</div>
+                  <div class="c-card__txt">My Crypto Heores</div>
+              </nuxt-link>
+            </div>
+          </li>
+          <li v-for="(mche, i) in myitems.mche" :key="i + '-mche'">
+          <div>
+              <nuxt-link :to="'/mchh/' + mche.attributes.id" class="c-card">
+                  <!-- 出品可能 -->
+                  <div class="c-card__label c-card__label__rarity--1">★1</div>
+                  <div class="c-card__label--exhibit">出品可能</div>
+                  <div class="c-card__img"><img :src="mche.cache_image"></div>
+                  <div class="c-card__name">{{mche.attributes.hero_name}} / LV.{{mche.attributes.lv}}</div>
+                  <div class="c-card__txt"># {{mche.attributes.id}}</div>
                   <div class="c-card__txt">My Crypto Heores</div>
               </nuxt-link>
             </div>

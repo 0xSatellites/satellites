@@ -1,17 +1,16 @@
 var ExtensionAsset = artifacts.require('token/mycryptoextensionAssetes/ExtensionAsset')
-var Bazaaar = artifacts.require('Bazaaar')
 
 contract('Deploy Extension', async function(accounts) {
 
-    const EXTENSIONID1 = 10012160;
-    const EXTENSIONID2 = 10012161;
-    const EXTENSIONID3 = 10012162;
-    const EXTENSIONID4 = 10012163;
-    const EXTENSIONID5 = 10012164;
-    const EXTENSIONID6 = 10012165;
-    const EXTENSIONID7 = 10012166;
-    const EXTENSIONID8 = 10012167;
-    const EXTENSIONID9 = 10012168;
+    const EXTENSIONID1 = 10010064;
+    const EXTENSIONID2 = 10010076;
+    const EXTENSIONID3 = 10010441;
+    const EXTENSIONID4 = 10010823;
+    const EXTENSIONID5 = 10010946;
+    const EXTENSIONID6 = 10010995;
+    const EXTENSIONID7 = 10011467;
+    const EXTENSIONID8 = 10011706;
+    const EXTENSIONID9 = 10012152;
 
     it('Mint initial token', async function() {
       var extensionAsset = await ExtensionAsset.new();

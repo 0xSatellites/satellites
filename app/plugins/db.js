@@ -65,13 +65,13 @@ const getOrderHistoryByType = async type => {
   console.log('db:getOrderHistoryByType')
   const result = {
     labels:[],
-    total_prices:[]
+    prices:[]
   }
-  const snapshots = await db.collection("order_opensea").where("type", "==", type).get()
+  const snapshots = await db.collection("order").where("asset_type", "==", type).get()
   snapshots.forEach((doc) => {
     const data = doc.data()
     result.labels.push("")
-    result.total_prices.push(data.total_price / 1000000000000000000)
+    result.prices.push(data.price / 1000000000000000000)
   });
   return result
 }

@@ -35,7 +35,7 @@ export default {
       datasets: [
         {
           label: '価格の推移',
-          data: history.total_prices
+          data: history.prices
         }
       ]
     }

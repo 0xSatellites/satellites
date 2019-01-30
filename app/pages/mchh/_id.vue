@@ -78,8 +78,8 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        // const order = await db.getOrderMyHistory(account)
-        // await store.dispatch('order/setOrder', order)
+        //const order = await db.getOrderByHistory(account)
+        //await store.dispatch('order/setOrder', order)
       }
       //initialize canvas client
       canvas.initialize('ogp')
@@ -105,9 +105,21 @@ export default {
       const asset = this.asset.mchh
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
-      const approved = await client.contract.mchh.methods
+      console.log("test")
+      console.log(client.contract.mchh.methods)
+      console.log(this.account)
+      console.log(client.contract)
+
+      const test = new client.eth.Contract(
+        config.abi.mchh,
+        config.contract.rinkeby.mchh
+      )
+
+      //const approved = await client.contract.mchh.methods
+        const approved = await test.methods
         .isApprovedForAll(address, client.contract.bazaaar_v1._address)
         .call()
+      console.log("test")
       if (approved) {
         canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)

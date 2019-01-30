@@ -1,5 +1,4 @@
 var HeroAsset = artifacts.require('token/mycryptoheroAssetes/HeroAsset')
-var Bazaaar = artifacts.require('Bazaaar')
 
 contract('Deploy Extension', async function(accounts) {
 

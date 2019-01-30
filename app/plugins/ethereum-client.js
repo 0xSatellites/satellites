@@ -1,18 +1,20 @@
 const Web3 = require('web3')
 const config = require('../../config.json')
 
-const web3 = new Web3(config.node.https)
+const web3 = new Web3(config.node.rinkeby.https)
 
 const contract = {
   bazaaar_v1: new web3.eth.Contract(
-    config.abi.bazaaar.proxy_v1,
-    config.contract.bazaaar.proxy_v1
+    config.abi.bazaaar_v1,
+    config.contract.bazaaar_v1
   ),
   mche: new web3.eth.Contract(
-    config.abi.mch.extension,
-    config.contract.mch.extension
+    config.abi.mchh,
+    config.contract.rinkeby.mche
   ),
-  mchh: new web3.eth.Contract(config.abi.mch.hero, config.contract.mch.hero)
+  mchh: new web3.eth.Contract(
+    config.abi.mchh,
+    config.contract.rinkeby.mchh)
 }
 
 const account = {

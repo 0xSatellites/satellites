@@ -41,12 +41,12 @@
     "matched": "matched"
   },
   "firebase":{
-    "apiKey": "AIzaSyA-7TvSTEopJ9bpVd-AwCaSbrD2iyGUIk0",
-    "authDomain": "blockbase-bazaaar.firebaseapp.com",
-    "databaseURL": "https://blockbase-bazaaar.firebaseio.com",
-    "projectId": "blockbase-bazaaar",
-    "storageBucket": "blockbase-bazaaar.appspot.com",
-    "messagingSenderId": "307672265180"
+    "apiKey": "AIzaSyDjT9zhOI5PpX7UZQTGoHfsrZmxcZ7eWCs",
+    "authDomain": "blockbase-bazaaar-sand.firebaseapp.com",
+    "databaseURL": "https://blockbase-bazaaar-sand.firebaseio.com",
+    "projectId": "blockbase-bazaaar-sand",
+    "storageBucket": "blockbase-bazaaar-sand.appspot.com",
+    "messagingSenderId": "218093511875"
   },
   "discord":{
     "endpoint":"http://localhost:3000/order/"

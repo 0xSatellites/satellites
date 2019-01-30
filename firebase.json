@@ -7,7 +7,7 @@
     "public": "app/dist",
 
     "rewrites": [ {
-      "source": "/order/*", "function": "order"
+      "source": "/order/*", "function": "ogp"
     } ],
 
     "ignore": [

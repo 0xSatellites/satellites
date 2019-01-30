@@ -41,12 +41,6 @@ import PriceChartComponent from '~/components/pricechart'
 const config = require('../../../config.json')
 
 export default {
-  head() {
-    var order = this.order
-    return {
-      meta: [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
-    }
-  },
   components: {
     PriceChartComponent
   },

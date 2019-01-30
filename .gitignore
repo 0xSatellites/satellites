@@ -88,3 +88,6 @@ build
 # PrivKey
 .secret
 .serviceAccountKey.json
+
+# Firebase
+firebase-debug.log

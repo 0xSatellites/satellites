@@ -69,7 +69,7 @@ const finalizeOrder = async order => {
     order.artEditRoyaltyRatio,
     order.salt
   )
-  const sig = await client.eth.personal.sign(data, order.maker, '')
+  const sig = await client.eth.personal.sign(order, order.maker, '')
 
   order.r = sig.substring(0, 66)
   order.s = '0x' + sig.substring(66, 130)

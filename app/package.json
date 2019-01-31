@@ -5,9 +5,9 @@
   "author": "BlockBase",
   "private": true,
   "scripts": {
-    "dev": "nuxt --hostname 0.0.0.0",
+    "dev": "nuxt --hostname 0.0.0.0 --port 8080",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "nuxt start --hostname 0.0.0.0 --port 8080",
     "generate": "nuxt generate"
   },
   "dependencies": {

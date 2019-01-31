@@ -8,6 +8,6 @@ admin.initializeApp({
 
 const db = admin.firestore()
 
-exports.ogp = functions.region('asia-northeast1').https.onRequest((req, res) => {
+exports.auth = functions.region('asia-northeast1').https.onRequest((req, res) => {
 
 });

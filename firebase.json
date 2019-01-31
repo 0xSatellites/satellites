@@ -3,19 +3,6 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
-    "public": "app/dist",
-
-    "rewrites": [ {
-      "source": "/order/*", "function": "ogp"
-    } ],
-
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
   "storage": {
     "rules": "storage.rules"
   }

@@ -2,7 +2,7 @@ const config = require('../../config.json')
 
 const axios= require('axios');
 const admin = require('firebase-admin');
-const serviceAccount = require('../../.serviceAccountKey.json');
+const serviceAccount = require('../.serviceAccountKey.json');
 
 const Web3 = require('web3');
 const web3 = new Web3(config.node.mainnet.https)

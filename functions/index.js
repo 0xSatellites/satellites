@@ -7,12 +7,8 @@ const {promisify} = require('util')
 
 const readFile = promisify(fs.readFile)
 
-//const draw = require('./lib/canvas')
+const draw = require('./lib/draw')
 const serviceAccount = require('./.serviceAccountKey.json')
-
-const Canvas = require('canvas')
-Canvas.registerFont(__dirname  + '/assets/fonts/NotoSansJP-Regular.otf', { family: 'Noto Sans JP' })
-Canvas.registerFont(__dirname  + '/assets/fonts/NotoSansJP-Bold.otf', { family: 'Noto Sans JP Bold', weight: 'bold'})
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -20,7 +16,7 @@ admin.initializeApp({
 
 const db = admin.firestore()
 
-exports.order = functions.region('asia-northeast1').https.onCall(async (data, c) => {
+exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
 
   const canvas = Canvas.createCanvas(1200,630)
   const context = canvas.getContext('2d')
@@ -64,7 +60,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, c)
   context.font = "bold 80px 'Noto Sans JP Bold'";
   context.textBaseline = "top";
   context.textAlign = 'center';
-  context.fillText('今なら買えます！', 840, 120, 720);
+  context.fillText('ただいま出品中！', 840, 120, 720);
 
   //コメント 1行目
   //context.fillStyle = '#ffff00';

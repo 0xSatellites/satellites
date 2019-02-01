@@ -54,6 +54,7 @@
 
 <script>
 import db from '~/plugins/db'
+import functions from '~/plugins/functions'
 import canvas from '~/plugins/canvas'
 import PriceChartComponent from '~/components/pricechart'
 import client from '~/plugins/ethereum-client'
@@ -98,7 +99,10 @@ export default {
   },
   methods: {
     async order_v1() {
-      console.log('order_v1')
+      console.log('order_v1--')
+      var result = await functions.call()
+      console.log(result)
+
       const router = this.$router
       const address = this.account.address
       const params = this.$route.params
@@ -109,6 +113,7 @@ export default {
         .isApprovedForAll(address, client.contract.bazaaar_v1.options.address)
         .call({from:this.account.address})
       if (approved) {
+        console.log('approved')
         canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)
         const order = {
@@ -122,14 +127,16 @@ export default {
           salt: salt
         }
 
-        const hash = await client.finalizeOrder(order)
-        const base64 = canvas.generate().substr(22)
-        order.ogp = await storage.ogp(hash, base64)
-        order.hash = hash
-        order.metadata = asset
-        await db.set(config.constant.order, hash, order)
+
+        //const hash = await client.finalizeOrder(order)
+        //const base64 = canvas.generate().substr(22)
+        //order.ogp = await storage.ogp(hash, base64)
+        //order.hash = hash
+        //order.metadata = asset
+        //await db.set(config.constant.order, hash, order)
         router.push({ path: '/order/' + hash})
       } else {
+        console.log('not approved')
         client.contract.mchh.methods
           .setApprovalForAll(client.contract.bazaaar_v1._address, true)
           .send({ from: this.account.address })

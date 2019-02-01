@@ -15,11 +15,15 @@
     "chart.js": "^2.7.3",
     "cross-env": "^5.2.0",
     "firebase": "^5.8.1",
+    "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
+    "nuxt-sass-resources-loader": "^2.0.5",
+    "sass-loader": "^7.1.0",
     "vue-chartjs": "^3.4.0",
     "web3": "^1.0.0-beta.41"
   },
   "devDependencies": {
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "nodemon": "^1.18.9"
   }
 }

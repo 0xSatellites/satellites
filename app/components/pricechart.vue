@@ -1,10 +1,5 @@
 <template>
-  <div>
-    <section class="c-price">
-      <h2 class="c-price__title">価格推移</h2>
-      <line-chart :chart-data="datacollection"></line-chart>
-    </section>
-  </div>
+    <line-chart :chart-data="datacollection" id="myChart"></line-chart>
 </template>
 
 <script>
@@ -42,3 +37,7 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+</style>
+

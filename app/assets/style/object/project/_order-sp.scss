@@ -144,102 +144,127 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
 
 //
 .l-og{
-position: relative;
-width: 348px;
-height: 348px;
-margin: 0 auto;
-overflow: hidden;
+  canvas{
+  width: 100vw;
+  }
+}
+
+//
+.l-modal{
+position: fixed;
+left: 0;
+top: 0;
+width: 100vw;
+height: 100vh;
+background: rgba(0,0,0,0.5);
 
   &__frame{
   position: absolute;
-  left:calc(50% - 330px);
-  width: 1200px;//1000
-  height: 630px;//525
-  background: #2284db url(../../img/og/bg.png) center center no-repeat;
-  transform-origin: left top;
-  transform: scale(0.55);
+  left: calc(50% - 42.66vw);
+  top: calc(50% - 66.67vw);
+  width: floor-decimal(320vw * 100 / 375, 2);
+  height: floor-decimal(500vw * 100 / 375, 2);
+  background: #fff;
   }
 
-  &__inner{
-  width: 630px;
-  height: 630px;
-  margin: 0 auto;
-  //background: rgba(255,0,0,0.2);
-  }
-  &__title{
-  padding-top: 75px;
-  font-size: 36px;
-  line-height: 1.1;
-  font-weight: 900;
-  color: #fff;
+  &__icon{
+  padding-top: floor-decimal(16vw * 100 / 375, 2);
   text-align: center;
-  }
-
-  &__img{
-  position: relative;
-  width: 230px;
-  margin: 50px auto 0;
-  padding-bottom: 25px;
     img{
-      &:nth-child(1){
-      width: 230px;
-      border: solid #fafafa 1px;
-      border-radius: 4px;
-      box-sizing: border-box;
-      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.16);
-      background: #fff;
-      }
-      &:nth-child(2){
-      position: absolute;
-      right: -50px;
-      bottom: 0;
-      width: 100px;
-      border: solid #fafafa 1px;
-      border-radius: 4px;
-      box-sizing: border-box;
-      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.16);
-      background: #fff;
-      }
+    width: floor-decimal(49vw * 100 / 375, 2);
+    height: floor-decimal(49vw * 100 / 375, 2);
     }
-  }
-  
-  &__lv{
-  padding-top: 40px;
-  font-size: 24px;
-  line-height: 1.1;
-  font-weight: 900;
-  color: #fff;
-  text-align: center;
-  }
-  &__eth{
-  padding-top: 25px;
-  font-size: 48px;
-  line-height: 1.1;
-  font-weight: 900;
-  color: #fff;
-  text-align: center;
   }
 
-  &__out{
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1200px;
-  height: 630px;
-  background: rgba(0,0,0,0.6);
-    &__txt{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    font-size: 60px;
-    line-height: 1.1;
-    font-weight: 900;
-    color: #f00;
-    padding: 0.5em 1em;
-    background: #fff;
-    border:solid #f00 20px;
-    transform: translate(-50%,-50%) rotate(-5deg);
+  &__title{
+  padding: floor-decimal(6vw * 100 / 375, 2) 0 floor-decimal(8vw * 100 / 375, 2);
+  font-size: floor-decimal(24vw * 100 / 375, 2);
+  line-height: 1.5;
+  font-weight: bold;
+  text-align: center;
+  color: #575656;
+  }
+
+  &__og{
+  padding: floor-decimal(10vw * 100 / 375, 2) 0;
+  text-align: center;
+  background: #eeeeee;
+    canvas{
+    width: floor-decimal(275vw * 100 / 375, 2);
     }
   }
+
+  &__txt{
+  padding-top: floor-decimal(30vw * 100 / 375, 2);
+  font-size: floor-decimal(20vw * 100 / 375, 2);
+  line-height: 1.5;
+  font-weight: normal;
+  text-align: center;
+  color: #575656;
+  }
+
+  &__btn{
+  width: floor-decimal(240vw * 100 / 375, 2);
+  height: floor-decimal(70vw * 100 / 375, 2);
+  margin: floor-decimal(10vw * 100 / 375, 2) auto 0;
+  border-radius : floor-decimal(4vw * 100 / 375, 2);;
+  font-size: floor-decimal(20vw * 100 / 375, 2);
+  line-height: floor-decimal(68vw * 100 / 375, 2);
+  font-weight: bold;
+  text-align: center;
+  background : #2D81DA;
+  color: #fff;
+  }
+
+  &__close{
+  padding-top: floor-decimal(30vw * 100 / 375, 2);
+  text-align: center;
+
+    &__icon{
+    position: relative;
+    left: 0;
+    top: ceil-decimal(1vw * 100 / 375, 2);
+    display: inline-block;
+    vertical-align: middle;
+    width: 29px;
+    height: 29px;
+    transform: rotate(45deg);
+    
+      &::before{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: #575656;
+      }
+      &::after{
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 0;
+      display: block;
+      width: 1px;
+      height: 100%;
+      background: #575656;
+      }
+    }
+    &__txt{
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: floor-decimal(20vw * 100 / 375, 2);
+    line-height: 1.5;
+    color: #575656;
+    margin-left: 0.25em;
+    }
+  }
+
 }
+
+
+
+
 

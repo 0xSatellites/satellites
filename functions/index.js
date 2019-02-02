@@ -23,9 +23,9 @@ Canvas.registerFont(__dirname  + '/assets/fonts/NotoSansJP-Bold.otf', { family: 
 
 const Web3 = require('web3')
 const web3 = new Web3(config.node.rinkeby.https)
-const bazaaar_v1 = new web3.eth.Contract(
-  config.abi.bazaaar_v1,
-  config.contract.rinkeby.bazaaar_v1
+const bazaaar_v2 = new web3.eth.Contract(
+  config.abi.bazaaar_v2,
+  config.contract.rinkeby.bazaaar_v2
 )
 
 async function metadata(asset, id){
@@ -98,9 +98,9 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
 
-  const hash = await bazaaar_v1.methods
+  const hash = await bazaaar_v2.methods
     .requireValidOrder_(
-      [data.proxy, data.maker, data.taker, data.artEditRoyaltyRecipient],
+      [data.proxy, data.maker, data.taker, data.artEditRoyaltyRecipient, data.asset],
       [data.id, data.price, data.artEditRoyaltyRatio, data.salt],
       data.v,
       data.r,

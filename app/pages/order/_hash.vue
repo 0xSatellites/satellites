@@ -82,19 +82,21 @@ export default {
     async purchase() {
       const account = this.account
       const order = this.order
-      await client.contract.bazaaar_v1.methods
+
+      await client.contract.bazaaar_v2.methods
         .orderMatch_(
           [
             order.proxy,
             order.maker,
             order.taker,
             order.artEditRoyaltyRecipient,
+            order.asset,
             order.maker
           ],
-          [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
+          [order.id, order.price, order.artEditRoyaltyRatio, order.salt, 100],
           order.v,
           order.r,
-          order.s
+          order.s,
         )
         .send({ from: account.address, value: order.price })
         .on('transactionHash', function(hash) {
@@ -104,13 +106,14 @@ export default {
     async cancel() {
       const account = this.account
       const order = this.order
-      await client.contract.bazaaar_v1.methods
+      await client.contract.bazaaar_v2.methods
         .orderCancell_(
           [
             order.proxy,
             order.maker,
             order.taker,
-            order.artEditRoyaltyRecipient
+            order.artEditRoyaltyRecipient,
+            client.contract.mchh.options.address
           ],
           [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
           order.v,

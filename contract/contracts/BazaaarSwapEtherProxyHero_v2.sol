@@ -110,6 +110,7 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
 
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
+        nonce[order.asset][order.id]++;
         emit OrderMatched(hash);
     }
 
@@ -117,6 +118,7 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         require(order.maker == msg.sender);
         bytes32 hash = requireValidOrder(order, sig);
         cancelledOrFinalized[hash] = true;
+        nonce[order.asset][order.id]++;
         emit OrderCancelled(hash);
     }
 

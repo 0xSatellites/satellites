@@ -125,10 +125,11 @@ export default {
           salt: salt
         }
 
-        var result = await functions.call(order)
+        const signedOrder = await client.signOrder(order)
+        var result = await functions.call('order', signedOrder)
         console.log(result)
 
-        //const hash = await client.finalizeOrder(order)
+        //const hash = await client.signOrder(order)
         //const base64 = canvas.generate().substr(22)
         //order.ogp = await storage.ogp(hash, base64)
         //order.hash = hash

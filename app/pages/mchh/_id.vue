@@ -4,7 +4,7 @@
         <div class="l-item__frame">
         <div>
         <div class="l-item__img">
-          <img :src="asset.mchh.cache_image" alt="">
+          <img :src="asset.mchh.image_url" alt="">
           <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt="">
           </div>
         </div>
@@ -68,7 +68,8 @@ export default {
     PriceChartComponent
   },
   async asyncData({ store, params }) {
-    const asset = await db.getAssetByKey('mchh_' + params.id)
+    //const asset = await db.getAssetByKey('mchh_' + params.id)
+    const asset = await functions.call('metadata', {asset:'mchh', id:params.id})
     await store.dispatch('asset/setMchh', asset)
   },
   mounted: async function() {

@@ -9,13 +9,14 @@ if (!firebase.apps.length) {
 var functions = firebase.app().functions(/*'asia-northeast1'*/);
 functions.useFunctionsEmulator('http://localhost:5000')
 
-const call = async key => {
-    const order = functions.httpsCallable('order');
-    return await order(key)
-  }
+const call = async (endpoint, param) => {
+  const callable = functions.httpsCallable(endpoint);
+  const response = await callable(param)
+  return response.data
+}
 
 const result = {
-    call:call
+  call:call
 }
 
 export default result

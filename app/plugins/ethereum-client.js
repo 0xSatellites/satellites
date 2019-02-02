@@ -52,9 +52,6 @@ const ownedTokens = async name => {
     promises.push(methods.tokenOfOwnerByIndex(account.address, i).call())
   }
   const result = await Promise.all(promises)
-  for (var i = 0; i < result.length; i++) {
-    result[i] = name + '_' + result[i]
-  }
   return result
 }
 

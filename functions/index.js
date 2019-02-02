@@ -16,15 +16,14 @@ const {promisify} = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 
-exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=900')
+exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
 
-  let query = req.query
+  var response
 
-  if(query.asset == 'mchh') {
+  if(data.asset == 'mchh') {
     let general = await axios({
       method:'get',
-      url:config.api.mch.metadata + 'hero/' + query.id,
+      url:config.api.mch.metadata + 'hero/' + data.id,
       responseType:'json'
     })
 
@@ -49,17 +48,15 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 
     let resolved = await Promise.all(promises)
 
-    let response = general.data
+    response = general.data
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
 
-    res.status(200).send(response)
-
-  } else if (query.asset == 'mche'){
+  } else if (data.asset == 'mche'){
     let general = await axios({
       method:'get',
-      url:config.api.mch.metadata + 'extension/' + query.id,
+      url:config.api.mch.metadata + 'extension/' + data.id,
       responseType:'json'
     })
 
@@ -78,18 +75,17 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 
     let resolved = await Promise.all(promises)
 
-    let response = general.data
+    response = general.data
     response.extension_type = resolved[0].data
     response.skill = resolved[1].data
 
-    res.status(200).send(response)
   }
+
+  return response
+
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
-  console.log("check")
-  console.log(context)
-  console.log(data)
   let canvas = Canvas.createCanvas(1200,630)
   let c = canvas.getContext('2d')
 

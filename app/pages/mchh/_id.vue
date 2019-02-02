@@ -128,14 +128,7 @@ export default {
         const signedOrder = await client.signOrder(order)
         var result = await functions.call('order', signedOrder)
         console.log(result)
-
-        //const hash = await client.signOrder(order)
-        //const base64 = canvas.generate().substr(22)
-        //order.ogp = await storage.ogp(hash, base64)
-        //order.hash = hash
-        //order.metadata = asset
-        //await db.set(config.constant.order, hash, order)
-        //router.push({ path: '/order/' + hash})
+        router.push({ path: '/order/' + result.hash})
       } else {
         console.log('not approved')
         client.contract.mchh.methods

@@ -99,9 +99,6 @@ export default {
   },
   methods: {
     async order_v1() {
-      console.log('order_v1--')
-      var result = await functions.call()
-      console.log(result)
 
       const router = this.$router
       const address = this.account.address
@@ -127,6 +124,8 @@ export default {
           salt: salt
         }
 
+        var result = await functions.call(order)
+        console.log(result)
 
         //const hash = await client.finalizeOrder(order)
         //const base64 = canvas.generate().substr(22)
@@ -134,7 +133,7 @@ export default {
         //order.hash = hash
         //order.metadata = asset
         //await db.set(config.constant.order, hash, order)
-        router.push({ path: '/order/' + hash})
+        //router.push({ path: '/order/' + hash})
       } else {
         console.log('not approved')
         client.contract.mchh.methods

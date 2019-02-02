@@ -1,14 +1,8 @@
+const config = require('./config.json')
+const serviceAccount = require('./.serviceAccountKey.json')
+
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-
-const http = require("http");
-const fs = require('fs')
-const {promisify} = require('util')
-
-const readFile = promisify(fs.readFile)
-
-const draw = require('./lib/draw')
-const serviceAccount = require('./.serviceAccountKey.json')
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -16,86 +10,164 @@ admin.initializeApp({
 
 const db = admin.firestore()
 
-exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+const axios = require("axios")
 
-  const canvas = Canvas.createCanvas(1200,630)
-  const context = canvas.getContext('2d')
+const {promisify} = require('util')
+const fs = require('fs')
+const readFile = promisify(fs.readFile)
+
+exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=900')
+
+  let query = req.query
+
+  if(query.asset == 'mchh') {
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'hero/' + query.id,
+      responseType:'json'
+    })
+
+    let promises = []
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
+      responseType:'json'
+    }))
+
+    let resolved = await Promise.all(promises)
+
+    let response = general.data
+    response.hero_type = resolved[0].data
+    response.active_skill = resolved[1].data
+    response.passive_skill = resolved[2].data
+
+    res.status(200).send(response)
+
+  } else if (query.asset == 'mche'){
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extension/' + query.id,
+      responseType:'json'
+    })
+
+    let promises = []
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
+      responseType:'json'
+    }))
+
+    let resolved = await Promise.all(promises)
+
+    let response = general.data
+    response.extension_type = resolved[0].data
+    response.skill = resolved[1].data
+
+    res.status(200).send(response)
+  }
+})
+
+exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  console.log("check")
+  console.log(context)
+  console.log(data)
+  let canvas = Canvas.createCanvas(1200,630)
+  let c = canvas.getContext('2d')
 
   //背景画像
-  const bgImg = new Canvas.Image()
+  let bgImg = new Canvas.Image()
   bgImg.src = await readFile('./assets/img/bg.png')
 
   //ロゴ
-  const logoImg = new Canvas.Image()
+  let logoImg = new Canvas.Image()
   logoImg.src = await readFile('./assets/img/logo.png')
 
   //ボタン
-  const btnImg = new Canvas.Image()
+  let btnImg = new Canvas.Image()
   btnImg.src = await readFile('./assets/img/btn.png')
 
   //キャラクター画像
-  //const characterImg = new Canvas.Image();
+  //let characterImg = new Canvas.Image();
   //characterImg.src = await http.get('http://www.mycryptoheroes.net/images/heroes/2000/4009.png')
 
-  const outImg = new Canvas.Image();
+  let outImg = new Canvas.Image();
   outImg.src = await readFile('./assets/img/out.png')
 
   //初期化
-  context.clearRect(0, 0, 1200, 630);
+  c.clearRect(0, 0, 1200, 630);
 
   //背景画像
-  context.drawImage(bgImg, 0, 0);
+  c.drawImage(bgImg, 0, 0);
 
   //ロゴ
-  context.drawImage(logoImg, 1002, 21);
+  c.drawImage(logoImg, 1002, 21);
 
   //ボタン
-  context.drawImage(btnImg, 696, 489);
+  c.drawImage(btnImg, 696, 489);
 
   //キャラクター画像
-  //context.drawImage(characterImg, 15, 90, 450, 450);
+  //c.drawImage(characterImg, 15, 90, 450, 450);
 
   //コメント 単一行
-  context.fillStyle = '#ffff00';
-  context.font = "bold 80px 'Noto Sans JP Bold'";
-  context.textBaseline = "top";
-  context.textAlign = 'center';
-  context.fillText('ただいま出品中！', 840, 120, 720);
+  c.fillStyle = '#ffff00';
+  c.font = "bold 80px 'Noto Sans JP Bold'";
+  c.textBaseline = "top";
+  c.textAlign = 'center';
+  c.fillText('ただいま出品中！', 840, 120, 720);
 
   //コメント 1行目
-  //context.fillStyle = '#ffff00';
-  //context.font = "bold 64px 'Noto Sans JP'";
-  //context.textBaseline = "top";
-  //context.textAlign = 'center';
-  //context.fillText('テキスト可変の場合', 840, 80, 720);
+  //c.fillStyle = '#ffff00';
+  //c.font = "bold 64px 'Noto Sans JP'";
+  //c.textBaseline = "top";
+  //c.textAlign = 'center';
+  //c.fillText('テキスト可変の場合', 840, 80, 720);
 
   //コメント 2行目
-  //context.fillStyle = '#ffff00';
-  //context.font = "bold 64px 'Noto Sans JP'";
-  //context.textBaseline = "top";
-  //context.textAlign = 'center';
-  //context.fillText('最大18文字まで可能', 840, 160, 720);
+  //c.fillStyle = '#ffff00';
+  //c.font = "bold 64px 'Noto Sans JP'";
+  //c.textBaseline = "top";
+  //c.textAlign = 'center';
+  //c.fillText('最大18文字まで可能', 840, 160, 720);
 
   //名前
-  context.fillStyle = '#fff';
-  context.font = "40px 'Noto Sans JP'";
-  context.textBaseline = "top";
-  context.textAlign = 'center';
-  context.fillText('Masamune Date', 840, 255, 720);
+  c.fillStyle = '#fff';
+  c.font = "40px 'Noto Sans JP'";
+  c.textBaseline = "top";
+  c.textAlign = 'center';
+  c.fillText('Masamune Date', 840, 255, 720);
 
   //Lv
-  context.fillStyle = '#fff';
-  context.font = "40px 'Noto Sans JP'";
-  context.textBaseline = "top";
-  context.textAlign = 'center';
-  context.fillText('Lv.70', 840, 305, 720);
+  c.fillStyle = '#fff';
+  c.font = "40px 'Noto Sans JP'";
+  c.textBaseline = "top";
+  c.textAlign = 'center';
+  c.fillText('Lv.70', 840, 305, 720);
 
   //イーサ
-  context.fillStyle = '#fff';
-  context.font = "bold 75px 'Noto Sans JP Bold'";
-  context.textBaseline = "top";
-  context.textAlign = 'center';
-  context.fillText('0.0001 ETH', 840, 375, 720);
+  c.fillStyle = '#fff';
+  c.font = "bold 75px 'Noto Sans JP Bold'";
+  c.textBaseline = "top";
+  c.textAlign = 'center';
+  c.fillText('0.0001 ETH', 840, 375, 720);
 
   return canvas.toDataURL()
 

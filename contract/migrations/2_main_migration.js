@@ -1,6 +1,8 @@
-var BazaaarSwapEtherProxyHero_v1 = artifacts.require("./BazaaarSwapEtherProxyHero_v1.sol");
+//var BazaaarSwapEtherProxyHero_v1 = artifacts.require("./BazaaarSwapEtherProxyHero_v1.sol");
+var BazaaarSwapEtherProxyHero_v2 = artifacts.require("./BazaaarSwapEtherProxyHero_v2.sol");
 
 module.exports = function(deployer) {
+  /*
   Ratios = [
     10000,  //ratioBase
     1000,   //feeRatio
@@ -9,4 +11,6 @@ module.exports = function(deployer) {
     600     //artEditRoyaltyRatioLimit
   ]
   deployer.deploy(BazaaarSwapEtherProxyHero_v1, "0x8C213a6B185FE83383d03421aC058772F842De7D", "0xaad0bb0dffaef8c2b0c07dc9ba9603083e8be1f5", Ratios);
+  */
+  deployer.deploy(BazaaarSwapEtherProxyHero_v2)
 };

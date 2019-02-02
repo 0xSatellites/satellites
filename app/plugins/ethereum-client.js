@@ -8,6 +8,10 @@ const contract = {
     config.abi.bazaaar_v1,
     config.contract.rinkeby.bazaaar_v1
   ),
+  bazaaar_v2: new web3.eth.Contract(
+    config.abi.bazaaar_v2,
+    config.contract.rinkeby.bazaaar_v2,
+  ),
   mche: new web3.eth.Contract(
     config.abi.mchh,
     config.contract.rinkeby.mche

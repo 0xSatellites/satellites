@@ -21,6 +21,8 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         uint price;
         uint creatorRoyaltyRatio;
         uint salt;
+        uint expiration;
+        uint nonce;
     }
 
     struct Referral {
@@ -41,35 +43,37 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
     }
 
     mapping(bytes32 => bool) public cancelledOrFinalized;
+    mapping(address=>mapping(uint=>uint)) nonce;
+
     uint public ratioBase = 10000;
 
     constructor() public {}
 
-    function orderMatch_(address[6] addrs, uint[5] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
+    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
         orderMatch(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
             Sig(v, r, s)
         );
         distribute(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
-            Referral(addrs[5], uints[4])
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
+            Referral(addrs[5], uints[6])
         );
     }
 
-    function orderCancell_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
+    function orderCancell_(address[5] addrs, uint[6] uints, uint8 v, bytes32 r, bytes32 s) external {
         orderCancell(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
             Sig(v, r, s)
         );
     }
 
-    function requireValidOrder_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
+    function requireValidOrder_(address[5] addrs, uint[6] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bytes32)
     {
         return requireValidOrder(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
             Sig(v, r, s)
         );
     }
@@ -168,6 +172,12 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         if (order.proxy != address(this)) {
             return false;
         }
+        if (order.expiration < now) {
+            return false;
+        }
+        if (order.nonce != nonce[order.asset][order.id]) {
+            return false;
+        }
         return true;
     }
 
@@ -198,7 +208,9 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
                 order.id,
                 order.price,
                 order.creatorRoyaltyRatio,
-                order.salt
+                order.salt,
+                order.expiration,
+                order.nonce
         ));
     }
 }

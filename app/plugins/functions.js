@@ -6,8 +6,8 @@ const config = require('../../config.json')
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase)
 }
-var functions = firebase.app().functions(/*'asia-northeast1'*/);
-functions.useFunctionsEmulator('http://localhost:5000')
+var functions = firebase.app().functions('asia-northeast1');
+//functions.useFunctionsEmulator('http://localhost:5000')
 
 const call = async (endpoint, param) => {
   const callable = functions.httpsCallable(endpoint);

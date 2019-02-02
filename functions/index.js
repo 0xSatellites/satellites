@@ -10,7 +10,6 @@ admin.initializeApp({
 
 const db = admin.firestore()
 const bucket = admin.storage().bucket(config.bucket.sand);
-const UUID = require("uuid-v4");
 
 const axios = require("axios")
 
@@ -29,14 +28,13 @@ const bazaaar_v1 = new web3.eth.Contract(
   config.contract.rinkeby.bazaaar_v1
 )
 
-exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+async function metadata(asset, id){
 
   var response
-
-  if(data.asset == 'mchh') {
+  if(asset == 'mchh') {
     let general = await axios({
       method:'get',
-      url:config.api.mch.metadata + 'hero/' + data.id,
+      url:config.api.mch.metadata + 'hero/' + id,
       responseType:'json'
     })
 
@@ -65,11 +63,10 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
-
-  } else if (data.asset == 'mche'){
+  } else if (asset == 'mche'){
     let general = await axios({
       method:'get',
-      url:config.api.mch.metadata + 'extension/' + data.id,
+      url:config.api.mch.metadata + 'extension/' + id,
       responseType:'json'
     })
 
@@ -91,11 +88,12 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
     response = general.data
     response.extension_type = resolved[0].data
     response.skill = resolved[1].data
-
   }
-
   return response
+}
 
+exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  return await metadata(data.asset, data.id)
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
@@ -120,7 +118,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     readFile('./assets/img/out.png'),
     axios.get(
       'http://www.mycryptoheroes.net/images/heroes/2000/4009.png',
-      { responseType: 'arraybuffer' })
+      { responseType: 'arraybuffer' }),
+    metadata('mchh', data.id)
   ]
 
   let resolved = await Promise.all(promises)
@@ -185,21 +184,21 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('Masamune Date', 840, 255, 720);
+  c.fillText(resolved[5].hero_type.name.ja, 840, 255, 720);
 
   //Lv
   c.fillStyle = '#fff';
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('Lv.70', 840, 305, 720);
+  c.fillText('Lv.' + resolved[5].attributes.lv, 840, 305, 720);
 
   //イーサ
   c.fillStyle = '#fff';
   c.font = "bold 75px 'Noto Sans JP Bold'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('0.0001 ETH', 840, 375, 720);
+  c.fillText(web3.utils.fromWei(data.price) + ' ETH', 840, 375, 720);
 
   const base64EncodedImageString = canvas.toDataURL().substring(22)
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
@@ -213,7 +212,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   const ogp = 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' + encodeURIComponent(hash + '.png') + '?alt=media'
   data.ogp = ogp
   data.timestamp = new Date().getTime()
-  db.collection('order').doc(hash).set(data)
+  data.metadata = await metadata('mchh', data.id)
+  await db.collection('order').doc(hash).set(data)
 
   const result = {
     ogp:ogp,

@@ -52,13 +52,10 @@ const ownedTokens = async name => {
     promises.push(methods.tokenOfOwnerByIndex(account.address, i).call())
   }
   const result = await Promise.all(promises)
-  for (var i = 0; i < result.length; i++) {
-    result[i] = name + '_' + result[i]
-  }
   return result
 }
 
-const finalizeOrder = async order => {
+const signOrder = async order => {
   const data = client.utils.soliditySha3(
     order.proxy,
     order.maker,
@@ -75,23 +72,14 @@ const finalizeOrder = async order => {
   order.s = '0x' + sig.substring(66, 130)
   order.v = '0x' + sig.substring(130, 132)
 
-  const hash = await client.contract.bazaaar_v1.methods
-    .requireValidOrder_(
-      [order.proxy, order.maker, order.taker, order.artEditRoyaltyRecipient],
-      [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
-      order.v,
-      order.r,
-      order.s
-    )
-    .call()
-  return hash
+  return order
 }
 const client = {
   account: account,
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
-  finalizeOrder:finalizeOrder,
+  signOrder:signOrder,
   utils: web3.utils,
   eth: web3.eth
 }

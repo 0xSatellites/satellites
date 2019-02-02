@@ -65,6 +65,7 @@ const signOrder = async order => {
     order.maker,
     order.taker,
     order.artEditRoyaltyRecipient,
+    order.asset,
     order.id,
     order.price,
     order.artEditRoyaltyRatio,

@@ -108,17 +108,18 @@ export default {
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
-        .isApprovedForAll(address, client.contract.bazaaar_v1.options.address)
+        .isApprovedForAll(address, client.contract.bazaaar_v2.options.address)
         .call({from:this.account.address})
       if (approved) {
         console.log('approved')
         canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)
         const order = {
-          proxy: client.contract.bazaaar_v1.options.address,
+          proxy: client.contract.bazaaar_v2.options.address,
           maker: address,
           taker: config.constant.nulladdress,
           artEditRoyaltyRecipient: address,
+          asset: client.contract.mchh.options.address,
           id: params.id,
           price: wei,
           artEditRoyaltyRatio: 600,
@@ -132,7 +133,7 @@ export default {
       } else {
         console.log('not approved')
         client.contract.mchh.methods
-          .setApprovalForAll(client.contract.bazaaar_v1._address, true)
+          .setApprovalForAll(client.contract.bazaaar_v2.options.address, true)
           .send({ from: this.account.address })
       }
     }

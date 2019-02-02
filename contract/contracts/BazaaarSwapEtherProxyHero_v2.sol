@@ -5,6 +5,10 @@ import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
+//TODO
+//Refferal can be more
+//Refferal can be maker
+
 contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
     using SafeMath for uint;
 

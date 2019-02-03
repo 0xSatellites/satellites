@@ -8,20 +8,18 @@ contract TestBazaaarSwapEtherProxyHero_v2 is BazaaarSwapEtherProxyHero_v2 {
     ) BazaaarSwapEtherProxyHero_v2(
     ) public {}
 
-    function cancelledOrFinalized_(bytes32 hash)
-        public
-    {
-        cancelledOrFinalized[hash] = true;
+    function now_() external view returns (uint) {
+        return now;
     }
 
-    function validateOrder_(bytes32 hash, address[5] addrs, uint[6] uints, uint8 v, bytes32 r, bytes32 s)
+    function validateOrder_(bytes32 hash, address[5] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bool)
     {
         return validateOrder(
             hash,
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
             Sig(v, r, s)
         );
     }
@@ -31,8 +29,8 @@ contract TestBazaaarSwapEtherProxyHero_v2 is BazaaarSwapEtherProxyHero_v2 {
         payable
     {
         distribute(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
-            Referral(addrs[5], uints[4])
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
+            addrs[5]
         );
     }
 
@@ -42,26 +40,25 @@ contract TestBazaaarSwapEtherProxyHero_v2 is BazaaarSwapEtherProxyHero_v2 {
         returns (uint[3])
     {
         Amount memory amount = computeAmount(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]),
-            Referral(addrs[5], uints[6])
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6])
             );
         return ([amount.maker, amount.creatorRoyalty, amount.referral]);
     }
 
-    function validateAssetStatus_(address[5] addrs, uint[6] uints)
+    function validateAssetStatus_(address[5] addrs, uint[7] uints)
         external
         view
         returns (bool)
     {
-        return validateAssetStatus(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]));
+        return validateAssetStatus(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]));
     }
 
-    function validateOrderParameters_(address[5] addrs, uint[6] uints)
+    function validateOrderParameters_(address[5] addrs, uint[7] uints)
         external
         view
         returns (bool)
     {
-        return validateOrderParameters(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]));
+        return validateOrderParameters(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]));
     }
 
     function ecrecover_(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
@@ -72,20 +69,20 @@ contract TestBazaaarSwapEtherProxyHero_v2 is BazaaarSwapEtherProxyHero_v2 {
         return ecrecover(hash, v, r, s);
     }
 
-    function hashToSign_(address[5] addrs, uint[6] uints)
+    function hashToSign_(address[5] addrs, uint[7] uints)
         external
         pure
         returns (bytes32)
     {
-        return hashToSign(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]));
+        return hashToSign(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]));
     }
 
-    function hashOrder_(address[5] addrs, uint[6] uints)
+    function hashOrder_(address[5] addrs, uint[7] uints)
         external
         pure
         returns (bytes32 hash)
     {
-        return hashOrder(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5]));
+        return hashOrder(Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]));
     }
 
 }

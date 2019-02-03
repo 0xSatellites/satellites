@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import db from '~/plugins/db'
 import client from '~/plugins/ethereum-client'
+import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
 export default {
@@ -81,12 +81,11 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        const order = await db.getOrderHistoryByAccount(account)
-        await store.dispatch('order/setOrder', order)
+        const order = await firestore.docs('order', 'maker', '==', account.address)
+        store.dispatch('order/setOrder', order)
       }
       if (!myitems.mchh.length) {
         //get myitems:mchh
-
         client.ownedTokens('mchh').then(async function(tokens) {
           const promises = []
           for(var token of tokens){

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import db from '~/plugins/db'
+import firestore from '~/plugins/firestore'
 import LineChart from '~/plugins/linechart'
 
 export default {
@@ -22,20 +22,27 @@ export default {
   },
   mounted: async function() {
     const params = this.$route.params
-    var history
+    var histories
     if (params.id) {
-      history = await db.getOrderHistoryByType(params.id.substring(0, 4))
+      histories = await firestore.docs('order', 'asset_type', '==', params.id.substring(0, 4))
     } else if (params.hash) {
-      const order = await db.getOrderByKey(params.hash)
-      history = await db.getOrderHistoryByType(order.id.substring(0, 4))
+      const order = await firestore.doc('order', params.hash)
+      histories = await firestore.docs('order', 'asset_type', '==', order.id.substring(0, 4))
     }
-
+    const chart = {
+      labels:[],
+      prices:[]
+    }
+    for(var history of histories){
+      chart.prices.push(history.price / 1000000000000000000)
+      chart.labels.push('')
+    }
     this.datacollection = {
-      labels: history.labels,
+      labels: chart.labels,
       datasets: [
         {
           label: '価格の推移',
-          data: history.prices
+          data: chart.prices
         }
       ]
     }

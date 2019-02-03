@@ -53,24 +53,20 @@
 </template>
 
 <script>
-import db from '~/plugins/db'
-import functions from '~/plugins/functions'
-import canvas from '~/plugins/canvas'
-import PriceChartComponent from '~/components/pricechart'
 import client from '~/plugins/ethereum-client'
-import storage from '~/plugins/storage'
-import template from '~/assets/ogp_template.svg'
+import firestore from '~/plugins/firestore'
+import functions from '~/plugins/functions'
+import priceChartComponent from '~/components/pricechart'
 
-const config = require('../../../config.json')
+const config = require('../../config.json')
 
 export default {
   components: {
-    PriceChartComponent
+    priceChartComponent
   },
   async asyncData({ store, params }) {
-    //const asset = await db.getAssetByKey('mchh_' + params.id)
     const asset = await functions.call('metadata', {asset:'mchh', id:params.id})
-    await store.dispatch('asset/setMchh', asset)
+    store.dispatch('asset/setMchh', asset)
   },
   mounted: async function() {
     const store = this.$store
@@ -79,12 +75,7 @@ export default {
         //initialize web3 client
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
-
-        //const order = await db.getOrderByHistory(account)
-        //await store.dispatch('order/setOrder', order)
       }
-      //initialize canvas client
-      canvas.initialize('ogp')
     }
   },
   computed: {
@@ -94,47 +85,53 @@ export default {
     asset() {
       return this.$store.getters['asset/asset']
     }
-    // order() {
-    //   return this.$store.getters['order/order']
-    // }
   },
   methods: {
     async order_v1() {
-
-      const router = this.$router
-      const address = this.account.address
-      const params = this.$route.params
+      console.log('order_v1')
+      const account = this.account
       const asset = this.asset.mchh
+      const params = this.$route.params
+      const router = this.$router
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
-        .isApprovedForAll(address, client.contract.bazaaar_v2.options.address)
-        .call({from:this.account.address})
+        .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
+        .call({from:account.address})
       if (approved) {
         console.log('approved')
-        canvas.draw(template, asset, amount)
+        const nonce = await client.contract.bazaaar_v1.methods
+          .nonce_(account.address, client.contract.mchh.options.address, params.id)
+          .call({from:account.address})
         const salt = Math.floor(Math.random() * 1000000000)
+        const date = new Date()
+        date.setDate(date.getDate() + 7)
+        const expiration = Math.round(date.getTime() / 1000)
         const order = {
-          proxy: client.contract.bazaaar_v2.options.address,
-          maker: address,
+          proxy: client.contract.bazaaar_v1.options.address,
+          maker: account.address,
           taker: config.constant.nulladdress,
-          artEditRoyaltyRecipient: address,
+          creatorRoyaltyRecipient: account.address,
           asset: client.contract.mchh.options.address,
           id: params.id,
           price: wei,
-          artEditRoyaltyRatio: 600,
-          salt: salt
+          nonce:nonce,
+          salt: salt,
+          expiration:expiration,
+          creatorRoyaltyRatio: 600,
+          referralRatio:400
         }
-
         const signedOrder = await client.signOrder(order)
         var result = await functions.call('order', signedOrder)
-        console.log(result)
         router.push({ path: '/order/' + result.hash})
       } else {
         console.log('not approved')
         client.contract.mchh.methods
-          .setApprovalForAll(client.contract.bazaaar_v2.options.address, true)
-          .send({ from: this.account.address })
+          .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
+          .send({ from: account.address })
+          .on('transactionHash', function(hash) {
+            console.log(hash)
+          })
       }
     }
   }

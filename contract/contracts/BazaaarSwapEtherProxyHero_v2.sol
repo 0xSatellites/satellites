@@ -3,17 +3,21 @@ pragma solidity 0.4.24;
 import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "../node_modules/openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
-//TODO
-//Refferal can be more
-//Refferal can be maker
-
-contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
+contract BazaaarSwapEtherProxyHero_v2 is Pausable {
     using SafeMath for uint;
 
-    event OrderCancelled(bytes32 indexed hash);
-    event OrderMatched(bytes32 indexed hash);
+    event OrderMatched(
+        bytes32 hash,
+        address maker,
+        address asset,
+        uint id
+    );
+    event OrderCancelled(
+        address maker,
+        address asset,
+        uint id
+    );
 
     struct Order {
         address proxy;
@@ -23,13 +27,11 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         address asset;
         uint id;
         uint price;
-        uint creatorRoyaltyRatio;
+        uint nonce;
         uint salt;
-    }
-
-    struct Referral {
-        address recipient;
-        uint ratio;
+        uint expiration;
+        uint creatorRoyaltyRatio;
+        uint referralRatio;
     }
 
     struct Amount {
@@ -44,62 +46,58 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         bytes32 s;
     }
 
-    mapping(bytes32 => bool) public cancelledOrFinalized;
     uint public ratioBase = 10000;
+    mapping(address=>mapping(address=>mapping(uint=>uint))) private nonce;
 
-    constructor() public {}
+    function nonce_(address maker, address asset, uint id) external view returns (uint) {
+        return nonce[maker][asset][id];
+    }
 
-    function orderMatch_(address[6] addrs, uint[5] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused nonReentrant {
+    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused {
         orderMatch(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
             Sig(v, r, s)
         );
         distribute(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
-            Referral(addrs[5], uints[4])
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
+            addrs[5]
         );
     }
 
-    function orderCancell_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s) external {
+    function orderCancell_(address[5] addrs, uint[7] uints) external {
         orderCancell(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
-            Sig(v, r, s)
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6])
         );
     }
 
-    function requireValidOrder_(address[5] addrs, uint[4] uints, uint8 v, bytes32 r, bytes32 s)
+    function requireValidOrder_(address[5] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bytes32)
     {
         return requireValidOrder(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
             Sig(v, r, s)
         );
     }
 
-    function distribute(Order memory order, Referral memory referral) internal {
+    function distribute(Order memory order, address referralRecipient) internal {
         IERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
-        Amount memory amount = computeAmount(order, referral);
-
-        if(amount.maker > 0 ){
-            order.maker.transfer(amount.maker);
-        }
+        Amount memory amount = computeAmount(order);
         if(amount.creatorRoyalty > 0){
             order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
         }
         if(amount.referral > 0){
-            referral.recipient.transfer(amount.referral);
+            referralRecipient.transfer(amount.referral);
+        }
+        if(amount.maker > 0 ){
+            order.maker.transfer(amount.maker);
         }
     }
 
-    function computeAmount(Order memory order, Referral memory referral) internal view returns (Amount memory amount) {
-        if(order.creatorRoyaltyRecipient != address(this)){
-            amount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
-        }
-        if(referral.recipient != address(this)) {
-            amount.referral = order.price.mul(referral.ratio).div(ratioBase);
-        }
+    function computeAmount(Order memory order) internal view returns (Amount memory amount) {
+        amount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
+        amount.referral = order.price.mul(order.referralRatio).div(ratioBase);
         amount.maker = order.price.sub(amount.creatorRoyalty).sub(amount.referral);
     }
 
@@ -107,17 +105,15 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         require(order.maker != msg.sender);
         require(order.taker == address(0x0) || order.taker == msg.sender);
         require(order.price == msg.value);
-
         bytes32 hash = requireValidOrder(order, sig);
-        cancelledOrFinalized[hash] = true;
-        emit OrderMatched(hash);
+        nonce[order.maker][order.asset][order.id]++;
+        emit OrderMatched(hash, order.maker, order.asset, order.id);
     }
 
-    function orderCancell(Order memory order, Sig memory sig) internal {
+    function orderCancell(Order memory order) internal {
         require(order.maker == msg.sender);
-        bytes32 hash = requireValidOrder(order, sig);
-        cancelledOrFinalized[hash] = true;
-        emit OrderCancelled(hash);
+        nonce[order.maker][order.asset][order.id]++;
+        emit OrderCancelled(order.maker, order.asset, order.id);
     }
 
     function requireValidOrder(Order memory order, Sig memory sig)
@@ -139,9 +135,6 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
             return false;
         }
         if (!validateOrderParameters(order)) {
-            return false;
-        }
-        if (cancelledOrFinalized[hash]) {
             return false;
         }
         if (ecrecover(hash, sig.v, sig.r, sig.s) == order.maker) {
@@ -170,6 +163,12 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
         returns (bool)
     {
         if (order.proxy != address(this)) {
+            return false;
+        }
+        if (order.expiration < now) {
+            return false;
+        }
+        if (order.nonce != nonce[order.maker][order.asset][order.id]) {
             return false;
         }
         return true;
@@ -201,8 +200,11 @@ contract BazaaarSwapEtherProxyHero_v2 is Pausable, ReentrancyGuard {
                 order.asset,
                 order.id,
                 order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
                 order.creatorRoyaltyRatio,
-                order.salt
+                order.referralRatio
         ));
     }
 }

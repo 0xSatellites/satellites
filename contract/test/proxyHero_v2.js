@@ -13,14 +13,21 @@ contract('Test BazaaarSwapEtherProxyHero_v2', async function(accounts) {
     var test;
     var heroAsset;
 
+    var templateNonce = 0
+    var templateSalt = Math.floor(Math.random() * 1000000000);
+    var date = new Date()
+    date.setDate(date.getDate() + 7)
+    var templateExpiration = Math.round(date.getTime() / 1000)
+    var templateOrder
+
     var account1 = accounts[0];
     var account2 = accounts[1];
-    var privkey1 = "0x03a0e18510f314e5a0a4f16c2312a40de0711af90b29f1e46974fab7b3a80fba";
+    var privkey1 = "0x59e6a1fa28851d9b11fef9967d4d63c50a40adbd8e944b67ad1f00f5ff614c24";
 
     var referralRecipient = accounts[9];
     var artEditRoyaltyRecipient = accounts[8];
 
-    const PRICE = 1000000000;
+    const PRICE = 10000;
     const referralRatio = 100;
     const RATIO = 600;
 
@@ -34,16 +41,73 @@ contract('Test BazaaarSwapEtherProxyHero_v2', async function(accounts) {
     const HEROID8 = 40090008;
     const HEROID9 = 40090009;
 
+    const hash = (order) => {
+        return  Web3Utils.soliditySha3(
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.address,
+            order.asset,
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.artEditRoyaltyRatio,
+            order.referralRatio
+        );
+    }
+
+    const preSigned = (data) => {
+        return Web3Utils.soliditySha3(
+            "\x19Ethereum Signed Message:\n32",
+            data
+        );
+    }
+
+    const input = (order) => {
+        return [[
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.address,
+            order.asset,
+        ], [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.artEditRoyaltyRatio,
+            order.referralRatio
+        ]]
+    }
+
+    const referral = (order,referral) => {
+        return [[
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.address,
+            order.asset,
+            referral
+        ], [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.artEditRoyaltyRatio,
+            order.referralRatio
+        ]]
+    }
+
     it('Setup', async function() {
         heroAsset = await HeroAsset.new();
         contract =  await bazaaarSwapEtherProxyHero_v2.new();
         test =  await testBazaaarSwapEtherProxyHero_v2.new();
-    })
 
-    it('Method: hashOrder', async function() {
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
+        templateOrder = {
             proxy: test.address,
             maker: account1,
             taker: "0x0000000000000000000000000000000000000000",
@@ -51,784 +115,126 @@ contract('Test BazaaarSwapEtherProxyHero_v2', async function(accounts) {
             asset:heroAsset.address,
             id: HEROID1,
             price: PRICE,
+            nonce: templateNonce,
+            salt: templateSalt,
+            expiration: templateExpiration,
             artEditRoyaltyRatio: RATIO,
-            salt: salt
+            referralRatio: referralRatio
         }
 
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
+    })
 
-        var result = await test.hashOrder_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
+    it('Method: hashOrder', async function() {
+        var order = templateOrder
+        var data = hash(order)
+        var result = await test.hashOrder_(input(order)[0], input(order)[1])
         assert.equal(data, result);
     })
 
     it('Method: hashToSign', async function() {
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var result = await test.hashToSign_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
+        var order = templateOrder
+        var data = hash(order)
+        var presignedData = preSigned(data)
+        var result = await test.hashToSign_(input(order)[0], input(order)[1])
         assert.equal(presignedData, result);
     })
 
     it('Method: ecrecover', async function() {
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
+        var order = templateOrder
+        var data = hash(order)
+        var presignedData = preSigned(data)
         var sig = web3Eth.accounts.sign(data, privkey1);
-
         var result = await test.ecrecover_(
             presignedData,
             sig.v,
             sig.r,
             sig.s
         )
-
         assert.equal(account1, result);
     })
 
     it('Method: validateAssetStatus(HEROID1)', async function() {
-
         await heroAsset.mint(account1, HEROID1);
         var result = await heroAsset.ownerOf(HEROID1);
         assert.equal(result, account1);
 
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var result = await test.validateAssetStatus_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
+        var order = templateOrder
+        var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
         assert.equal(false, result, "not approved by maker");
 
         await heroAsset.approve(test.address, HEROID1);
         var result = await heroAsset.getApproved(HEROID1)
         assert.equal(result, test.address);
 
-        var result = await test.validateAssetStatus_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
+        var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
         assert.equal(true, result, "approved by maker");
-
     })
 
     it('Method: validateOrderParameters', async function() {
+        var order = templateOrder
+        var result = await test.validateOrderParameters_(input(order)[0], input(order)[1])
+        assert.equal(true, result, "Should pass: positive")
 
-        var salt = Math.floor(Math.random() * 1000000000);
+        //order.proxy != address(this)
+        var keep = order.proxy
+        order.proxy = contract.address
+        var result = await test.validateOrderParameters_(input(order)[0], input(order)[1])
+        assert.equal(false, result, "Proxy address: negative")
+        order.proxy = keep
 
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
+        //order.expiration < now
+        var keep = order.expiration
+        var date = new Date()
+        date.setDate(date.getDate() - 1)
+        var Expired = Math.round(date.getTime() / 1000)
+        order.expiration = Expired
+        var result = await test.validateOrderParameters_(input(order)[0], input(order)[1])
+        assert.equal(false, result, "Expiration: negative")
+        order.expiration = keep
 
-        var result = await test.validateOrderParameters_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
-        assert.equal(true, result, "Proxy address: positive");
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            //Input wrong address
-            proxy: contract.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var result = await test.validateOrderParameters_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ])
-
-        assert.equal(false, result, "Proxy address: negative");
-
+        //order.nonce != nonce[order.maker][order.asset][order.id]
+        var keep = order.nonce
+        order.nonce = 1
+        var result = await test.validateOrderParameters_(input(order)[0], input(order)[1])
+        assert.equal(false, result, "nonce: negative")
+        order.nonce = keep
     })
 
     it('Method: validateOrder', async function() {
-
-        //!validateAssetStatus(order)
         var result = await heroAsset.getApproved(HEROID1)
         assert.equal(result, test.address);
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
+        var order = templateOrder
+        var data = hash(order)
+        var presignedData = preSigned(data)
         var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-        assert.equal(true, result, "maker: positive");
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: contract.address,
-            //Input wrong address
-            maker: account2,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(false, result, "maker: negative");
-
-        //!validateOrderParameters(order)
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(true, result, "Proxy address: positive");
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            //Input wrong address
-            proxy: contract.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(false, result, "Proxy address: negative");
-
-        //cancelledOrFinalized[hash]
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(true, result, "Before finalize order");
-
-        await test.cancelledOrFinalized_(presignedData);
-        var result = await test.cancelledOrFinalized(presignedData);
+        var result = await test.validateOrder_(presignedData, input(order)[0], input(order)[1], sig.v, sig.r, sig.s)
         assert.equal(true, result);
 
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
+        //!validateAssetStatus(order)
 
-        assert.equal(false, result, "After finalize order");
+        //!validateOrderParameters(order)
 
-        //ecrecover(hash, sig.v, sig.r, sig.s) == order.maker
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(true, result, "Positive ecrecover");
-
-        var result = await test.validateOrder_(
-            presignedData,
-        [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            //Put wrong signature
-            sig.s,
-            sig.r
-        )
-
-        assert.equal(false, result, "negative ecrecover");
-
+        //ecrecover(hash, sig.v, sig.r, sig.s) == order.maker)
     })
 
     it('Method: requireValidOrder', async function() {
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
+        var result = await heroAsset.getApproved(HEROID1)
+        assert.equal(result, test.address);
+        var order = templateOrder
+        var data = hash(order)
+        var presignedData = preSigned(data)
         var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.requireValidOrder_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
+        var result = await test.requireValidOrder_(input(order)[0], input(order)[1], sig.v, sig.r, sig.s)
         assert.equal(presignedData, result);
-
-    })
-
-
-    it('Method: requireValidOrder', async function() {
-
-        var salt = Math.floor(Math.random() * 1000000000);
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset: heroAsset.address,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-
-        var sig = web3Eth.accounts.sign(data, privkey1);
-
-        var result = await test.requireValidOrder_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ],
-            sig.v,
-            sig.r,
-            sig.s
-        )
-
-        assert.equal(presignedData, result);
-
     })
 
     it('Method: computeAmount', async function() {
+        var order = templateOrder
 
-        var salt = Math.floor(Math.random() * 1000000000);
-        var price = 10000;
-
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: account1,
-            asset:heroAsset.address,
-            id: HEROID1,
-            price: price,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var result = await test.computeAmount_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            referralRecipient
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt,
-            referralRatio
-        ]
-        )
-
+        var result = await test.computeAmount_(referral(order, referralRecipient)[0], input(order)[1])
         assert.equal(9300, result[0].toString());
         assert.equal(600, result[1].toString());
         assert.equal(100, result[2].toString());
-
     })
 
     it('Scenario: purchase hero(HEROID9)', async function() {
@@ -837,248 +243,25 @@ contract('Test BazaaarSwapEtherProxyHero_v2', async function(accounts) {
         var result = await heroAsset.ownerOf(HEROID9);
         assert.equal(result, account1);
 
-        /*
-        await heroAsset.approve(contract.address, HEROID9);
-        var result = await heroAsset.getApproved(HEROID9)
-        assert.equal(result, contract.address);
-        */
-
         await heroAsset.setApprovalForAll(contract.address, true)
-        var salt = Math.floor(Math.random() * 1000000000);
 
-        var order = {
-            proxy: contract.address,
-            maker: account1,
-            taker: "0x0000000000000000000000000000000000000000",
-            address: artEditRoyaltyRecipient,
-            asset:heroAsset.address,
-            id: HEROID9,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-
+        var order = templateOrder
+        order.id = HEROID9
+        order.proxy = contract.address
+        var data = hash(order)
         var sig = web3Eth.accounts.sign(data, privkey1);
 
-        var result = await contract.orderMatch_([
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.address,
-            order.asset,
-            referralRecipient,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt,
-            referralRatio
-        ], sig.v,
-           sig.r,
-           sig.s,
-           { from: account2, value:order.price}
+        var result = await contract.orderMatch_(referral(
+            order,
+            referralRecipient)[0],
+            input(order)[1],
+            sig.v,
+            sig.r,
+            sig.s,
+            { from: account2, value:order.price}
         )
 
         var result = await heroAsset.ownerOf(HEROID9);
         assert.equal(result, account2);
     })
-
-
-
-/*
-    it('Method: distribute', async function() {
-        var salt = Math.floor(Math.random() * 1000000000);
-        var price = 10000;
-        var order = {
-            proxy: test.address,
-            maker: account1,
-            address: artEditRoyaltyRecipient,
-            id: HEROID1,
-            price: price,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-        var makerBalanceBefore = await web3.eth.getBalance(account1);
-        var takerBalanceBefore = await web3.eth.getBalance(account2);
-        var artEditRoyaltyRecipientBalanceBefore = await web3.eth.getBalance(artEditRoyaltyRecipient);
-        var assetRoyaltyRecipientBalanceBefore = await web3.eth.getBalance(assetRoyaltyRecipient);
-        var referralRecipientBalanceBefore = await web3.eth.getBalance(referralRecipient);
-        var result = await test.distribute_([
-            order.proxy,
-            order.maker,
-            order.address,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ], referralRecipient,
-           {from: account2, value: order.price}
-        )
-        var makerBalanceAfter = await web3.eth.getBalance(account1);
-        var takerBalanceAfter = await web3.eth.getBalance(account2);
-        var artEditRoyaltyRecipientBalanceAfter = await web3.eth.getBalance(artEditRoyaltyRecipient);
-        var assetRoyaltyRecipientBalanceAfter = await web3.eth.getBalance(assetRoyaltyRecipient);
-        var referralRecipientBalanceAfter = await web3.eth.getBalance(referralRecipient);
-        console.log(makerBalanceBefore)
-        console.log(artEditRoyaltyRecipientBalanceBefore, artEditRoyaltyRecipientBalanceAfter)
-        console.log(assetRoyaltyRecipientBalanceBefore, assetRoyaltyRecipientBalanceAfter)
-        console.log(referralRecipientBalanceBefore, referralRecipientBalanceAfter)
-        //assert.equal(9001 + makerBalanceBefore, makerBalanceAfter, "maker");
-        //assert.equal(takerBalanceBefore - order.price, takerBalanceAfter, "taker");
-        //assert.equal(100 + referralRecipientBalanceBefore, referralRecipientBalanceAfter, "referralRecipient");
-        //assert.equal(600 + artEditRoyaltyRecipientBalanceBefore, artEditRoyaltyRecipientBalanceAfter, "artEditRoyaltyRecipient");
-        //assert.equal(150 + referralRecipientBalanceBefore, referralRecipientBalanceAfter, "referralRecipient");
-    })
-*/
-
-/*
-    it('Variable: cancelledOrFinalized (HEROID1)', async function() {
-        await heroAsset.mint(account1, HEROID1);
-        var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, account1);
-        await heroAsset.approve(contract.address, HEROID1);
-        var result = await heroAsset.getApproved(HEROID1)
-        assert.equal(result, contract.address);
-        var salt = Math.floor(Math.random() * 1000000000);
-        var order = {
-            proxy: contract.address,
-            maker: account1,
-            address: account1,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.address,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-        var sig = web3Eth.accounts.sign(data, privkey1);
-        var result = await contract.cancelledOrFinalized(presignedData);
-        assert.equal(false, result, "Before Order Matched");
-        var result = await contract.orderMatch_([
-            order.proxy,
-            order.maker,
-            order.address,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ], sig.v,
-           sig.r,
-           sig.s,
-           { from: account2 }
-        )
-        var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, account2);
-        var result = await contract.cancelledOrFinalized(presignedData);
-        assert.equal(true, result, "After Order Matched");
-        var salt = Math.floor(Math.random() * 1000000000);
-        var order = {
-            proxy: contract.address,
-            maker: account1,
-            address: account1,
-            id: HEROID1,
-            price: PRICE,
-            artEditRoyaltyRatio: RATIO,
-            salt: salt
-        }
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.address,
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        );
-        var presignedData = Web3Utils.soliditySha3(
-            "\x19Ethereum Signed Message:\n32",
-            data
-        );
-        var sig = web3Eth.accounts.sign(data, privkey1);
-        var result = await contract.cancelledOrFinalized(presignedData);
-        assert.equal(false, result, "Before Order Cancelled");
-        var result = await contract.orderCancell_([
-            order.proxy,
-            order.maker,
-            order.address,
-        ], [
-            order.id,
-            order.price,
-            order.artEditRoyaltyRatio,
-            order.salt
-        ], sig.v,
-           sig.r,
-           sig.s,
-           { from: account1 }
-        )
-        var result = await contract.cancelledOrFinalized(presignedData);
-        assert.equal(true, result, "After Order Cancelled");
-    })
-    it('Scenario: purchase hero', async function() {
-        await heroAsset.mint(accounts[0], HEROID1);
-        var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, accounts[0]);
-        contract = await bazaaarSwapEtherProxyHero_v1.new(heroAsset.address);
-        await heroAsset.approve(contract.address, HEROID1);
-        var salt = Math.floor(Math.random() * 1000000000);
-        var order = {
-            proxy: contract.address,
-            maker: account1,
-            address: account1,
-            id: HEROID1,
-            price: PRICE,
-            salt: salt
-        }
-        var data = Web3Utils.soliditySha3(
-            order.proxy,
-            order.maker,
-            order.address,
-            order.id,
-            order.price,
-            order.salt
-        );
-        var sig = web3Eth.accounts.sign(data, privkey1);
-        var result = await contract.orderMatch_([
-            order.proxy,
-            order.maker,
-            order.address,
-        ], [
-            order.id,
-            order.price,
-            order.salt
-        ], sig.v,
-           sig.r,
-           sig.s,
-           { from: accounts[1] }
-        )
-        var result = await heroAsset.ownerOf(HEROID1);
-        assert.equal(result, accounts[1]);
-    })
-    */
-
 })

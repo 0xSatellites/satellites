@@ -5,19 +5,20 @@
   "author": "BlockBase",
   "private": true,
   "scripts": {
-    "dev": "nuxt --hostname 0.0.0.0 --port 8080",
+    "dev": "nuxt --hostname 0.0.0.0 --port 3000",
     "build": "nuxt build",
     "start": "nuxt start --hostname 0.0.0.0 --port 8080",
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^2.6.0",
     "chart.js": "^2.7.3",
     "cross-env": "^5.2.0",
     "firebase": "^5.8.1",
     "nuxt": "^2.3.4",
     "vue-chartjs": "^3.4.0",
-    "web3": "^1.0.0-beta.41"
+    "web3": "^1.0.0-beta.37"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"

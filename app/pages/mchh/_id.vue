@@ -4,7 +4,7 @@
         <div class="l-item__frame">
         <div>
         <div class="l-item__img">
-          <img :src="asset.mchh.cache_image" alt="">
+          <img :src="asset.mchh.image_url" alt="">
           <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt="">
           </div>
         </div>
@@ -54,6 +54,7 @@
 
 <script>
 import db from '~/plugins/db'
+import functions from '~/plugins/functions'
 import canvas from '~/plugins/canvas'
 import PriceChartComponent from '~/components/pricechart'
 import client from '~/plugins/ethereum-client'
@@ -67,7 +68,8 @@ export default {
     PriceChartComponent
   },
   async asyncData({ store, params }) {
-    const asset = await db.getAssetByKey('mchh_' + params.id)
+    //const asset = await db.getAssetByKey('mchh_' + params.id)
+    const asset = await functions.call('metadata', {asset:'mchh', id:params.id})
     await store.dispatch('asset/setMchh', asset)
   },
   mounted: async function() {
@@ -98,7 +100,7 @@ export default {
   },
   methods: {
     async order_v1() {
-      console.log('order_v1')
+
       const router = this.$router
       const address = this.account.address
       const params = this.$route.params
@@ -106,32 +108,32 @@ export default {
       const amount = document.getElementById('amount').value
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
-        .isApprovedForAll(address, client.contract.bazaaar_v1.options.address)
+        .isApprovedForAll(address, client.contract.bazaaar_v2.options.address)
         .call({from:this.account.address})
       if (approved) {
+        console.log('approved')
         canvas.draw(template, asset, amount)
         const salt = Math.floor(Math.random() * 1000000000)
         const order = {
-          proxy: client.contract.bazaaar_v1.options.address,
+          proxy: client.contract.bazaaar_v2.options.address,
           maker: address,
           taker: config.constant.nulladdress,
           artEditRoyaltyRecipient: address,
+          asset: client.contract.mchh.options.address,
           id: params.id,
           price: wei,
           artEditRoyaltyRatio: 600,
           salt: salt
         }
 
-        const hash = await client.finalizeOrder(order)
-        const base64 = canvas.generate().substr(22)
-        order.ogp = await storage.ogp(hash, base64)
-        order.hash = hash
-        order.metadata = asset
-        await db.set(config.constant.order, hash, order)
-        router.push({ path: '/order/' + hash})
+        const signedOrder = await client.signOrder(order)
+        var result = await functions.call('order', signedOrder)
+        console.log(result)
+        router.push({ path: '/order/' + result.hash})
       } else {
+        console.log('not approved')
         client.contract.mchh.methods
-          .setApprovalForAll(client.contract.bazaaar_v1._address, true)
+          .setApprovalForAll(client.contract.bazaaar_v2.options.address, true)
           .send({ from: this.account.address })
       }
     }

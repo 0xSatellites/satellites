@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const config = require('../../config.json')
+const config = require('../config.json')
 
 const web3 = new Web3(config.node.rinkeby.https)
 
@@ -7,10 +7,6 @@ const contract = {
   bazaaar_v1: new web3.eth.Contract(
     config.abi.bazaaar_v1,
     config.contract.rinkeby.bazaaar_v1
-  ),
-  bazaaar_v2: new web3.eth.Contract(
-    config.abi.bazaaar_v2,
-    config.contract.rinkeby.bazaaar_v2,
   ),
   mche: new web3.eth.Contract(
     config.abi.mchh,
@@ -27,19 +23,17 @@ const account = {
 }
 
 const activate = async provider => {
-  console.log('ethereum-client:activate')
+  console.log('ethereum-client:activate', provider)
   web3.setProvider(provider)
   const accounts = await web3.eth.getAccounts()
-  const address = accounts[0]
-  const balance = await web3.eth.getBalance(address)
-  account.address = address
-  account.balance = balance
+  account.address = accounts[0]
+  account.balance = await web3.eth.getBalance(accounts[0])
   setInterval(async () => {
-    const accounts = await web3.eth.getAccounts()
-    const address = accounts[0]
-    if (account.address != address) {
-      location.reload()
-    }
+    web3.eth.getAccounts().then(accounts => {
+      if (account.address != accounts[0]) {
+        location.reload()
+      }
+    })
   }, 100)
   return account
 }
@@ -60,33 +54,35 @@ const ownedTokens = async name => {
 }
 
 const signOrder = async order => {
-  const data = client.utils.soliditySha3(
+  console.log('ethereum-client:signOrder:', order)
+  const data = web3.utils.soliditySha3(
     order.proxy,
     order.maker,
     order.taker,
-    order.artEditRoyaltyRecipient,
+    order.creatorRoyaltyRecipient,
     order.asset,
     order.id,
     order.price,
-    order.artEditRoyaltyRatio,
-    order.salt
+    order.nonce,
+    order.salt,
+    order.expiration,
+    order.creatorRoyaltyRatio,
+    order.referralRatio
   )
-  const sig = await client.eth.personal.sign(data, order.maker, '')
-
+  const sig = await web3.eth.personal.sign(data, order.maker)
   order.r = sig.substring(0, 66)
   order.s = '0x' + sig.substring(66, 130)
   order.v = '0x' + sig.substring(130, 132)
-
   return order
 }
+
 const client = {
   account: account,
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
   signOrder:signOrder,
-  utils: web3.utils,
-  eth: web3.eth
+  utils: web3.utils
 }
 
 export default client

@@ -19,7 +19,6 @@
 </template>
 <script>
 import client from '~/plugins/ethereum-client'
-import db from '~/plugins/db'
 import FooterTemp from '~/components/footer'
 
 export default {

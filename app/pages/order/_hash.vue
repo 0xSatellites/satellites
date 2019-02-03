@@ -41,10 +41,10 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
-import db from '~/plugins/db'
-import PriceChartComponent from '~/components/pricechart'
+import firestore from '~/plugins/firestore'
+import priceChartComponent from '~/components/pricechart'
 
-const config = require('../../../config.json')
+const config = require('../../config.json')
 
 export default {
   head() {
@@ -54,10 +54,10 @@ export default {
     }
   },
   components: {
-    PriceChartComponent
+    priceChartComponent
   },
   async asyncData({ store, params }) {
-    const order = await db.getOrderByKey(params.hash)
+    const order = await firestore.doc('order', params.hash)
     await store.dispatch('order/setOrder', order)
   },
   mounted: async function() {
@@ -83,17 +83,25 @@ export default {
       const account = this.account
       const order = this.order
 
-      await client.contract.bazaaar_v2.methods
+      await client.contract.bazaaar_v1.methods
         .orderMatch_(
           [
             order.proxy,
             order.maker,
             order.taker,
-            order.artEditRoyaltyRecipient,
+            order.creatorRoyaltyRecipient,
             order.asset,
             order.maker
           ],
-          [order.id, order.price, order.artEditRoyaltyRatio, order.salt, 100],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ],
           order.v,
           order.r,
           order.s,
@@ -106,19 +114,25 @@ export default {
     async cancel() {
       const account = this.account
       const order = this.order
-      await client.contract.bazaaar_v2.methods
+      await client.contract.bazaaar_v1.methods
         .orderCancell_(
           [
             order.proxy,
             order.maker,
             order.taker,
-            order.artEditRoyaltyRecipient,
-            client.contract.mchh.options.address
+            order.creatorRoyaltyRecipient,
+            order.asset,
+            order.maker
           ],
-          [order.id, order.price, order.artEditRoyaltyRatio, order.salt],
-          order.v,
-          order.r,
-          order.s
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ]
         )
         .send({ from: account.address })
         .on('transactionHash', function(hash) {

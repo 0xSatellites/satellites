@@ -154,7 +154,7 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
     box-shadow: 0px ceil-decimal(3vw * 100 / 375, 2) ceil-decimal(4vw * 100 / 375, 2) rgba(0, 0, 0, 0.16);
 
       &--type1{
-      border: solid #3498db 1px;
+      // border: solid #3498db 1px;
       background: #3498db;
       color: #fff;
       }

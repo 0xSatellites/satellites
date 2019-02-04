@@ -30,12 +30,20 @@
         </ul>
 
         <div class="l-information__action">
-          <!-- 条件分岐 order statusがselling以外は消す -->
-          <div class="l-information__action__btn" @click="purchase" value="purchase">購入する</div>
+          <div v-if="order.status == '出品中'"
+          class="l-information__action__btn" @click="purchase" value="purchase">購入する</div>
       </div>
     </div>
     </section>
     <price-chart-component></price-chart-component>
+    <div class="l-information__action__btn">
+       <a :href="'https://twitter.com/share?url=https://bazaaar.io/order/' + order.hash +
+        '&text=' + '出品されました! '+ order.metadata.hero_type.name.ja  + '/ LV.' + order.metadata.attributes.lv +
+        '&hashtags=bazaaar, バザール, マイクリ'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
+        Tweetする
+        </a>
+        <!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+    </div>
 
   </div>
 </template>
@@ -143,3 +151,17 @@ export default {
   }
 }
 </script>
+<style scoped>
+.twitter-share-button {
+text-decoration: none;
+color: white;
+}
+
+.share{
+  max-width: 100px;
+  text-align: center;
+  padding: 10px 0;
+  margin: auto;
+}
+</style>
+

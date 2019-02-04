@@ -91,3 +91,6 @@ build
 
 # Firebase
 firebase-debug.log
+
+# Service Worker
+sw.*

@@ -49,13 +49,11 @@ module.exports = {
   /*
   ** Nuxt.js modules
   */
-  modules: [,
-    '@nuxtjs/pwa',
-    // ['nuxt-sass-resources-loader', [
-    //   '@/assets/style/style.scss',
-    // ]],
-  ],
 
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/pwa'
+  ],
   /*
   ** Build configuration
   */

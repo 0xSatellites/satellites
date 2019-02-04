@@ -18,7 +18,7 @@
         </ul>
         <ul class="l-information__data">
           <!-- TODO Active_sukill 有無 -->
-        <li><span class="l-information__skill--type">Active</span>{{asset.mchh.attributes.active_skill }}</li>
+        <li><span class="l-information__skill--type">Active</span>{{order.metadata.attributes.active_skill }}</li>
         <li><span class="l-information__skill--type">Passive</span>{{ order.metadata.attributes.passive_skill}}</li>
         </ul>
 

@@ -20,6 +20,6 @@
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
     "firebase-admin": "^6.5.1",
-    "web3": "^1.0.0-beta.39"
+    "web3": "1.0.0-beta.41"
   }
 }

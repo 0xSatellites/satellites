@@ -4,8 +4,10 @@
         <div class="l-item__frame">
         <div>
         <div class="l-item__img">
+
           <img :src="asset.mchh.image_url" alt="">
-          <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt="">
+          <!-- アートエディット作者に許可が必要なため、掲載しない -->
+          <!-- <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""> -->
           </div>
         </div>
         <div>
@@ -23,32 +25,110 @@
         <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
         </ul>
         <ul class="l-item__data">
-          <!-- TODO 条件分岐 Active有無 -->
-        <li><span class="l-item__skill--type">Active</span></li>
+        <li><span class="l-item__skill--type">Active</span>{{asset.mchh.attributes.active_skill }}</li>
         <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
         </ul>
 
-        <form>
-        <div class="l-item__action">
+        <v-form v-model="valid">
+          <div class="l-item__action">
 
-        <div class="l-item__action__price"><label><input type="text" value="" id="amount"> ETH</label></div>
-
-        <div class="l-item__action__btns">
-          <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1" value=Sell>出品する</div>
-          <!-- TODOキャンセル、金額変更処理 -->
-          <!-- <div class="l-item__action__btn l-item__action__btn--type1">金額変更する</div> -->
-          <!-- <div class="l-item__action__btn l-item__action__btn--type2" @click="cancel" value="cancel">キャンセルする</div> -->
-        </div>
-
-        </div>
-        </form>
+          <div class="l-item__action__price"><label><input type="text" v-model="price" id="amount"> ETH</label></div>
+          <v-expansion-panel>
+            <v-expansion-panel-content>
+              <div slot="header">オプション設定</div>
+              <v-card>
+                <p>一言メッセージ</p>
+                <div ><textarea name="" id="" cols="30" rows="10"></textarea></div>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <!-- todo order存在しているか -->
+          <div class="l-item__action__btns" v-if="true">
+              <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
+                :disabled="!valid || loading"
+                color="#3498db"
+                large
+                @click="order_v1"
+              >
+                出品する
+                <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </v-btn>
+          </div>
+            <div class="l-item__action__btns" v-else>
+              <div class="l-item__action__btn l-item__action__btn--type1"
+              :disabled="!valid || loading"
+              @click="order_v1"
+              >
+              金額変更する
+              <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </div>
+              <div class="l-item__action__btn l-item__action__btn--type2"
+              :disabled="!valid || loading"
+              @click="cancel"
+              value="cancel"
+              >
+              キャンセルする
+              <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </div>
+            </div>
+            <v-flex center>
+            <v-checkbox
+              class="center"
+              v-model="checkbox"
+              :rules="[v => !!v || '']"
+              label="利用規約に同意する"
+              required
+            ></v-checkbox>
+            </v-flex>
+          </div>
+        </v-form>
       </div>
       </div>
       </section>
       <section class="c-price">
-        <price-chart-component id="myChart"></price-chart-component>
+        <h2 class="c-price__title">価格推移</h2>
+        <price-chart-component></price-chart-component>
       </section>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>
+
+      <transition name="modal" v-if="modal">
+        <div class="l-modal">
+
+            <div class="l-modal__frame">
+
+                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
+                <div class="l-modal__title">出品されました！</div>
+
+                <div class="l-modal__og">
+                    <div id="modalImg">
+                      <img  :src="ogp" alt=""  width="85%">
+                    </div>
+                </div>
+
+                <div class="l-modal__txt">SNSに投稿しましょう</div>
+                <div class="l-modal__btn">
+                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/order/' + hash +
+                  '&text=' + '出品されました！ '+ asset.mchh.attributes.hero_name  + '/ LV.' + asset.mchh.attributes.lv +
+                  '&hashtags=bazaaar, バザール, マイクリ'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
+                  twitterに投稿
+                  </a>
+                </div>
+
+                <div class="l-modal__close" @click="closeModal">
+                  <div class="l-modal__close__icon" ></div>
+                  <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+                </div>
+
+            </div>
+
+        </div>
+      </transition>
     </div>
 </template>
 
@@ -62,11 +142,24 @@ const config = require('../../config.json')
 
 export default {
   components: {
-    priceChartComponent
+    priceChartComponent,
+  },
+  data() {
+    return {
+      modal: false,
+      tokenOwner: false,
+      hash: "",
+      ogp: "",
+      price: "",
+      loading:false,
+      valid: true,
+      checkbox: false,
+      }
   },
   async asyncData({ store, params }) {
     const asset = await functions.call('metadata', {asset:'mchh', id:params.id})
     store.dispatch('asset/setMchh', asset)
+
   },
   mounted: async function() {
     const store = this.$store
@@ -75,6 +168,20 @@ export default {
         //initialize web3 client
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
+
+        const order = await firestore.docs(
+          'order', 'maker', '==', account.address,
+          'id' , '==', this.$route.params.id,
+          'status', '==', '出品中')
+        order.sort((a, b) => {
+          if (a.timestamp < b.timestamp) return 1;
+          if (a.timestamp > b.timestamp) return -1;
+          return 0;
+        });
+        const order1 = order.shift();
+        console.log(order1)
+        this.price = order1.price/1000000000000000000
+        await store.dispatch('order/setOrder', order1)
       }
     }
   },
@@ -84,16 +191,29 @@ export default {
     },
     asset() {
       return this.$store.getters['asset/asset']
+    },
+    order() {
+      return this.$store.getters['order/order']
     }
   },
   methods: {
+    openModal() {
+      this.modal = true
+    },
+    closeModal() {
+      const router = this.$router
+      this.modal = false
+      router.push({ path: '/order/' + this.hash})
+    },
     async order_v1() {
       console.log('order_v1')
+      this.loading = true
       const account = this.account
       const asset = this.asset.mchh
       const params = this.$route.params
       const router = this.$router
-      const amount = document.getElementById('amount').value
+      // const amount = document.getElementById('amount').value
+      const amount = this.price
       const wei = client.utils.toWei(amount)
       const approved = await client.contract.mchh.methods
         .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
@@ -123,7 +243,11 @@ export default {
         }
         const signedOrder = await client.signOrder(order)
         var result = await functions.call('order', signedOrder)
-        router.push({ path: '/order/' + result.hash})
+        this.hash = result.hash
+        this.ogp = result.ogp
+        this.loading = false
+        this.modal = true
+        // router.push({ path: '/order/' + result.hash})
       } else {
         console.log('not approved')
         client.contract.mchh.methods
@@ -133,7 +257,41 @@ export default {
             console.log(hash)
           })
       }
+    },
+    async cancel() {
+      const account = this.account
+      const order = this.order
+      await client.contract.bazaaar_v1.methods
+        .orderCancell_(
+          [
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.creatorRoyaltyRecipient,
+            order.asset,
+            order.maker
+          ],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ]
+        )
+        .send({ from: account.address })
+        .on('transactionHash', function(hash) {
+          console.log(hash)
+        })
     }
   }
 }
 </script>
+<style scoped>
+.twitter-share-button {
+text-decoration: none;
+color: white;
+}
+</style>

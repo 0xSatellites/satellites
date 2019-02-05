@@ -46,22 +46,36 @@
         </ul>
       </section>
 
-      <!-- <section>
+      <section>
+         <!-- <v-data-table
+          :headers="headers"
+          :items="order"
+          class="elevation-1"
+        >
+          <template slot="items" scope="props">
+            <td>{{ props.item.status }}</td>
+            <td>{{ props.item.id }}</td>
+            <td class="text-xs-right">{{ props.item.metadata.hero_type.name.ja }}</td>
+            <td class="text-xs-right">{{ props.item.price / 1000000000000000000}}</td>
+            <td class="text-xs-right">{{ props.item.metadata.attributes.lv }}</td>
+          </template>
+        </v-data-table> -->
+
         <div>
           <div v-for="(order, i) in order" :key="i">
             <div class="l-personal__frame">
               <dl class="l-personal__address">
-              <dt>オーダー内容：</dt>
+              <dt>{{order.status}}：</dt>
               <dd>
-                <nuxt-link :to="'/order/' + order.proxy">
-                 {{order.proxy}}
+                <nuxt-link :to="'/order/' + order.hash">
+                 {{order.metadata.hero_type.name.ja}} / Lv.{{ order.metadata.attributes.lv }} / #{{ order.id }} / {{ order.price / 1000000000000000000}}ETH
                  </nuxt-link>
               </dd>
               </dl>
               </div>
           </div>
         </div>
-      </section> -->
+      </section>
     </div>
 </template>
 
@@ -118,6 +132,23 @@ export default {
     order() {
       return this.$store.getters['order/order']
     }
-  }
+  },
+  data () {
+      return {
+        headers: [
+          {
+            text: 'Dessert (100g serving)',
+            align: 'left',
+            sortable: false,
+            value: 'name'
+          },
+          { text: 'Calories', value: 'calories' },
+          { text: 'Fat (g)', value: 'fat' },
+          { text: 'Carbs (g)', value: 'carbs' },
+          { text: 'Protein (g)', value: 'protein' },
+          { text: 'Iron (%)', value: 'iron' }
+        ],
+      }
+    }
 }
 </script>

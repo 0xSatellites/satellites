@@ -7,7 +7,7 @@ min-width: 1000px;
 max-width: 2400px;
 margin-top: 100px;
 //border-top: 1px solid rgb(221, 221, 221);
-padding: 0 0 80px;
+padding: 0 0 40px;
 background: #575656;
 color: #fff;
 
@@ -17,6 +17,7 @@ color: #fff;
   padding: 1em 0 0 2em;
   font-size: 12px;
   line-height: 1.5;
+  text-align: center;
     a{
       &:link,&:visited{
       color: #fff;

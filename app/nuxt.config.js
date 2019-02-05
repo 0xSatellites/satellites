@@ -35,8 +35,9 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    "@/assets/style/style.css",
-    "@/assets/style/style_sp.css"
+    { src: '@/assets/style/style_main.scss', lang: 'scss' }
+    // "@/assets/style/style.css",
+    // "@/assets/style/style_sp.css"
   ],
 
   /*
@@ -48,9 +49,11 @@ module.exports = {
   /*
   ** Nuxt.js modules
   */
+
   modules: [
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '@nuxtjs/vuetify'
   ],
   /*
   ** Build configuration

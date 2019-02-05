@@ -72,10 +72,19 @@
         </li>
         </ul>
     </section>
+    <section class="c-index">
+        <h2 class="c-index__title">取り扱いアセット</h2>
+    </section>
+    <section class="c-index">
+        <h2 class="c-index__title">パートナー</h2>
+    </section>
 </div>
 </template>
 
 <script>
+export default {
+// layout: 'indexfooter'
+}
 </script>
 
 <style>

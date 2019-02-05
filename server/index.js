@@ -1,4 +1,4 @@
-const config = require('../config.json')
+const config = require('./config.json')
 const admin = require('firebase-admin')
 const serviceAccount = require('./.serviceAccountKey.json');
 
@@ -9,47 +9,47 @@ admin.initializeApp({
 const db = admin.firestore()
 
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node.wss))
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node.rinkeby.wss))
 
 const contract = {
   bazaaar_v1: new web3.eth.Contract(
-    config.abi.bazaaar.proxy_v1,
-    config.contract.bazaaar.proxy_v1
-  ),
-  mchh: new web3.eth.Contract(config.abi.mch.hero, config.contract.mch.hero),
-  mche: new web3.eth.Contract(
-    config.abi.mch.extension,
-    config.contract.mch.extension
+    config.abi.bazaaar_v1,
+    config.contract.bazaaar_v1
   )
 }
 
-contract.mchh.events.Transfer(null, async function(error, result) {
-  console.log('contract.mchh.events.Transfer')
-  if (error) return
-  //Todo filter and update metadata
-})
-
-contract.mche.events.Transfer(null, async function(error, result) {
-  console.log('contract.mche.events.Transfer')
-  if (error) return
-  //Todo filter and update metadata
-})
-
 contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderMatched')
+
   if (error) return
-  const date = new Date()
-  const time = date.getTime()
-  const key = result.raw.topics[1]
-  console.log('db:update')
-  db.collection(config.constant.order)
-    .doc(key)
-    .update({status:config.constant.matched, modified:time})
+  time = new Date().getTime()
+
+  db.collection('order')
+  .where("maker", "==", result.returnValues.maker)
+  .where("asset", "==", result.returnValues.asset)
+  .where("id", "==", result.returnValues.id)
+  .get()
+  .then(snapshots => {
+    snapshots.forEach(async doc => {
+      if(doc.id != result.returnValues.hash){
+        await db.collection('order')
+        .doc(result.returnValues.hash)
+        .update({status:'キャンセル', valid:false, timestamp:time})
+      }
+    })
+  });
+
+  db.collection('order')
+    .doc(result.returnValues.hash)
+    .update({status:'売却済', valid:false, timestamp:time})
+
 })
 
 contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderCancelled')
+
   if (error) return
+  /*
   const date = new Date()
   const time = date.getTime()
   const key = result.raw.topics[1]
@@ -57,4 +57,5 @@ contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   db.collection(config.constant.order)
     .doc(key)
     .update({status:config.constant.cancelled, modified:time})
+  */
 })

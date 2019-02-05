@@ -209,8 +209,11 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   })
 
   const ogp = 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' + encodeURIComponent(hash + '.png') + '?alt=media'
-  data.ogp = ogp
   data.timestamp = new Date().getTime()
+  data.valid = true
+  data.status = '出品中'
+  data.hash = hash
+  data.ogp = ogp
   data.metadata = await metadata('mchh', data.id)
   await db.collection('order').doc(hash).set(data)
 
@@ -221,4 +224,17 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
 
   return result
 
+});
+
+exports.helloPubSub = functions.pubsub.topic('topic-test').onPublish(event => {
+  const pubSubMessage = event.data;
+  // Get the `name` attribute of the PubSub message JSON body.
+  let name = null;
+  try {
+    name = pubSubMessage.json.name;
+    console.log(`Name: ${name}`);
+  } catch (e) {
+    console.error('PubSub message was not JSON', e);
+  }
+  return 0;
 });

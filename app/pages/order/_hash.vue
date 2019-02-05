@@ -1,7 +1,7 @@
 <template>
 <div>
     <section class="l-information">
-      <div><img :src="order.ogp" width=100%></div>
+      <div ><img class="ogpimg" :src="order.ogp" width=100%></div>
       <div class="l-information__frame">
         <div class="l-information__name">{{ order.metadata.hero_type.name.ja}} / LV.{{ order.metadata.attributes.lv}}</div>
         <div class="l-information__txt"># {{ order.metadata.attributes.id}}</div>
@@ -17,7 +17,6 @@
         <li><strong>AGI：</strong> {{ order.metadata.attributes.agi}}</li>
         </ul>
         <ul class="l-information__data">
-          <!-- TODO Active_sukill 有無 -->
 
         <li><span class="l-information__skill--type">Active</span>
           【{{ order.metadata.active_skill.name.ja}}】<br>
@@ -28,13 +27,32 @@
           {{ order.metadata.passive_skill.description.ja}}
         </li>
         </ul>
-
+        <v-form v-model="valid">
         <div class="l-information__action">
-          <div v-if="order.status == '出品中'"
-          class="l-information__action__btn" @click="purchase" value="purchase">購入する</div>
+          <v-btn v-if="order.status == '出品中'"
+          class="l-information__action__btn"
+          :disabled="!valid || loading"
+          color="#3498db"
+          large
+          @click="purchase"
+          value="purchase"
+          >購入する
+           <v-progress-circular size=16 class="ma-2" v-if="loading"
+              indeterminate
+            ></v-progress-circular>
+          </v-btn>
       </div>
+       <v-flex center>
+            <v-checkbox
+              class="center"
+              v-model="checkbox"
+              :rules="[v => !!v || '']"
+              label="利用規約に同意する"
+              required
+            ></v-checkbox>
+        </v-flex>
+        </v-form>
     </div>
-    </section>
     <price-chart-component></price-chart-component>
     <div class="l-information__action__btn">
        <a :href="'https://twitter.com/share?url=https://bazaaar.io/order/' + order.hash +
@@ -43,6 +61,26 @@
         Tweetする
         </a>
         <!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+    </div>
+    </section>
+    <section class="c-index c-index--recommend">
+
+        <h2 class="c-index__title">おすすめアセット</h2>
+        <ul>
+        <li v-for="(recommend, i ) in recommend" :key="i">
+        <nuxt-link :to="'/order/'+ recommend.hash" class="c-card">
+        <div class="c-card__label c-card__label__rarity--1">★1</div>
+        <div class="c-card__img"><img :src="recommend.metadata.image_url" alt=""></div>
+        <div class="c-card__name">{{recommend.metadata.hero_type.name.ja}} / LV.{{ recommend.metadata.attributes.lv }} </div>
+        <div class="c-card__txt">#{{recommend.id}}</div>
+        <div class="c-card__txt">My Crypto Heores</div>
+        <div class="c-card__eth">{{recommend.price / 1000000000000000000}} ETH</div>
+        </nuxt-link>
+        </li>
+        </ul>
+    </section>
+    <div>
+
     </div>
 
   </div>
@@ -65,9 +103,28 @@ export default {
   components: {
     priceChartComponent
   },
+  data() {
+    return {
+      loading:false,
+      valid: true,
+      checkbox: false,
+      }
+  },
   async asyncData({ store, params }) {
     const order = await firestore.doc('order', params.hash)
     await store.dispatch('order/setOrder', order)
+
+    // recomend用のid4桁欲しいかも
+    // const recommend1 = await firestore.docs('order','id' , '==', order.id.substring(0,4), 'status', '==', '出品中')
+    // >, < がerrorになる
+    const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
+    recommend2.sort((a, b) => {
+          if (a.price < b.price) return -1;
+          if (a.price > b.price) return 1;
+          return 0;
+        });
+    const recommend = recommend2.slice(0,4)
+    await store.dispatch('recommend/setRecommend', recommend)
   },
   mounted: async function() {
     const store = this.$store
@@ -85,6 +142,9 @@ export default {
     },
     order() {
       return this.$store.getters['order/order']
+    },
+    recommend(){
+      return this.$store.getters['recommend/recommend']
     }
   },
   methods: {
@@ -162,6 +222,9 @@ color: white;
   text-align: center;
   padding: 10px 0;
   margin: auto;
+}
+.ogpimg{
+  
 }
 </style>
 

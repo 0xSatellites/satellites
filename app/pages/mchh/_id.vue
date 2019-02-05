@@ -43,7 +43,7 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
           <!-- todo order存在しているか -->
-          <div class="l-item__action__btns" v-if="order.price > 0">
+          <div class="l-item__action__btns" v-if="true">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
                 :disabled="!valid || loading"
                 color="#3498db"
@@ -57,8 +57,25 @@
               </v-btn>
           </div>
             <div class="l-item__action__btns" v-else>
-              <div class="l-item__action__btn l-item__action__btn--type1" @click="order_v1">金額変更する</div>
-              <div class="l-item__action__btn l-item__action__btn--type2" @click="cancel" value="cancel">キャンセルする</div>
+              <div class="l-item__action__btn l-item__action__btn--type1"
+              :disabled="!valid || loading"
+              @click="order_v1"
+              >
+              金額変更する
+              <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </div>
+              <div class="l-item__action__btn l-item__action__btn--type2"
+              :disabled="!valid || loading"
+              @click="cancel"
+              value="cancel"
+              >
+              キャンセルする
+              <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </div>
             </div>
             <v-flex center>
             <v-checkbox
@@ -230,7 +247,6 @@ export default {
         this.ogp = result.ogp
         this.loading = false
         this.modal = true
-        console.log("ok")
         // router.push({ path: '/order/' + result.hash})
       } else {
         console.log('not approved')

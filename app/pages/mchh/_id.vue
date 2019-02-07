@@ -42,6 +42,19 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
+          <!-- <div class="l-item__action__btns" v-if="approved">
+              <v-btn class="l-item__action__btn"
+                :disabled="loading"
+                color="success"
+                large
+                @click="approve"
+              >
+                承認する
+                <v-progress-circular size=16 class="ma-2" v-if="loading"
+                indeterminate
+              ></v-progress-circular>
+              </v-btn>
+          </div> -->
           <!-- todo order存在しているか -->
           <div class="l-item__action__btns" v-if="true">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -154,6 +167,7 @@ export default {
       loading:false,
       valid: true,
       checkbox: false,
+      // approved: false,
       }
   },
   async asyncData({ store, params }) {
@@ -163,6 +177,7 @@ export default {
   },
   mounted: async function() {
     const store = this.$store
+
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
@@ -182,6 +197,12 @@ export default {
         console.log(order1)
         this.price = order1.price/1000000000000000000
         await store.dispatch('order/setOrder', order1)
+
+        const approved = await client.contract.mchh.methods
+        .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
+        .call({from:account.address})
+        console.log(approved)
+        this.approved = approved
       }
     }
   },
@@ -257,6 +278,14 @@ export default {
             console.log(hash)
           })
       }
+    },
+    async approve(){
+      client.contract.mchh.methods
+          .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
+          .send({ from: account.address })
+          .on('transactionHash', function(hash) {
+            console.log(hash)
+          })
     },
     async cancel() {
       const account = this.account

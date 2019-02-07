@@ -106,7 +106,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
       data.s
     )
     .call()
-
   let canvas = Canvas.createCanvas(1200,630)
   let c = canvas.getContext('2d')
 

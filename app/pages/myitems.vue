@@ -20,11 +20,10 @@
           <li v-for="(mchh, i) in myitems.mchh" :key="i + '-mchh'">
           <div>
               <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
-                  <!-- 出品可能 -->
                   <div class="c-card__label c-card__label__rarity--1">★1</div>
                   <div class="c-card__label--exhibit">出品可能</div>
                   <div class="c-card__img"><img :src="mchh.image_url"></div>
-                  <div class="c-card__name">{{mchh.attributes.hero_name}} / LV.{{mchh.attributes.lv}}</div>
+                  <div class="c-card__name">{{mchh.hero_type.name.ja}} / LV.{{mchh.attributes.lv}}</div>
                   <div class="c-card__txt"># {{mchh.attributes.id}}</div>
                   <div class="c-card__txt">My Crypto Heores</div>
               </nuxt-link>
@@ -32,13 +31,12 @@
           </li>
           <li v-for="(mche, i) in myitems.mche" :key="i + '-mche'">
           <div>
-              <nuxt-link :to="'/mchh/' + mche.attributes.id" class="c-card">
-                  <!-- 出品可能 -->
+              <nuxt-link :to="'/mche/' + mche.external_url.slice(-8) " class="c-card">
                   <div class="c-card__label c-card__label__rarity--1">★1</div>
                   <div class="c-card__label--exhibit">出品可能</div>
                   <div class="c-card__img"><img :src="mche.image_url"></div>
-                  <div class="c-card__name">{{mche.attributes.hero_name}} / LV.{{mche.attributes.lv}}</div>
-                  <div class="c-card__txt"># {{mche.attributes.id}}</div>
+                  <div class="c-card__name">{{mche.extension_type.name.ja}} / LV.{{mche.attributes.lv}}</div>
+                  <div class="c-card__txt"># {{mche.external_url.slice(-8)}}</div>
                   <div class="c-card__txt">My Crypto Heores</div>
               </nuxt-link>
             </div>
@@ -46,7 +44,7 @@
         </ul>
       </section>
 
-      <section class="c-index c-index--mypage">
+      <!-- <section class="c-index c-index--mypage">
          <v-data-table
           :headers="headers"
           :items="order"
@@ -60,21 +58,7 @@
           </template>
         </v-data-table>
 
-        <!-- <div>
-          <div v-for="(order, i) in order" :key="i">
-            <div class="l-personal__frame">
-              <dl class="l-personal__address">
-              <dt>{{order.status}}：</dt>
-              <dd>
-                <nuxt-link :to="'/order/' + order.hash">
-                 {{order.metadata.hero_type.name.ja}} / Lv.{{ order.metadata.attributes.lv }} / #{{ order.id }} / {{ order.price / 1000000000000000000}}ETH
-                 </nuxt-link>
-              </dd>
-              </dl>
-              </div>
-          </div>
-        </div> -->
-      </section>
+      </section> -->
     </div>
 </template>
 

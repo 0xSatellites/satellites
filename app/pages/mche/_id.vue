@@ -4,29 +4,28 @@
         <div class="l-item__frame">
         <div>
         <div class="l-item__img">
-
-          <img :src="asset.mchh.image_url" alt="">
-          <!-- アートエディット作者に許可が必要なため、掲載しない -->
-          <!-- <img src="https://ipfs.infura.io/ipfs/QmTauj6WRifc3fXowFRgs27U7HSmSMNbvEdPzQqDZ9ERwB" alt=""> -->
+          <img :src="asset.mche.image_url" alt="">
           </div>
         </div>
         <div>
-        <div class="l-item__name">{{asset.mchh.attributes.hero_name }} / LV.{{asset.mchh.attributes.lv }}</div>
-        <div class="l-item__txt"># {{asset.mchh.attributes.id }}</div>
+        <div class="l-item__name">{{asset.mche.extension_type.name.ja }} / LV.{{asset.mche.attributes.lv }}</div>
+        <div class="l-item__txt"># {{asset.mche.external_url.slice(-8) }}</div>
         <div class="l-item__txt">My Crypto Heores</div>
 
         <ul class="l-item__data">
-        <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.mchh.attributes.rarity }}</li>
+        <li>
+          <!-- todo rarity -->
+          <span class="l-item__rarity l-item__rarity--5">★★★★★</span>
+          {{asset.mche.attributes.rarity }}</li>
         </ul>
         <ul class="l-item__data">
-        <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
-        <li><strong>PHY：</strong> {{asset.mchh.attributes.phy }}</li>
-        <li><strong>INT：</strong> {{asset.mchh.attributes.int }}</li>
-        <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
+        <li><strong>HP：</strong> {{asset.mche.attributes.hp }}</li>
+        <li><strong>PHY：</strong> {{asset.mche.attributes.phy }}</li>
+        <li><strong>INT：</strong> {{asset.mche.attributes.int }}</li>
+        <li><strong>AGI：</strong> {{asset.mche.attributes.agi }}</li>
         </ul>
         <ul class="l-item__data">
-        <li><span class="l-item__skill--type">Active</span>{{asset.mchh.attributes.active_skill }}</li>
-        <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
+        <li><span class="l-item__skill--type">Active</span>{{asset.mche.skill.name.ja }}</li>
         </ul>
 
         <v-form v-model="valid">
@@ -42,7 +41,7 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <!-- <div class="l-item__action__btns" v-if="approved">
+          <div class="l-item__action__btns" v-if="approved">
               <v-btn class="l-item__action__btn"
                 :disabled="loading"
                 color="success"
@@ -54,8 +53,8 @@
                 indeterminate
               ></v-progress-circular>
               </v-btn>
-          </div> -->
-          <!-- todo order存在しているか -->
+          </div>
+
           <div class="l-item__action__btns" v-if="true">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
                 :disabled="!valid || loading"
@@ -126,8 +125,8 @@
 
                 <div class="l-modal__txt">SNSに投稿しましょう</div>
                 <div class="l-modal__btn">
-                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/mchh/order/' + hash +
-                  '&text=' + '出品されました！ '+ asset.mchh.attributes.hero_name  + '/ LV.' + asset.mchh.attributes.lv +
+                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/mche/' + hash +
+                  '&text=' + '出品されました！ '+ asset.mche.extension_type.name.ja  + '/ LV.' + asset.mche.attributes.lv +
                   '&hashtags=bazaaar, バザール, マイクリ'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
                   twitterに投稿
                   </a>
@@ -167,12 +166,12 @@ export default {
       loading:false,
       valid: true,
       checkbox: false,
-      // approved: false,
+      approved: false,
       }
   },
   async asyncData({ store, params }) {
-    const asset = await functions.call('metadata', {asset:'mchh', id:params.id})
-    store.dispatch('asset/setMchh', asset)
+    const asset = await functions.call('metadata', {asset:'mche', id:params.id})
+    store.dispatch('asset/setMche', asset)
 
   },
   mounted: async function() {
@@ -198,7 +197,7 @@ export default {
         this.price = order1.price/1000000000000000000
         await store.dispatch('order/setOrder', order1)
 
-        const approved = await client.contract.mchh.methods
+        const approved = await client.contract.mche.methods
         .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
         .call({from:account.address})
         console.log(approved)
@@ -224,25 +223,25 @@ export default {
     closeModal() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/mchh/order/' + this.hash})
+      router.push({ path: '/mche/' + this.hash})
     },
     async order_v1() {
       console.log('order_v1')
       this.loading = true
       const account = this.account
-      const asset = this.asset.mchh
+      const asset = this.asset.mche
       const params = this.$route.params
       const router = this.$router
       // const amount = document.getElementById('amount').value
       const amount = this.price
       const wei = client.utils.toWei(amount)
-      const approved = await client.contract.mchh.methods
+      const approved = await client.contract.mche.methods
         .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
         .call({from:account.address})
       if (approved) {
         console.log('approved')
         const nonce = await client.contract.bazaaar_v1.methods
-          .nonce_(account.address, client.contract.mchh.options.address, params.id)
+          .nonce_(account.address, client.contract.mche.options.address, params.id)
           .call({from:account.address})
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
@@ -253,7 +252,7 @@ export default {
           maker: account.address,
           taker: config.constant.nulladdress,
           creatorRoyaltyRecipient: account.address,
-          asset: client.contract.mchh.options.address,
+          asset: client.contract.mche.options.address,
           id: params.id,
           price: wei,
           nonce:nonce,
@@ -262,8 +261,11 @@ export default {
           creatorRoyaltyRatio: 600,
           referralRatio:400
         }
+        console.log("ok")
         const signedOrder = await client.signOrder(order)
+        console.log(signedOrder)
         var result = await functions.call('order', signedOrder)
+        console.log(result)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false
@@ -271,7 +273,7 @@ export default {
         // router.push({ path: '/order/' + result.hash})
       } else {
         console.log('not approved')
-        client.contract.mchh.methods
+        client.contract.mche.methods
           .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
           .send({ from: account.address })
           .on('transactionHash', function(hash) {
@@ -280,7 +282,7 @@ export default {
       }
     },
     async approve(){
-      client.contract.mchh.methods
+      client.contract.mche.methods
           .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
           .send({ from: account.address })
           .on('transactionHash', function(hash) {

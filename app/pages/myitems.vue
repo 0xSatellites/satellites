@@ -46,8 +46,8 @@
         </ul>
       </section>
 
-      <section>
-         <!-- <v-data-table
+      <section class="c-index c-index--mypage">
+         <v-data-table
           :headers="headers"
           :items="order"
           class="elevation-1"
@@ -55,13 +55,12 @@
           <template slot="items" scope="props">
             <td>{{ props.item.status }}</td>
             <td>{{ props.item.id }}</td>
-            <td class="text-xs-right">{{ props.item.metadata.hero_type.name.ja }}</td>
-            <td class="text-xs-right">{{ props.item.price / 1000000000000000000}}</td>
-            <td class="text-xs-right">{{ props.item.metadata.attributes.lv }}</td>
+            <td >{{ props.item.metadata.hero_type.name.ja }}  / lv.{{ props.item.metadata.attributes.lv }}</td>
+            <td >{{ props.item.price / 1000000000000000000}}</td>
           </template>
-        </v-data-table> -->
+        </v-data-table>
 
-        <div>
+        <!-- <div>
           <div v-for="(order, i) in order" :key="i">
             <div class="l-personal__frame">
               <dl class="l-personal__address">
@@ -74,7 +73,7 @@
               </dl>
               </div>
           </div>
-        </div>
+        </div> -->
       </section>
     </div>
 </template>
@@ -137,16 +136,14 @@ export default {
       return {
         headers: [
           {
-            text: 'Dessert (100g serving)',
+            text: 'ステータス',
             align: 'left',
             sortable: false,
             value: 'name'
           },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' }
+          { text: 'id', value: 'calories' },
+          { text: 'アセット', value: 'fat' },
+          { text: '価格', value: 'price' },
         ],
       }
     }

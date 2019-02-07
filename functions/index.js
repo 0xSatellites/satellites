@@ -106,6 +106,9 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
       data.s
     )
     .call()
+
+  data.metadata = await metadata('mchh', data.id)
+
   let canvas = Canvas.createCanvas(1200,630)
   let c = canvas.getContext('2d')
 
@@ -213,7 +216,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   data.status = '出品中'
   data.hash = hash
   data.ogp = ogp
-  data.metadata = await metadata('mchh', data.id)
+
   await db.collection('order').doc(hash).set(data)
 
   const result = {
@@ -225,15 +228,32 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
 
 });
 
-exports.helloPubSub = functions.pubsub.topic('topic-test').onPublish(event => {
-  const pubSubMessage = event.data;
-  // Get the `name` attribute of the PubSub message JSON body.
-  let name = null;
-  try {
-    name = pubSubMessage.json.name;
-    console.log(`Name: ${name}`);
-  } catch (e) {
-    console.error('PubSub message was not JSON', e);
-  }
-  return 0;
+exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('orderMatched').onPublish(message => {
+  const transactionHash = message.json.transactionHash;
+  web3.eth.getTransactionReceipt(transactionHash)
+  .then(async function(val){
+    const maker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(26, 66)))
+    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
+    const id = web3.utils.hexToNumber(val.logs[0].data.substring(130, 194)).toString()
+    const time = new Date().getTime()
+    if(web3.utils.toChecksumAddress(val.logs[0].address) == config.contract.rinkeby.bazaaar_v1){
+      const batch = db.batch();
+      var ref = db.collection('order').doc(val.logs[0].topics[1])
+      batch.update(ref, {status:'売却済', valid:false, timestamp:time})
+      const snapshots = await db.collection('order')
+      .where("maker", "==", maker)
+      .where("asset", "==", asset)
+      .where("id", "==", id)
+      .get()
+      snapshots.forEach(function(doc) {
+        if(doc.id != val.logs[0].topics[1]){
+          var ref = db.collection('order').doc(doc.id)
+          batch.update(ref, {status:'キャンセル', valid:false, timestamp:time})
+        }
+      })
+      batch.commit().then(function () {
+        console.log("done!!")
+      });
+    }
+  })
 });

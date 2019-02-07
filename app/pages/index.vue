@@ -28,7 +28,7 @@
     </section>
     <section class="c-index c-index--recommend">
 
-        <h2 class="c-index__title">おすすめアセット</h2>
+        <h2 class="c-index__title">新着アセット</h2>
         <ul>
         <li>
         <a href="#" class="c-card">

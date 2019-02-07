@@ -55,7 +55,7 @@
     </div>
     <price-chart-component></price-chart-component>
     <div class="l-information__action__btn">
-       <a :href="'https://twitter.com/share?url=https://bazaaar.io/order/' + order.hash +
+       <a :href="'https://twitter.com/share?url=https://bazaaar.io/mchh/order/' + order.hash +
         '&text=' + '出品されました! '+ order.metadata.hero_type.name.ja  + '/ LV.' + order.metadata.attributes.lv +
         '&hashtags=bazaaar, バザール, マイクリ'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
         Tweetする
@@ -91,7 +91,7 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import priceChartComponent from '~/components/pricechart'
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 
 export default {
   head() {
@@ -114,9 +114,6 @@ export default {
     const order = await firestore.doc('order', params.hash)
     await store.dispatch('order/setOrder', order)
 
-    // recomend用のid4桁欲しいかも
-    // const recommend1 = await firestore.docs('order','id' , '==', order.id.substring(0,4), 'status', '==', '出品中')
-    // >, < がerrorになる
     const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
     recommend2.sort((a, b) => {
           if (a.price < b.price) return -1;

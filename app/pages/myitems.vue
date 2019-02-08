@@ -41,6 +41,18 @@
               </nuxt-link>
             </div>
           </li>
+          <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
+          <div>
+              <nuxt-link :to="'/ck/' + ck.id " class="c-card">
+                  <div class="c-card__label c-card__label__rarity--1">★1</div>
+                  <div class="c-card__label--exhibit">出品可能</div>
+                  <div class="c-card__img"><img :src="ck.image_url"></div>
+                  <div class="c-card__name">{{ck.name}} / Gen.{{ck.generation}}</div>
+                  <div class="c-card__txt"># {{ck.id}}</div>
+                  <div class="c-card__txt">Crypto Kitties</div>
+              </nuxt-link>
+            </div>
+          </li>
         </ul>
       </section>
 
@@ -102,6 +114,25 @@ export default {
           const result = await Promise.all(promises)
           store.dispatch('myitems/setMche', result)
         })
+      }
+      if (!myitems.ck.length) {
+        //get myitems:ck
+        const result = await client.ownedTokensCk('ck')
+        console.log(result)
+        store.dispatch('myitems/setCk', result)
+        // client.ownedTokensCk('ck').then(async function(tokens) {
+          // const promises = []
+          // for(var token of tokens){
+          //   promises.push(functions.call('metadata', {asset:'ck', id:token}))
+          // }
+          // const result = await Promise.all(promises)
+        //   const result = tokens
+        //   console.log(result)
+        //   store.dispatch('myitems/setCk', result)
+        // })
+        // const result = await client.ownedTokensCk('ck')
+        // console.log(result)
+        // store.dispatch('myitems/setCk', result)
       }
     }
   },

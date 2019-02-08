@@ -88,6 +88,14 @@ async function metadata(asset, id){
     response = general.data
     response.extension_type = resolved[0].data
     response.skill = resolved[1].data
+  }else if (asset == 'ck'){
+    let general = await axios({
+      method:'get',
+      url:config.api.ck.metadata + id,
+      responseType:'json'
+    })
+
+    response = general.data
   }
   return response
 }
@@ -97,6 +105,7 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  console.log(1)
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(
       [data.proxy, data.maker, data.taker, data.creatorRoyaltyRecipient, data.asset],
@@ -107,7 +116,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     )
     .call()
 
-  data.metadata = await metadata('mchh', data.id)
+  console.log(2)
+  data.metadata = await metadata('ck', data.id)
 
   let canvas = Canvas.createCanvas(1200,630)
   let c = canvas.getContext('2d')
@@ -118,9 +128,9 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     readFile('./assets/img/btn.png'),
     readFile('./assets/img/out.png'),
     axios.get(
-      'http://www.mycryptoheroes.net/images/heroes/2000/4009.png',
+      'https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1078.svg',
       { responseType: 'arraybuffer' }),
-    metadata('mchh', data.id)
+    // metadata('ck', data.id)
   ]
 
   let resolved = await Promise.all(promises)
@@ -143,6 +153,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   //キャラクター画像
   let characterImg = new Canvas.Image();
   characterImg.src = resolved[4].data
+  console.log(resolved[4].data)
+
 
   //初期化
   c.clearRect(0, 0, 1200, 630);
@@ -185,14 +197,16 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText(resolved[5].hero_type.name.ja, 840, 255, 720);
+  // c.fillText(resolved[5].name, 840, 255, 720);
+  // console.log(resolved[5].name)
 
-  //Lv
+  //Gen
   c.fillStyle = '#fff';
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('Lv.' + resolved[5].attributes.lv, 840, 305, 720);
+  // c.fillText('Gen.' + resolved[5].generation, 840, 305, 720);
+  // console.log(resolved[5].generation)
 
   //イーサ
   c.fillStyle = '#fff';
@@ -200,6 +214,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.textBaseline = "top";
   c.textAlign = 'center';
   c.fillText(web3.utils.fromWei(data.price) + ' ETH', 840, 375, 720);
+
+  console.log(3)
 
   const base64EncodedImageString = canvas.toDataURL().substring(22)
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')

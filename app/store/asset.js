@@ -1,7 +1,9 @@
 export const state = () => ({
   //MCH
   mchh: {},
-  mche: {}
+  mche: {},
+  //CK
+  ck:{}
 })
 
 export const getters = {
@@ -9,6 +11,7 @@ export const getters = {
     const asset = {
       mchh:state.mchh,
       mche:state.mche,
+      ck:state.ck
     }
     return asset
   }
@@ -20,6 +23,9 @@ export const mutations = {
   },
   setMche(state, mche) {
     state.mche = mche
+  },
+  setCk(state, ck) {
+    state.ck = ck
   }
 }
 
@@ -29,5 +35,8 @@ export const actions = {
   },
   async setMche({ state, commit }, mche) {
     commit('setMche', mche)
+  },
+  async setCk({ state, commit }, ck) {
+    commit('setCk', ck)
   }
 }

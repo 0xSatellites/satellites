@@ -1,17 +1,17 @@
-var bazaaarSwapEtherProxyHero_v1 = artifacts.require('BazaaarSwapEtherProxyHero_v1')
-var testBazaaarSwapEtherProxyHero_v1 = artifacts.require('test/TestBazaaarSwapEtherProxyHero_v1')
-var HeroAsset = artifacts.require('tokens/MyCryptoHeroes/HeroAsset')
+var bazaaarProtocol_v1 = artifacts.require('BazaaarProtocol_v1')
+var testBazaaarProtocol_v1 = artifacts.require('test/TestBazaaarProtocol_v1')
+var KittyCore = artifacts.require('tokens/CK/KittyCore')
 
 var Web3 = require('web3');
 
 const web3Eth = new Web3(web3.currentProvider).eth;
 const Web3Utils = new Web3(web3.currentProvider).utils;
 
-contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
+contract('Test BazaaarProtocol_v1', async function(accounts) {
 
     var contract;
     var test;
-    var heroAsset;
+    var kittyCore;
 
     var templateNonce = 0
     var templateSalt = Math.floor(Math.random() * 1000000000);
@@ -22,7 +22,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
 
     var account1 = accounts[0];
     var account2 = accounts[1];
-    var privkey1 = "0x59e6a1fa28851d9b11fef9967d4d63c50a40adbd8e944b67ad1f00f5ff614c24";
+    var privkey1 = "0x97ec2b3a580c4733fd7bba016fd0ce11609aa1d98aa9af6dd53aea9d1c4dc55e";
 
     var referralRecipient = accounts[9];
     var artEditRoyaltyRecipient = accounts[8];
@@ -103,16 +103,16 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
     }
 
     it('Setup', async function() {
-        heroAsset = await HeroAsset.new();
-        contract =  await bazaaarSwapEtherProxyHero_v1.new();
-        test =  await testBazaaarSwapEtherProxyHero_v1.new();
+        kittyCore = await KittyCore.new();
+        contract =  await bazaaarProtocol_v1.new();
+        test =  await testBazaaarProtocol_v1.new();
 
         templateOrder = {
             proxy: test.address,
             maker: account1,
             taker: "0x0000000000000000000000000000000000000000",
             address: account1,
-            asset:heroAsset.address,
+            asset:kittyCore.address,
             id: HEROID1,
             price: PRICE,
             nonce: templateNonce,
@@ -154,16 +154,16 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
     })
 
     it('Method: validateAssetStatus(HEROID1)', async function() {
-        await heroAsset.mint(account1, HEROID1);
-        var result = await heroAsset.ownerOf(HEROID1);
+        await kittyCore.mint(account1, HEROID1);
+        var result = await kittyCore.ownerOf(HEROID1);
         assert.equal(result, account1);
 
         var order = templateOrder
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
         assert.equal(false, result, "not approved by maker");
 
-        await heroAsset.approve(test.address, HEROID1);
-        var result = await heroAsset.getApproved(HEROID1)
+        await kittyCore.approve(test.address, HEROID1);
+        var result = await kittyCore.kittyIndexToApproved(HEROID1)
         assert.equal(result, test.address);
 
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
@@ -201,7 +201,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
     })
 
     it('Method: validateOrder', async function() {
-        var result = await heroAsset.getApproved(HEROID1)
+        var result = await kittyCore.kittyIndexToApproved(HEROID1)
         assert.equal(result, test.address);
         var order = templateOrder
         var data = hash(order)
@@ -218,7 +218,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
     })
 
     it('Method: requireValidOrder', async function() {
-        var result = await heroAsset.getApproved(HEROID1)
+        var result = await kittyCore.kittyIndexToApproved(HEROID1)
         assert.equal(result, test.address);
         var order = templateOrder
         var data = hash(order)
@@ -239,11 +239,11 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
 
     it('Scenario: purchase hero(HEROID9)', async function() {
 
-        await heroAsset.mint(account1, HEROID9);
-        var result = await heroAsset.ownerOf(HEROID9);
+        await kittyCore.mint(account1, HEROID9);
+        var result = await kittyCore.ownerOf(HEROID9);
         assert.equal(result, account1);
 
-        await heroAsset.setApprovalForAll(contract.address, true)
+        await kittyCore.approve(contract.address, HEROID9)
 
         var order = templateOrder
         order.id = HEROID9
@@ -261,7 +261,7 @@ contract('Test BazaaarSwapEtherProxyHero_v1', async function(accounts) {
             { from: account2, value:order.price}
         )
 
-        var result = await heroAsset.ownerOf(HEROID9);
+        var result = await kittyCore.ownerOf(HEROID9);
         assert.equal(result, account2);
     })
 })

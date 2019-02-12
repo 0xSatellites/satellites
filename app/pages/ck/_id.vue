@@ -41,22 +41,22 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <div class="l-item__action__btns" v-if="approved">
+
+          <div class="l-item__action__btns" v-if="!approved">
               <v-btn class="l-item__action__btn"
-                :disabled="loading"
-                color="success"
+                :disabled="!valid ||loading || approved"
                 large
                 @click="approve"
-              >
+                >
                 承認する
                 <v-progress-circular size=16 class="ma-2" v-if="loading"
                 indeterminate
               ></v-progress-circular>
               </v-btn>
           </div>
-          <div class="l-item__action__btns" v-if="true">
+          <div class="l-item__action__btns" v-if="order.length">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!valid || loading"
+                :disabled="!valid || loading || !approved"
                 color="#3498db"
                 large
                 @click="order_v1"
@@ -170,12 +170,12 @@ export default {
   },
   async asyncData({ store, params }) {
     const asset = await functions.call('metadata', {asset:'ck', id:params.id})
-    console.log("1")
     store.dispatch('asset/setCk', asset)
 
   },
   mounted: async function() {
     const store = this.$store
+    const params = this.$route.params
 
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
@@ -197,11 +197,14 @@ export default {
         this.price = order1.price/1000000000000000000
         await store.dispatch('order/setOrder', order1)
 
-        // const approved = await client.contract.ck.methods
-        // .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
-        // .call({from:account.address})
-        // console.log(approved)
-        // this.approved = approved
+        console.log("ok")
+        this.approved = approved
+        const approved = await client.contract.ck.methods
+        .kittyIndexToApproved(params.id)
+        .call({from:account.address})
+        console.log("approve" + approved)
+        this.approved = approved
+
       }
     }
   },
@@ -217,6 +220,7 @@ export default {
     }
   },
   methods: {
+
     openModal() {
       this.modal = true
     },
@@ -272,17 +276,19 @@ export default {
         this.loading = false
         this.modal = true
         // router.push({ path: '/order/' + result.hash})
-      } else {
-        console.log('not approved')
-        client.contract.ck.methods
-          .approve(client.contract.bazaaar_v1.options.address, params.id)
-          .send({ from: account.address })
-          .on('transactionHash', function(hash) {
-            console.log(hash)
-          })
       }
+      // else {
+      //   console.log('not approved')
+      //   client.contract.ck.methods
+      //     .approve(client.contract.bazaaar_v1.options.address, params.id)
+      //     .send({ from: account.address })
+      //     .on('transactionHash', function(hash) {
+      //       console.log(hash)
+      //     })
+      // }
     },
     async approve(){
+      const account = this.account
       const params = this.$route.params
       client.contract.ck.methods
           .approve(client.contract.bazaaar_v1.options.address, params.id)
@@ -294,6 +300,7 @@ export default {
     async cancel() {
       const account = this.account
       const order = this.order
+      console.log(order)
       await client.contract.bazaaar_v1.methods
         .orderCancell_(
           [
@@ -302,7 +309,6 @@ export default {
             order.taker,
             order.creatorRoyaltyRecipient,
             order.asset,
-            order.maker
           ],
           [
             order.id,

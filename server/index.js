@@ -13,6 +13,8 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+console.log("server on")
+
 const db = admin.firestore()
 
 const Web3 = require('web3')

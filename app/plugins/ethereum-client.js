@@ -62,38 +62,8 @@ const ownedTokens = async name => {
 
 const ownedTokensCk = async name => {
   console.log('ethereum-client:ownedTokens:' + name)
-  const methods = contract[name].methods
-  // const balance = await methods.balanceOf(account.address).call()
-  // console.log("b" + balance)
-  // if (balance == 0) {
-  //   return []
-  // }
-  // const promises = []
-  // for (var i = 0; i < balance; i++) {
-  //   promises.push(methods.tokensOfOwner(account.address).call())
-  //   console.log(promises)
-  // }
-
-  //error
-  // const result = await axios.get('https://api.cryptokitties.co/kitties?owner_wallet_address=' + account.address)
-  // const result = await methods.tokensOfOwner(account.address).call()
-  // console.log("tokensOfOwner" + result)
-  // const result = await Promise.all(promises)
-  // return result
-  const result = await axios.get('https://api.cryptokitties.co/kitties?owner_wallet_address=0x686BF528CA3793954547070EbE25649e08197805')
+  const result = await axios.get('https://api.cryptokitties.co/kitties?owner_wallet_address='+ account.address)
   return result.data.kitties
-
-  // axios.get('https://api.cryptokitties.co/kitties?owner_wallet_address=0x686BF528CA3793954547070EbE25649e08197805')
-  // .then(function (response) {
-  //   // handle success
-  //   console.log(response);
-  //   console.log(response.data.kitties)
-  //   return response.data.kitties
-  // })
-  // .catch(function (error) {
-  //   // handle error
-  //   console.log(error);
-  // })
 }
 
 const signOrder = async order => {

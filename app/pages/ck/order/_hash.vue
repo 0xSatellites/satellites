@@ -82,6 +82,31 @@
     <div>
 
     </div>
+    <transition name="modal" v-if="modal">
+        <div class="l-modal">
+
+            <div class="l-modal__frame">
+
+                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
+                <div class="l-modal__title">購入処理完了しました！</div>
+
+                <div class="l-modal__og">
+                    <div id="modalImg">
+                      <img  :src="order.ogp" alt=""  width="85%">
+                    </div>
+                </div>
+                <div class="l-modal__txt">トランザクションハッシュ</div>
+                <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
+
+                <div class="l-modal__close" @click="closeModal">
+                  <div class="l-modal__close__icon" ></div>
+                  <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+                </div>
+
+            </div>
+
+        </div>
+      </transition>
 
   </div>
 </template>
@@ -108,6 +133,8 @@ export default {
       loading:false,
       valid: true,
       checkbox: false,
+      modal: false,
+      hash: "",
       }
   },
   async asyncData({ store, params }) {
@@ -175,36 +202,16 @@ export default {
         .send({ from: account.address, value: order.price })
         .on('transactionHash', function(hash) {
           console.log(hash)
+          this.hash = hash
+          this.modal = true
         })
     },
-    async cancel() {
-      const account = this.account
-      const order = this.order
-      await client.contract.bazaaar_v1.methods
-        .orderCancell_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset,
-            order.maker
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ]
-        )
-        .send({ from: account.address })
-        .on('transactionHash', function(hash) {
-          console.log(hash)
-        })
-    }
+    openModal() {
+      this.modal = true
+    },
+    closeModal() {
+      this.modal = false
+    },
   }
 }
 </script>

@@ -17,27 +17,15 @@
       </section>
       <section class="c-index c-index--mypage">
         <ul>
-          <li v-for="(mchh, i) in myitems.mchh" :key="i + '-mchh'">
+          <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
           <div>
-              <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
-                  <div class="c-card__label c-card__label__rarity--1">★1</div>
-                  <div class="c-card__label--exhibit">出品可能</div>
-                  <div class="c-card__img"><img :src="mchh.image_url"></div>
-                  <div class="c-card__name">{{mchh.hero_type.name.ja}} / LV.{{mchh.attributes.lv}}</div>
-                  <div class="c-card__txt"># {{mchh.attributes.id}}</div>
-                  <div class="c-card__txt">My Crypto Heores</div>
-              </nuxt-link>
-            </div>
-          </li>
-          <li v-for="(mche, i) in myitems.mche" :key="i + '-mche'">
-          <div>
-              <nuxt-link :to="'/mche/' + mche.external_url.slice(-8) " class="c-card">
-                  <div class="c-card__label c-card__label__rarity--1">★1</div>
-                  <div class="c-card__label--exhibit">出品可能</div>
-                  <div class="c-card__img"><img :src="mche.image_url"></div>
-                  <div class="c-card__name">{{mche.extension_type.name.ja}} / LV.{{mche.attributes.lv}}</div>
-                  <div class="c-card__txt"># {{mche.external_url.slice(-8)}}</div>
-                  <div class="c-card__txt">My Crypto Heores</div>
+              <nuxt-link :to="'/ck/' + ck.id " class="c-card">
+                  <!-- <div class="c-card__label c-card__label__rarity--1">★1</div> -->
+                  <!-- <div class="c-card__label--exhibit">出品可能</div> -->
+                  <div class="c-card__img"><img :src="ck.image_url"></div>
+                  <div class="c-card__name">Gen.{{ck.generation}}</div>
+                  <div class="c-card__txt"># {{ck.id}}</div>
+                  <div class="c-card__txt">Crypto Kitties</div>
               </nuxt-link>
             </div>
           </li>
@@ -81,27 +69,11 @@ export default {
         const order = await firestore.docs('order', 'maker', '==', account.address)
         store.dispatch('order/setOrder', order)
       }
-      if (!myitems.mchh.length) {
-        //get myitems:mchh
-        client.ownedTokens('mchh').then(async function(tokens) {
-          const promises = []
-          for(var token of tokens){
-            promises.push(functions.call('metadata', {asset:'mchh', id:token}))
-          }
-          const result = await Promise.all(promises)
-          store.dispatch('myitems/setMchh', result)
-        })
-      }
-      if (!myitems.mche.length) {
-        //get myitems:mche
-        client.ownedTokens('mche').then(async function(tokens) {
-          const promises = []
-          for(var token of tokens){
-            promises.push(functions.call('metadata', {asset:'mche', id:token}))
-          }
-          const result = await Promise.all(promises)
-          store.dispatch('myitems/setMche', result)
-        })
+      if (!myitems.ck.length) {
+        //get myitems:ck
+        const result = await client.ownedTokensCk('ck')
+        console.log(result)
+        store.dispatch('myitems/setCk', result)
       }
     }
   },

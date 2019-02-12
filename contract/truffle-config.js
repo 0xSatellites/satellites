@@ -23,13 +23,12 @@
  */
 
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const infuraKey = "v3/921701b6ba5e47c4a064f227613a7f09";
-//
+const infuraKey = "";
+
 //const fs = require('fs');
 //const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 const mnemonic = process.env.MNEMONIC
-console.log(mnemonic)
 
 module.exports = {
   /**
@@ -84,8 +83,21 @@ module.exports = {
           "https://rinkeby.infura.io/" + infuraKey
         );
       },
+      gasPrice: 10000000000, //ex. 10 gwei = 10000000000
       network_id: 4
-    }
+    },
+
+    live: {
+      provider: function() {
+        return new HDWalletProvider(
+          mnemonic,
+          "https://mainnet.infura.io/" + infuraKey
+        );
+      },
+      //It is recommend to set gasPrice (in wei)
+      gasPrice: 10000000000, //ex. 10 gwei = 10000000000
+      network_id: 1
+    },
 
     // Useful for private networks
     // private: {

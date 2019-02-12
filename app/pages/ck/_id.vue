@@ -9,13 +9,13 @@
           </div>
         </div>
         <div>
-        <div class="l-item__name">{{asset.ck.name }} / Gen.{{asset.ck.generation }}</div>
+        <div class="l-item__name">Gen.{{asset.ck.generation }}</div>
         <div class="l-item__txt"># {{asset.ck.id }}</div>
         <div class="l-item__txt">Cooldown Index {{asset.ck.status.cooldown_index }}</div>
         <div class="l-item__txt">Crypto Kitties</div>
 
         <ul class="l-item__data">
-        <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li>
+        <!-- <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li> -->
         </ul>
         <!-- <ul class="l-item__data">
         <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
@@ -54,7 +54,7 @@
               ></v-progress-circular>
               </v-btn>
           </div>
-          <div class="l-item__action__btns" v-if="order.length">
+          <div class="l-item__action__btns" v-if="true">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
                 :disabled="!valid || loading || !approved"
                 color="#3498db"
@@ -329,5 +329,9 @@ export default {
 .twitter-share-button {
 text-decoration: none;
 color: white;
+}
+
+.white_text{
+  color: white;
 }
 </style>

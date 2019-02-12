@@ -2,26 +2,54 @@ const Web3 = require('web3')
 const config = require('../../config.json')
 const axios = require("axios")
 
-const web3 = new Web3(config.node.rinkeby.https)
+var web3
 
-const contract = {
-  bazaaar_v1: new web3.eth.Contract(
-    config.abi.bazaaar_v1,
-    config.contract.rinkeby.bazaaar_v1
-  ),
-  mche: new web3.eth.Contract(
-    config.abi.mchh,
-    config.contract.rinkeby.mche
-  ),
-  mchh: new web3.eth.Contract(
-    config.abi.mchh,
-    config.contract.rinkeby.mchh
-  ),
-  ck: new web3.eth.Contract(
-    config.abi.ck,
-    config.contract.rinkeby.ck
-  ),
+if(process.env.NODE_ENV == 'development') {
+  web3 = new Web3(config.node.rinkeby.https)
+} else if (process.env.NODE_ENV == 'production') {
+  web3 = new Web3(config.node.mainnet.https)
+}
 
+var contract
+
+if(process.env.NODE_ENV == 'development') {
+  contract = {
+    bazaaar_v1: new web3.eth.Contract(
+      config.abi.bazaaar_v1,
+      config.contract.rinkeby.bazaaar_v1
+    ),
+    mche: new web3.eth.Contract(
+      config.abi.mchh,
+      config.contract.rinkeby.mche
+    ),
+    mchh: new web3.eth.Contract(
+      config.abi.mchh,
+      config.contract.rinkeby.mchh
+    ),
+    ck: new web3.eth.Contract(
+      config.abi.ck,
+      config.contract.rinkeby.ck
+    ),
+  }
+} else if (process.env.NODE_ENV == 'production') {
+  contract = {
+    bazaaar_v1: new web3.eth.Contract(
+      config.abi.bazaaar_v1,
+      config.contract.mainnet.bazaaar_v1
+    ),
+    mche: new web3.eth.Contract(
+      config.abi.mchh,
+      config.contract.mainnet.mche
+    ),
+    mchh: new web3.eth.Contract(
+      config.abi.mchh,
+      config.contract.mainnet.mchh
+    ),
+    ck: new web3.eth.Contract(
+      config.abi.ck,
+      config.contract.mainnet.ck
+    ),
+  }
 }
 
 const account = {

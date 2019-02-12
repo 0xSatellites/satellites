@@ -1,23 +1,21 @@
 pragma solidity 0.4.24;
 
-// import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 /**
- * @title ERC721 Non-Fungible Token Standard basic interface
- * @dev see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md
+ * Title  :  BazaaarProtocol_v1
+ * Asset  :  CryptoKitties
+ * Author :  BlockBase
  */
-contract IERC721 {
-
+contract CK {
     function kittyIndexToApproved(uint256 tokenId)public view returns (address operator);
     function balanceOf(address owner) public view returns (uint256 balance);
     function ownerOf(uint256 tokenId) public view returns (address owner);
     function transferFrom(address from, address to, uint256 tokenId) public;
-
 }
 
-contract BazaaarSwapEtherProxyCk_v1 is Pausable {
+contract BazaaarProtocol_v1 is Pausable {
     using SafeMath for uint;
 
     event OrderMatched(
@@ -96,7 +94,7 @@ contract BazaaarSwapEtherProxyCk_v1 is Pausable {
     }
 
     function distribute(Order memory order, address referralRecipient) internal {
-        IERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
+        CK(order.asset).transferFrom(order.maker, msg.sender, order.id);
         Amount memory amount = computeAmount(order);
         if(amount.creatorRoyalty > 0){
             order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
@@ -163,10 +161,10 @@ contract BazaaarSwapEtherProxyCk_v1 is Pausable {
         view
         returns (bool)
     {
-        if (IERC721(order.asset).ownerOf(order.id) != order.maker) {
+        if (CK(order.asset).ownerOf(order.id) != order.maker) {
             return false;
         }
-        if (IERC721(order.asset).kittyIndexToApproved(order.id) != address(this)) {
+        if (CK(order.asset).kittyIndexToApproved(order.id) != address(this)) {
             return false;
         }
         return true;

@@ -1,11 +1,11 @@
 pragma solidity 0.4.24;
 
-import "../BazaaarSwapEtherProxyHero_v1.sol";
+import "../BazaaarProtocol_v1.sol";
 
-contract TestBazaaarSwapEtherProxyHero_v1 is BazaaarSwapEtherProxyHero_v1 {
+contract TestBazaaarProtocol_v1 is BazaaarProtocol_v1 {
 
     constructor(
-    ) BazaaarSwapEtherProxyHero_v1(
+    ) BazaaarProtocol_v1(
     ) public {}
 
     function now_() external view returns (uint) {

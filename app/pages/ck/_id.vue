@@ -28,7 +28,7 @@
         <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
         </ul> -->
 
-        <v-form v-model="valid">
+        <v-form v-model="valid" v-if="owner == account.address">
           <div class="l-item__action">
 
           <div class="l-item__action__price"><label><input type="text" v-model="price" id="amount"> ETH</label></div>
@@ -166,6 +166,7 @@ export default {
       valid: true,
       checkbox: false,
       approved: false,
+      owner: "",
       }
   },
   async asyncData({ store, params }) {
@@ -204,6 +205,12 @@ export default {
         .call({from:account.address})
         console.log("approve" + approved)
         this.approved = approved
+
+        const owner = await client.contract.ck.methods
+        .kittyIndexToOwner(params.id)
+        .call({from:account.address})
+        console.log("owner" + owner)
+        this.owner = owner
 
       }
     }
@@ -266,8 +273,8 @@ export default {
           nonce:nonce,
           salt: salt,
           expiration:expiration,
-          creatorRoyaltyRatio: 600,
-          referralRatio:400
+          creatorRoyaltyRatio: 0,
+          referralRatio:0
         }
         const signedOrder = await client.signOrder(order)
         var result = await functions.call('order', signedOrder)
@@ -275,17 +282,7 @@ export default {
         this.ogp = result.ogp
         this.loading = false
         this.modal = true
-        // router.push({ path: '/order/' + result.hash})
       }
-      // else {
-      //   console.log('not approved')
-      //   client.contract.ck.methods
-      //     .approve(client.contract.bazaaar_v1.options.address, params.id)
-      //     .send({ from: account.address })
-      //     .on('transactionHash', function(hash) {
-      //       console.log(hash)
-      //     })
-      // }
     },
     async approve(){
       const account = this.account

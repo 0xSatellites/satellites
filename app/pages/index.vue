@@ -82,6 +82,7 @@
 </template>
 
 <script>
+
 export default {
 // layout: 'indexfooter'
 }

@@ -1,146 +1,179 @@
 <template>
-    <div>
-      <section class="l-item">
-        <div class="l-item__frame">
+  <div>
+    <section class="l-item">
+      <div class="l-item__frame">
         <div>
-        <div class="l-item__img">
-
-          <img :src="asset.ck.image_url" alt="">
+          <div class="l-item__img">
+            <img :src="asset.ck.image_url" alt="" />
           </div>
         </div>
         <div>
-        <div class="l-item__name">Gen.{{asset.ck.generation }}</div>
-        <div class="l-item__txt"># {{asset.ck.id }}</div>
-        <div class="l-item__txt">Cooldown Index {{asset.ck.status.cooldown_index }}</div>
-        <div class="l-item__txt">Crypto Kitties</div>
+          <div class="l-item__name">Gen.{{ asset.ck.generation }}</div>
+          <div class="l-item__txt"># {{ asset.ck.id }}</div>
+          <div class="l-item__txt">
+            Cooldown Index {{ asset.ck.status.cooldown_index }}
+          </div>
+          <div class="l-item__txt">Crypto Kitties</div>
 
-        <ul class="l-item__data">
-        <!-- <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li> -->
-        </ul>
-        <!-- <ul class="l-item__data">
+          <ul class="l-item__data">
+            <!-- <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li> -->
+          </ul>
+          <!-- <ul class="l-item__data">
         <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
         <li><strong>PHY：</strong> {{asset.mchh.attributes.phy }}</li>
         <li><strong>INT：</strong> {{asset.mchh.attributes.int }}</li>
         <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
         </ul> -->
-        <!-- <ul class="l-item__data">
+          <!-- <ul class="l-item__data">
         <li><span class="l-item__skill--type">CooldownIndex</span>{{asset.ck.status.cooldown_index }}</li>
         <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
         </ul> -->
 
-        <v-form v-model="valid" v-if="owner == account.address">
-          <div class="l-item__action">
-
-          <div class="l-item__action__price"><label><input type="text" v-model="price" id="amount"> ETH</label></div>
-          <v-expansion-panel>
-            <v-expansion-panel-content>
-              <div slot="header">オプション設定</div>
-              <v-card>
-                <p>一言メッセージ</p>
-                <div ><textarea name="" id="" cols="30" rows="10"></textarea></div>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-
-          <div class="l-item__action__btns" v-if="!approved">
-              <v-btn class="l-item__action__btn"
-                :disabled="!valid ||loading || approved"
-                large
-                @click="approve"
+          <v-form v-model="valid" v-if="owner == account.address">
+            <div class="l-item__action">
+              <div class="l-item__action__price">
+                <label
+                  ><input type="text" v-model="price" id="amount" /> ETH</label
                 >
-                承認する
-                <v-progress-circular size=16 class="ma-2" v-if="loading"
-                indeterminate
-              ></v-progress-circular>
-              </v-btn>
-          </div>
-          <div class="l-item__action__btns" v-if="true">
-              <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!valid || loading || !approved"
-                color="#3498db"
-                large
-                @click="order_v1"
-              >
-                出品する
-                <v-progress-circular size=16 class="ma-2" v-if="loading"
-                indeterminate
-              ></v-progress-circular>
-              </v-btn>
-          </div>
-            <div class="l-item__action__btns" v-else>
-              <div class="l-item__action__btn l-item__action__btn--type1"
-              :disabled="!valid || loading"
-              @click="order_v1"
-              >
-              金額変更する
-              <v-progress-circular size=16 class="ma-2" v-if="loading"
-                indeterminate
-              ></v-progress-circular>
               </div>
-              <div class="l-item__action__btn l-item__action__btn--type2"
-              :disabled="!valid || loading"
-              @click="cancel"
-              value="cancel"
-              >
-              キャンセルする
-              <v-progress-circular size=16 class="ma-2" v-if="loading"
-                indeterminate
-              ></v-progress-circular>
-              </div>
-            </div>
-            <v-flex center>
-            <v-checkbox
-              class="center"
-              v-model="checkbox"
-              :rules="[v => !!v || '']"
-              label="利用規約に同意する"
-              required
-            ></v-checkbox>
-            </v-flex>
-          </div>
-        </v-form>
-      </div>
-      </div>
-      </section>
-      <section class="c-price">
-        <h2 class="c-price__title">価格推移</h2>
-        <price-chart-component></price-chart-component>
-      </section>
-      <canvas id="ogp" width="1200" height="630" hidden></canvas>
-
-      <transition name="modal" v-if="modal">
-        <div class="l-modal">
-
-            <div class="l-modal__frame">
-
-                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-                <div class="l-modal__title">出品されました！</div>
-
-                <div class="l-modal__og">
-                    <div id="modalImg">
-                      <img  :src="ogp" alt=""  width="85%">
+              <v-expansion-panel>
+                <v-expansion-panel-content>
+                  <div slot="header">オプション設定</div>
+                  <v-card>
+                    <p>一言メッセージ</p>
+                    <div>
+                      <textarea name="" id="" cols="30" rows="10"></textarea>
                     </div>
-                </div>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
 
-                <div class="l-modal__txt">SNSに投稿しましょう</div>
-                <div class="l-modal__btn">
-                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/ck/order/' + hash +
-                  '&text=' + '出品されました！ '+ asset.ck.name  + '/ LV.' + asset.ck.generation +
-                  '&hashtags=bazaaar, バザール, CryptoKitties'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
-                  twitterに投稿
-                  </a>
+              <div class="l-item__action__btns" v-if="!approved">
+                <v-btn
+                  class="l-item__action__btn"
+                  :disabled="!valid || loading || approved"
+                  large
+                  @click="approve"
+                >
+                  承認する
+                  <v-progress-circular
+                    size="16"
+                    class="ma-2"
+                    v-if="loading"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-btn>
+              </div>
+              <div class="l-item__action__btns" v-if="true">
+                <v-btn
+                  class="l-item__action__btn l-item__action__btn--type1 white_text"
+                  :disabled="!valid || loading || !approved"
+                  color="#3498db"
+                  large
+                  @click="order_v1"
+                >
+                  出品する
+                  <v-progress-circular
+                    size="16"
+                    class="ma-2"
+                    v-if="loading"
+                    indeterminate
+                  ></v-progress-circular>
+                </v-btn>
+              </div>
+              <div class="l-item__action__btns" v-else>
+                <div
+                  class="l-item__action__btn l-item__action__btn--type1"
+                  :disabled="!valid || loading"
+                  @click="order_v1"
+                >
+                  金額変更する
+                  <v-progress-circular
+                    size="16"
+                    class="ma-2"
+                    v-if="loading"
+                    indeterminate
+                  ></v-progress-circular>
                 </div>
-
-                <div class="l-modal__close" @click="closeModal">
-                  <div class="l-modal__close__icon" ></div>
-                  <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+                <div
+                  class="l-item__action__btn l-item__action__btn--type2"
+                  :disabled="!valid || loading"
+                  @click="cancel"
+                  value="cancel"
+                >
+                  キャンセルする
+                  <v-progress-circular
+                    size="16"
+                    class="ma-2"
+                    v-if="loading"
+                    indeterminate
+                  ></v-progress-circular>
                 </div>
-
+              </div>
+              <v-flex center>
+                <v-checkbox
+                  class="center"
+                  v-model="checkbox"
+                  :rules="[v => !!v || '']"
+                  label="利用規約に同意する"
+                  required
+                ></v-checkbox>
+              </v-flex>
             </div>
-
+          </v-form>
         </div>
-      </transition>
-    </div>
+      </div>
+    </section>
+    <section class="c-price">
+      <h2 class="c-price__title">価格推移</h2>
+      <price-chart-component></price-chart-component>
+    </section>
+    <canvas id="ogp" width="1200" height="630" hidden></canvas>
+
+    <transition name="modal" v-if="modal">
+      <div class="l-modal">
+        <div class="l-modal__frame">
+          <div class="l-modal__icon">
+            <img src="~/assets/img/modal/icon.svg" alt="" />
+          </div>
+          <div class="l-modal__title">出品されました！</div>
+
+          <div class="l-modal__og">
+            <div id="modalImg">
+              <img :src="ogp" alt="" width="85%" />
+            </div>
+          </div>
+
+          <div class="l-modal__txt">SNSに投稿しましょう</div>
+          <div class="l-modal__btn">
+            <a
+              :href="
+                'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
+                  hash +
+                  '&text=' +
+                  '出品されました！ ' +
+                  asset.ck.name +
+                  '/ LV.' +
+                  asset.ck.generation +
+                  '&hashtags=bazaaar, バザール, CryptoKitties'
+              "
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+            >
+              twitterに投稿
+            </a>
+          </div>
+
+          <div class="l-modal__close" @click="closeModal">
+            <div class="l-modal__close__icon"></div>
+            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script>
@@ -153,26 +186,28 @@ const config = require('../../../config.json')
 
 export default {
   components: {
-    priceChartComponent,
+    priceChartComponent
   },
   data() {
     return {
       modal: false,
       tokenOwner: false,
-      hash: "",
-      ogp: "",
-      price: "",
-      loading:false,
+      hash: '',
+      ogp: '',
+      price: '',
+      loading: false,
       valid: true,
       checkbox: false,
       approved: false,
-      owner: "",
-      }
+      owner: ''
+    }
   },
   async asyncData({ store, params }) {
-    const asset = await functions.call('metadata', {asset:'ck', id:params.id})
+    const asset = await functions.call('metadata', {
+      asset: 'ck',
+      id: params.id
+    })
     store.dispatch('asset/setCk', asset)
-
   },
   mounted: async function() {
     const store = this.$store
@@ -185,33 +220,40 @@ export default {
         store.dispatch('account/setAccount', account)
 
         const order = await firestore.docs(
-          'order', 'maker', '==', account.address,
-          'id' , '==', this.$route.params.id,
-          'status', '==', '出品中')
+          'order',
+          'maker',
+          '==',
+          account.address,
+          'id',
+          '==',
+          this.$route.params.id,
+          'status',
+          '==',
+          '出品中'
+        )
         order.sort((a, b) => {
-          if (a.timestamp < b.timestamp) return 1;
-          if (a.timestamp > b.timestamp) return -1;
-          return 0;
-        });
-        const order1 = order.shift();
+          if (a.timestamp < b.timestamp) return 1
+          if (a.timestamp > b.timestamp) return -1
+          return 0
+        })
+        const order1 = order.shift()
         console.log(order1)
-        this.price = order1.price/1000000000000000000
+        this.price = order1.price / 1000000000000000000
         await store.dispatch('order/setOrder', order1)
 
-        console.log("ok")
+        console.log('ok')
         this.approved = approved
         const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
-        .call({from:account.address})
-        console.log("approve" + approved)
+          .kittyIndexToApproved(params.id)
+          .call({ from: account.address })
+        console.log('approve' + approved)
         this.approved = approved
 
         const owner = await client.contract.ck.methods
-        .kittyIndexToOwner(params.id)
-        .call({from:account.address})
-        console.log("owner" + owner)
+          .kittyIndexToOwner(params.id)
+          .call({ from: account.address })
+        console.log('owner' + owner)
         this.owner = owner
-
       }
     }
   },
@@ -227,14 +269,13 @@ export default {
     }
   },
   methods: {
-
     openModal() {
       this.modal = true
     },
     closeModal() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/ck/order/' + this.hash})
+      router.push({ path: '/ck/order/' + this.hash })
     },
     async order_v1() {
       console.log('order_v1')
@@ -248,7 +289,7 @@ export default {
       //
       const approved = await client.contract.ck.methods
         .kittyIndexToApproved(params.id)
-        .call({from:account.address})
+        .call({ from: account.address })
       console.log(params.id)
       console.log(approved)
       console.log(client.contract.bazaaar_v1.options.address)
@@ -256,8 +297,12 @@ export default {
       if (approved == client.contract.bazaaar_v1.options.address) {
         console.log('approved')
         const nonce = await client.contract.bazaaar_v1.methods
-          .nonce_(account.address, client.contract.ck.options.address, params.id)
-          .call({from:account.address})
+          .nonce_(
+            account.address,
+            client.contract.ck.options.address,
+            params.id
+          )
+          .call({ from: account.address })
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
         date.setDate(date.getDate() + 7)
@@ -270,11 +315,11 @@ export default {
           asset: client.contract.ck.options.address,
           id: params.id,
           price: wei,
-          nonce:nonce,
+          nonce: nonce,
           salt: salt,
-          expiration:expiration,
+          expiration: expiration,
           creatorRoyaltyRatio: 0,
-          referralRatio:0
+          referralRatio: 0
         }
         const signedOrder = await client.signOrder(order)
         var result = await functions.call('order', signedOrder)
@@ -284,15 +329,15 @@ export default {
         this.modal = true
       }
     },
-    async approve(){
+    async approve() {
       const account = this.account
       const params = this.$route.params
       client.contract.ck.methods
-          .approve(client.contract.bazaaar_v1.options.address, params.id)
-          .send({ from: account.address })
-          .on('transactionHash', function(hash) {
-            console.log(hash)
-          })
+        .approve(client.contract.bazaaar_v1.options.address, params.id)
+        .send({ from: account.address })
+        .on('transactionHash', function(hash) {
+          console.log(hash)
+        })
     },
     async cancel() {
       const account = this.account
@@ -305,7 +350,7 @@ export default {
             order.maker,
             order.taker,
             order.creatorRoyaltyRecipient,
-            order.asset,
+            order.asset
           ],
           [
             order.id,
@@ -327,11 +372,11 @@ export default {
 </script>
 <style scoped>
 .twitter-share-button {
-text-decoration: none;
-color: white;
+  text-decoration: none;
+  color: white;
 }
 
-.white_text{
+.white_text {
   color: white;
 }
 </style>

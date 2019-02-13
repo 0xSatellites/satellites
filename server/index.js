@@ -13,10 +13,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-console.log("server on")
-
-const db = admin.firestore()
-
 const Web3 = require('web3')
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node.rinkeby.wss))
 
@@ -44,5 +40,15 @@ contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
 contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderCancelled')
   if (error) return
-
+  const registerMessage = {
+    transactionHash: result.transactionHash
+  };
+  const topic = pubsub.topic('orderCancelled');
+  topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
 })
+
+console.log("server on")

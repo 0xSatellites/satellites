@@ -102,10 +102,6 @@
       </div>
       </div>
       </section>
-      <section class="c-price">
-        <h2 class="c-price__title">価格推移</h2>
-        <price-chart-component></price-chart-component>
-      </section>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>
 
       <transition name="modal" v-if="modal">

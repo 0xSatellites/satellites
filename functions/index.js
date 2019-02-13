@@ -1,11 +1,11 @@
 const config = require('./config.json')
-const serviceAccount = require('./.serviceAccountKey.json')
+//const serviceAccount = require('./.serviceAccountKey.json')
 
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.applicationDefault(),
 })
 
 const db = admin.firestore()
@@ -266,6 +266,32 @@ exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('o
           var ref = db.collection('order').doc(doc.id)
           batch.update(ref, {status:'キャンセル', valid:false, timestamp:time})
         }
+      })
+      batch.commit().then(function () {
+        console.log("done!!")
+      });
+    }
+  })
+});
+
+exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(message => {
+  const transactionHash = message.json.transactionHash;
+  web3.eth.getTransactionReceipt(transactionHash)
+  .then(async function(val){
+    const maker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(26, 66)))
+    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
+    const id = web3.utils.hexToNumber(val.logs[0].data.substring(130, 194)).toString()
+    const time = new Date().getTime()
+    if(web3.utils.toChecksumAddress(val.logs[0].address) == config.contract.rinkeby.bazaaar_v1){
+      const batch = db.batch();
+      const snapshots = await db.collection('order')
+      .where("maker", "==", maker)
+      .where("asset", "==", asset)
+      .where("id", "==", id)
+      .get()
+      snapshots.forEach(function(doc) {
+        var ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {status:'キャンセル', valid:false, timestamp:time})
       })
       batch.commit().then(function () {
         console.log("done!!")

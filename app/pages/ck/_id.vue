@@ -14,39 +14,19 @@
             Cooldown Index {{ asset.ck.status.cooldown_index }}
           </div>
           <div class="l-item__txt">Crypto Kitties</div>
+        <v-form v-model="valid" v-if="owner == account.address">
+          <div class="l-item__action">
 
-          <ul class="l-item__data">
-            <!-- <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li> -->
-          </ul>
-          <!-- <ul class="l-item__data">
-        <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
-        <li><strong>PHY：</strong> {{asset.mchh.attributes.phy }}</li>
-        <li><strong>INT：</strong> {{asset.mchh.attributes.int }}</li>
-        <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
-        </ul> -->
-          <!-- <ul class="l-item__data">
-        <li><span class="l-item__skill--type">CooldownIndex</span>{{asset.ck.status.cooldown_index }}</li>
-        <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
-        </ul> -->
-
-          <v-form v-model="valid" v-if="owner == account.address">
-            <div class="l-item__action">
-              <div class="l-item__action__price">
-                <label
-                  ><input type="text" v-model="price" id="amount" /> ETH</label
-                >
-              </div>
-              <v-expansion-panel>
-                <v-expansion-panel-content>
-                  <div slot="header">オプション設定</div>
-                  <v-card>
-                    <p>一言メッセージ</p>
-                    <div>
-                      <textarea name="" id="" cols="30" rows="10"></textarea>
-                    </div>
-                  </v-card>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
+          <div class="l-item__action__price"><label><input type="text" v-model="price" id="amount"> ETH</label></div>
+          <v-expansion-panel>
+            <v-expansion-panel-content>
+              <div slot="header">オプション設定</div>
+              <v-card>
+                <p>一言メッセージ</p>
+                <div ><textarea name="" id="" cols="30" rows="10"></textarea></div>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
 
               <div class="l-item__action__btns" v-if="!approved">
                 <v-btn
@@ -81,19 +61,35 @@
                   ></v-progress-circular>
                 </v-btn>
               </div>
-              <div class="l-item__action__btns" v-else>
-                <div
-                  class="l-item__action__btn l-item__action__btn--type1"
-                  :disabled="!valid || loading"
-                  @click="order_v1"
-                >
-                  金額変更する
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
+            </div>
+            <v-flex center>
+            <v-checkbox
+              class="center"
+              v-model="checkbox"
+              :rules="[v => !!v || '']"
+              label="利用規約に同意する"
+              required
+            ></v-checkbox>
+            </v-flex>
+          </div>
+        </v-form>
+      </div>
+      </div>
+      </section>
+      <canvas id="ogp" width="1200" height="630" hidden></canvas>
+
+      <transition name="modal" v-if="modal">
+        <div class="l-modal">
+
+            <div class="l-modal__frame">
+
+                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
+                <div class="l-modal__title">出品されました！</div>
+
+                <div class="l-modal__og">
+                    <div id="modalImg">
+                      <img  :src="ogp" alt=""  width="85%">
+                    </div>
                 </div>
                 <div
                   class="l-item__action__btn l-item__action__btn--type2"
@@ -180,14 +176,10 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import priceChartComponent from '~/components/pricechart'
 
 const config = require('../../../config.json')
 
 export default {
-  components: {
-    priceChartComponent
-  },
   data() {
     return {
       modal: false,

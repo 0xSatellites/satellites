@@ -4,17 +4,31 @@
         <div class="l-item__frame">
         <div>
         <div class="l-item__img">
-
-          <img :src="asset.ck.image_url" alt="">
+          <img :src="asset.mche.image_url" alt="">
           </div>
         </div>
         <div>
-        <div class="l-item__name">Gen.{{asset.ck.generation }}</div>
-        <div class="l-item__txt"># {{asset.ck.id }}</div>
-        <div class="l-item__txt">Cooldown Index {{asset.ck.status.cooldown_index }}</div>
-        <div class="l-item__txt">Crypto Kitties</div>
+        <div class="l-item__name">{{asset.mche.extension_type.name.ja }} / LV.{{asset.mche.attributes.lv }}</div>
+        <div class="l-item__txt"># {{asset.mche.external_url.slice(-8) }}</div>
+        <div class="l-item__txt">My Crypto Heores</div>
 
-        <v-form v-model="valid" v-if="owner == account.address">
+        <ul class="l-item__data">
+        <li>
+          <!-- todo rarity -->
+          <span class="l-item__rarity l-item__rarity--5">★★★★★</span>
+          {{asset.mche.attributes.rarity }}</li>
+        </ul>
+        <ul class="l-item__data">
+        <li><strong>HP：</strong> {{asset.mche.attributes.hp }}</li>
+        <li><strong>PHY：</strong> {{asset.mche.attributes.phy }}</li>
+        <li><strong>INT：</strong> {{asset.mche.attributes.int }}</li>
+        <li><strong>AGI：</strong> {{asset.mche.attributes.agi }}</li>
+        </ul>
+        <ul class="l-item__data">
+        <li><span class="l-item__skill--type">Active</span>{{asset.mche.skill.name.ja }}</li>
+        </ul>
+
+        <v-form v-model="valid">
           <div class="l-item__action">
 
           <div class="l-item__action__price"><label><input type="text" v-model="price" id="amount"> ETH</label></div>
@@ -27,22 +41,23 @@
               </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
-
-          <div class="l-item__action__btns" v-if="!approved">
+          <div class="l-item__action__btns" v-if="approved">
               <v-btn class="l-item__action__btn"
-                :disabled="!valid ||loading || approved"
+                :disabled="loading"
+                color="success"
                 large
                 @click="approve"
-                >
+              >
                 承認する
                 <v-progress-circular size=16 class="ma-2" v-if="loading"
                 indeterminate
               ></v-progress-circular>
               </v-btn>
           </div>
+
           <div class="l-item__action__btns" v-if="true">
               <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!valid || loading || !approved"
+                :disabled="!valid || loading"
                 color="#3498db"
                 large
                 @click="order_v1"
@@ -88,6 +103,10 @@
       </div>
       </div>
       </section>
+      <section class="c-price">
+        <h2 class="c-price__title">価格推移</h2>
+        <price-chart-component></price-chart-component>
+      </section>
       <canvas id="ogp" width="1200" height="630" hidden></canvas>
 
       <transition name="modal" v-if="modal">
@@ -106,9 +125,9 @@
 
                 <div class="l-modal__txt">SNSに投稿しましょう</div>
                 <div class="l-modal__btn">
-                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/ck/order/' + hash +
-                  '&text=' + '出品されました！ '+ asset.ck.name  + '/ LV.' + asset.ck.generation +
-                  '&hashtags=bazaaar, バザール, CryptoKitties'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
+                  <a :href="'https://twitter.com/share?url=https://bazaaar.io/mche/' + hash +
+                  '&text=' + '出品されました！ '+ asset.mche.extension_type.name.ja  + '/ LV.' + asset.mche.attributes.lv +
+                  '&hashtags=bazaaar, バザール, マイクリ'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
                   twitterに投稿
                   </a>
                 </div>
@@ -129,10 +148,14 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import priceChartComponent from '~/components/pricechart'
 
-const config = require('../../../config.json')
+const config = require('../../config.json')
 
 export default {
+  components: {
+    priceChartComponent,
+  },
   data() {
     return {
       modal: false,
@@ -144,17 +167,15 @@ export default {
       valid: true,
       checkbox: false,
       approved: false,
-      owner: "",
       }
   },
   async asyncData({ store, params }) {
-    const asset = await functions.call('metadata', {asset:'ck', id:params.id})
-    store.dispatch('asset/setCk', asset)
+    const asset = await functions.call('metadata', {asset:'mche', id:params.id})
+    store.dispatch('asset/setMche', asset)
 
   },
   mounted: async function() {
     const store = this.$store
-    const params = this.$route.params
 
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
@@ -176,20 +197,11 @@ export default {
         this.price = order1.price/1000000000000000000
         await store.dispatch('order/setOrder', order1)
 
-        console.log("ok")
-        this.approved = approved
-        const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
+        const approved = await client.contract.mche.methods
+        .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
         .call({from:account.address})
-        console.log("approve" + approved)
+        console.log(approved)
         this.approved = approved
-
-        const owner = await client.contract.ck.methods
-        .kittyIndexToOwner(params.id)
-        .call({from:account.address})
-        console.log("owner" + owner)
-        this.owner = owner
-
       }
     }
   },
@@ -205,36 +217,31 @@ export default {
     }
   },
   methods: {
-
     openModal() {
       this.modal = true
     },
     closeModal() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/ck/order/' + this.hash})
+      router.push({ path: '/mche/' + this.hash})
     },
     async order_v1() {
       console.log('order_v1')
       this.loading = true
       const account = this.account
-      const asset = this.asset.ck
+      const asset = this.asset.mche
       const params = this.$route.params
       const router = this.$router
+      // const amount = document.getElementById('amount').value
       const amount = this.price
       const wei = client.utils.toWei(amount)
-      //
-      const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
+      const approved = await client.contract.mche.methods
+        .isApprovedForAll(account.address, client.contract.bazaaar_v1.options.address)
         .call({from:account.address})
-      console.log(params.id)
-      console.log(approved)
-      console.log(client.contract.bazaaar_v1.options.address)
-
-      if (approved == client.contract.bazaaar_v1.options.address) {
+      if (approved) {
         console.log('approved')
         const nonce = await client.contract.bazaaar_v1.methods
-          .nonce_(account.address, client.contract.ck.options.address, params.id)
+          .nonce_(account.address, client.contract.mche.options.address, params.id)
           .call({from:account.address})
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
@@ -245,28 +252,38 @@ export default {
           maker: account.address,
           taker: config.constant.nulladdress,
           creatorRoyaltyRecipient: account.address,
-          asset: client.contract.ck.options.address,
+          asset: client.contract.mche.options.address,
           id: params.id,
           price: wei,
           nonce:nonce,
           salt: salt,
           expiration:expiration,
-          creatorRoyaltyRatio: 0,
-          referralRatio:0
+          creatorRoyaltyRatio: 600,
+          referralRatio:400
         }
+        console.log("ok")
         const signedOrder = await client.signOrder(order)
+        console.log(signedOrder)
         var result = await functions.call('order', signedOrder)
+        console.log(result)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false
         this.modal = true
+        // router.push({ path: '/order/' + result.hash})
+      } else {
+        console.log('not approved')
+        client.contract.mche.methods
+          .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
+          .send({ from: account.address })
+          .on('transactionHash', function(hash) {
+            console.log(hash)
+          })
       }
     },
     async approve(){
-      const account = this.account
-      const params = this.$route.params
-      client.contract.ck.methods
-          .approve(client.contract.bazaaar_v1.options.address, params.id)
+      client.contract.mche.methods
+          .setApprovalForAll(client.contract.bazaaar_v1.options.address, true)
           .send({ from: account.address })
           .on('transactionHash', function(hash) {
             console.log(hash)
@@ -275,7 +292,6 @@ export default {
     async cancel() {
       const account = this.account
       const order = this.order
-      console.log(order)
       await client.contract.bazaaar_v1.methods
         .orderCancell_(
           [
@@ -284,6 +300,7 @@ export default {
             order.taker,
             order.creatorRoyaltyRecipient,
             order.asset,
+            order.maker
           ],
           [
             order.id,
@@ -307,9 +324,5 @@ export default {
 .twitter-share-button {
 text-decoration: none;
 color: white;
-}
-
-.white_text{
-  color: white;
 }
 </style>

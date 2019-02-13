@@ -44,7 +44,18 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/i18n.js'
   ],
+  vendor: [
+    'vue-i18n'
+  ],
+
+  router: {
+    middleware: 'i18n'
+  },
+  generate: {
+    routes: ['/', '/ja']
+  },
 
   /*
   ** Nuxt.js modules
@@ -53,7 +64,7 @@ module.exports = {
   modules: [
     '@nuxtjs/axios',
     //'@nuxtjs/pwa',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
   ],
   /*
   ** Build configuration

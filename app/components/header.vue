@@ -7,9 +7,20 @@
         </nuxt-link>
         </div>
         <nav class="l-header__nav">
-        <ul>
+        <!-- <ul>
         <li v-for="(item, i) in items" :key="i"><nuxt-link :to="item.to">{{item.title}}</nuxt-link></li>
-        </ul>
+        </ul> -->
+        <ul>
+        <li>
+        <nuxt-link :to="'/myitems'">{{$t('header.mypage')}}</nuxt-link>
+        <nuxt-link :to="'/myitems'">{{$t('header.howto')}}</nuxt-link>
+         <NuxtLink v-if="$i18n.locale === 'en'" :to="`/ja` + $route.fullPath" class="Header__Link" active-class="none" exact>
+            {{ $t('header.japanese') }}
+          </NuxtLink>
+          <NuxtLink v-else :to="$route.fullPath.replace(/^\/[^\/]+/, '')" class="Header__Link" active-class="none" exact>
+            {{ $t('header.english') }}
+          </NuxtLink></li>
+          </ul>
         </nav>
     </header>
 </template>

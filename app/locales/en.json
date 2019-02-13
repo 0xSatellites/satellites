@@ -1,0 +1,37 @@
+{
+    "meta":{
+        "title": "bazaaar"
+    },
+    "index":{
+        "subTitle1":"Fair Value",
+        "subTitle2":"SNS Order",
+        "subTitle3":"white List",
+        "subDiscription1":"aaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subDiscription2":"aaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subDiscription3":"aaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "header":{
+        "mypage": "MyPage",
+        "howto": "HowTo",
+        "english": "EnglishVer",
+        "japanese": "JapaneseVer"
+    },
+    "myitems":{
+        "mypage": "Mypage",
+        "address": "address",
+        "balance": "balance"
+    },
+    "footer":{
+        "terms": "terms",
+        "company": "company"
+    },
+    "id":{
+        "option": "option",
+        "inputMessage": "inputMessage",
+        "approve": "approve",
+        "sell": "sell",
+        "change": "change",
+        "cancel": "cancel",
+        "agree": "Agree with the Terms"
+    }
+}

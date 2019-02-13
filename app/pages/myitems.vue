@@ -52,6 +52,7 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
+import kitty from '~/plugins/kitty'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
@@ -71,7 +72,7 @@ export default {
       }
       if (!myitems.ck.length) {
         //get myitems:ck
-        const result = await client.ownedTokensCk('ck')
+        const result = await kitty.ownedTokens(this.account.address)
         console.log(result)
         store.dispatch('myitems/setCk', result)
       }

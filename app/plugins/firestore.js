@@ -18,7 +18,6 @@ const doc = async (collenction, doc) => {
 const docs = async (collenction, a, cond1, b, c, cond2, d, e, cond3, f)  => {
   console.log('db:gets', collenction, a, cond1, b)
   const result = []
-  console.log(c)
   if(!c){
     console.log('db:gets', collenction, a, cond1, b)
     const snapshots = await db.collection(collenction).where(a, cond1, b).get()

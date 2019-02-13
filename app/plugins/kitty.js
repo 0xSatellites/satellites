@@ -16,4 +16,3 @@ const kitty = {
 }
 
 export default kitty
-

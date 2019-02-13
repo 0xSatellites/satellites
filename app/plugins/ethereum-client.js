@@ -65,6 +65,7 @@ const activate = async provider => {
   setInterval(async () => {
     web3.eth.getAccounts().then(accounts => {
       if (account.address != accounts[0]) {
+        account.address = accounts[0]
         location.reload()
       }
     })

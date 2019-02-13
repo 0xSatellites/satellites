@@ -1,6 +1,5 @@
 const Web3 = require('web3')
 const config = require('../../config.json')
-const axios = require("axios")
 
 var web3
 
@@ -88,12 +87,6 @@ const ownedTokens = async name => {
   return result
 }
 
-const ownedTokensCk = async name => {
-  console.log('ethereum-client:ownedTokens:' + name)
-  const result = await axios.get('https://api.cryptokitties.co/kitties?owner_wallet_address='+ account.address)
-  return result.data.kitties
-}
-
 const signOrder = async order => {
   console.log('ethereum-client:signOrder:', order)
   const data = web3.utils.soliditySha3(
@@ -122,7 +115,6 @@ const client = {
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
-  ownedTokensCk:ownedTokensCk,
   signOrder:signOrder,
   utils: web3.utils
 }

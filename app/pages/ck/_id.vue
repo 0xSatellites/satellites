@@ -14,20 +14,6 @@
         <div class="l-item__txt">Cooldown Index {{asset.ck.status.cooldown_index }}</div>
         <div class="l-item__txt">Crypto Kitties</div>
 
-        <ul class="l-item__data">
-        <!-- <li><span class="l-item__rarity l-item__rarity--5">★★★★★</span>{{asset.ck.fancy_type }}</li> -->
-        </ul>
-        <!-- <ul class="l-item__data">
-        <li><strong>HP：</strong> {{asset.mchh.attributes.hp }}</li>
-        <li><strong>PHY：</strong> {{asset.mchh.attributes.phy }}</li>
-        <li><strong>INT：</strong> {{asset.mchh.attributes.int }}</li>
-        <li><strong>AGI：</strong> {{asset.mchh.attributes.agi }}</li>
-        </ul> -->
-        <!-- <ul class="l-item__data">
-        <li><span class="l-item__skill--type">CooldownIndex</span>{{asset.ck.status.cooldown_index }}</li>
-        <li><span class="l-item__skill--type">Passive</span>{{asset.mchh.attributes.passive_skill }}</li>
-        </ul> -->
-
         <v-form v-model="valid" v-if="owner == account.address">
           <div class="l-item__action">
 
@@ -143,14 +129,10 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import priceChartComponent from '~/components/pricechart'
 
 const config = require('../../../config.json')
 
 export default {
-  components: {
-    priceChartComponent,
-  },
   data() {
     return {
       modal: false,

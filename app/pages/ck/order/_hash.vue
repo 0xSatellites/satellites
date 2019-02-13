@@ -53,7 +53,6 @@
         </v-flex>
         </v-form>
     </div>
-    <price-chart-component></price-chart-component>
     <div class="l-information__action__btn">
        <a :href="'https://twitter.com/share?url=https://bazaaar.io/ck/order/' + order.hash +
         '&text=' + '出品されました! '+ order.metadata.name  + '/ Gen.' + order.metadata.generation +
@@ -114,7 +113,6 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import priceChartComponent from '~/components/pricechart'
 
 const config = require('../../../config.json')
 
@@ -125,9 +123,6 @@ export default {
       meta:
       [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
     }
-  },
-  components: {
-    priceChartComponent
   },
   data() {
     return {

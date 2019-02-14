@@ -198,7 +198,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.textBaseline = "top";
   c.textAlign = 'center';
   c.fillText(data.metadata.name, 840, 255, 720);
-  console.log(data.metadata.name)
 
   //Gen
   c.fillStyle = '#fff';
@@ -206,7 +205,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.textBaseline = "top";
   c.textAlign = 'center';
   c.fillText('Gen.' + data.metadata.generation, 840, 305, 720);
-  console.log(data.metadata.generation)
 
   //イーサ
   c.fillStyle = '#fff';

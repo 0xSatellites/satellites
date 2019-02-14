@@ -117,8 +117,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     .call()
 
   console.log(2)
-  data.metadata = await metadata('ck', data.id)
-
+  data.metadata = await metadata('ck', data.order.id)
   let canvas = Canvas.createCanvas(1200,630)
   let c = canvas.getContext('2d')
 
@@ -176,7 +175,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.font = "bold 80px 'Noto Sans JP Bold'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('ただいま出品中！', 840, 120, 720);
+  c.fillText(data.msg, 840, 120, 720);
 
   //コメント 1行目
   //c.fillStyle = '#ffff00';
@@ -212,13 +211,13 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.textBaseline = "top";
   c.textAlign = 'center';
   c.fillText('Cooldown.' + data.metadata.status.cooldown_index, 840, 335, 720);
-
+  console.log(data.order.price)
   //イーサ
   c.fillStyle = '#fff';
   c.font = "bold 75px 'Noto Sans JP Bold'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText(web3.utils.fromWei(data.price) + ' ETH', 840, 375, 720);
+  c.fillText(web3.utils.fromWei(data.order.price) + ' ETH', 840, 375, 720);
 
   console.log(3)
 

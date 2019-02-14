@@ -28,7 +28,7 @@
                   <v-card>
                     <p>{{ $t('id.inputMessage') }}</p>
                     <div>
-                      <textarea name="" id="" cols="30" rows="10"></textarea>
+                      <textarea v-model="msg" name="" id="" cols="30" rows="10"></textarea>
                     </div>
                   </v-card>
                 </v-expansion-panel-content>
@@ -177,7 +177,8 @@ export default {
       valid: true,
       checkbox: false,
       approved: false,
-      owner: ''
+      owner: '',
+      msg:''
     }
   },
   async asyncData({ store, params }) {
@@ -289,7 +290,11 @@ export default {
           referralRatio: 0
         }
         const signedOrder = await client.signOrder(order)
-        var result = await functions.call('order', signedOrder)
+        const datas = {
+          order: signedOrder,
+          msg: msg
+        }
+        var result = await functions.call('order', datas)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false

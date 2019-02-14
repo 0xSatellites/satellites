@@ -8,7 +8,10 @@
         "subTitle3":"ホワイトリスト",
         "subDiscription1":"過去の取引履歴から適正な価格を求めることができます。",
         "subDiscription2":"オーダー情報は各SNS上にアップされ、マーケットの場を広げます。",
-        "subDiscription3":"仮想通貨に該当しないと解釈されているデジタルアセットのみを扱っています。"
+        "subDiscription3":"仮想通貨に該当しないと解釈されているデジタルアセットのみを扱っています。",
+        "newAssets":"新着アセット",
+        "handlingAssets":"取り扱いアセット",
+        "partners":"パートナー"
     },
     "header":{
         "mypage": "マイページ",

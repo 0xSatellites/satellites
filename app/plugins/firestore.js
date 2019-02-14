@@ -9,6 +9,13 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore()
 
+const getOrdersByMaker = async maker => {
+  const result = []
+  const snapshots = await db.collection('order').where('maker', '==', maker).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
+
 const doc = async (collenction, doc) => {
   console.log('db:get', collenction, doc)
   const snapshot = await db.collection(collenction).doc(doc).get()
@@ -39,6 +46,7 @@ const docs = async (collenction, a, cond1, b, c, cond2, d, e, cond3, f)  => {
 const firestore = {
   doc:doc,
   docs: docs,
+  getOrdersByMaker:getOrdersByMaker
 }
 
 export default firestore

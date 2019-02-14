@@ -197,14 +197,21 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText(data.metadata.name, 840, 255, 720);
+  c.fillText('Id.' +data.metadata.id, 840, 235, 720);
 
   //Gen
   c.fillStyle = '#fff';
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  c.fillText('Gen.' + data.metadata.generation, 840, 305, 720);
+  c.fillText('Gen.' + data.metadata.generation, 840, 285, 720);
+
+  //cooldown
+  c.fillStyle = '#fff';
+  c.font = "40px 'Noto Sans JP'";
+  c.textBaseline = "top";
+  c.textAlign = 'center';
+  c.fillText('Cooldown.' + data.metadata.status.cooldown_index, 840, 335, 720);
 
   //イーサ
   c.fillStyle = '#fff';

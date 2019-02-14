@@ -16,6 +16,18 @@ const getOrdersByMaker = async maker => {
   return result
 }
 
+const getOrdersByMakerIdStatus = async (maker, id, status) => {
+  const result = []
+  const snapshots = await db.collection('order')
+    .where('maker', '==', maker)
+    .where('id', '==', id)
+    .where('status', '==', status).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
+
+//Insert New Order here
+
 const doc = async (collenction, doc) => {
   console.log('db:get', collenction, doc)
   const snapshot = await db.collection(collenction).doc(doc).get()
@@ -46,7 +58,8 @@ const docs = async (collenction, a, cond1, b, c, cond2, d, e, cond3, f)  => {
 const firestore = {
   doc:doc,
   docs: docs,
-  getOrdersByMaker:getOrdersByMaker
+  getOrdersByMaker:getOrdersByMaker,
+  getOrdersByMakerIdStatus:getOrdersByMakerIdStatus
 }
 
 export default firestore

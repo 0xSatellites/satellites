@@ -197,18 +197,7 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        const order = await firestore.docs(
-          'order',
-          'maker',
-          '==',
-          account.address,
-          'id',
-          '==',
-          this.$route.params.id,
-          'status',
-          '==',
-          '出品中'
-        )
+        const order = await firestore.getOrdersByMakerIdStatus(account.address, params.id, '出品中')
         order.sort((a, b) => {
           if (a.timestamp < b.timestamp) return 1
           if (a.timestamp > b.timestamp) return -1

@@ -128,7 +128,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     readFile('./assets/img/btn.png'),
     readFile('./assets/img/out.png'),
     axios.get(
-      'https://img.cryptokitties.co/0x06012c8cf97bead5deae237070f9587f8e7a266d/1078.svg',
+      data.metadata.image_url_png,
       { responseType: 'arraybuffer' }),
     // metadata('ck', data.id)
   ]
@@ -197,16 +197,16 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  // c.fillText(resolved[5].name, 840, 255, 720);
-  // console.log(resolved[5].name)
+  c.fillText(data.metadata.name, 840, 255, 720);
+  console.log(data.metadata.name)
 
   //Gen
   c.fillStyle = '#fff';
   c.font = "40px 'Noto Sans JP'";
   c.textBaseline = "top";
   c.textAlign = 'center';
-  // c.fillText('Gen.' + resolved[5].generation, 840, 305, 720);
-  // console.log(resolved[5].generation)
+  c.fillText('Gen.' + data.metadata.generation, 840, 305, 720);
+  console.log(data.metadata.generation)
 
   //イーサ
   c.fillStyle = '#fff';

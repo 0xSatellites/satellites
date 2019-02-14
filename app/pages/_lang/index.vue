@@ -28,7 +28,7 @@
     </section>
     <section class="c-index c-index--recommend">
 
-        <h2 class="c-index__title">新着アセット</h2>
+        <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
         <ul>
         <li>
         <a href="#" class="c-card">
@@ -73,10 +73,10 @@
         </ul>
     </section>
     <section class="c-index">
-        <h2 class="c-index__title">取り扱いアセット</h2>
+        <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
     </section>
     <section class="c-index">
-        <h2 class="c-index__title">パートナー</h2>
+        <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
     </section>
 </div>
 </template>

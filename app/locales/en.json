@@ -6,9 +6,12 @@
         "subTitle1":"Fair Value",
         "subTitle2":"SNS Order",
         "subTitle3":"white List",
-        "subDiscription1":"aaaaaaaaaaaaaaaaaaaaaaaaa",
-        "subDiscription2":"aaaaaaaaaaaaaaaaaaaaaaaaa",
-        "subDiscription3":"aaaaaaaaaaaaaaaaaaaaaaaa"
+        "subDiscription1":"You can estimate an appropriate price from past transactions.",
+        "subDiscription2":"Order information will be uploaded on each SNS and expand the market place.",
+        "subDiscription3":"We deal only with digital assets which are not interpreted as crypto currency.",
+        "newAssets":"New Assets",
+        "handlingAssets":"Handling Assets",
+        "partners":"Partners"
     },
     "header":{
         "mypage": "MyPage",

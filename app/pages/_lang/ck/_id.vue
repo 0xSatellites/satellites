@@ -134,6 +134,7 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import kitty from '~/plugins/kitty'
 
 const config = require('../../../../config.json')
 
@@ -154,10 +155,7 @@ export default {
     }
   },
   async asyncData({ store, params }) {
-    const asset = await functions.call('metadata', {
-      asset: 'ck',
-      id: params.id
-    })
+    const asset = await kitty.getKittyById(params.id)
     store.dispatch('asset/setCk', asset)
   },
   mounted: async function() {
@@ -183,13 +181,6 @@ export default {
         console.log(order1)
         this.price = order1.price / 1000000000000000000
         await store.dispatch('order/setOrder', order1)
-
-        const owner = await client.contract.ck.methods
-          .kittyIndexToOwner(params.id)
-          .call({ from: account.address })
-        console.log('owner' + owner)
-        this.owner = owner
-
         */
       }
 

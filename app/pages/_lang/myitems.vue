@@ -60,7 +60,7 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
       }
-      kitty.ownedTokens(client.account.address).then(tokens =>store.dispatch('myitems/setCk', tokens))
+      kitty.getKittiesByWalletAddress(client.account.address).then(tokens =>store.dispatch('myitems/setCk', tokens))
       firestore.getOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
     }
   },

@@ -140,6 +140,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   .where("maker", "==", data.maker)
   .where("asset", "==", data.asset)
   .where("id", "==", data.id)
+  .where("valid", "==", true)
   .get()
 
   snapshots.forEach(function(doc) {
@@ -162,8 +163,42 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
 })
 
 exports.onOrderChange = functions.firestore
-  .document('order/{hash}').onUpdate((change, context) => {
-    console.log(change)
+  .document('order/{hash}').onUpdate(async (change, context) => {
+
+    const doc = change.after.data()
+    const canvas = Canvas.createCanvas(1200,630)
+    const c = canvas.getContext('2d')
+
+    const imagePromise = axios.get(doc.ogp, { responseType: 'arraybuffer' })
+
+    promises = [
+      imagePromise,
+      readFile('./assets/img/out_en.png'),
+    ]
+
+    const resolved = await Promise.all(promises)
+
+    const bgImg = new Canvas.Image()
+    bgImg.src = resolved[0].data
+
+    const outImg = new Canvas.Image()
+    outImg.src = resolved[1]
+
+    c.clearRect(0, 0, 1200, 630)
+    c.drawImage(bgImg, 0, 0)
+
+    c.fillStyle = 'rgba(0,0,0,0.7)';
+    c.fillRect(0,0,1200,630);
+    c.drawImage(outImg, 76, 145);
+
+    const base64EncodedImageString = canvas.toDataURL().substring(22)
+    const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    const file = bucket.file(change.after.id + '.png')
+    file.save(imageBuffer, { metadata: {contentType: 'image/png'}})
+
+    const ogp = 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' + encodeURIComponent(change.after.id + '.png') + '?alt=media'
+    console.log(ogp)
+
   });
 
 exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('orderMatched').onPublish(message => {

@@ -13,6 +13,11 @@
         </dl>
       </div>
     </section>
+    <v-progress-circular class="loading" v-if="this.loading === true"
+      :size="50"
+      color="blue"
+      indeterminate
+    ></v-progress-circular>
     <section class="c-index c-index--mypage">
       <ul>
         <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
@@ -60,7 +65,12 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
       }
-      kitty.ownedTokens(client.account.address).then(tokens =>store.dispatch('myitems/setCk', tokens))
+      
+      this.loading = true
+      kitty.ownedTokens(client.account.address).then(tokens =>{
+        store.dispatch('myitems/setCk', tokens)
+        console.log(tokens)
+      this.loading = false})      
       firestore.getOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
     }
   },
@@ -87,8 +97,18 @@ export default {
         { text: 'id', value: 'calories' },
         { text: 'アセット', value: 'fat' },
         { text: '価格', value: 'price' }
-      ]
+      ],
+      loading: false
     }
   }
 }
 </script>
+
+<style scoped>
+  .loading{
+    margin: auto;
+    margin-top: 30px;
+    display: block;    
+  }
+
+</style>

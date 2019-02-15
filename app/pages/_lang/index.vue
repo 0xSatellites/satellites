@@ -85,9 +85,9 @@
 
 export default {
 
-head() {
-    return { title: this.$t('meta.titile') }
-  }
+// head() {
+//     return { title: this.$t('meta.titile') }
+//   }
 }
 </script>
 

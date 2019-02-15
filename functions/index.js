@@ -105,7 +105,7 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
-  console.log(1)
+  console.log(data)
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(
       [data.proxy, data.maker, data.taker, data.creatorRoyaltyRecipient, data.asset],
@@ -116,7 +116,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
     )
     .call()
 
-  console.log(2)
   data.metadata = await metadata('ck', data.id)
 
   let canvas = Canvas.createCanvas(1200,630)

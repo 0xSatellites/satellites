@@ -14,8 +14,7 @@
             Cooldown Index {{ asset.ck.status.cooldown_index }}
           </div>
           <div class="l-item__txt">Crypto Kitties</div>
-
-          <v-form v-model="valid" v-if="owner == account.address">
+          <v-form>
             <div class="l-item__action">
               <div class="l-item__action__price">
                 <label
@@ -34,10 +33,11 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
+              <div v-if="owned">
               <div class="l-item__action__btns" v-if="!approved">
                 <v-btn
                   class="l-item__action__btn"
-                  :disabled="!valid || loading || approved"
+                  :disabled="!valid || loading"
                   large
                   @click="approve"
                 >
@@ -50,7 +50,7 @@
                   ></v-progress-circular>
                 </v-btn>
               </div>
-              <div class="l-item__action__btns" v-if="true">
+              <div class="l-item__action__btns" v-if="approved">
                 <v-btn
                   class="l-item__action__btn l-item__action__btn--type1 white_text"
                   :disabled="!valid || loading || !approved"
@@ -67,35 +67,6 @@
                   ></v-progress-circular>
                 </v-btn>
               </div>
-              <div class="l-item__action__btns" v-else>
-                <div
-                  class="l-item__action__btn l-item__action__btn--type1"
-                  :disabled="!valid || loading"
-                  @click="order_v1"
-                >
-                  {{ $t('id.change') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </div>
-                <div
-                  class="l-item__action__btn l-item__action__btn--type2"
-                  :disabled="!valid || loading"
-                  @click="cancel"
-                  value="cancel"
-                >
-                  {{ $t('id.cancel') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </div>
-              </div>
               <v-flex center>
                 <v-checkbox
                   class="center"
@@ -105,6 +76,7 @@
                   required
                 ></v-checkbox>
               </v-flex>
+              </div>
             </div>
           </v-form>
         </div>
@@ -177,6 +149,7 @@ export default {
       valid: true,
       checkbox: false,
       approved: false,
+      owned: false,
       owner: ''
     }
   },
@@ -197,7 +170,10 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        const order = await firestore.getOrdersByMakerIdStatus(account.address, params.id, '出品中')
+        /*
+        //const order = await firestore.getLowestCostOrderByMakerId(account.address, params.id)
+        const order = await firestore.getLowestCostOrderByMakerId('0xb5384D9F2dDd0AD646919c2299B7C9296208eB4a', '1078')
+        console.log(order)
         order.sort((a, b) => {
           if (a.timestamp < b.timestamp) return 1
           if (a.timestamp > b.timestamp) return -1
@@ -208,20 +184,23 @@ export default {
         this.price = order1.price / 1000000000000000000
         await store.dispatch('order/setOrder', order1)
 
-        console.log('ok')
-        this.approved = approved
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
-          .call({ from: account.address })
-        console.log('approve' + approved)
-        this.approved = approved
-
         const owner = await client.contract.ck.methods
           .kittyIndexToOwner(params.id)
           .call({ from: account.address })
         console.log('owner' + owner)
         this.owner = owner
+
+        */
       }
+
+      client.contract.ck.methods.kittyIndexToOwner(params.id).call().then(owner => {
+        this.owned = owner == this.account.address
+      })
+
+      client.contract.ck.methods.kittyIndexToApproved(params.id).call().then(approvedAddress => {
+        this.approved = approvedAddress == client.contract.bazaaar_v1.options.address
+      })
+
     }
   },
   computed: {
@@ -255,8 +234,8 @@ export default {
       const wei = client.utils.toWei(amount)
       //
       const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
-        .call({ from: account.address })
+        .kittyIndexToApproved('269')
+        .call()
       console.log(params.id)
       console.log(approved)
       console.log(client.contract.bazaaar_v1.options.address)

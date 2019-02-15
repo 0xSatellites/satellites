@@ -26,8 +26,6 @@ const getOrdersByMakerIdStatus = async (maker, id, status) => {
   return result
 }
 
-//Insert New Order here
-
 const doc = async (collenction, doc) => {
   console.log('db:get', collenction, doc)
   const snapshot = await db.collection(collenction).doc(doc).get()

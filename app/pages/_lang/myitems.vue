@@ -66,8 +66,11 @@ export default {
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
-      kitty.getKittiesByWalletAddress(client.account.address).then(tokens =>store.dispatch('myitems/setCk', tokens))
-      this.loading = false})      
+      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
+        this.loading = false
+        store.dispatch('myitems/setCk', tokens)
+        }
+      )
       firestore.getOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
     }
   },

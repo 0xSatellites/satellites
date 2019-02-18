@@ -9,8 +9,8 @@ if (!firebase.apps.length) {
 
 const app = firebase.app().functions('asia-northeast1');
 
-// const app = firebase.app().functions();
-// app.useFunctionsEmulator('http://localhost:5000')
+//const app = firebase.app().functions();
+//app.useFunctionsEmulator('http://localhost:5000')
 
 const call = async (endpoint, param) => {
   console.log('functions:call', endpoint, param)

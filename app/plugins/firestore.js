@@ -9,6 +9,14 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore()
 
+const getLatestOrders = async limit => {
+  const result = []
+  const snapshots = await db.collection('order')
+    .orderBy('created', 'desc').limit(limit).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
+
 const getOrdersByMaker = async maker => {
   const result = []
   const snapshots = await db.collection('order').where('maker', '==', maker).get()
@@ -25,8 +33,6 @@ const getOrdersByMakerIdStatus = async (maker, id, status) => {
   snapshots.forEach(doc => result.push(doc.data()))
   return result
 }
-
-//Insert New Order here
 
 const doc = async (collenction, doc) => {
   console.log('db:get', collenction, doc)
@@ -58,6 +64,7 @@ const docs = async (collenction, a, cond1, b, c, cond2, d, e, cond3, f)  => {
 const firestore = {
   doc:doc,
   docs: docs,
+  getLatestOrders:getLatestOrders,
   getOrdersByMaker:getOrdersByMaker,
   getOrdersByMakerIdStatus:getOrdersByMakerIdStatus
 }

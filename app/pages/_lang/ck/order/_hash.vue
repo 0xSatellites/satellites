@@ -117,6 +117,7 @@ import firestore from '~/plugins/firestore'
 const config = require('../../../../config.json')
 
 export default {
+  
   head() {
     var order = this.order
     return {

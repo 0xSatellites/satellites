@@ -30,66 +30,135 @@
 
         <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
         <ul>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--1">★1</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--2">★2</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--3">★3</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--4">★4</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
+        <li v-for="(order, i) in orders" :key="i + '-ck'">
+            <div>
+            <nuxt-link :to="'/ck/' + order.id" class="c-card">
+              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
+              <div class="c-card__name">Gen.{{ order.metadata.generation }}</div>
+              <div class="c-card__txt"># {{ order.id }}</div>
+              <div class="c-card__txt">Crypto Kitties</div>
+              <div class="c-card__eth">Ξ {{ order.price / 1000000000000000000}} ETH</div>
+            </nuxt-link>
+          </div>
         </li>
         </ul>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
+            <v-layout>
+                <v-flex xs12 sm6 offset-sm3>
+                <a href="https://www.cryptokitties.co/">
+                    <v-card>
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/CryptoKitties.png')"
+                        aspect-ratio="1.75"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">CryptoKitties</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+            </v-layout>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
+        <v-container grid-list-md align-center justify-space-between>
+            <v-layout row wrap justify-center>
+                <v-flex xs6 md3>
+                <a href="https://tokenpocket.jp/ja/">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/tokenpocket.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">TokenPocket</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+                <v-flex xs6 md3>
+                <a href="https://www.go-wallet.app/">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/GoWallet.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">GO!WALLET</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+            </v-layout>
+        </v-container>    
     </section>
 </div>
 </template>
 
 <script>
 
-export default {
+import firestore from '~/plugins/firestore'
 
-// head() {
-//     return { title: this.$t('meta.titile') }
-//   }
+export default {
+  data() {
+    return {
+   
+      }
+  },
+  head() {
+    return { title: this.$t('meta.titile') }
+  },
+
+  async asyncData({ store, params }) {
+      const order = await firestore.getLatestOrders(4)
+      console.log(order)
+      await store.dispatch('order/setOrder', order)
+
+    //const order = await firestore.doc('order', params.hash)
+    //await store.dispatch('order/setOrder', order)
+
+    // const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
+    // recommend2.sort((a, b) => {
+    //       if (a.price < b.price) return -1;
+    //       if (a.price > b.price) return 1;
+    //       return 0;
+    //     });
+    // const recommend = recommend2.slice(0,4)
+    // await store.dispatch('recommend/setRecommend', recommend)
+  },
+
+  computed: {
+    
+    orders() {
+      return this.$store.getters['order/order']
+    },
+    
+  },
 }
+
 </script>
 
-<style>
+<style scope>
+    .text-box{
+        margin: auto;
+    }
+
+    a{
+        text-decoration: none
+    }
+
+    .partner{
+        margin-right: 1em;
+    }
 </style>

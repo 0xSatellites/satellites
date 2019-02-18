@@ -108,7 +108,7 @@ export default {
   .loading{
     margin: auto;
     margin-top: 30px;
-    display: block;    
+    display: block;
   }
 
 </style>

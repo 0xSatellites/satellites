@@ -58,7 +58,7 @@
                         <div class="text-box">
                             <h3 class="headline mb-0">CryptoKitties</h3>
                         </div>
-                        </v-card-title>            
+                        </v-card-title>
                     </v-card>
                 </a>
                 </v-flex>
@@ -70,38 +70,26 @@
             <v-layout row wrap justify-center>
                 <v-flex xs6 md3>
                 <a href="https://tokenpocket.jp/ja/">
-                    <v-card class="partner">
+                    <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/original/tokenpocket.png')"
                         aspect-ratio="1"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">TokenPocket</h3>
-                        </div>
-                        </v-card-title>            
                     </v-card>
                 </a>
                 </v-flex>
                 <v-flex xs6 md3>
                 <a href="https://www.go-wallet.app/">
-                    <v-card class="partner">
+                    <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/original/GoWallet.png')"
                         aspect-ratio="1"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">GO!WALLET</h3>
-                        </div>
-                        </v-card-title>            
                     </v-card>
                 </a>
                 </v-flex>
             </v-layout>
-        </v-container>    
+        </v-container>
     </section>
 </div>
 </template>
@@ -113,7 +101,6 @@ import firestore from '~/plugins/firestore'
 export default {
   data() {
     return {
-   
       }
   },
   head() {
@@ -122,28 +109,12 @@ export default {
 
   async asyncData({ store, params }) {
       const order = await firestore.getLatestOrders(4)
-      console.log(order)
       await store.dispatch('order/setOrder', order)
-
-    //const order = await firestore.doc('order', params.hash)
-    //await store.dispatch('order/setOrder', order)
-
-    // const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
-    // recommend2.sort((a, b) => {
-    //       if (a.price < b.price) return -1;
-    //       if (a.price > b.price) return 1;
-    //       return 0;
-    //     });
-    // const recommend = recommend2.slice(0,4)
-    // await store.dispatch('recommend/setRecommend', recommend)
   },
-
   computed: {
-    
     orders() {
       return this.$store.getters['order/order']
     },
-    
   },
 }
 

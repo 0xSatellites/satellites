@@ -13,13 +13,13 @@
         </dl>
       </div>
     </section>
-    <v-progress-circular class="loading" v-if="this.loading === true"
-      :size="50"
-      color="blue"
-      indeterminate
-    ></v-progress-circular>
     <section class="c-index c-index--mypage">
       <ul>
+        <v-progress-circular class="loading" v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
         <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">

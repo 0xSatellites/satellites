@@ -30,45 +30,16 @@
 
         <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
         <ul>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--1">★1</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--2">★2</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--3">★3</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
-        </li>
-        <li>
-        <a href="#" class="c-card">
-        <div class="c-card__label c-card__label__rarity--4">★4</div>
-        <div class="c-card__img"><img src="~/assets/img/card/sample_img.png" alt=""></div>
-        <div class="c-card__name">Masamune Date / LV.99</div>
-        <div class="c-card__txt">#30010206</div>
-        <div class="c-card__txt">My Crypto Heores</div>
-        <div class="c-card__eth">Ξ 0.45</div>
-        </a>
+        <li v-for="(order, i) in orders" :key="i + '-ck'">
+            <div>
+            <nuxt-link :to="'/ck/' + order.id" class="c-card">
+              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
+              <div class="c-card__name">Gen.{{ order.metadata.generation }}</div>
+              <div class="c-card__txt"># {{ order.id }}</div>
+              <div class="c-card__txt">Crypto Kitties</div>
+              <div class="c-card__eth">Ξ {{ order.price / 1000000000000000000}} ETH</div>
+            </nuxt-link>
+          </div>
         </li>
         </ul>
     </section>
@@ -137,12 +108,43 @@
 
 <script>
 
+import firestore from '~/plugins/firestore'
+
 export default {
-
-head() {
+  data() {
+    return {
+   
+      }
+  },
+  head() {
     return { title: this.$t('meta.titile') }
-  }
+  },
 
+  async asyncData({ store, params }) {
+      const order = await firestore.getLatestOrders(4)
+      console.log(order)
+      await store.dispatch('order/setOrder', order)
+
+    //const order = await firestore.doc('order', params.hash)
+    //await store.dispatch('order/setOrder', order)
+
+    // const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
+    // recommend2.sort((a, b) => {
+    //       if (a.price < b.price) return -1;
+    //       if (a.price > b.price) return 1;
+    //       return 0;
+    //     });
+    // const recommend = recommend2.slice(0,4)
+    // await store.dispatch('recommend/setRecommend', recommend)
+  },
+
+  computed: {
+    
+    orders() {
+      return this.$store.getters['order/order']
+    },
+    
+  },
 }
 
 </script>

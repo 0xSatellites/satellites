@@ -15,7 +15,7 @@
     </section>
     <section class="c-index c-index--mypage">
       <ul>
-        <v-progress-circular class="loading" v-if="this.loading === true"
+        <v-progress-circular class="loading " v-if="this.loading === true"
           :size="50"
           color="blue"
           indeterminate

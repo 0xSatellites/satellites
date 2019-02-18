@@ -20,7 +20,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
+        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'" v-else>
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
               <div class="c-card__img"><img :src="ck.image_url" /></div>

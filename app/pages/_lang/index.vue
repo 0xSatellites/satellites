@@ -45,9 +45,63 @@
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
+            <v-layout>
+                <v-flex xs12 sm6 offset-sm3>
+                <a href="https://www.cryptokitties.co/">
+                    <v-card>
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/CryptoKitties.png')"
+                        aspect-ratio="1.75"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">CryptoKitties</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+            </v-layout>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
+        <v-container grid-list-md align-center justify-space-between>
+            <v-layout row wrap justify-center>
+                <v-flex xs6 md3>
+                <a href="https://tokenpocket.jp/ja/">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/tokenpocket.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">TokenPocket</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+                <v-flex xs6 md3>
+                <a href="https://www.go-wallet.app/">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/original/GoWallet.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">GO!WALLET</h3>
+                        </div>
+                        </v-card-title>            
+                    </v-card>
+                </a>
+                </v-flex>
+            </v-layout>
+        </v-container>    
     </section>
 </div>
 </template>
@@ -93,8 +147,18 @@ export default {
   },
 }
 
-
 </script>
 
-<style>
+<style scope>
+    .text-box{
+        margin: auto;
+    }
+
+    a{
+        text-decoration: none
+    }
+
+    .partner{
+        margin-right: 1em;
+    }
 </style>

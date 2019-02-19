@@ -76,7 +76,7 @@ export default {
         .getValidOrdersByMaker(client.account.address)
         .then(orders => store.dispatch('order/setOrders', orders))
 
-      await firestore
+      firestore
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
 

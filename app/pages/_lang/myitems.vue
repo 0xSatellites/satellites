@@ -71,7 +71,7 @@ export default {
         store.dispatch('myitems/setCk', tokens)
         }
       )
-      firestore.getOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
+      firestore.getValidOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
     }
   },
   computed: {

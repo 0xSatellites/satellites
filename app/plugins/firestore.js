@@ -9,27 +9,50 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore()
 
-const getLatestOrders = async limit => {
+const getLatestValidOrders = async limit => {
   const result = []
   const snapshots = await db.collection('order')
+    .where('valid', '==', true)
     .orderBy('created', 'desc').limit(limit).get()
   snapshots.forEach(doc => result.push(doc.data()))
   return result
 }
 
-const getOrdersByMaker = async maker => {
+const getRelatedValidOrders = async (hash, maker, id) => {
+  const added = []
   const result = []
-  const snapshots = await db.collection('order').where('maker', '==', maker).get()
+  var snapshots = await db.collection('order')
+    .where('maker', '==', maker)
+    .where('id', '==', id)
+    .where('valid', '==', true).get()
+  snapshots.forEach(doc => {
+    added.push(doc.id)
+    if(doc.id !== hash){
+      result.push(doc.data())
+    }
+  })
+  snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .orderBy('created', 'desc').limit(3).get()
+    snapshots.forEach(doc => {
+      if(!added.includes(doc.id)) result.push(doc.data())
+    })
+  return result
+}
+
+const getValidOrdersByMaker = async maker => {
+  const result = []
+  const snapshots = await db.collection('order').where('maker', '==', maker).where('valid', '==', true).get()
   snapshots.forEach(doc => result.push(doc.data()))
   return result
 }
 
-const getOrdersByMakerIdStatus = async (maker, id, status) => {
+const getValidOrdersByMakerIdStatus = async (maker, id) => {
   const result = []
   const snapshots = await db.collection('order')
     .where('maker', '==', maker)
     .where('id', '==', id)
-    .where('status', '==', status).get()
+    .where('valid', '==', true).get()
   snapshots.forEach(doc => result.push(doc.data()))
   return result
 }
@@ -41,9 +64,10 @@ const doc = async (collenction, doc) => {
 
 const firestore = {
   doc:doc,
-  getLatestOrders:getLatestOrders,
-  getOrdersByMaker:getOrdersByMaker,
-  getOrdersByMakerIdStatus:getOrdersByMakerIdStatus
+  getLatestValidOrders:getLatestValidOrders,
+  getRelatedValidOrders:getRelatedValidOrders,
+  getValidOrdersByMaker:getValidOrdersByMaker,
+  getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus
 }
 
 export default firestore

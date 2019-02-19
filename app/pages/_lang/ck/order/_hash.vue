@@ -37,7 +37,6 @@
         '&hashtags=bazaaar, バザール, CryptoKitties'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
         Tweetする
         </a>
-        <!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
     </div>
     </section>
     <section class="c-index c-index--recommend" v-if="recommend.lengh">
@@ -56,42 +55,26 @@
     <div>
 
     </div>
-    <transition name="modal" v-if="modal">
-        <div class="l-modal">
-
-            <div class="l-modal__frame">
-
-                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-                <div class="l-modal__title">購入処理が完了しました！</div>
-
-                <div class="l-modal__og">
-                    <div id="modalImg">
-                      <img  :src="order.ogp" alt=""  width="85%">
-                    </div>
-                </div>
-                <div class="l-modal__txt">トランザクションハッシュ</div>
-                <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
-
-                <div class="l-modal__close" @click="closeModal">
-                  <div class="l-modal__close__icon" ></div>
-                  <div class="l-modal__close__txt u-obj--sp">閉じる</div>
-                </div>
-
-            </div>
-
-        </div>
-      </transition>
-
+    <modal
+      v-if="modal"
+      v-on:closeModal="closeModal"
+      :hash="hash"
+      :modalNo="modalNo"
+    ></modal>
   </div>
 </template>
 
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
+import Modal from '~/components/modal'
 
 const config = require('../../../../config.json')
 
 export default {
+  components: {
+    Modal
+  },
 
   head() {
     var order = this.order
@@ -106,6 +89,7 @@ export default {
       valid: true,
       checkbox: false,
       modal: false,
+      modalNo: 4,
       hash: "",
       }
   },
@@ -172,9 +156,6 @@ export default {
           this.hash = hash
           this.modal = true
         })
-    },
-    openModal() {
-      this.modal = true
     },
     closeModal() {
       this.modal = false

@@ -8,7 +8,7 @@ export const getters = {
 
 export const mutations = {
   setTransactions(state, transactions) {
-    state.order = transactions
+    state.transactions = transactions
   }
 }
 

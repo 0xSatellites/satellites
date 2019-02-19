@@ -47,6 +47,22 @@ const getRelatedValidOrders = async (hash, maker, id) => {
   return result
 }
 
+const getHistoryByAddress = async address => {
+  const result = []
+  var snapshots
+  snapshots = await db.collection('order')
+    .where('result.taker', '==', address)
+    .where('result.status', '==', 'sold').get()
+  snapshots.forEach(doc => result.push(doc.data()))
+
+  snapshots = await db.collection('order')
+    .where('maker', '==', address)
+    .where('result.status', '==', 'sold').get()
+
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
+
 const getValidOrdersByMaker = async maker => {
   const result = []
   const snapshots = await db.collection('order').where('maker', '==', maker).where('valid', '==', true).get()
@@ -74,6 +90,7 @@ const firestore = {
   getLatestValidOrders:getLatestValidOrders,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
+  getHistoryByAddress:getHistoryByAddress,
   getValidOrdersByMaker:getValidOrdersByMaker,
   getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus
 }

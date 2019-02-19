@@ -32,7 +32,7 @@
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
             <div>
-            <nuxt-link :to="'/ck/' + order.id" class="c-card">
+            <nuxt-link :to="'/ck/order/' + order.hash" class="c-card">
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name">Gen.{{ order.metadata.generation }}</div>
               <div class="c-card__txt"># {{ order.id }}</div>

@@ -23,8 +23,10 @@ const contract = {
   )
 }
 
+web3.eth.getTransactionReceipt('0x00a5ff2ffc02875fafb302419f907220651d12531095cdea79bb21ac8476589a').then(console.log)
+
 const registerMessage = {
-  transactionHash: '0x91896ccf4a7e4c42b5d6c5e645ba1f1636afaa917d4b714d9e0ccc7897f7e9c0'
+  transactionHash: '0x00a5ff2ffc02875fafb302419f907220651d12531095cdea79bb21ac8476589a'
 };
 const topic = pubsub.topic('orderMatched');
 topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {

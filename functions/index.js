@@ -3,8 +3,10 @@ const config = require('./config.json')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
+const serviceAccount = require('./.serviceAccountKey.json')
+
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(serviceAccount),
 })
 
 const db = admin.firestore()
@@ -162,8 +164,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
 
 })
 
-exports.onOrderChange = functions.firestore
-  .document('order/{hash}').onUpdate(async (change, context) => {
+exports.onOrderChange = functions.firestore.document('order/{hash}').onUpdate(async (change, context) => {
 
     const doc = change.after.data()
     const canvas = Canvas.createCanvas(1200,630)
@@ -180,7 +181,6 @@ exports.onOrderChange = functions.firestore
 
     const bgImg = new Canvas.Image()
     bgImg.src = resolved[0].data
-
     const outImg = new Canvas.Image()
     outImg.src = resolved[1]
 
@@ -195,67 +195,62 @@ exports.onOrderChange = functions.firestore
     const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
     const file = bucket.file(change.after.id + '.png')
     file.save(imageBuffer, { metadata: {contentType: 'image/png'}})
+});
 
-    const ogp = 'https://firebasestorage.googleapis.com/v0/b/' + bucket.name + '/o/' + encodeURIComponent(change.after.id + '.png') + '?alt=media'
-    console.log(ogp)
-
-  });
-
-exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('orderMatched').onPublish(message => {
+exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('orderMatched').onPublish(async message => {
   const transactionHash = message.json.transactionHash
-  web3.eth.getTransactionReceipt(transactionHash)
-  .then(async function(val){
-    const maker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(26, 66)))
-    const taker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
-    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(154, 194)))
-    const id = web3.utils.hexToNumber(val.logs[0].data.substring(194, 258)).toString()
-    const time = new Date().getTime()
-    if(web3.utils.toChecksumAddress(val.logs[0].address) == config.contract.rinkeby.bazaaar_v1){
-      const batch = db.batch()
-      var ref = db.collection('order').doc(val.logs[0].topics[1])
-      batch.update(ref, {result: {status:'sold', taker}, valid:false, modified:now})
-      const snapshots = await db.collection('order')
-      .where("maker", "==", maker)
-      .where("asset", "==", asset)
-      .where("id", "==", id)
-      .where("valid", "==", true)
-      .get()
-      snapshots.forEach(function(doc) {
-        if(doc.id != val.logs[0].topics[1]){
-          var ref = db.collection('order').doc(doc.id)
-          batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
-        }
-      })
-      batch.commit().then(function () {
-        console.log("done!!")
-      })
-    }
-  })
+  const transaction = await web3.eth.getTransactionReceipt(transactionHash)
+
+  const hash = transaction.logs[0].topics[1]
+  const address = web3.utils.toChecksumAddress(transaction.logs[0].address)
+  const maker = web3.utils.toChecksumAddress(web3.utils.toHex(transaction.logs[0].data.substring(26, 66)))
+  const taker = web3.utils.toChecksumAddress(web3.utils.toHex(transaction.logs[0].data.substring(90, 130)))
+  const asset = web3.utils.toChecksumAddress(web3.utils.toHex(transaction.logs[0].data.substring(154, 194)))
+  const id = web3.utils.hexToNumber(transaction.logs[0].data.substring(194, 258)).toString()
+  const now = new Date().getTime()
+
+  if(address == config.contract.rinkeby.bazaaar_v1){
+    const batch = db.batch()
+    var ref = db.collection('order').doc(hash)
+    batch.update(ref, {result: {status:'sold', taker:taker}, valid:false, modified:now})
+    const snapshots = await db.collection('order')
+    .where("maker", "==", maker)
+    .where("asset", "==", asset)
+    .where("id", "==", id)
+    .where("valid", "==", true)
+    .get()
+    snapshots.forEach(function(doc) {
+      if(doc.id != hash){
+        var ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
+      }
+    })
+    await batch.commit()
+  }
 })
 
 exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(message => {
   const transactionHash = message.json.transactionHash
-  web3.eth.getTransactionReceipt(transactionHash)
-  .then(async function(val){
-    const maker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(26, 66)))
-    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
-    const id = web3.utils.hexToNumber(val.logs[0].data.substring(130, 194)).toString()
-    const time = new Date().getTime()
-    if(web3.utils.toChecksumAddress(val.logs[0].address) == config.contract.rinkeby.bazaaar_v1){
-      const batch = db.batch()
-      const snapshots = await db.collection('order')
-      .where("maker", "==", maker)
-      .where("asset", "==", asset)
-      .where("id", "==", id)
-      .where("valid", "==", true)
-      .get()
-      snapshots.forEach(function(doc) {
-        var ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
-      })
-      batch.commit().then(function () {
-        console.log("done!!")
-      })
-    }
-  })
+  const transaction = await web3.eth.getTransactionReceipt(transactionHash)
+
+  const address = web3.utils.toChecksumAddress(transaction.logs[0].address)
+  const maker = web3.utils.toChecksumAddress(web3.utils.toHex(transaction.logs[0].data.substring(26, 66)))
+  const asset = web3.utils.toChecksumAddress(web3.utils.toHex(transaction.logs[0].data.substring(90, 130)))
+  const id = web3.utils.hexToNumber(transaction.logs[0].data.substring(130, 194)).toString()
+  const now = new Date().getTime()
+
+  if(address == config.contract.rinkeby.bazaaar_v1){
+    const batch = db.batch()
+    const snapshots = await db.collection('order')
+    .where("maker", "==", maker)
+    .where("asset", "==", asset)
+    .where("id", "==", id)
+    .where("valid", "==", true)
+    .get()
+    snapshots.forEach(function(doc) {
+      var ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
+    })
+    await batch.commit()
+  }
 })

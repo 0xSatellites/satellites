@@ -8,9 +8,8 @@
         <div class="l-information__txt">Crypto Kitties</div>
         <v-form v-model="valid">
         <div class="l-information__action">
-          <v-btn v-if="order.status == '出品中'"
+          <v-btn
           class="l-information__action__btn"
-          :disabled="!valid || loading"
           color="#3498db"
           large
           @click="purchase"
@@ -41,11 +40,11 @@
         <!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
     </div>
     </section>
-    <section class="c-index c-index--recommend">
+    <section class="c-index c-index--recommend" v-if="recommend.lengh">
         <h2 class="c-index__title">関連アセット</h2>
         <ul>
         <li v-for="(recommend, i ) in recommend" :key="i">
-        <nuxt-link :to="'/order/'+ recommend.id" class="c-card">
+        <nuxt-link :to="'/ck/order/'+ recommend.hash" class="c-card">
         <div class="c-card__img"><img :src="recommend.metadata.image_url" alt=""></div>
         <div class="c-card__name">{{recommend.metadata.name}}</div>
         <div class="c-card__txt">#{{recommend.id}}</div>
@@ -115,7 +114,7 @@ export default {
     await store.dispatch('order/setOrder', order)
 
     const recommend = await firestore.getRelatedValidOrders(params.hash, order.maker, order.id)
-    await store.dispatch('recommend/setRecommend', recommend)
+    await store.dispatch('order/setOrders', recommend)
 
   },
   mounted: async function() {
@@ -136,7 +135,7 @@ export default {
       return this.$store.getters['order/order']
     },
     recommend(){
-      return this.$store.getters['recommend/recommend']
+      return this.$store.getters['order/orders']
     }
   },
   methods: {

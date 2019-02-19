@@ -27,7 +27,7 @@
                   <v-card>
                     <p>{{ $t('id.inputMessage') }}</p>
                     <div>
-                      <textarea name="" id="" cols="30" rows="10"></textarea>
+                      <textarea v-model="msg" name="" id="" cols="30" rows="10"></textarea>
                     </div>
                   </v-card>
                 </v-expansion-panel-content>
@@ -120,7 +120,8 @@ export default {
       checkbox: false,
       approved: false,
       owned: false,
-      owner: ''
+      owner: '',
+      msg: ''
     }
   },
   async asyncData({ store, params }) {
@@ -191,7 +192,7 @@ export default {
       const wei = client.utils.toWei(amount)
       //
       const approved = await client.contract.ck.methods
-        .kittyIndexToApproved('269')
+        .kittyIndexToApproved(params.id)
         .call()
       console.log(params.id)
       console.log(approved)
@@ -225,7 +226,11 @@ export default {
           referralRatio: 0
         }
         const signedOrder = await client.signOrder(order)
-        var result = await functions.call('order', signedOrder)
+        const datas = {
+          order: signedOrder,
+          msg: this.msg
+        }
+        var result = await functions.call('order', datas)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false

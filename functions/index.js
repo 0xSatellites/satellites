@@ -27,7 +27,8 @@ const bazaaar_v1 = new web3.eth.Contract(
   config.contract.rinkeby.bazaaar_v1
 )
 
-exports.order = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  const data = params.order
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(
       [data.proxy, data.maker, data.taker, data.creatorRoyaltyRecipient, data.asset],
@@ -78,42 +79,32 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (data, co
   c.drawImage(characterImg, 15, 90, 450, 450)
 
   c.fillStyle = '#ffff00'
-  c.font = "bold 80px 'Noto Sans JP Bold'"
+  c.font = "bold 60px 'Noto Sans JP'"
   c.textBaseline = "top"
   c.textAlign = 'center'
-  c.fillText('ただいま出品中！', 840, 120, 720)
+  if(!params.msg){
+    c.fillText('NOW ON SALE!', 840, 120, 720)
+  } else {
+    c.fillText(params.msg.substr(0,9), 840, 80, 720)
 
-  //コメント 1行目
-  //c.fillStyle = '#ffff00'
-  //c.font = "bold 64px 'Noto Sans JP'"
-  //c.textBaseline = "top"
-  //c.textAlign = 'center'
-  //c.fillText('テキスト可変の場合', 840, 80, 720)
-
-  //コメント 2行目
-  //c.fillStyle = '#ffff00'
-  //c.font = "bold 64px 'Noto Sans JP'"
-  //c.textBaseline = "top"
-  //c.textAlign = 'center'
-  //c.fillText('最大18文字まで可能', 840, 160, 720)
+    c.fillStyle = '#ffff00'
+    c.font = "bold 60px 'Noto Sans JP'"
+    c.textBaseline = "top"
+    c.textAlign = 'center'
+    c.fillText(params.msg.substr(9,18), 840, 160, 720)
+  }
 
   c.fillStyle = '#fff'
   c.font = "40px 'Noto Sans JP'"
   c.textBaseline = "top"
   c.textAlign = 'center'
-  c.fillText('Id.' + data.id, 840, 235, 720)
+  c.fillText('Id.' + data.id + '/' + 'Gen.' + metadata.generation, 840, 255, 720)
 
   c.fillStyle = '#fff'
   c.font = "40px 'Noto Sans JP'"
   c.textBaseline = "top"
   c.textAlign = 'center'
-  c.fillText('Gen.' + metadata.generation, 840, 285, 720)
-
-  c.fillStyle = '#fff'
-  c.font = "40px 'Noto Sans JP'"
-  c.textBaseline = "top"
-  c.textAlign = 'center'
-  c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 335, 720)
+  c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
 
   c.fillStyle = '#fff'
   c.font = "bold 75px 'Noto Sans JP Bold'"

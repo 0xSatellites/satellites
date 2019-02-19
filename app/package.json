@@ -16,15 +16,14 @@
     "@nuxtjs/vuetify": "^0.5.3",
     "cross-env": "^5.2.0",
     "firebase": "^5.8.1",
-    "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
-    "nuxt-sass-resources-loader": "^2.0.5",
-    "sass-loader": "^7.1.0",
     "vue-i18n": "^8.8.1",
     "web3": "1.0.0-beta.37"
   },
   "devDependencies": {
+    "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "sass-loader": "^7.1.0"
   }
 }

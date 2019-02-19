@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-const config = require('../../config.json')
+const config = require('../config.json')
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase)

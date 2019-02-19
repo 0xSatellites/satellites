@@ -136,7 +136,7 @@ import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import kitty from '~/plugins/kitty'
 
-const config = require('../../../../config.json')
+const config = require('../../../config.json')
 
 export default {
   data() {

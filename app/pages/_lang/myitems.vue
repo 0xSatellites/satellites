@@ -25,7 +25,7 @@
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else>
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-            <div class="c-card__label--exhibit">出品中</div>
+            <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
               <div class="c-card__name">Gen.{{ ck.generation }}</div>
               <div class="c-card__txt"># {{ ck.id }}</div>
@@ -74,7 +74,7 @@ export default {
         store.dispatch('asset/setAssets', tokens)
       })
       firestore
-        .getOrdersByMaker(client.account.address)
+        .getValidOrdersByMaker(client.account.address)
         .then(orders => store.dispatch('order/setOrders', orders))
     }
   },
@@ -87,6 +87,13 @@ export default {
     },
     orders() {
       return this.$store.getters['order/orders']
+    },
+    selling() {
+      const result = []
+      for (const order of this.$store.getters['order/orders']) {
+        result.push(order.id)
+      }
+      return result
     }
   },
   data() {

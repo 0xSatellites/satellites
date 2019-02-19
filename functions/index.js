@@ -206,22 +206,24 @@ exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('o
   web3.eth.getTransactionReceipt(transactionHash)
   .then(async function(val){
     const maker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(26, 66)))
-    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
-    const id = web3.utils.hexToNumber(val.logs[0].data.substring(130, 194)).toString()
+    const taker = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(90, 130)))
+    const asset = web3.utils.toChecksumAddress(web3.utils.toHex(val.logs[0].data.substring(154, 194)))
+    const id = web3.utils.hexToNumber(val.logs[0].data.substring(194, 258)).toString()
     const time = new Date().getTime()
     if(web3.utils.toChecksumAddress(val.logs[0].address) == config.contract.rinkeby.bazaaar_v1){
       const batch = db.batch()
       var ref = db.collection('order').doc(val.logs[0].topics[1])
-      batch.update(ref, {status:'売却済', valid:false, timestamp:time})
+      batch.update(ref, {result: {status:'sold', taker}, valid:false, modified:now})
       const snapshots = await db.collection('order')
       .where("maker", "==", maker)
       .where("asset", "==", asset)
       .where("id", "==", id)
+      .where("valid", "==", true)
       .get()
       snapshots.forEach(function(doc) {
         if(doc.id != val.logs[0].topics[1]){
           var ref = db.collection('order').doc(doc.id)
-          batch.update(ref, {status:'キャンセル', valid:false, timestamp:time})
+          batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
         }
       })
       batch.commit().then(function () {
@@ -245,10 +247,11 @@ exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic(
       .where("maker", "==", maker)
       .where("asset", "==", asset)
       .where("id", "==", id)
+      .where("valid", "==", true)
       .get()
       snapshots.forEach(function(doc) {
         var ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {status:'キャンセル', valid:false, timestamp:time})
+        batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
       })
       batch.commit().then(function () {
         console.log("done!!")

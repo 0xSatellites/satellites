@@ -1,5 +1,5 @@
 export const state = () => ({
-  order: {}
+  order: []
 })
 
 export const getters = {

@@ -18,6 +18,13 @@ const getLatestValidOrders = async limit => {
   return result
 }
 
+const getOrdersByMaker = async maker => {
+  const result = []
+  const snapshots = await db.collection('order').where('maker', '==', maker).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
+
 const getRelatedValidOrders = async (hash, maker, id) => {
   const added = []
   const result = []
@@ -65,6 +72,7 @@ const doc = async (collenction, doc) => {
 const firestore = {
   doc:doc,
   getLatestValidOrders:getLatestValidOrders,
+  getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getValidOrdersByMaker:getValidOrdersByMaker,
   getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus

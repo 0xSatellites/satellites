@@ -21,8 +21,7 @@
                   hash +
                   '&text=' +
                   '出品されました！ ' +
-                  asset.ck.name +
-                  '/ LV.' +
+                  'Gen.' +
                   asset.ck.generation +
                   '&hashtags=bazaaar, バザール, CryptoKitties'
               "

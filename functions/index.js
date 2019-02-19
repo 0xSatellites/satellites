@@ -29,7 +29,6 @@ const bazaaar_v1 = new web3.eth.Contract(
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const data = params.order
-  console.log(data)
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(
       [data.proxy, data.maker, data.taker, data.creatorRoyaltyRecipient, data.asset],

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="l-personal">
+    <section class="l-personal" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('myitems.mypage') }}</h2>
       <div class="l-personal__frame">
         <dl class="l-personal__address">
@@ -13,6 +13,9 @@
         </dl>
       </div>
     </section>
+    <section class="l-personal" v-else>
+      <h2 class="l-personal__title">get metamask and login</h2>
+    </section>
     <section class="c-index c-index--mypage">
       <ul>
         <v-progress-circular
@@ -22,7 +25,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else>
+        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
             <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
@@ -33,6 +36,7 @@
             </nuxt-link>
           </div>
         </li>
+        <div v-else>No kitty!!</div>
       </ul>
     </section>
 

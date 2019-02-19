@@ -27,7 +27,7 @@
                   <v-card>
                     <p>{{ $t('id.inputMessage') }}</p>
                     <div>
-                      <textarea name="" id="" cols="30" rows="10"></textarea>
+                      <textarea v-model="msg" name="" id="" cols="30" rows="10"></textarea>
                     </div>
                   </v-card>
                 </v-expansion-panel-content>
@@ -83,14 +83,50 @@
       </div>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
-    <modal
-      v-if="modal"
-      v-on:closeModal="closeModal"
-      :ogp="ogp"
-      :asset="asset"
-      :hash="hash"
-      :modalNo="modalNo"
-    ></modal>
+
+    <transition name="modal" v-if="modal">
+      <div class="l-modal">
+        <div class="l-modal__frame">
+          <div class="l-modal__icon">
+            <img src="~/assets/img/modal/icon.svg" alt="" />
+          </div>
+          <div class="l-modal__title">出品されました！</div>
+
+          <div class="l-modal__og">
+            <div id="modalImg">
+              <img :src="ogp" alt="" width="85%" />
+            </div>
+          </div>
+
+          <div class="l-modal__txt">SNSに投稿しましょう</div>
+          <div class="l-modal__btn">
+            <a
+              :href="
+                'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
+                  hash +
+                  '&text=' +
+                  '出品されました！ ' +
+                  asset.name +
+                  '/ LV.' +
+                  asset.generation +
+                  '&hashtags=bazaaar, バザール, CryptoKitties'
+              "
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+            >
+              twitterに投稿
+            </a>
+          </div>
+
+          <div class="l-modal__close" @click="closeModal">
+            <div class="l-modal__close__icon"></div>
+            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -120,7 +156,8 @@ export default {
       checkbox: false,
       approved: false,
       owned: false,
-      owner: ''
+      owner: '',
+      msg: ''
     }
   },
   async asyncData({ store, params }) {
@@ -191,7 +228,7 @@ export default {
       const wei = client.utils.toWei(amount)
       //
       const approved = await client.contract.ck.methods
-        .kittyIndexToApproved('269')
+        .kittyIndexToApproved(params.id)
         .call()
       console.log(params.id)
       console.log(approved)
@@ -225,7 +262,11 @@ export default {
           referralRatio: 0
         }
         const signedOrder = await client.signOrder(order)
-        var result = await functions.call('order', signedOrder)
+        const datas = {
+          order: signedOrder,
+          msg: this.msg
+        }
+        var result = await functions.call('order', datas)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false

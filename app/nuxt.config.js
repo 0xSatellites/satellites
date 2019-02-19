@@ -49,7 +49,6 @@ module.exports = {
   vendor: [
     'vue-i18n'
   ],
-
   router: {
     middleware: 'i18n'
   },

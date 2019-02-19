@@ -1,13 +1,22 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-const config = require('../../config.json')
+const config = require('../config.json')
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase)
 }
 
 const db = firebase.firestore()
+
+const getLatestValidOrders = async limit => {
+  const result = []
+  const snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .orderBy('created', 'desc').limit(limit).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
 
 const getOrdersByMaker = async maker => {
   const result = []
@@ -16,50 +25,57 @@ const getOrdersByMaker = async maker => {
   return result
 }
 
-const getOrdersByMakerIdStatus = async (maker, id, status) => {
+const getRelatedValidOrders = async (hash, maker, id) => {
+  const added = []
   const result = []
-  const snapshots = await db.collection('order')
+  var snapshots = await db.collection('order')
     .where('maker', '==', maker)
     .where('id', '==', id)
-    .where('status', '==', status).get()
+    .where('valid', '==', true).get()
+  snapshots.forEach(doc => {
+    added.push(doc.id)
+    if(doc.id !== hash){
+      result.push(doc.data())
+    }
+  })
+  snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .orderBy('created', 'desc').limit(3).get()
+    snapshots.forEach(doc => {
+      if(!added.includes(doc.id)) result.push(doc.data())
+    })
+  return result
+}
+
+const getValidOrdersByMaker = async maker => {
+  const result = []
+  const snapshots = await db.collection('order').where('maker', '==', maker).where('valid', '==', true).get()
   snapshots.forEach(doc => result.push(doc.data()))
   return result
 }
 
-//Insert New Order here
+const getValidOrdersByMakerIdStatus = async (maker, id) => {
+  const result = []
+  const snapshots = await db.collection('order')
+    .where('maker', '==', maker)
+    .where('id', '==', id)
+    .where('valid', '==', true).get()
+  snapshots.forEach(doc => result.push(doc.data()))
+  return result
+}
 
 const doc = async (collenction, doc) => {
-  console.log('db:get', collenction, doc)
   const snapshot = await db.collection(collenction).doc(doc).get()
   return snapshot.data()
 }
 
-const docs = async (collenction, a, cond1, b, c, cond2, d, e, cond3, f)  => {
-  console.log('db:gets', collenction, a, cond1, b)
-  const result = []
-  if(!c){
-    console.log('db:gets', collenction, a, cond1, b)
-    const snapshots = await db.collection(collenction).where(a, cond1, b).get()
-    snapshots.forEach(doc => result.push(doc.data()));
-  }else if(!e){
-    console.log('db:gets', collenction, a, cond1, b, c, cond2, d)
-    const snapshots = await db.collection(collenction).where(a, cond1, b).where(c, cond2, d).get()
-    snapshots.forEach(doc => result.push(doc.data()));
-  }else{
-    console.log('db:gets', collenction, a, cond1, b, c, cond2, d, e, cond3, f)
-    const snapshots = await db.collection(collenction).where(a, cond1, b).where(c, cond2, d).where(e, cond3, f).get()
-    snapshots.forEach(doc => result.push(doc.data()));
-  }
-
-  return result
-}
-
-
 const firestore = {
   doc:doc,
-  docs: docs,
+  getLatestValidOrders:getLatestValidOrders,
   getOrdersByMaker:getOrdersByMaker,
-  getOrdersByMakerIdStatus:getOrdersByMakerIdStatus
+  getRelatedValidOrders:getRelatedValidOrders,
+  getValidOrdersByMaker:getValidOrdersByMaker,
+  getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus
 }
 
 export default firestore

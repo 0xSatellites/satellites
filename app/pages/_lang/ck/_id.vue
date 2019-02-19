@@ -4,18 +4,17 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img :src="asset.ck.image_url" alt="" />
+            <img :src="asset.image_url" alt="" />
           </div>
         </div>
         <div>
-          <div class="l-item__name">Gen.{{ asset.ck.generation }}</div>
-          <div class="l-item__txt"># {{ asset.ck.id }}</div>
+          <div class="l-item__name">Gen.{{ asset.generation }}</div>
+          <div class="l-item__txt"># {{ asset.id }}</div>
           <div class="l-item__txt">
-            Cooldown Index {{ asset.ck.status.cooldown_index }}
+            Cooldown Index {{ asset.status.cooldown_index }}
           </div>
           <div class="l-item__txt">Crypto Kitties</div>
-
-          <v-form v-model="valid" v-if="owner == account.address">
+          <v-form>
             <div class="l-item__action">
               <div class="l-item__action__price">
                 <label
@@ -28,16 +27,17 @@
                   <v-card>
                     <p>{{ $t('id.inputMessage') }}</p>
                     <div>
-                      <textarea v-model="msg" name="" id="" cols="30" rows="10"></textarea>
+                      <textarea name="" id="" cols="30" rows="10"></textarea>
                     </div>
                   </v-card>
                 </v-expansion-panel-content>
               </v-expansion-panel>
 
+              <div v-if="owned">
               <div class="l-item__action__btns" v-if="!approved">
                 <v-btn
                   class="l-item__action__btn"
-                  :disabled="!valid || loading || approved"
+                  :disabled="!valid || loading"
                   large
                   @click="approve"
                 >
@@ -50,7 +50,7 @@
                   ></v-progress-circular>
                 </v-btn>
               </div>
-              <div class="l-item__action__btns" v-if="true">
+              <div class="l-item__action__btns" v-if="approved">
                 <v-btn
                   class="l-item__action__btn l-item__action__btn--type1 white_text"
                   :disabled="!valid || loading || !approved"
@@ -67,35 +67,6 @@
                   ></v-progress-circular>
                 </v-btn>
               </div>
-              <div class="l-item__action__btns" v-else>
-                <div
-                  class="l-item__action__btn l-item__action__btn--type1"
-                  :disabled="!valid || loading"
-                  @click="order_v1"
-                >
-                  {{ $t('id.change') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </div>
-                <div
-                  class="l-item__action__btn l-item__action__btn--type2"
-                  :disabled="!valid || loading"
-                  @click="cancel"
-                  value="cancel"
-                >
-                  {{ $t('id.cancel') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </div>
-              </div>
               <v-flex center>
                 <v-checkbox
                   class="center"
@@ -105,56 +76,21 @@
                   required
                 ></v-checkbox>
               </v-flex>
+              </div>
             </div>
           </v-form>
         </div>
       </div>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
-
-    <transition name="modal" v-if="modal">
-      <div class="l-modal">
-        <div class="l-modal__frame">
-          <div class="l-modal__icon">
-            <img src="~/assets/img/modal/icon.svg" alt="" />
-          </div>
-          <div class="l-modal__title">出品されました！</div>
-
-          <div class="l-modal__og">
-            <div id="modalImg">
-              <img :src="ogp" alt="" width="85%" />
-            </div>
-          </div>
-
-          <div class="l-modal__txt">SNSに投稿しましょう</div>
-          <div class="l-modal__btn">
-            <a
-              :href="
-                'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
-                  hash +
-                  '&text=' +
-                  '出品されました！ ' +
-                  asset.ck.name +
-                  '/ LV.' +
-                  asset.ck.generation +
-                  '&hashtags=bazaaar, バザール, CryptoKitties'
-              "
-              class="twitter-share-button"
-              data-size="large"
-              data-show-count="false"
-              target="”_blank”"
-            >
-              twitterに投稿
-            </a>
-          </div>
-
-          <div class="l-modal__close" @click="closeModal">
-            <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <modal
+      v-if="modal"
+      v-on:closeModal="closeModal"
+      :ogp="ogp"
+      :asset="asset"
+      :hash="hash"
+      :modalNo="modalNo"
+    ></modal>
   </div>
 </template>
 
@@ -162,13 +98,19 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import kitty from '~/plugins/kitty'
+import Modal from '~/components/modal'
 
-const config = require('../../../../config.json')
+const config = require('../../../config.json')
 
 export default {
+  components: {
+    Modal
+  },
   data() {
     return {
       modal: false,
+      modalNo: '',
       tokenOwner: false,
       hash: '',
       ogp: '',
@@ -177,16 +119,13 @@ export default {
       valid: true,
       checkbox: false,
       approved: false,
-      owner: '',
-      msg:''
+      owned: false,
+      owner: ''
     }
   },
   async asyncData({ store, params }) {
-    const asset = await functions.call('metadata', {
-      asset: 'ck',
-      id: params.id
-    })
-    store.dispatch('asset/setCk', asset)
+    const asset = await kitty.getKittyById(params.id)
+    store.dispatch('asset/setAsset', asset)
   },
   mounted: async function() {
     const store = this.$store
@@ -198,7 +137,10 @@ export default {
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
 
-        const order = await firestore.getOrdersByMakerIdStatus(account.address, params.id, '出品中')
+        /*
+        //const order = await firestore.getLowestCostOrderByMakerId(account.address, params.id)
+        const order = await firestore.getLowestCostOrderByMakerId('0xb5384D9F2dDd0AD646919c2299B7C9296208eB4a', '1078')
+        console.log(order)
         order.sort((a, b) => {
           if (a.timestamp < b.timestamp) return 1
           if (a.timestamp > b.timestamp) return -1
@@ -208,21 +150,17 @@ export default {
         console.log(order1)
         this.price = order1.price / 1000000000000000000
         await store.dispatch('order/setOrder', order1)
-
-        console.log('ok')
-        this.approved = approved
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
-          .call({ from: account.address })
-        console.log('approve' + approved)
-        this.approved = approved
-
-        const owner = await client.contract.ck.methods
-          .kittyIndexToOwner(params.id)
-          .call({ from: account.address })
-        console.log('owner' + owner)
-        this.owner = owner
+        */
       }
+
+      client.contract.ck.methods.kittyIndexToOwner(params.id).call().then(owner => {
+        this.owned = owner == this.account.address
+      })
+
+      client.contract.ck.methods.kittyIndexToApproved(params.id).call().then(approvedAddress => {
+        this.approved = approvedAddress == client.contract.bazaaar_v1.options.address
+      })
+
     }
   },
   computed: {
@@ -237,9 +175,6 @@ export default {
     }
   },
   methods: {
-    openModal() {
-      this.modal = true
-    },
     closeModal() {
       const router = this.$router
       this.modal = false
@@ -256,8 +191,8 @@ export default {
       const wei = client.utils.toWei(amount)
       //
       const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
-        .call({ from: account.address })
+        .kittyIndexToApproved('269')
+        .call()
       console.log(params.id)
       console.log(approved)
       console.log(client.contract.bazaaar_v1.options.address)
@@ -290,14 +225,11 @@ export default {
           referralRatio: 0
         }
         const signedOrder = await client.signOrder(order)
-        const datas = {
-          order: signedOrder,
-          msg: msg
-        }
-        var result = await functions.call('order', datas)
+        var result = await functions.call('order', signedOrder)
         this.hash = result.hash
         this.ogp = result.ogp
         this.loading = false
+        this.modalNo = 1
         this.modal = true
       }
     },
@@ -309,6 +241,9 @@ export default {
         .send({ from: account.address })
         .on('transactionHash', function(hash) {
           console.log(hash)
+          this.hash = hash
+          this.modalNo = 2
+          this.modal = true
         })
     },
     async cancel() {
@@ -337,6 +272,9 @@ export default {
         .send({ from: account.address })
         .on('transactionHash', function(hash) {
           console.log(hash)
+          this.hash = hash;
+          this.modalNo = 3
+          this.modal = true
         })
     }
   }

@@ -2,36 +2,14 @@
 <div>
     <section class="l-information">
       <div ><img class="ogpimg" :src="order.ogp" width=100%></div>
-      <div class="l-information__frame">
+      <div class="l-information__frame" v-if="order.valid">
         <div class="l-information__name">{{ order.metadata.name}} / Gen.{{ order.metadata.generation}}</div>
         <div class="l-information__txt"># {{ order.metadata.id}}</div>
         <div class="l-information__txt">Crypto Kitties</div>
-
-        <!-- <ul class="l-information__data">
-        <li><span class="l-information__rarity l-item__rarity--5">★★★★★</span>{{ order.metadata.fancy_type}}</li>
-        </ul> -->
-        <!-- <ul class="l-information__data">
-        <li><strong>HP：</strong> {{ order.metadata.attributes.hp}}</li>
-        <li><strong>PHY：</strong> {{ order.metadata.attributes.phy}}</li>
-        <li><strong>INT：</strong> {{ order.metadata.attributes.int}}</li>
-        <li><strong>AGI：</strong> {{ order.metadata.attributes.agi}}</li>
-        </ul> -->
-        <!-- <ul class="l-information__data">
-
-        <li><span class="l-information__skill--type">Active</span>
-          【{{ order.metadata.active_skill.name.ja}}】<br>
-          {{ order.metadata.active_skill.description.ja}}
-        </li>
-        <li><span class="l-information__skill--type">Passive</span>
-          【{{ order.metadata.passive_skill.name.ja}}】<br>
-          {{ order.metadata.passive_skill.description.ja}}
-        </li>
-        </ul> -->
         <v-form v-model="valid">
         <div class="l-information__action">
-          <v-btn v-if="order.status == '出品中'"
+          <v-btn
           class="l-information__action__btn"
-          :disabled="!valid || loading"
           color="#3498db"
           large
           @click="purchase"
@@ -53,26 +31,22 @@
         </v-flex>
         </v-form>
     </div>
-    <div class="l-information__action__btn">
+    <div class="l-information__action__btn" v-if="order.valid">
        <a :href="'https://twitter.com/share?url=https://bazaaar.io/ck/order/' + order.hash +
         '&text=' + '出品されました! '+ order.metadata.name  + '/ Gen.' + order.metadata.generation +
         '&hashtags=bazaaar, バザール, CryptoKitties'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
         Tweetする
         </a>
-        <!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
     </div>
     </section>
-    <section class="c-index c-index--recommend">
-
-        <h2 class="c-index__title">おすすめアセット</h2>
+    <section class="c-index c-index--recommend" v-if="recommend.lengh">
+        <h2 class="c-index__title">関連アセット</h2>
         <ul>
         <li v-for="(recommend, i ) in recommend" :key="i">
-        <nuxt-link :to="'/order/'+ recommend.hash" class="c-card">
-        <div class="c-card__label c-card__label__rarity--1">★1</div>
+        <nuxt-link :to="'/ck/order/'+ recommend.hash" class="c-card">
         <div class="c-card__img"><img :src="recommend.metadata.image_url" alt=""></div>
-        <div class="c-card__name">{{recommend.metadata.hero_type.name.ja}} / LV.{{ recommend.metadata.attributes.lv }} </div>
+        <div class="c-card__name">{{recommend.metadata.name}}</div>
         <div class="c-card__txt">#{{recommend.id}}</div>
-        <div class="c-card__txt">My Crypto Heores</div>
         <div class="c-card__eth">{{recommend.price / 1000000000000000000}} ETH</div>
         </nuxt-link>
         </li>
@@ -81,42 +55,27 @@
     <div>
 
     </div>
-    <transition name="modal" v-if="modal">
-        <div class="l-modal">
-
-            <div class="l-modal__frame">
-
-                <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-                <div class="l-modal__title">購入処理完了しました！</div>
-
-                <div class="l-modal__og">
-                    <div id="modalImg">
-                      <img  :src="order.ogp" alt=""  width="85%">
-                    </div>
-                </div>
-                <div class="l-modal__txt">トランザクションハッシュ</div>
-                <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
-
-                <div class="l-modal__close" @click="closeModal">
-                  <div class="l-modal__close__icon" ></div>
-                  <div class="l-modal__close__txt u-obj--sp">閉じる</div>
-                </div>
-
-            </div>
-
-        </div>
-      </transition>
-
+    <modal
+      v-if="modal"
+      v-on:closeModal="closeModal"
+      :hash="hash"
+      :modalNo="modalNo"
+    ></modal>
   </div>
 </template>
 
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
+import Modal from '~/components/modal'
 
 const config = require('../../../../config.json')
 
 export default {
+  components: {
+    Modal
+  },
+
   head() {
     var order = this.order
     return {
@@ -130,6 +89,7 @@ export default {
       valid: true,
       checkbox: false,
       modal: false,
+      modalNo: 4,
       hash: "",
       }
   },
@@ -137,14 +97,9 @@ export default {
     const order = await firestore.doc('order', params.hash)
     await store.dispatch('order/setOrder', order)
 
-    // const recommend2 = await firestore.docs('order','status', '==', '出品中', 'metadata.attributes.rarity' , '==', order.metadata.attributes.rarity, )
-    // recommend2.sort((a, b) => {
-    //       if (a.price < b.price) return -1;
-    //       if (a.price > b.price) return 1;
-    //       return 0;
-    //     });
-    // const recommend = recommend2.slice(0,4)
-    // await store.dispatch('recommend/setRecommend', recommend)
+    const recommend = await firestore.getRelatedValidOrders(params.hash, order.maker, order.id)
+    await store.dispatch('order/setOrders', recommend)
+
   },
   mounted: async function() {
     const store = this.$store
@@ -164,7 +119,7 @@ export default {
       return this.$store.getters['order/order']
     },
     recommend(){
-      return this.$store.getters['recommend/recommend']
+      return this.$store.getters['order/orders']
     }
   },
   methods: {
@@ -202,9 +157,6 @@ export default {
           this.modal = true
         })
     },
-    openModal() {
-      this.modal = true
-    },
     closeModal() {
       this.modal = false
     },
@@ -224,7 +176,7 @@ color: white;
   margin: auto;
 }
 .ogpimg{
-  
+
 }
 </style>
 

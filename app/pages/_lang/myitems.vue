@@ -36,18 +36,16 @@
       </ul>
     </section>
 
-    <!--
-    <section class="c-index c-index--mypage">
-      <v-data-table :headers="headers" :items="orders" class="elevation-1">
-        <template slot="items" scope="props">
-          <td>{{ props.item.status }}</td>
+    <section class="c-index c-index--mypage" v-if="transactions.length">
+      <v-data-table :headers="headers" :items="transactions" class="elevation-1">
+        <template slot="items" slot-scope="props">
+          <td v-if="props.item.maker == account.address">sold</td>
+          <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
-          <td>{{ props.item.metadata.name }}</td>
-          <td>{{ props.item.price / 1000000000000000000 }}</td>
+          <td>{{ props.item.price / 1000000000000000000 }} ETH</td>
         </template>
       </v-data-table>
     </section>
-    -->
 
   </div>
 </template>
@@ -73,9 +71,15 @@ export default {
         this.loading = false
         store.dispatch('asset/setAssets', tokens)
       })
+
       firestore
         .getValidOrdersByMaker(client.account.address)
         .then(orders => store.dispatch('order/setOrders', orders))
+
+      await firestore
+        .getHistoryByAddress(client.account.address)
+        .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
+
     }
   },
   computed: {
@@ -88,6 +92,9 @@ export default {
     orders() {
       return this.$store.getters['order/orders']
     },
+    transactions() {
+      return this.$store.getters['transaction/transactions']
+    },
     selling() {
       const result = []
       for (const order of this.$store.getters['order/orders']) {
@@ -99,15 +106,9 @@ export default {
   data() {
     return {
       headers: [
-        {
-          text: 'ステータス',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'id', value: 'calories' },
-        { text: 'アセット', value: 'fat' },
-        { text: '価格', value: 'price' }
+        { text: 'result', value: 'result' },
+        { text: 'id', value: 'id' },
+        { text: 'price', value: 'price' }
       ],
       loading: false
     }

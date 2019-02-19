@@ -15,12 +15,12 @@
     </section>
     <section class="c-index c-index--mypage">
       <ul>
-        <v-progress-circular class="loading" v-if="this.loading === true"
+        <v-progress-circular class="loading " v-if="this.loading === true"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'">
+        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'" v-else>
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
               <div class="c-card__img"><img :src="ck.image_url" /></div>
@@ -71,7 +71,7 @@ export default {
         store.dispatch('myitems/setCk', tokens)
         }
       )
-      firestore.getOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
+      firestore.getValidOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
     }
   },
   computed: {

@@ -50,7 +50,7 @@
                 <a href="https://www.cryptokitties.co/">
                     <v-card>
                         <v-img
-                        v-bind:src="require('~/assets/img/original/CryptoKitties.png')"
+                        v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
                         aspect-ratio="1.75"
                         ></v-img>
 
@@ -72,7 +72,7 @@
                 <a href="https://tokenpocket.jp/ja/">
                     <v-card class="partner pa-3">
                         <v-img
-                        v-bind:src="require('~/assets/img/original/tokenpocket.png')"
+                        v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
                         aspect-ratio="1"
                         ></v-img>
                     </v-card>
@@ -82,7 +82,7 @@
                 <a href="https://www.go-wallet.app/">
                     <v-card class="partner pa-3">
                         <v-img
-                        v-bind:src="require('~/assets/img/original/GoWallet.png')"
+                        v-bind:src="require('~/assets/img/partner/GoWallet.png')"
                         aspect-ratio="1"
                         ></v-img>
                     </v-card>
@@ -108,7 +108,7 @@ export default {
   },
 
   async asyncData({ store, params }) {
-      const order = await firestore.getLatestOrders(4)
+      const order = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrder', order)
   },
   computed: {

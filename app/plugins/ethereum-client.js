@@ -57,7 +57,6 @@ const account = {
 }
 
 const activate = async provider => {
-  console.log('ethereum-client:activate', provider)
   web3.setProvider(provider)
   const accounts = await web3.eth.getAccounts()
   account.address = accounts[0]
@@ -74,7 +73,6 @@ const activate = async provider => {
 }
 
 const ownedTokens = async name => {
-  console.log('ethereum-client:ownedTokens:' + name)
   const methods = contract[name].methods
   const balance = await methods.balanceOf(account.address).call()
   if (balance == 0) {
@@ -89,7 +87,6 @@ const ownedTokens = async name => {
 }
 
 const signOrder = async order => {
-  console.log('ethereum-client:signOrder:', order)
   const data = web3.utils.soliditySha3(
     order.proxy,
     order.maker,

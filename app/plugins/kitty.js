@@ -1,18 +1,18 @@
 const axios = require("axios")
 
+const config = require('../config.json')
+
 const instance = axios.create({
-    baseURL: 'https://api.cryptokitties.co/',
-    headers: {'x-api-token': 'NjRDB41VxE4elimp3ggfuOy_qUbWbOL5mmYvjG8aH-c'}
+    baseURL: 'https://public.api.cryptokitties.co/v1/',
+    headers: {'x-api-token': config.token.kitty}
   })
 
 const getKittiesByWalletAddress = async address => {
-    console.log('kitty:getKittiesByWalletAddress:' + address)
     const result = await instance.get('kitties?owner_wallet_address='+ address)
     return result.data.kitties
   }
 
 const getKittyById = async id => {
-  console.log('kitty:getKittyById:' + id)
   const result = await instance.get('kitties/'+ id)
   return result.data
 }

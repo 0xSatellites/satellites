@@ -22,7 +22,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'" v-else>
+        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else>
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
             <div class="c-card__label--exhibit">出品中</div>
@@ -71,11 +71,11 @@ export default {
       this.loading = true
       kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
-        store.dispatch('myitems/setCk', tokens)
+        store.dispatch('asset/setAssets', tokens)
       })
       firestore
         .getOrdersByMaker(client.account.address)
-        .then(orders => store.dispatch('order/setOrder', orders))
+        .then(orders => store.dispatch('order/setOrders', orders))
     }
   },
   computed: {
@@ -83,10 +83,10 @@ export default {
       return this.$store.getters['account/account']
     },
     myitems() {
-      return this.$store.getters['myitems/myitems']
+      return this.$store.getters['asset/assets']
     },
     orders() {
-      return this.$store.getters['order/order']
+      return this.$store.getters['order/orders']
     }
   },
   data() {

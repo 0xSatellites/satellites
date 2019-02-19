@@ -1,42 +1,27 @@
 export const state = () => ({
-  //MCH
-  mchh: {},
-  mche: {},
-  //CK
-  ck:{}
+  asset: {},
+  assets: [],
 })
 
 export const getters = {
-  asset: state => {
-    const asset = {
-      mchh:state.mchh,
-      mche:state.mche,
-      ck:state.ck
-    }
-    return asset
-  }
+  asset: state => state.asset,
+  assets: state => state.assets,
 }
 
 export const mutations = {
-  setMchh(state, mchh) {
-    state.mchh = mchh
+  setAsset(state, asset) {
+    state.asset = asset
   },
-  setMche(state, mche) {
-    state.mche = mche
-  },
-  setCk(state, ck) {
-    state.ck = ck
+  setAssets(state, assets) {
+    state.assets = assets
   }
 }
 
 export const actions = {
-  async setMchh({ state, commit }, mchh) {
-    commit('setMchh', mchh)
+  async setAsset({ state, commit }, asset) {
+    commit('setAsset', asset)
   },
-  async setMche({ state, commit }, mche) {
-    commit('setMche', mche)
-  },
-  async setCk({ state, commit }, ck) {
-    commit('setCk', ck)
+  async setAssets({ state, commit }, assets) {
+    commit('setAssets', assets)
   }
 }

@@ -115,7 +115,7 @@ export default {
     await store.dispatch('order/setOrder', order)
 
     const recommend = await firestore.getRelatedValidOrders(params.hash, order.maker, order.id)
-    await store.dispatch('recommend/setRecommend', recommend)
+    await store.dispatch('order/setOrders', recommend)
 
   },
   mounted: async function() {
@@ -136,7 +136,7 @@ export default {
       return this.$store.getters['order/order']
     },
     recommend(){
-      return this.$store.getters['recommend/recommend']
+      return this.$store.getters['order/orders']
     }
   },
   methods: {

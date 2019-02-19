@@ -18,6 +18,17 @@ const getLatestValidOrders = async limit => {
   return result
 }
 
+const getLowestCostOrderByMakerId = async (maker, id) => {
+  var result = {}
+  const snapshots = await db.collection('order')
+    .where('maker', '==', maker)
+    .where('id', '==', id)
+    .where('valid', '==', true)
+    .orderBy('price').limit(1).get()
+  snapshots.forEach(doc => result = doc.data())
+  return result
+}
+
 const getOrdersByMaker = async maker => {
   const result = []
   const snapshots = await db.collection('order').where('maker', '==', maker).get()
@@ -88,6 +99,7 @@ const doc = async (collenction, doc) => {
 const firestore = {
   doc:doc,
   getLatestValidOrders:getLatestValidOrders,
+  getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

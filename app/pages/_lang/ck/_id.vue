@@ -27,55 +27,95 @@
                   <v-card>
                     <p>{{ $t('id.inputMessage') }}</p>
                     <div>
-                      <textarea v-model="msg" name="" id="" cols="30" rows="10"></textarea>
+                      <textarea
+                        v-model="msg"
+                        name=""
+                        id=""
+                        cols="30"
+                        rows="10"
+                      ></textarea>
                     </div>
                   </v-card>
                 </v-expansion-panel-content>
               </v-expansion-panel>
-
               <div v-if="owned">
-              <div class="l-item__action__btns" v-if="!approved">
-                <v-btn
-                  class="l-item__action__btn"
-                  :disabled="!valid || loading"
-                  large
-                  @click="approve"
-                >
-                  {{ $t('id.approve') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </v-btn>
-              </div>
-              <div class="l-item__action__btns" v-if="approved">
-                <v-btn
-                  class="l-item__action__btn l-item__action__btn--type1 white_text"
-                  :disabled="!valid || loading || !approved"
-                  color="#3498db"
-                  large
-                  @click="order_v1"
-                >
-                  {{ $t('id.sell') }}
-                  <v-progress-circular
-                    size="16"
-                    class="ma-2"
-                    v-if="loading"
-                    indeterminate
-                  ></v-progress-circular>
-                </v-btn>
-              </div>
-              <v-flex center>
-                <v-checkbox
-                  class="center"
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  label="利用規約に同意する"
-                  required
-                ></v-checkbox>
-              </v-flex>
+                <div class="l-item__action__btns" v-if="!approved">
+                  <v-btn
+                    class="l-item__action__btn"
+                    :disabled="!valid || loading"
+                    large
+                    @click="approve"
+                  >
+                    {{ $t('id.approve') }}
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
+                  </v-btn>
+                </div>
+
+                <div class="l-item__action__btns" v-else-if="approved && !order.id">
+                  <v-btn
+                    class="l-item__action__btn l-item__action__btn--type1 white_text"
+                    :disabled="!valid || loading || !approved"
+                    color="#3498db"
+                    large
+                    @click="order_v1"
+                  >
+                    {{ $t('id.sell') }}
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
+                  </v-btn>
+                </div>
+
+                <div class="l-item__action__btns" v-else-if="approved && order.id">
+                  <v-btn
+                    class="l-item__action__btn l-item__action__btn--type1 white_text"
+                    :disabled="!valid || loading || !approved"
+                    color="#3498db"
+                    large
+                    @click="order_v1('change')"
+                  >
+                    {{order.price / 1000000000000000000}} -> change
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
+                  </v-btn>
+                  <v-btn
+                    class="l-item__action__btn l-item__action__btn--type1 white_text"
+                    :disabled="!valid || loading || !approved"
+                    color="#3498db"
+                    large
+                    @click="cancel"
+                  >
+                    cancel
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
+                  </v-btn>
+                </div>
+
+                <v-flex center>
+                  <v-checkbox
+                    class="center"
+                    v-model="checkbox"
+                    :rules="[v => !!v || '']"
+                    label="利用規約に同意する"
+                    required
+                  ></v-checkbox>
+                </v-flex>
               </div>
             </div>
           </v-form>
@@ -137,31 +177,28 @@ export default {
         //initialize web3 client
         const account = await client.activate(web3.currentProvider)
         store.dispatch('account/setAccount', account)
-
-        /*
-        //const order = await firestore.getLowestCostOrderByMakerId(account.address, params.id)
-        const order = await firestore.getLowestCostOrderByMakerId('0xb5384D9F2dDd0AD646919c2299B7C9296208eB4a', '1078')
-        console.log(order)
-        order.sort((a, b) => {
-          if (a.timestamp < b.timestamp) return 1
-          if (a.timestamp > b.timestamp) return -1
-          return 0
-        })
-        const order1 = order.shift()
-        console.log(order1)
-        this.price = order1.price / 1000000000000000000
-        await store.dispatch('order/setOrder', order1)
-        */
       }
 
-      client.contract.ck.methods.kittyIndexToOwner(params.id).call().then(owner => {
-        this.owned = owner == this.account.address
-      })
+      client.contract.ck.methods
+        .kittyIndexToOwner(params.id)
+        .call()
+        .then(owner => {
+          this.owned = owner == this.account.address
+        })
 
-      client.contract.ck.methods.kittyIndexToApproved(params.id).call().then(approvedAddress => {
-        this.approved = approvedAddress == client.contract.bazaaar_v1.options.address
-      })
+      client.contract.ck.methods
+        .kittyIndexToApproved(params.id)
+        .call()
+        .then(approvedAddress => {
+          this.approved =
+            approvedAddress == client.contract.bazaaar_v1.options.address
+        })
 
+      firestore
+        .getLowestCostOrderByMakerId(client.account.address, params.id)
+        .then(order => {
+          store.dispatch('order/setOrder', order)
+        })
     }
   },
   computed: {
@@ -181,22 +218,24 @@ export default {
       this.modal = false
       router.push({ path: '/ck/order/' + this.hash })
     },
-    async order_v1() {
+    async order_v1(type) {
       console.log('order_v1')
-      this.loading = true
+
+      //this.loading = true
       const account = this.account
       const asset = this.asset.ck
       const params = this.$route.params
       const router = this.$router
       const amount = this.price
       const wei = client.utils.toWei(amount)
-      //
+      if(type == 'change' && this.order.price / 1000000000000000000 <= amount){
+        alert('make it cheeper')
+        return
+      }
+
       const approved = await client.contract.ck.methods
         .kittyIndexToApproved(params.id)
         .call()
-      console.log(params.id)
-      console.log(approved)
-      console.log(client.contract.bazaaar_v1.options.address)
 
       if (approved == client.contract.bazaaar_v1.options.address) {
         console.log('approved')
@@ -255,6 +294,7 @@ export default {
       const account = this.account
       const order = this.order
       console.log(order)
+
       await client.contract.bazaaar_v1.methods
         .orderCancell_(
           [
@@ -262,7 +302,7 @@ export default {
             order.maker,
             order.taker,
             order.creatorRoyaltyRecipient,
-            order.asset
+            order.asset,
           ],
           [
             order.id,
@@ -272,12 +312,12 @@ export default {
             order.expiration,
             order.creatorRoyaltyRatio,
             order.referralRatio
-          ]
+          ],
         )
         .send({ from: account.address })
         .on('transactionHash', function(hash) {
           console.log(hash)
-          this.hash = hash;
+          this.hash = hash
           this.modalNo = 3
           this.modal = true
         })

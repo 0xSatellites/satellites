@@ -108,12 +108,12 @@ export default {
   },
 
   async asyncData({ store, params }) {
-      const order = await firestore.getLatestValidOrders(4)
-      await store.dispatch('order/setOrder', order)
+      const orders = await firestore.getLatestValidOrders(4)
+      await store.dispatch('order/setOrders', orders)
   },
   computed: {
     orders() {
-      return this.$store.getters['order/order']
+      return this.$store.getters['order/orders']
     },
   },
 }

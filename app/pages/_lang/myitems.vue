@@ -15,14 +15,17 @@
     </section>
     <section class="c-index c-index--mypage">
       <ul>
-        <v-progress-circular class="loading " v-if="this.loading === true"
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems.ck" :key="i + '-ck'" v-else>
+        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else>
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+            <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
               <div class="c-card__name">Gen.{{ ck.generation }}</div>
               <div class="c-card__txt"># {{ ck.id }}</div>
@@ -32,20 +35,20 @@
         </li>
       </ul>
     </section>
-    <!-- <section class="c-index c-index--mypage">
-        <v-data-table
-        :headers="headers"
-        :items="order"
-        class="elevation-1"
-      >
+
+    <!--
+    <section class="c-index c-index--mypage">
+      <v-data-table :headers="headers" :items="orders" class="elevation-1">
         <template slot="items" scope="props">
           <td>{{ props.item.status }}</td>
           <td>{{ props.item.id }}</td>
-          <td >{{ props.item.metadata.hero_type.name.ja }}  / lv.{{ props.item.metadata.attributes.lv }}</td>
-          <td >{{ props.item.price / 1000000000000000000}}</td>
+          <td>{{ props.item.metadata.name }}</td>
+          <td>{{ props.item.price / 1000000000000000000 }}</td>
         </template>
       </v-data-table>
-    </section> -->
+    </section>
+    -->
+
   </div>
 </template>
 
@@ -68,10 +71,11 @@ export default {
       this.loading = true
       kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
-        store.dispatch('myitems/setCk', tokens)
-        }
-      )
-      firestore.getValidOrdersByMaker(client.account.address).then(orders => store.dispatch('order/setOrder', orders))
+        store.dispatch('asset/setAssets', tokens)
+      })
+      firestore
+        .getValidOrdersByMaker(client.account.address)
+        .then(orders => store.dispatch('order/setOrders', orders))
     }
   },
   computed: {
@@ -79,10 +83,17 @@ export default {
       return this.$store.getters['account/account']
     },
     myitems() {
-      return this.$store.getters['myitems/myitems']
+      return this.$store.getters['asset/assets']
     },
-    order() {
-      return this.$store.getters['order/order']
+    orders() {
+      return this.$store.getters['order/orders']
+    },
+    selling() {
+      const result = []
+      for (const order of this.$store.getters['order/orders']) {
+        result.push(order.id)
+      }
+      return result
     }
   },
   data() {
@@ -105,10 +116,9 @@ export default {
 </script>
 
 <style scoped>
-  .loading{
-    margin: auto;
-    margin-top: 30px;
-    display: block;
-  }
-
+.loading {
+  margin: auto;
+  margin-top: 30px;
+  display: block;
+}
 </style>

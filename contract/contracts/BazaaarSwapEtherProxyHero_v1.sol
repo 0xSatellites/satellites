@@ -10,6 +10,7 @@ contract BazaaarSwapEtherProxyHero_v1 is Pausable {
     event OrderMatched(
         bytes32 indexed hash,
         address maker,
+        address taker,
         address asset,
         uint id
     );
@@ -108,7 +109,7 @@ contract BazaaarSwapEtherProxyHero_v1 is Pausable {
         require(order.price == msg.value);
         bytes32 hash = requireValidOrder(order, sig);
         nonce[order.maker][order.asset][order.id]++;
-        emit OrderMatched(hash, order.maker, order.asset, order.id);
+        emit OrderMatched(hash, order.maker, msg.sender, order.asset, order.id);
     }
 
     function orderCancell(Order memory order) internal {

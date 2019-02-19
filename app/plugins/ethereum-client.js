@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const config = require('../../config.json')
+const config = require('../config.json')
 
 var web3
 
@@ -16,14 +16,6 @@ if(process.env.NODE_ENV == 'development') {
     bazaaar_v1: new web3.eth.Contract(
       config.abi.bazaaar_v1,
       config.contract.rinkeby.bazaaar_v1
-    ),
-    mche: new web3.eth.Contract(
-      config.abi.mchh,
-      config.contract.rinkeby.mche
-    ),
-    mchh: new web3.eth.Contract(
-      config.abi.mchh,
-      config.contract.rinkeby.mchh
     ),
     ck: new web3.eth.Contract(
       config.abi.ck,

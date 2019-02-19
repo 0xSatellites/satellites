@@ -4,14 +4,14 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img :src="asset.ck.image_url" alt="" />
+            <img :src="asset.image_url" alt="" />
           </div>
         </div>
         <div>
-          <div class="l-item__name">Gen.{{ asset.ck.generation }}</div>
-          <div class="l-item__txt"># {{ asset.ck.id }}</div>
+          <div class="l-item__name">Gen.{{ asset.generation }}</div>
+          <div class="l-item__txt"># {{ asset.id }}</div>
           <div class="l-item__txt">
-            Cooldown Index {{ asset.ck.status.cooldown_index }}
+            Cooldown Index {{ asset.status.cooldown_index }}
           </div>
           <div class="l-item__txt">Crypto Kitties</div>
           <v-form>
@@ -91,7 +91,6 @@
       :hash="hash"
       :modalNo="modalNo"
     ></modal>
-
   </div>
 </template>
 
@@ -102,7 +101,7 @@ import functions from '~/plugins/functions'
 import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
 
-const config = require('../../../../config.json')
+const config = require('../../../config.json')
 
 export default {
   components: {
@@ -126,7 +125,7 @@ export default {
   },
   async asyncData({ store, params }) {
     const asset = await kitty.getKittyById(params.id)
-    store.dispatch('asset/setCk', asset)
+    store.dispatch('asset/setAsset', asset)
   },
   mounted: async function() {
     const store = this.$store

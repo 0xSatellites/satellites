@@ -3,10 +3,8 @@ const config = require('./config.json')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
-const serviceAccount = require('./.serviceAccountKey.json')
-
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.applicationDefault(),
 })
 
 const db = admin.firestore()
@@ -220,7 +218,7 @@ exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('o
   }
 })
 
-exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(message => {
+exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(async message => {
   const transactionHash = message.json.transactionHash
   const transaction = await web3.eth.getTransactionReceipt(transactionHash)
 

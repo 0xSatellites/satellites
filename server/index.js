@@ -23,19 +23,6 @@ const contract = {
   )
 }
 
-web3.eth.getTransactionReceipt('0x00a5ff2ffc02875fafb302419f907220651d12531095cdea79bb21ac8476589a').then(console.log)
-
-const registerMessage = {
-  transactionHash: '0x00a5ff2ffc02875fafb302419f907220651d12531095cdea79bb21ac8476589a'
-};
-const topic = pubsub.topic('orderMatched');
-topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
-  if (err) {
-    console.log(err);
-  }
-  console.log('done')
-})
-
 contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
   console.log('contract.bazaaar_v1.events.OrderMatched')
   if (error) return

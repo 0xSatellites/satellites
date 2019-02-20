@@ -1,0 +1,13 @@
+{
+  "name": "bazaaar.io",
+  "description": "bazaaar.io",
+  "scripts": {
+    "serve:dev": "firebase use dev && firebase functions:config:set env.project=development && firebase functions:config:get > .runtimeconfig.json && firebase serve",
+    "serve:stg": "firebase use stg && firebase functions:config:set env.project=staging && firebase functions:config:get > .runtimeconfig.json && firebase serve",
+    "serve:prd": "firebase use prd && firebase functions:config:set env.project=production && firebase functions:config:get > .runtimeconfig.json && firebase serve",
+    "deploy:dev": "firebase use dev && firebase functions:config:set env.project=development && firebase deploy",
+    "deploy:stg": "firebase use stg && firebase functions:config:set env.project=staging && firebase deploy",
+    "deploy:prd": "firebase use prd && firebase functions:config:set env.project=production && firebase deploy",
+    "logs": "firebase functions:log"
+  }
+}

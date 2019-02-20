@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "blockbase-bazaaar-sand"
+    "dev": "blockbase-bazaaar-sand",
+    "stg": "blockbase-bazaaar-staging",
+    "prd": "blockbase-bazaaar-production"
   }
 }

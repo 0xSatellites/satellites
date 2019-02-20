@@ -3,6 +3,8 @@ const config = require('./config.json')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
+const project = functions.config().env.project || 'development'
+
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
 })
@@ -11,7 +13,7 @@ const db = admin.firestore()
 const settings = {timestampsInSnapshots: true};
 db.settings(settings);
 
-const bucket = admin.storage().bucket(config.bucket.sand)
+const bucket = admin.storage().bucket(config.bucket[project])
 
 const axios = require("axios")
 
@@ -24,10 +26,10 @@ Canvas.registerFont(__dirname  + '/assets/fonts/NotoSansJP-Regular.otf', { famil
 Canvas.registerFont(__dirname  + '/assets/fonts/NotoSansJP-Bold.otf', { family: 'Noto Sans JP Bold', weight: 'bold'})
 
 const Web3 = require('web3')
-const web3 = new Web3(config.node.rinkeby.https)
+const web3 = new Web3(config.node[project].https)
 const bazaaar_v1 = new web3.eth.Contract(
   config.abi.bazaaar_v1,
-  config.contract.rinkeby.bazaaar_v1
+  config.contract[project].bazaaar_v1
 )
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {

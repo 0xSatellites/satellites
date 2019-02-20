@@ -4,7 +4,7 @@ import 'firebase/firestore'
 const config = require('../config.json')
 
 if (!firebase.apps.length) {
-  firebase.initializeApp(config.firebase)
+  firebase.initializeApp(config.firebase[process.env.project])
 }
 
 const db = firebase.firestore()

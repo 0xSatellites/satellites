@@ -62,11 +62,19 @@ contract BazaaarProtocol_v1 is Pausable {
     uint public ratioBase = 10000;
     mapping(address=>mapping(address=>mapping(uint=>uint))) private nonce;
 
-    function nonce_(address maker, address asset, uint id) external view returns (uint) {
+    function nonce_(address maker, address asset, uint id)
+        external
+        view
+        returns (uint)
+    {
         return nonce[maker][asset][id];
     }
 
-    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s) external payable whenNotPaused {
+    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
+        external
+        payable
+        whenNotPaused
+    {
         orderMatch(
             Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
             Sig(v, r, s)
@@ -94,7 +102,9 @@ contract BazaaarProtocol_v1 is Pausable {
         );
     }
 
-    function distribute(Order memory order, address referralRecipient) internal {
+    function distribute(Order memory order, address referralRecipient)
+        internal
+    {
         CK(order.asset).transferFrom(order.maker, msg.sender, order.id);
         Amount memory amount = computeAmount(order);
         if(amount.creatorRoyalty > 0){
@@ -108,13 +118,19 @@ contract BazaaarProtocol_v1 is Pausable {
         }
     }
 
-    function computeAmount(Order memory order) internal view returns (Amount memory amount) {
+    function computeAmount(Order memory order)
+        internal
+        view
+        returns (Amount memory amount)
+    {
         amount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
         amount.referral = order.price.mul(order.referralRatio).div(ratioBase);
         amount.maker = order.price.sub(amount.creatorRoyalty).sub(amount.referral);
     }
 
-    function orderMatch(Order memory order, Sig memory sig) internal {
+    function orderMatch(Order memory order, Sig memory sig)
+        internal
+    {
         require(order.maker != msg.sender);
         require(order.taker == address(0x0) || order.taker == msg.sender);
         require(order.price == msg.value);

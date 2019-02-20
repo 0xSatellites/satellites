@@ -77,8 +77,8 @@ contract BazaaarProtocol_v1 is Pausable {
         );
     }
 
-    function orderCancell_(address[5] addrs, uint[7] uints) external {
-        orderCancell(
+    function orderCancel_(address[5] addrs, uint[7] uints) external {
+        orderCancel(
             Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6])
         );
     }
@@ -123,7 +123,7 @@ contract BazaaarProtocol_v1 is Pausable {
         emit OrderMatched(hash, order.maker, msg.sender ,order.asset, order.id);
     }
 
-    function orderCancell(Order memory order) internal {
+    function orderCancel(Order memory order) internal {
         require(order.maker == msg.sender);
         bytes32 hash = hashToSign(order);
         nonce[order.maker][order.asset][order.id]++;

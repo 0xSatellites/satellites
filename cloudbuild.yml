@@ -1,0 +1,7 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  args:
+  - beta
+  - functions
+  - deploy
+  - order

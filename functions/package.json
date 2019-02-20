@@ -17,7 +17,7 @@
     "firebase-admin": "~6.0.0",
     "firebase-functions": "^2.1.0",
     "fs": "0.0.1-security",
-    "web3": "1.0.0-beta.41"
+    "web3": "^1.0.0-beta.46"
   },
   "private": true
 }

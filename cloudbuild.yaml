@@ -1,9 +1,8 @@
 steps:
 - name: gcr.io/cloud-builders/gcloud
-  dir: 'functions'
-  args:
-  - beta
-  - functions
-  - deploy
-  - order
-  - --trigger-http
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['functions', 'deploy', 'order', '--trigger-http']
+  dir: 'functions/

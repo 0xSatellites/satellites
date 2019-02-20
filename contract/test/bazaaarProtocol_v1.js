@@ -22,15 +22,17 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     var templateOrder
 
     //accounts
-    var createdAccount = web3.eth.accounts.create()
-    var account1 = createdAccount.address
-    var account2 = accounts[0]
-    var privkey1 = createdAccount.privateKey
+    var account1 = accounts[0]
+    var account2 = accounts[1]
+    //update privkey for your test
+    var privkey1 = '0xbb57b12319116586841a2028ea6eedac7b8cf789e289a3c1b654d2f68a010d04'
     var referralRecipient = accounts[9]
 
     //token
-    const ck1 = 40090001
-    const ck2 = 40090009
+    const ck1gen = 1000000001
+    const ck2gen = 1000000002
+    const ck1 = 1
+    const ck2 = 2
 
     //common functions
     const hash = (order) => {
@@ -96,6 +98,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
 
     it('Setup', async function() {
         kittyCore = await KittyCore.new()
+
         contract =  await bazaaarProtocol_v1.new()
         test =  await testBazaaarProtocol_v1.new()
 
@@ -145,20 +148,22 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     })
 
     it('Method: validateAssetStatus(ck1)', async function() {
-        await kittyCore.mint(account1, ck1)
+
+        await kittyCore.createPromoKitty(ck1gen, account1)
         var result = await kittyCore.ownerOf(ck1)
         assert.equal(result, account1)
 
         var order = templateOrder
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
         assert.equal(false, result, "not approved by maker")
-
         await kittyCore.approve(test.address, ck1)
+
         var result = await kittyCore.kittyIndexToApproved(ck1)
         assert.equal(result, test.address)
 
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
         assert.equal(true, result, "approved by maker")
+
     })
 
     it('Method: validateOrderParameters', async function() {
@@ -192,6 +197,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     })
 
     it('Method: validateOrder', async function() {
+
         var result = await kittyCore.kittyIndexToApproved(ck1)
         assert.equal(result, test.address)
         var order = templateOrder
@@ -230,7 +236,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
 
     it('Scenario: purchase hero(ck2)', async function() {
 
-        await kittyCore.mint(account1, ck2)
+        await kittyCore.createPromoKitty(ck2gen, account1)
         var result = await kittyCore.ownerOf(ck2)
         assert.equal(result, account1)
 
@@ -242,16 +248,12 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         var data = hash(order)
         var sig = web3.eth.accounts.sign(data, privkey1)
 
-        var result = await contract.orderMatch_(referral(
-            order,
-            referralRecipient)[0],
+        var result = await contract.orderMatch_(
+            referral(order, referralRecipient)[0],
             input(order)[1],
-            sig.v,
-            sig.r,
-            sig.s,
+            sig.v, sig.r, sig.s,
             { from: account2, value:order.price}
         )
-
         var result = await kittyCore.ownerOf(ck2)
         assert.equal(result, account2)
     })

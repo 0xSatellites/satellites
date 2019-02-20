@@ -189,6 +189,7 @@ exports.onOrderChange = functions.firestore.document('order/{hash}').onUpdate(as
     file.save(imageBuffer, { metadata: {contentType: 'image/png'}})
 });
 
+//そのアセットの今Matched履歴以外を全てCancelled状態にする。一つのみMatched。
 exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('orderMatched').onPublish(async message => {
   const transactionHash = message.json.transactionHash
   const transaction = await web3.eth.getTransactionReceipt(transactionHash)
@@ -221,6 +222,7 @@ exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('o
   }
 })
 
+//そのアセットの履歴を全てCancelled状態にする。事でキャンセルとする
 exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(async message => {
   const transactionHash = message.json.transactionHash
   const transaction = await web3.eth.getTransactionReceipt(transactionHash)

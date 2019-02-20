@@ -222,7 +222,7 @@ exports.orderMatchedPubSub = functions.region('asia-northeast1').pubsub.topic('o
   }
 })
 
-//そのアセットの履歴を全てCancelled状態にする。事でキャンセルとする
+//そのアセットの履歴を全てCancelled状態にする事でキャンセルとする
 exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic('orderCancelled').onPublish(async message => {
   const transactionHash = message.json.transactionHash
   const transaction = await web3.eth.getTransactionReceipt(transactionHash)
@@ -247,4 +247,47 @@ exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic(
     })
     await batch.commit()
   }
+})
+
+
+exports.orderSurveillancePubSub = functions.https.onRequest(async (req, res) => {
+  const eventOrderMatchedAll = await bazaaar_v1.getPastEvents('OrderMatched', {
+    fromBlock: 0,
+    toBlock: 'latest'
+  })
+
+  const batch = db.batch()
+
+  for(var OrderMatche of eventOrderMatchedAll) {
+    var hash = OrderMatche.returnValues.hash
+    var id = OrderMatche.returnValues.id
+    var maker = OrderMatche.returnValues.maker
+    var taker = OrderMatche.returnValues.taker
+    var asset = OrderMatche.returnValues.asset
+
+    var snapshots = await db.collection('order')
+      .where("hash", "==", hash)
+      .where("valid", "==", true)
+      .get()
+
+    snapshots.forEach(function(doc) {
+      var ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {result: {status:'sold', taker:taker}, valid:false, modified:now})
+    })
+
+    var snapshots = await db.collection('order')
+      .where("id", "==", id)
+      .where("maker", "==", maker)
+      .where("asset", "==", asset)
+      .where("valid", "==", true)
+      .get()
+
+    snapshots.forEach(function(doc) {
+      var ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
+    })
+
+  }
+  await batch.commit()
+  res.send('OK')
 })

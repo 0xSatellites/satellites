@@ -26,7 +26,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     var account2 = accounts[1]
     const errorAccount = accounts[2]
     //update privkey for your test
-    var privkey1 = '0xfab78c768322b65fb0783b3193dac8f8e2bdca9a28a0ef73850da6c73632ee6d'
+    var privkey1 = ''
     var referralRecipient = accounts[9]
 
     //token
@@ -139,12 +139,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         var data = hash(order)
         var presignedData = preSigned(data)
         var sig = web3.eth.accounts.sign(data, privkey1)
-        var result = await test.ecrecover_(
-            presignedData,
-            sig.v,
-            sig.r,
-            sig.s
-        )
+        var result = await test.ecrecover_(presignedData, sig.v, sig.r, sig.s)
         assert.equal(account1, result)
     })
 
@@ -213,6 +208,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         //!validateOrderParameters(order)
 
         //ecrecover(hash, sig.v, sig.r, sig.s) == order.maker)
+
     })
 
     it('Method: requireValidOrder', async function() {
@@ -228,7 +224,6 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
 
     it('Method: computeAmount', async function() {
         var order = templateOrder
-
         var result = await test.computeAmount_(referral(order, referralRecipient)[0], input(order)[1])
         assert.equal(9300, result[0].toString())
         assert.equal(600, result[1].toString())
@@ -236,7 +231,6 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     })
 
     it('Scenario: purchase hero(ck2)', async function() {
-
         await kittyCore.createPromoKitty(ck2gen, account1)
         var result = await kittyCore.ownerOf(ck2)
         assert.equal(result, account1)
@@ -249,15 +243,33 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         var data = hash(order)
         var sig = web3.eth.accounts.sign(data, privkey1)
 
-        var result = await contract.orderMatch_(
-            referral(order, referralRecipient)[0],
-            input(order)[1],
-            sig.v, sig.r, sig.s,
-            { from: account2, value:order.price}
-        )
+        var result = await contract.orderMatch_(referral(order, referralRecipient)[0], input(order)[1], sig.v, sig.r, sig.s, { from: account2, value:order.price})
         var result = await kittyCore.ownerOf(ck2)
         assert.equal(result, account2)
+        var result = await contract.nonce_(account1, kittyCore.address, ck2)
+        assert.equal(result, 1)
+
+        var result = await contract.nonce_(account1, kittyCore.address, ck1)
+        assert.equal(result, 0)
+
+        var result = await contract.nonce_(account1, test.address, ck2)
+        assert.equal(result, 0)
+
+        var result = await contract.nonce_(account2, contract.address, ck2)
+        assert.equal(result, 0)
+
     })
+
+
+    it('Scenario: purchase cancel(ck2)', async function() {
+        var order = templateOrder
+        order.id = ck2
+        order.proxy = contract.address
+        var result = await contract.orderCancel_(input(order)[0], input(order)[1])
+        var result = await contract.nonce_(account1, kittyCore.address, ck2)
+        assert.equal(result, 2)
+    })
+
 
     it('Additional: normalDesignationOrder Setup', async function() {
         kittyCore = await KittyCore.new()
@@ -472,4 +484,5 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         var result = await kittyCore.ownerOf(ck2)
         assert.equal(result, account2)
     })
+
 })

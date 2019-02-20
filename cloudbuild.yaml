@@ -3,5 +3,5 @@ steps:
   args: ['install']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['functions', 'deploy', 'order', '--trigger-http']
-  dir: 'functions/
+  args: ['beta', 'functions', 'deploy', 'order', '--trigger-http']
+  dir: 'functions/'

@@ -1,48 +1,40 @@
 var bazaaarProtocol_v1 = artifacts.require('BazaaarProtocol_v1')
 var testBazaaarProtocol_v1 = artifacts.require('test/TestBazaaarProtocol_v1')
-var KittyCore = artifacts.require('tokens/CK/KittyCore')
-
-var Web3 = require('web3');
-
-const web3Eth = new Web3(web3.currentProvider).eth;
-const Web3Utils = new Web3(web3.currentProvider).utils;
+var KittyCore = artifacts.require('tokens/ck/KittyCore')
+var Web3 = require('web3')
 
 contract('Test BazaaarProtocol_v1', async function(accounts) {
 
-    var contract;
-    var test;
-    var kittyCore;
+    //contracts
+    var contract
+    var test
+    var kittyCore
 
+    //template value
     var templateNonce = 0
-    var templateSalt = Math.floor(Math.random() * 1000000000);
+    var templateSalt = Math.floor(Math.random() * 1000000000)
     var date = new Date()
     date.setDate(date.getDate() + 7)
     var templateExpiration = Math.round(date.getTime() / 1000)
+    const price = 10000
+    const referralRatio = 100
+    const ratio = 600
     var templateOrder
 
-    var account1 = accounts[0];
-    var account2 = accounts[1];
-    var privkey1 = "0x97ec2b3a580c4733fd7bba016fd0ce11609aa1d98aa9af6dd53aea9d1c4dc55e";
+    //accounts
+    var createdAccount = web3.eth.accounts.create()
+    var account1 = createdAccount.address
+    var account2 = accounts[0]
+    var privkey1 = createdAccount.privateKey
+    var referralRecipient = accounts[9]
 
-    var referralRecipient = accounts[9];
-    var artEditRoyaltyRecipient = accounts[8];
+    //token
+    const ck1 = 40090001
+    const ck2 = 40090009
 
-    const PRICE = 10000;
-    const referralRatio = 100;
-    const RATIO = 600;
-
-    const HEROID1 = 40090001;
-    const HEROID2 = 40090002;
-    const HEROID3 = 40090003;
-    const HEROID4 = 40090004;
-    const HEROID5 = 40090005;
-    const HEROID6 = 40090006;
-    const HEROID7 = 40090007;
-    const HEROID8 = 40090008;
-    const HEROID9 = 40090009;
-
+    //common functions
     const hash = (order) => {
-        return  Web3Utils.soliditySha3(
+        return  web3.utils.soliditySha3(
             order.proxy,
             order.maker,
             order.taker,
@@ -53,16 +45,16 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
             order.nonce,
             order.salt,
             order.expiration,
-            order.artEditRoyaltyRatio,
+            order.creatorRoyalityRatio,
             order.referralRatio
-        );
+        )
     }
 
     const preSigned = (data) => {
-        return Web3Utils.soliditySha3(
+        return web3.utils.soliditySha3(
             "\x19Ethereum Signed Message:\n32",
             data
-        );
+        )
     }
 
     const input = (order) => {
@@ -78,12 +70,12 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
             order.nonce,
             order.salt,
             order.expiration,
-            order.artEditRoyaltyRatio,
+            order.creatorRoyalityRatio,
             order.referralRatio
         ]]
     }
 
-    const referral = (order,referral) => {
+    const referral = (order, referral) => {
         return [[
             order.proxy,
             order.maker,
@@ -97,15 +89,15 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
             order.nonce,
             order.salt,
             order.expiration,
-            order.artEditRoyaltyRatio,
+            order.creatorRoyalityRatio,
             order.referralRatio
         ]]
     }
 
     it('Setup', async function() {
-        kittyCore = await KittyCore.new();
-        contract =  await bazaaarProtocol_v1.new();
-        test =  await testBazaaarProtocol_v1.new();
+        kittyCore = await KittyCore.new()
+        contract =  await bazaaarProtocol_v1.new()
+        test =  await testBazaaarProtocol_v1.new()
 
         templateOrder = {
             proxy: test.address,
@@ -113,22 +105,21 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
             taker: "0x0000000000000000000000000000000000000000",
             address: account1,
             asset:kittyCore.address,
-            id: HEROID1,
-            price: PRICE,
+            id: ck1,
+            price: price,
             nonce: templateNonce,
             salt: templateSalt,
             expiration: templateExpiration,
-            artEditRoyaltyRatio: RATIO,
+            creatorRoyalityRatio: ratio,
             referralRatio: referralRatio
         }
-
     })
 
     it('Method: hashOrder', async function() {
         var order = templateOrder
         var data = hash(order)
         var result = await test.hashOrder_(input(order)[0], input(order)[1])
-        assert.equal(data, result);
+        assert.equal(data, result)
     })
 
     it('Method: hashToSign', async function() {
@@ -136,38 +127,38 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
         var data = hash(order)
         var presignedData = preSigned(data)
         var result = await test.hashToSign_(input(order)[0], input(order)[1])
-        assert.equal(presignedData, result);
+        assert.equal(presignedData, result)
     })
 
     it('Method: ecrecover', async function() {
         var order = templateOrder
         var data = hash(order)
         var presignedData = preSigned(data)
-        var sig = web3Eth.accounts.sign(data, privkey1);
+        var sig = web3.eth.accounts.sign(data, privkey1)
         var result = await test.ecrecover_(
             presignedData,
             sig.v,
             sig.r,
             sig.s
         )
-        assert.equal(account1, result);
+        assert.equal(account1, result)
     })
 
-    it('Method: validateAssetStatus(HEROID1)', async function() {
-        await kittyCore.mint(account1, HEROID1);
-        var result = await kittyCore.ownerOf(HEROID1);
-        assert.equal(result, account1);
+    it('Method: validateAssetStatus(ck1)', async function() {
+        await kittyCore.mint(account1, ck1)
+        var result = await kittyCore.ownerOf(ck1)
+        assert.equal(result, account1)
 
         var order = templateOrder
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
-        assert.equal(false, result, "not approved by maker");
+        assert.equal(false, result, "not approved by maker")
 
-        await kittyCore.approve(test.address, HEROID1);
-        var result = await kittyCore.kittyIndexToApproved(HEROID1)
-        assert.equal(result, test.address);
+        await kittyCore.approve(test.address, ck1)
+        var result = await kittyCore.kittyIndexToApproved(ck1)
+        assert.equal(result, test.address)
 
         var result = await test.validateAssetStatus_(input(order)[0], input(order)[1])
-        assert.equal(true, result, "approved by maker");
+        assert.equal(true, result, "approved by maker")
     })
 
     it('Method: validateOrderParameters', async function() {
@@ -201,14 +192,14 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     })
 
     it('Method: validateOrder', async function() {
-        var result = await kittyCore.kittyIndexToApproved(HEROID1)
-        assert.equal(result, test.address);
+        var result = await kittyCore.kittyIndexToApproved(ck1)
+        assert.equal(result, test.address)
         var order = templateOrder
         var data = hash(order)
         var presignedData = preSigned(data)
-        var sig = web3Eth.accounts.sign(data, privkey1);
+        var sig = web3.eth.accounts.sign(data, privkey1)
         var result = await test.validateOrder_(presignedData, input(order)[0], input(order)[1], sig.v, sig.r, sig.s)
-        assert.equal(true, result);
+        assert.equal(true, result)
 
         //!validateAssetStatus(order)
 
@@ -218,38 +209,38 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
     })
 
     it('Method: requireValidOrder', async function() {
-        var result = await kittyCore.kittyIndexToApproved(HEROID1)
-        assert.equal(result, test.address);
+        var result = await kittyCore.kittyIndexToApproved(ck1)
+        assert.equal(result, test.address)
         var order = templateOrder
         var data = hash(order)
         var presignedData = preSigned(data)
-        var sig = web3Eth.accounts.sign(data, privkey1);
+        var sig = web3.eth.accounts.sign(data, privkey1)
         var result = await test.requireValidOrder_(input(order)[0], input(order)[1], sig.v, sig.r, sig.s)
-        assert.equal(presignedData, result);
+        assert.equal(presignedData, result)
     })
 
     it('Method: computeAmount', async function() {
         var order = templateOrder
 
         var result = await test.computeAmount_(referral(order, referralRecipient)[0], input(order)[1])
-        assert.equal(9300, result[0].toString());
-        assert.equal(600, result[1].toString());
-        assert.equal(100, result[2].toString());
+        assert.equal(9300, result[0].toString())
+        assert.equal(600, result[1].toString())
+        assert.equal(100, result[2].toString())
     })
 
-    it('Scenario: purchase hero(HEROID9)', async function() {
+    it('Scenario: purchase hero(ck2)', async function() {
 
-        await kittyCore.mint(account1, HEROID9);
-        var result = await kittyCore.ownerOf(HEROID9);
-        assert.equal(result, account1);
+        await kittyCore.mint(account1, ck2)
+        var result = await kittyCore.ownerOf(ck2)
+        assert.equal(result, account1)
 
-        await kittyCore.approve(contract.address, HEROID9)
+        await kittyCore.approve(contract.address, ck2)
 
         var order = templateOrder
-        order.id = HEROID9
+        order.id = ck2
         order.proxy = contract.address
         var data = hash(order)
-        var sig = web3Eth.accounts.sign(data, privkey1);
+        var sig = web3.eth.accounts.sign(data, privkey1)
 
         var result = await contract.orderMatch_(referral(
             order,
@@ -261,7 +252,7 @@ contract('Test BazaaarProtocol_v1', async function(accounts) {
             { from: account2, value:order.price}
         )
 
-        var result = await kittyCore.ownerOf(HEROID9);
-        assert.equal(result, account2);
+        var result = await kittyCore.ownerOf(ck2)
+        assert.equal(result, account2)
     })
 })

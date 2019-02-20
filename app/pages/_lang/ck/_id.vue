@@ -239,13 +239,14 @@ export default {
 
       if (approved == client.contract.bazaaar_v1.options.address) {
         console.log('approved')
+        console.log(client.contract.bazaaar_v1)
         const nonce = await client.contract.bazaaar_v1.methods
           .nonce_(
             account.address,
             client.contract.ck.options.address,
             params.id
           )
-          .call({ from: account.address })
+          .call()
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
         date.setDate(date.getDate() + 7)
@@ -296,7 +297,7 @@ export default {
       console.log(order)
 
       await client.contract.bazaaar_v1.methods
-        .orderCancell_(
+        .orderCancel_(
           [
             order.proxy,
             order.maker,

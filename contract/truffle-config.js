@@ -83,7 +83,7 @@ module.exports = {
           "https://rinkeby.infura.io/" + infuraKey
         );
       },
-      gasPrice: 10000000000, //ex. 10 gwei = 10000000000
+      gasPrice: 12000000000, //ex. 10 gwei = 10000000000
       network_id: 4
     },
 
@@ -95,7 +95,7 @@ module.exports = {
         );
       },
       //It is recommend to set gasPrice (in wei)
-      gasPrice: 10000000000, //ex. 10 gwei = 10000000000
+      gasPrice: 15000000000, //ex. 10 gwei = 10000000000
       network_id: 1
     },
 

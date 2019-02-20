@@ -6,9 +6,12 @@
   "private": true,
   "scripts": {
     "dev": "nuxt --hostname 0.0.0.0 --port 3000",
-    "build": "nuxt build",
-    "start": "nuxt start --hostname 0.0.0.0 --port 8080",
-    "generate": "nuxt generate"
+    "dev:stg": "NODE_ENV=staging nuxt --hostname 0.0.0.0 --port 3000",
+    "dev:prod": "NODE_ENV=production nuxt --hostname 0.0.0.0 --port 3000",
+    "build:dev": "NODE_ENV=development nuxt build",
+    "build:stg": "NODE_ENV=staging nuxt build",
+    "build:prod": "NODE_ENV=production nuxt build",
+    "start": "nuxt start --hostname 0.0.0.0 --port 8080"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",

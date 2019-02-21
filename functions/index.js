@@ -91,13 +91,14 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   if(!params.msg){
     c.fillText('NOW ON SALE!', 840, 120, 720)
   } else {
-    c.fillText(params.msg.substr(0,9), 840, 80, 720)
+    var msg = params.msg.replace(/\r?\n/g, '')
+    c.fillText(msg.substr(0,9), 840, 80, 720)
 
     c.fillStyle = '#ffff00'
     c.font = "bold 60px 'Noto Sans JP'"
     c.textBaseline = "top"
     c.textAlign = 'center'
-    c.fillText(params.msg.substr(9,18), 840, 160, 720)
+    c.fillText(msg.substr(9,18), 840, 160, 720)
   }
 
   c.fillStyle = '#fff'

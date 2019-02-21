@@ -8,9 +8,11 @@
     "dev": "nuxt --hostname 0.0.0.0 --port 3000",
     "dev:stg": "NODE_ENV=staging nuxt --hostname 0.0.0.0 --port 3000",
     "dev:prod": "NODE_ENV=production nuxt --hostname 0.0.0.0 --port 3000",
+    "dev:maintenance": "MAINTENANCE_MODE=true nuxt --hostname 0.0.0.0 --port 3000",
     "build:dev": "NODE_ENV=development nuxt build",
     "build:stg": "NODE_ENV=staging nuxt build",
     "build:prod": "NODE_ENV=production nuxt build",
+    "build:maintenance": "MAINTENANCE_MODE=true nuxt build",
     "start": "nuxt start --hostname 0.0.0.0 --port 8080"
   },
   "dependencies": {
@@ -20,6 +22,7 @@
     "cross-env": "^5.2.0",
     "firebase": "^5.8.1",
     "nuxt": "^2.3.4",
+    "nuxt-maintenance-mode": "^0.3.0",
     "vue-i18n": "^8.8.1",
     "web3": "1.0.0-beta.37"
   },

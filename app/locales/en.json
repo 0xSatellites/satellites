@@ -36,5 +36,11 @@
         "change": "change",
         "cancel": "cancel",
         "agree": "Agree with the Terms"
+    },
+    "maintenance":{
+        "_comment": "メンテナンスモードはstoreが機能しないので言語選択による表示が出来ない。そのため日本語と英語同時に表示する",
+        "title1": "メンテナンス中",
+        "title2": "Under maintenance",
+        "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
     }
 }

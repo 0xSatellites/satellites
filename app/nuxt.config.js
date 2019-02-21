@@ -39,8 +39,6 @@ module.exports = {
   */
   css: [
     { src: '@/assets/style/style_main.scss', lang: 'scss' }
-    // "@/assets/style/style.css",
-    // "@/assets/style/style_sp.css"
   ],
 
   /*
@@ -67,7 +65,13 @@ module.exports = {
     '@nuxtjs/axios',
     //'@nuxtjs/pwa',
     '@nuxtjs/vuetify',
+    'nuxt-maintenance-mode'
   ],
+  maintenance: {
+    enabled: !!process.env.MAINTENANCE_MODE, // If given truthy value, activation maintenance mode on startup your nuxt application.
+    path: '/maintenance', // maintenance fallback content routing.
+    // matcher: /^\/admin/ // Path to be in maintenance mode (regex).
+  },
   /*
   ** Build configuration
   */

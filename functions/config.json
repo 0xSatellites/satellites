@@ -11,7 +11,7 @@
         "host":"http://localhost:3000/"
     },
     "bucket":{
-        "development":"blockbase-bazaaar-sand.appspot.com",
+        "sand":"blockbase-bazaaar-sand.appspot.com",
         "staging":"blockbase-bazaaar-staging.appspot.com",
         "production":"blockbase-bazaaar-production.appspot.com"
     },
@@ -19,7 +19,7 @@
         "nulladdress":"0x0000000000000000000000000000000000000000"
     },
     "contract":{
-        "development":{
+        "sand":{
             "bazaaar_v1":"0xD78309087c48eEb209D1738e3E25Ec5C1aBCe023",
             "ck":"0x16baf0de678e52367adc69fd067e5edd1d33e3bf"
         },
@@ -33,7 +33,7 @@
         }
     },
     "firebase":{
-        "development": {
+        "sand": {
             "apiKey":"AIzaSyDjT9zhOI5PpX7UZQTGoHfsrZmxcZ7eWCs",
             "authDomain":"blockbase-bazaaar-sand.firebaseapp.com",
             "databaseURL":"https://blockbase-bazaaar-sand.firebaseio.com",
@@ -53,7 +53,7 @@
         }
     },
     "node":{
-        "development":{
+        "sand":{
             "https":"https://rinkeby.infura.io",
             "wss":"wss://rinkeby.infura.io/ws"
         },

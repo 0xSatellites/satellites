@@ -5,12 +5,12 @@
     "node": "8"
   },
   "scripts": {
-    "serve:dev": "firebase use dev && firebase functions:config:set env.project=development && firebase functions:config:get > .runtimeconfig.json && firebase serve --only functions",
-    "serve:stg": "firebase use stg && firebase functions:config:set env.project=staging && firebase functions:config:get > .runtimeconfig.json && firebase serve --only functions",
-    "serve:prd": "firebase use prd && firebase functions:config:set env.project=production && firebase functions:config:get > .runtimeconfig.json && firebase serve --only functions",
-    "deploy:dev": "firebase use blockbase-bazaaar-sand && firebase functions:config:set env.project=development && firebase deploy --only functions",
-    "deploy:stg": "firebase use stg && firebase functions:config:set env.project=staging && firebase deploy --only functions",
-    "deploy:prd": "firebase use prd && firebase functions:config:set env.project=production && firebase deploy --only functions",
+    "serve:dev": "firebase use dev && firebase serve --only functions",
+    "serve:stg": "firebase use stg && firebase serve --only functions",
+    "serve:prd": "firebase use prd && firebase serve --only functions",
+    "deploy:dev": "firebase use dev && firebase deploy --only functions",
+    "deploy:stg": "firebase use stg && firebase deploy --only functions",
+    "deploy:prd": "firebase use prd && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "dependencies": {

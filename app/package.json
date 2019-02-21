@@ -5,11 +5,11 @@
   "author": "BlockBase",
   "private": true,
   "scripts": {
-    "dev": "nuxt --hostname 0.0.0.0 --port 3000",
+    "dev": "NODE_ENV=sand nuxt --hostname 0.0.0.0 --port 3000",
     "dev:stg": "NODE_ENV=staging nuxt --hostname 0.0.0.0 --port 3000",
     "dev:prod": "NODE_ENV=production nuxt --hostname 0.0.0.0 --port 3000",
     "dev:maintenance": "MAINTENANCE_MODE=true nuxt --hostname 0.0.0.0 --port 3000",
-    "build:dev": "NODE_ENV=development nuxt build",
+    "build:dev": "NODE_ENV=sand nuxt build",
     "build:stg": "NODE_ENV=staging nuxt build",
     "build:prod": "NODE_ENV=production nuxt build",
     "build:maintenance": "MAINTENANCE_MODE=true nuxt build",

@@ -3,7 +3,7 @@ const config = require('./config.json')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
-const project = functions.config().env.project || 'development'
+const project = 'development'
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
@@ -34,6 +34,7 @@ const bazaaar_v1 = new web3.eth.Contract(
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   console.log(process.env.GCLOUD_PROJECT)
+  console.log(process.env.GCLOUD_PROJECT.split('-')[2])
   const data = params.order
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(

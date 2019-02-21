@@ -1,4 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/npm'
   args: ['run', 'deploy:dev']
   dir: 'functions/'

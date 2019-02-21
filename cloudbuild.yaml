@@ -2,3 +2,6 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'order', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'onOrderChange', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-event=providers/cloud.firestore/eventTypes/object.update']
+  dir: 'functions/'

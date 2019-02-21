@@ -4,7 +4,8 @@
         <div class="l-visual__bg"><img src="~/assets/img/top_visual/bg_pc.png" alt="" class="u-obj--pc"><img src="~/assets/img/top_visual/bg_sp.png" alt="" class="u-obj--sp"></div>
 
         <div class="l-visual__txts">
-        <h1 class="l-visual__txts__title"><img src="~/assets/img/top_visual/title_pc.png" alt="誰でもカンタン デジタルアセットの取引マッチングサービス - bazaaar.io" class="u-obj--pc"><img src="~/assets/img/top_visual/title_sp.png" alt="" class="u-obj--sp"></h1>
+        <h1 class="l-visual__txts__title">{{ $t('index.title1') }}<br>{{ $t('index.title2') }}</h1><h1 class="l-visual__txts__tagline">{{ $t('index.tagline') }}<br><span class="bazaaar">bazaaar.io</span></h1>
+        <!--<h1 class="l-visual__txts__title"><img src="~/assets/img/top_visual/title_pc.png" alt="誰でもカンタン デジタルアセットの取引マッチングサービス - bazaaar.io" class="u-obj--pc"><img src="~/assets/img/top_visual/title_sp.png" alt="" class="u-obj--sp"></h1> -->
         </div>
 
         <div class="l-visual__img"><img src="~/assets/img/top_visual/illust.png" alt=""></div>

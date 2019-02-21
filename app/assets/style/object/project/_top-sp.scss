@@ -17,10 +17,16 @@ color: #fff;
   left: 0;
   top: floor-decimal(45vw * 100 / 375, 2);
   width: 100%;
-  text-align: center;
     &__title{
-      img{
-      width: floor-decimal(336vw * 100 / 375, 2);
+      font-size: floor-decimal(50vw * 100 / 375, 2);
+      width:55%;
+    }
+    &__tagline{
+      margin-top:floor-decimal(50vw * 100 / 375, 2);
+      text-align: center;
+      font-size: floor-decimal(18vw * 100 / 375, 2);
+      .bazaaar{
+        font-size: floor-decimal(36vw * 100 / 375, 2);
       }
     }
   }

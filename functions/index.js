@@ -3,7 +3,11 @@ const config = require('./config.json')
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
+<<<<<<< HEAD
 const project = process.env.GCLOUD_PROJECT.split('-')[2]
+=======
+const project = functions.config().env.project || 'development'
+>>>>>>> 3a858e0e37ee206406c411b9fff0b0a4796bb47a
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
@@ -33,6 +37,10 @@ const bazaaar_v1 = new web3.eth.Contract(
 )
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+<<<<<<< HEAD
+=======
+  console.log("test!!!!!")
+>>>>>>> 3a858e0e37ee206406c411b9fff0b0a4796bb47a
   const data = params.order
   const hash = await bazaaar_v1.methods
     .requireValidOrder_(
@@ -253,20 +261,25 @@ exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic(
 })
 
 
-exports.orderSurveillancePubSub = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+exports.orderPeriodicUpdatePubSub = functions.region('asia-northeast1').pubsub.topic('orderPeriodicUpdate').onPublish(async message => {
   const eventOrderMatchedAll = await bazaaar_v1.getPastEvents('OrderMatched', {
-    fromBlock: 0,
+    fromBlock: await web3.eth.getBlockNumber() - 150,
+    toBlock: 'latest'
+  })
+
+  const eventOrderCancelledAll = await bazaaar_v1.getPastEvents('orderCancelled', {
+    fromBlock: await web3.eth.getBlockNumber() - 150,
     toBlock: 'latest'
   })
 
   const batch = db.batch()
 
-  for(var OrderMatche of eventOrderMatchedAll) {
-    var hash = OrderMatche.returnValues.hash
-    var id = OrderMatche.returnValues.id
-    var maker = OrderMatche.returnValues.maker
-    var taker = OrderMatche.returnValues.taker
-    var asset = OrderMatche.returnValues.asset
+  for(var OrderMatched of eventOrderMatchedAll) {
+    var hash = OrderMatched.returnValues.hash
+    var id = OrderMatched.returnValues.id
+    var maker = OrderMatched.returnValues.maker
+    var taker = OrderMatched.returnValues.taker
+    var asset = OrderMatched.returnValues.asset
 
     var snapshots = await db.collection('order')
       .where("hash", "==", hash)
@@ -291,6 +304,26 @@ exports.orderSurveillancePubSub = functions.region('asia-northeast1').https.onRe
     })
 
   }
+
+  for(var orderCancelled of eventOrderCancelledAll) {
+    var hash = orderCancelled.returnValues.hash
+    var id = orderCancelled.returnValues.id
+    var maker = orderCancelled.returnValues.maker
+    var taker = orderCancelled.returnValues.taker
+    var asset = orderCancelled.returnValues.asset
+
+    var snapshots = await db.collection('order')
+      .where("id", "==", id)
+      .where("maker", "==", maker)
+      .where("asset", "==", asset)
+      .where("valid", "==", true)
+      .get()
+
+    snapshots.forEach(function(doc) {
+      var ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
+    })
+
+  }
   await batch.commit()
-  res.send('OK')
 })

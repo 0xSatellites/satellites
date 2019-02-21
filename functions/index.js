@@ -91,6 +91,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   if(!params.msg){
     c.fillText('NOW ON SALE!', 840, 120, 720)
   } else {
+    params.msg = params.msg.replace(/\r?\n/g, '')
     c.fillText(params.msg.substr(0,9), 840, 80, 720)
 
     c.fillStyle = '#ffff00'

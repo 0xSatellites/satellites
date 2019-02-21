@@ -33,6 +33,7 @@ const bazaaar_v1 = new web3.eth.Contract(
 )
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  console.log(process.env.GCLOUD_PROJECT)
   console.log(process.env.project)
   console.log(functions.config().env.project)
   const data = params.order

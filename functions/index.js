@@ -160,7 +160,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
 
 })
 
-exports.onOrderChange = functions.firestore.document('order/{hash}').onUpdate(async (change, context) => {
+exports.onOrderChange = functions.region('asia-northeast1').firestore.document('order/{hash}').onUpdate(async (change, context) => {
 
     const doc = change.after.data()
     const canvas = Canvas.createCanvas(1200,630)

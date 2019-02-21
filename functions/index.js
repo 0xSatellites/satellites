@@ -1,5 +1,14 @@
 const config = require('./config.json')
 
+const twitter = require('twitter');
+
+const client = new twitter({
+  consumer_key: config.twitter.consumerKey,
+  consumer_secret: config.twitter.consumerSecret,
+  access_token_key: config.twitter.accessTokenKey,
+  access_token_secret: config.twitter.accessTokenSecret
+})
+
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
@@ -105,7 +114,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   c.font = "40px 'Noto Sans JP'"
   c.textBaseline = "top"
   c.textAlign = 'center'
-  c.fillText('Id.' + data.id + '/' + 'Gen.' + metadata.generation, 840, 255, 720)
+  c.fillText('ID.' + data.id + '/' + 'Gen.' + metadata.generation, 840, 255, 720)
 
   c.fillStyle = '#fff'
   c.font = "40px 'Noto Sans JP'"
@@ -155,6 +164,26 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     ogp:ogp,
     hash:hash
   }
+
+  const msssage = 'https://bazaaar.io/ck/order/' +
+  result.hash +
+  '&text=' +
+  '出品されました！ ' +
+  '/ ID.' +
+  data.id +
+  '/ Gen.' +
+  metadata.generation +
+  '/ Cooldown.' +
+  metadata.status.cooldown_index +
+  '&hashtags=bazaaar, バザール, CryptoKitties'
+
+  client.post('statuses/update', {status: msssage}, function(error, tweet, response){
+    if (!error) {
+      console.log(tweet);
+    } else {
+      console.log('error');
+    }
+  });
 
   return result
 

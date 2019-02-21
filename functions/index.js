@@ -254,20 +254,25 @@ exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic(
 })
 
 
-exports.orderSurveillancePubSub = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+exports.orderPeriodicUpdatePubSub = functions.region('asia-northeast1').pubsub.topic('orderPeriodicUpdate').onPublish(async message => {
   const eventOrderMatchedAll = await bazaaar_v1.getPastEvents('OrderMatched', {
-    fromBlock: 0,
+    fromBlock: await web3.eth.getBlockNumber() - 150,
+    toBlock: 'latest'
+  })
+
+  const eventOrderCancelledAll = await bazaaar_v1.getPastEvents('orderCancelled', {
+    fromBlock: await web3.eth.getBlockNumber() - 150,
     toBlock: 'latest'
   })
 
   const batch = db.batch()
 
-  for(var OrderMatche of eventOrderMatchedAll) {
-    var hash = OrderMatche.returnValues.hash
-    var id = OrderMatche.returnValues.id
-    var maker = OrderMatche.returnValues.maker
-    var taker = OrderMatche.returnValues.taker
-    var asset = OrderMatche.returnValues.asset
+  for(var OrderMatched of eventOrderMatchedAll) {
+    var hash = OrderMatched.returnValues.hash
+    var id = OrderMatched.returnValues.id
+    var maker = OrderMatched.returnValues.maker
+    var taker = OrderMatched.returnValues.taker
+    var asset = OrderMatched.returnValues.asset
 
     var snapshots = await db.collection('order')
       .where("hash", "==", hash)
@@ -292,6 +297,26 @@ exports.orderSurveillancePubSub = functions.region('asia-northeast1').https.onRe
     })
 
   }
+
+  for(var orderCancelled of eventOrderCancelledAll) {
+    var hash = orderCancelled.returnValues.hash
+    var id = orderCancelled.returnValues.id
+    var maker = orderCancelled.returnValues.maker
+    var taker = orderCancelled.returnValues.taker
+    var asset = orderCancelled.returnValues.asset
+
+    var snapshots = await db.collection('order')
+      .where("id", "==", id)
+      .where("maker", "==", maker)
+      .where("asset", "==", asset)
+      .where("valid", "==", true)
+      .get()
+
+    snapshots.forEach(function(doc) {
+      var ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {result: {status:'cancelled'}, valid:false, modified:now})
+    })
+
+  }
   await batch.commit()
-  res.send('OK')
 })

@@ -26,8 +26,18 @@ color: #fff;
   top: 132px;
   text-align: center;
     &__title{
-      img{
-      width: (908px / 2);
+      font-size: 60px;
+      br{
+        display: none;
+      }
+      margin-bottom: 50px;
+    }
+    &__tagline{
+      margin-top:10px;
+      font-size: 25px;
+      .bazaaar{
+        line-height: 60px;
+        font-size: 40px;
       }
     }
   }

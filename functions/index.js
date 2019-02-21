@@ -254,7 +254,7 @@ exports.orderCancelledPubSub = functions.region('asia-northeast1').pubsub.topic(
 })
 
 
-exports.orderSurveillancePubSub = functions.https.onRequest(async (req, res) => {
+exports.orderSurveillancePubSub = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   const eventOrderMatchedAll = await bazaaar_v1.getPastEvents('OrderMatched', {
     fromBlock: 0,
     toBlock: 'latest'

@@ -28,12 +28,13 @@ const bazaaar_v1 = new web3.eth.Contract(
   config.contract[project].bazaaar_v1
 )
 const twitter = require('twitter')
-const tweet = new twitter({
+const client = new twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: config.TWITTER_CONSUMER_SECRET,
-  access_token_key: config.TWITTER_ACCESSTOKEN_KEY,
-  access_token_secret: config.TWITTER_ACCESSTOKEN_SECRET
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESSTOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESSTOKEN_SECRET
 })
+
 const deactivateDocOGP = async doc => {
   const canvas = Canvas.createCanvas(1200, 630)
   const c = canvas.getContext('2d')
@@ -41,8 +42,8 @@ const deactivateDocOGP = async doc => {
   const promises = [imagePromise, readFile('./assets/img/out_en.png')]
   const resolved = await Promise.all(promises)
   const bgImg = new Canvas.Image()
-  bgImg.src = resolved[0].data
   const outImg = new Canvas.Image()
+  bgImg.src = resolved[0].data
   outImg.src = resolved[1]
   c.clearRect(0, 0, 1200, 630)
   c.drawImage(bgImg, 0, 0)
@@ -51,8 +52,8 @@ const deactivateDocOGP = async doc => {
   c.drawImage(outImg, 76, 145)
   const base64EncodedImageString = canvas.toDataURL().substring(22)
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
-  const file = bucket.file(doc.id + '.png')
-  file.save(imageBuffer, { metadata: { contentType: 'image/png' } })
+  const file = bucket.file(doc.hash + '.png')
+  await file.save(imageBuffer, { metadata: { contentType: 'image/png' } })
 }
 
 exports.order = functions
@@ -94,8 +95,8 @@ exports.order = functions
     const promises = [readFile('./assets/img/template_en.png'), imagePromise]
     const resolved = await Promise.all(promises)
     const templateImg = new Canvas.Image()
-    templateImg.src = resolved[0]
     const characterImg = new Canvas.Image()
+    templateImg.src = resolved[0]
     characterImg.src = resolved[1].data
     const canvas = Canvas.createCanvas(1200, 630)
     const c = canvas.getContext('2d')
@@ -140,6 +141,7 @@ exports.order = functions
     order.created = now
     order.valid = true
     const batch = db.batch()
+    const deactivateDocOGPPromises = []
     const snapshots = await db
       .collection('order')
       .where('maker', '==', order.maker)
@@ -154,7 +156,7 @@ exports.order = functions
         valid: false,
         modified: now
       })
-      deactivateDocOGP(doc.data())
+      deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
     })
     const ref = db.collection('order').doc(hash)
     batch.set(ref, order)
@@ -162,10 +164,10 @@ exports.order = functions
       file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
       batch.commit()
     ]
-    await Promise.all(savePromises)
+    await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     const msssage =
       'https://bazaaar.io/ck/order/' +
-      result.hash +
+      order.hash +
       '&text=' +
       'NOW ON SALE! ' +
       '/ ID.' +
@@ -175,7 +177,9 @@ exports.order = functions
       '/ Cooldown.' +
       metadata.status.cooldown_index +
       '&hashtags=bazaaar, CryptoKitties'
-    tweet.post('statuses/update', { status: msssage })
+    client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      if(error) throw error;
+    });
     const result = {
       ogp: ogp,
       hash: hash
@@ -206,6 +210,7 @@ exports.orderMatchedPubSub = functions
     const now = new Date().getTime()
     if (address == bazaaar_v1.options.address) {
       const batch = db.batch()
+      const deactivateDocOGPPromises = []
       const promises = [
         db
           .collection('order')
@@ -228,7 +233,7 @@ exports.orderMatchedPubSub = functions
           valid: false,
           modified: now
         })
-        deactivateDocOGP(doc.data())
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
       })
       resolved[1].forEach(function(doc) {
         if (doc.id != hash) {
@@ -238,10 +243,11 @@ exports.orderMatchedPubSub = functions
             valid: false,
             modified: now
           })
-          deactivateDocOGP(doc.data())
+          deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
         }
       })
-      batch.commit()
+      const savePromises = [batch.commit()]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     }
   })
 
@@ -264,6 +270,7 @@ exports.orderCancelledPubSub = functions
     const now = new Date().getTime()
     if (address == bazaaar_v1.options.address) {
       const batch = db.batch()
+      const deactivateDocOGPPromises = []
       const snapshots = await db
         .collection('order')
         .where('maker', '==', maker)
@@ -278,9 +285,10 @@ exports.orderCancelledPubSub = functions
           valid: false,
           modified: now
         })
-        deactivateDocOGP(doc.data())
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
       })
-      await batch.commit()
+      const savePromises = [batch.commit()]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     }
   })
 
@@ -293,7 +301,7 @@ exports.orderPeriodicUpdatePubSub = functions
         fromBlock: (await web3.eth.getBlockNumber()) - 150,
         toBlock: 'latest'
       }),
-      bazaaar_v1.getPastEvents('orderCancelled', {
+      bazaaar_v1.getPastEvents('OrderCancelled', {
         fromBlock: (await web3.eth.getBlockNumber()) - 150,
         toBlock: 'latest'
       })
@@ -303,6 +311,8 @@ exports.orderPeriodicUpdatePubSub = functions
     const takers = []
     const soldPromises = []
     const cancelledPromises = []
+    const deactivateDocOGPPromises = []
+    const now = new Date().getTime()
     for (var i = 0; i < eventResolved[0].length; i++) {
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
@@ -339,27 +349,32 @@ exports.orderPeriodicUpdatePubSub = functions
         return Promise.all(innerPromiseArray)
       })
     )
+    const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
       orderResolved[0][i].forEach(function(doc) {
+        processed.push(doc.id)
         let ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
           result: { status: 'sold', taker: takers[i] },
           valid: false,
           modified: now
         })
-        deactivateDocOGP(doc.data())
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
       orderResolved[1][i].forEach(function(doc) {
-        let ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {
-          result: { status: 'cancelled' },
-          valid: false,
-          modified: now
-        })
-        deactivateDocOGP(doc.data())
+        if(!processed.includes(doc.id)){
+          let ref = db.collection('order').doc(doc.id)
+          batch.update(ref, {
+            result: { status: 'cancelled' },
+            valid: false,
+            modified: now
+          })
+          deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+        }
       })
     }
-    await batch.commit()
+    const savePromises = [batch.commit()]
+    await Promise.all(savePromises.concat(deactivateDocOGPPromises))
   })

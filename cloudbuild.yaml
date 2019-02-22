@@ -11,6 +11,3 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'orderMatchedPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderPeriodicUpdate']
   dir: 'functions/'
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'onOrderChange', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-event=providers/cloud.firestore/eventTypes/document.update']
-  dir: 'functions/'

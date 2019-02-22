@@ -68,11 +68,5 @@
     },
     "token":{
         "kitty":"NjRDB41VxE4elimp3ggfuOy_qUbWbOL5mmYvjG8aH-c"
-    },
-    "twitter":{
-        "consumerKey":"wuW3o58bUiWrsJV9twxiAvtNq",
-        "consumerSecret":"XQ5DKMe4I3Q67gvAOcDdUX0x9BILp5WjIkEHI1dUdMB2NBuOc2",
-        "accessTokenKey":"1089112494587539456-C9DOzXMwCmlWqblzcOjgIVIMmnSiIq",
-        "accessTokenSecret":"E3KF6loCyOPip10ACBtw0Wekb9pxgyfJb7JCzcLUNR253"
     }
 }

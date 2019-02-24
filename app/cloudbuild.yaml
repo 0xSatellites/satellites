@@ -1,7 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/npm'
   args: ['install']
+  dir: 'app'
 - name: 'gcr.io/cloud-builders/npm'
-  args: ['run','build:${PROJECT_ID}']
+  args: ['run','build:${_PROJECT_ENV}']
+  dir: 'app'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy", "-v", "release"]
+  dir: 'app'

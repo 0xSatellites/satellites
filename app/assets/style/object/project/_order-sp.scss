@@ -14,6 +14,12 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
   //display: flex;
   }
 
+  &__img{
+    img{
+      width: 100%;
+    }
+  }
+
   &__name{
   //margin-top: floor-decimal(30vw * 100 / 375, 2);
   font-size: floor-decimal(24vw * 100 / 375, 2);
@@ -100,7 +106,6 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
   }
 
   &__action{
-  margin-top: floor-decimal(20vw * 100 / 375, 2);
   text-align: center;
     &__price{
     font-size: floor-decimal(32vw * 100 / 375, 2);
@@ -124,7 +129,7 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
     font-size: floor-decimal(18vw * 100 / 375, 2);
     line-height: 1.5;
     font-weight: 900;
-    margin: floor-decimal(20vw * 100 / 375, 2) auto 0;
+    margin: floor-decimal(10vw * 100 / 375, 2) auto 0;
     border-radius: ceil-decimal(4vw * 100 / 375, 2);
     padding: 0.25em 0 0.45em;
     text-align: center;
@@ -229,7 +234,7 @@ background: rgba(0,0,0,0.5);
     width: 29px;
     height: 29px;
     transform: rotate(45deg);
-    
+
       &::before{
       content: '';
       position: absolute;
@@ -263,8 +268,3 @@ background: rgba(0,0,0,0.5);
   }
 
 }
-
-
-
-
-

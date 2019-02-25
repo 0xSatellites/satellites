@@ -128,6 +128,18 @@ padding-top: 60px;
       }
     }
 
+    &__textarea{
+      margin: 20px 0;
+      textarea{
+        border: solid #e5e5e5 1px;
+        border-radius: 4px;
+        outline: none;
+        text-align: left;
+        font-weight: 300;
+        width: 300px;
+      }
+    }
+
     &__btns{
     margin-top: 10px;
     display: flex;

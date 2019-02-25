@@ -139,6 +139,17 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
       }
     }
 
+    &__textarea{
+      margin-top: 10px;
+      textarea{
+        border: solid #e5e5e5 1px;
+        border-radius: 4px;
+        outline: none;
+        text-align: left;
+        width:75%;
+      }
+    }
+
     &__btns{
     //margin-top: floor-decimal(20vw * 100 / 375, 2);
     }
@@ -169,5 +180,9 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
 
   }
 
+}
+
+.v-input__control{
+  margin: 0 auto;
 }
 

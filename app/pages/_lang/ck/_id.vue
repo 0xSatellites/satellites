@@ -266,6 +266,7 @@ export default {
             params.id
           )
           .call()
+
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
         date.setDate(date.getDate() + 7)
@@ -289,7 +290,11 @@ export default {
           order: signedOrder,
           msg: this.msg
         }
-        var result = await functions.call('order', datas)
+        try {
+          var result = await functions.call('order', datas)
+        } catch (err){
+          alert(err)
+        }
         this.hash = result.hash
         this.ogp = result.ogp
         this.modalNo = 1
@@ -315,6 +320,7 @@ export default {
           console.log(receipt)
           location.reload();
         })
+        .on('error', err => alert(err));
     },
     async cancel() {
       this.loading = true
@@ -349,6 +355,7 @@ export default {
           this.modal = true
           this.loading = false
         })
+        .on('error', err => alert(err));
     }
   }
 }

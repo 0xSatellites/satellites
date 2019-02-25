@@ -21,23 +21,39 @@
                   ><input type="text" v-model="price" id="amount" /> ETH</label
                 >
               </div>
+              <div class="l-item__action__textarea">
+                <div>{{ $t('id.option') }}</div>
+              <textarea
+                v-model="msg"
+                name=""
+                id=""
+                box
+                auto-grow
+                placeholder = "一言メッセージを記入できます"
+              >
+              </textarea>
+              </div>
+
+              <!--
               <v-expansion-panel>
                 <v-expansion-panel-content>
-                  <div slot="header">{{ $t('id.option') }}</div>
+                  <div slot="header" class="text-xs-center">{{ $t('id.option') }}</div>
                   <v-card>
-                    <p>{{ $t('id.inputMessage') }}</p>
-                    <div>
+                    <p class="text-xs-center">{{ $t('id.inputMessage') }}</p>
+                    <v-container fluid grid-list-md>
+                      <div class="l-item__action__textarea">
                       <textarea
                         v-model="msg"
                         name=""
                         id=""
-                        cols="30"
-                        rows="10"
+                        box
+                        auto-grow
                       ></textarea>
-                    </div>
+                      </div>
+                    </v-container>
                   </v-card>
                 </v-expansion-panel-content>
-              </v-expansion-panel>
+              </v-expansion-panel> -->
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn

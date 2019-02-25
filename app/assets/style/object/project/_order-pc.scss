@@ -13,6 +13,13 @@
   box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.16);
   text-align: center;
   }
+  &__img{
+    text-align: center;
+    img{
+      width: 800px;
+      margin-top: 30px;
+    }
+  }
 
   &__name{
   font-size: 36px;
@@ -89,13 +96,12 @@
   }
 
   &__action{
-  margin-top: 50px;
     &__btn{
     width: 9em;
     font-size: 18px;
     line-height: 1.5;
     font-weight: 900;
-    margin: 0 auto 0;
+    margin: 15px auto;
     border-radius: 4px;
     padding: 0.25em 0 0.45em;
     text-align: center;
@@ -197,7 +203,7 @@ background: rgba(0,0,0,0.5);
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-    
+
     &:hover{
     opacity: 0.5;
     }
@@ -209,7 +215,7 @@ background: rgba(0,0,0,0.5);
   top: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-    
+
     &:hover{
     opacity: 0.5;
     }
@@ -219,7 +225,7 @@ background: rgba(0,0,0,0.5);
     width: 29px;
     height: 29px;
     transform: rotate(45deg);
-    
+
       &::before{
       content: '';
       position: absolute;
@@ -245,4 +251,7 @@ background: rgba(0,0,0,0.5);
 
 }
 
-
+//Vuetifyのデフォルトを上書きしました。
+.v-input__control{
+  margin: 0 auto;
+}

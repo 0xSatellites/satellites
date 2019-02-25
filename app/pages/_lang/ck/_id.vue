@@ -259,13 +259,13 @@ export default {
 
       if (approved == client.contract.bazaaar_v1.options.address) {
         console.log('approved')
-        const nonce = 10/*await client.contract.bazaaar_v1.methods
+        const nonce = await client.contract.bazaaar_v1.methods
           .nonce_(
             account.address,
             client.contract.ck.options.address,
             params.id
           )
-          .call()*/
+          .call()
 
         const salt = Math.floor(Math.random() * 1000000000)
         const date = new Date()
@@ -320,6 +320,7 @@ export default {
           console.log(receipt)
           location.reload();
         })
+        .on('error', err => alert(err));
     },
     async cancel() {
       this.loading = true
@@ -354,6 +355,7 @@ export default {
           this.modal = true
           this.loading = false
         })
+        .on('error', err => alert(err));
     }
   }
 }

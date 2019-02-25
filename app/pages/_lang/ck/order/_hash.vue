@@ -159,6 +159,7 @@ export default {
           this.hash = hash
           this.modal = true
         })
+        .on('error', err => alert(err));
     },
     closeModal() {
       this.modal = false

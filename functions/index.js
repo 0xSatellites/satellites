@@ -36,6 +36,7 @@ const client = new twitter({
 })
 
 const deactivateDocOGP = async doc => {
+  console.info("START deactivateDocOGP")
   const canvas = Canvas.createCanvas(1200, 630)
   const c = canvas.getContext('2d')
   const imagePromise = axios.get(doc.ogp, { responseType: 'arraybuffer' })
@@ -54,11 +55,15 @@ const deactivateDocOGP = async doc => {
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
   const file = bucket.file(doc.hash + '.png')
   await file.save(imageBuffer, { metadata: { contentType: 'image/png' } })
+  console.info("END deactivateDocOGP")
 }
 
 exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
+    console.info("START order")
+    console.info("INPUT data:" + data)
+
     const order = params.order
     const hash = await bazaaar_v1.methods
       .requireValidOrder_(
@@ -83,17 +88,20 @@ exports.order = functions
         order.s
       )
       .call()
+    console.info("INFO order 1")
     const response = await axios({
       method: 'get',
       url: config.api.ck.metadata + order.id,
       responseType: 'json'
     })
+    console.info("INFO order 2")
     const metadata = response.data
     const imagePromise = axios.get(metadata.image_url_png, {
       responseType: 'arraybuffer'
     })
     const promises = [readFile('./assets/img/template_en.png'), imagePromise]
     const resolved = await Promise.all(promises)
+    console.info("INFO order 3")
     const templateImg = new Canvas.Image()
     const characterImg = new Canvas.Image()
     templateImg.src = resolved[0]
@@ -149,6 +157,7 @@ exports.order = functions
       .where('id', '==', order.id)
       .where('valid', '==', true)
       .get()
+    console.info("INFO order 4")
     snapshots.forEach(function(doc) {
       const ref = db.collection('order').doc(doc.id)
       batch.update(ref, {
@@ -165,6 +174,7 @@ exports.order = functions
       batch.commit()
     ]
     await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    console.info("INFO order 5")
     const msssage =
       'https://bazaaar.io/ck/order/' +
       order.hash +
@@ -184,6 +194,8 @@ exports.order = functions
       ogp: ogp,
       hash: hash
     }
+    console.info("OUTPUT data:" + result)
+    console.info("END order")
     return result
   })
 
@@ -191,8 +203,11 @@ exports.orderMatchedPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderMatched')
   .onPublish(async message => {
+    console.info("START orderMatched")
+    console.info("INPUT data:" + message.json)
     const transactionHash = message.json.transactionHash
     const transaction = await web3.eth.getTransactionReceipt(transactionHash)
+    console.info("INFO orderMached 1")
     const hash = transaction.logs[0].topics[1]
     const address = web3.utils.toChecksumAddress(transaction.logs[0].address)
     const maker = web3.utils.toChecksumAddress(
@@ -209,6 +224,7 @@ exports.orderMatchedPubSub = functions
       .toString()
     const now = new Date().getTime()
     if (address == bazaaar_v1.options.address) {
+      console.info("INFO orderMached 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
       const promises = [
@@ -226,6 +242,7 @@ exports.orderMatchedPubSub = functions
           .get()
       ]
       const resolved = await Promise.all(promises)
+      console.info("INFO orderMached 3")
       resolved[0].forEach(function(doc) {
         let ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
@@ -249,14 +266,18 @@ exports.orderMatchedPubSub = functions
       const savePromises = [batch.commit()]
       await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     }
+    console.info("END orderMached")
   })
 
 exports.orderCancelledPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderCancelled')
   .onPublish(async message => {
+    console.info("START orderCancelled")
+    console.info("INPUT data:" + message.json)
     const transactionHash = message.json.transactionHash
     const transaction = await web3.eth.getTransactionReceipt(transactionHash)
+    console.info("INFO orderCancelled 1")
     const address = web3.utils.toChecksumAddress(transaction.logs[0].address)
     const maker = web3.utils.toChecksumAddress(
       web3.utils.toHex(transaction.logs[0].data.substring(26, 66))
@@ -269,6 +290,7 @@ exports.orderCancelledPubSub = functions
       .toString()
     const now = new Date().getTime()
     if (address == bazaaar_v1.options.address) {
+      console.info("INFO orderCancelled 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
       const snapshots = await db
@@ -278,6 +300,7 @@ exports.orderCancelledPubSub = functions
         .where('id', '==', id)
         .where('valid', '==', true)
         .get()
+      console.info("INFO orderCancelled 3")
       snapshots.forEach(function(doc) {
         var ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
@@ -290,12 +313,15 @@ exports.orderCancelledPubSub = functions
       const savePromises = [batch.commit()]
       await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     }
+    console.info("END orderCancelled")
   })
 
 exports.orderPeriodicUpdatePubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderPeriodicUpdate')
   .onPublish(async message => {
+    console.info("START orderPeriodicUpdate")
+    console.info("INPUT data:" + message.json)
     const eventPromises = [
       bazaaar_v1.getPastEvents('OrderMatched', {
         fromBlock: (await web3.eth.getBlockNumber()) - 150,
@@ -307,6 +333,7 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
+    console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()
     const takers = []
     const soldPromises = []
@@ -349,6 +376,7 @@ exports.orderPeriodicUpdatePubSub = functions
         return Promise.all(innerPromiseArray)
       })
     )
+    console.info("INFO orderPeriodicUpdate 2")
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
       orderResolved[0][i].forEach(function(doc) {
@@ -377,4 +405,5 @@ exports.orderPeriodicUpdatePubSub = functions
     }
     const savePromises = [batch.commit()]
     await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    console.info("END orderPeriodicUpdate")
   })

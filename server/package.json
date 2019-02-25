@@ -1,11 +1,11 @@
 {
-  "name": "bazaaar.io",
+  "name": "test",
   "version": "1.0.0",
   "description": "bazaaar.io",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
-    "start": "node index.js"
+    "dev": "node server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,9 @@
   "homepage": "https://github.com/block-base/bazaaar.io#readme",
   "dependencies": {
     "@google-cloud/pubsub": "^0.24.1",
+    "@google-cloud/logging-winston": "^0.11.0",
     "firebase-admin": "^6.5.1",
-    "web3": "1.0.0-beta.41"
+    "web3": "1.0.0-beta.41",
+    "winston": "^3.2.1"
   }
 }

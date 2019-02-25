@@ -4,8 +4,10 @@ const { PubSub } = require('@google-cloud/pubsub')
 
 const serviceAccount = require('./.serviceAccountKey.json')
 
+const project = process.env.PROJECT
+
 const pubsub = new PubSub({
-  projectId: 'blockbase-bazaaar-sand',
+  projectId: config.firebase[project].projectId,
   keyFilename: '.serviceAccountKey.json'
 })
 
@@ -14,12 +16,12 @@ admin.initializeApp({
 })
 
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node.sand.wss))
+const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node[project].wss))
 
 const contract = {
   bazaaar_v1: new web3.eth.Contract(
     config.abi.bazaaar_v1,
-    config.contract.sand.bazaaar_v1
+    config.contract[project].bazaaar_v1
   )
 }
 

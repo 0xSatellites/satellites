@@ -4,8 +4,11 @@
   "description": "bazaaar.io",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
-    "start": "node index.js"
+    "start:dev": "PROJECT=sand forever start index.js",
+    "start:stg": "PROJECT=staging forever start index.js",
+    "start:prd": "PROJECT=production forever start index.js",
+    "stop": "forever stopall",
+    "logs": "forever logs"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,7 @@
   "dependencies": {
     "@google-cloud/pubsub": "^0.24.1",
     "firebase-admin": "^6.5.1",
+    "forever": "^0.15.3",
     "web3": "1.0.0-beta.41"
   }
 }

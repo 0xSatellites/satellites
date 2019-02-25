@@ -1,15 +1,24 @@
 <template>
 <div>
     <section class="l-information">
-      <div ><img class="ogpimg" :src="order.ogp" width=100%></div>
+      <div class=l-information__img><img class="ogpimg" :src="order.ogp"></div>
       <div class="l-information__frame" v-if="order.valid">
         <div class="l-information__name">{{ order.metadata.name}} / Gen.{{ order.metadata.generation}}</div>
         <div class="l-information__txt"># {{ order.metadata.id}}</div>
         <div class="l-information__txt">Crypto Kitties</div>
-        <v-form v-model="valid">
+        <v-form v-model="valid" class="center">
+          <v-flex center>
+            <v-checkbox
+              class="center"
+              v-model="checkbox"
+              :rules="[v => !!v || '']"
+              label="利用規約に同意する"
+              required
+            ></v-checkbox>
+          </v-flex>
         <div class="l-information__action">
           <v-btn
-          class="l-information__action__btn"
+          class="l-information__action__btn white_text"
           color="#3498db"
           large
           @click="purchase"
@@ -20,24 +29,17 @@
             ></v-progress-circular>
           </v-btn>
       </div>
-       <v-flex center>
-            <v-checkbox
-              class="center"
-              v-model="checkbox"
-              :rules="[v => !!v || '']"
-              label="利用規約に同意する"
-              required
-            ></v-checkbox>
-        </v-flex>
+
         </v-form>
-    </div>
-    <div class="l-information__action__btn" v-if="order.valid">
+      <div class="l-information__action__btn" v-if="order.valid">
        <a :href="'https://twitter.com/share?url=https://bazaaar.io/ck/order/' + order.hash +
         '&text=' + '出品されました! '+ order.metadata.name  + '/ Gen.' + order.metadata.generation +
         '&hashtags=bazaaar, バザール, CryptoKitties'" class="twitter-share-button" data-size="large" data-show-count="false" target=”_blank”>
         Tweetする
         </a>
+      </div>
     </div>
+
     </section>
     <section class="c-index c-index--recommend" v-if="recommend.lengh">
         <h2 class="c-index__title">関連アセット</h2>
@@ -175,8 +177,13 @@ color: white;
   padding: 10px 0;
   margin: auto;
 }
-.ogpimg{
 
+.white_text {
+  color: white;
+}
+
+.v-input__control{
+  margin: 0 auto;
 }
 </style>
 

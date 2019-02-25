@@ -105,7 +105,7 @@ export default {
       }
   },
   head() {
-    return { title: this.$t('meta.titile') }
+    return { title: this.$t('meta.title') }
   },
 
   async asyncData({ store, params }) {

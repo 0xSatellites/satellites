@@ -2,11 +2,9 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 
 const config = require('../config.json')
-const firestoreSettings = { timestampsInSnapshots: true }
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase[process.env.project])
-  firebase.firestore().settings(firestoreSettings)
 }
 
 const db = firebase.firestore()

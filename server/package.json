@@ -1,11 +1,11 @@
 {
-  "name": "test",
+  "name": "bazaaar.io",
   "version": "1.0.0",
   "description": "bazaaar.io",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "node index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

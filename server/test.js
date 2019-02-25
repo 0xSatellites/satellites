@@ -23,32 +23,13 @@ const contract = {
   )
 }
 
-contract.bazaaar_v1.events.OrderMatched(null, async function(error, result) {
-  console.log('contract.bazaaar_v1.events.OrderMatched')
-  if (error) return
+
   const registerMessage = {
-    transactionHash: result.transactionHash
+    transactionHash: 'ok'
   };
-  const topic = pubsub.topic('orderMatched');
+  const topic = pubsub.topic('orderPeriodicUpdate');
   topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
     if (err) {
       console.log(err);
     }
   })
-})
-
-contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
-  console.log('contract.bazaaar_v1.events.OrderCancelled')
-  if (error) return
-  const registerMessage = {
-    transactionHash: result.transactionHash
-  }
-  const topic = pubsub.topic('orderCancelled');
-  topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
-    if (err) {
-      console.log(err);
-    }
-  })
-})
-
-console.log("server on")

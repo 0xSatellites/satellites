@@ -80,4 +80,13 @@ contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
   })
 })
 
+const registerMessage = {
+  transactionHash: '0x028cdc3c431d9e0be59b50502e571ba8d78da661a53e1e2845aad9b238414746'
+}
+const topic = pubsub.topic('orderMatched');
+topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
+  console.log(err)
+  console.log('done')
+})
+
 console.log("server on")

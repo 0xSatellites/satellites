@@ -6,8 +6,8 @@ steps:
   args: ['beta', 'functions', 'deploy', 'orderMatchedPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderMatched']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'orderMatchedPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderCancelled']
+  args: ['beta', 'functions', 'deploy', 'orderCancelledPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderCancelled']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'orderMatchedPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderPeriodicUpdate']
+  args: ['beta', 'functions', 'deploy', 'orderPeriodicUpdatePubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderPeriodicUpdate']
   dir: 'functions/'

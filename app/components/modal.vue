@@ -56,7 +56,7 @@
           </div>
           <div class="l-modal__txt">トランザクション</div>
             <div class="l-modal__txt">
-               <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
               </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
@@ -81,7 +81,7 @@
           </div>
           <div class="l-modal__txt">トランザクション</div>
             <div class="l-modal__txt">
-              <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+              <a href='https://etherscan.io/tx/' + hash >Ethescan</a>
               </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
@@ -103,7 +103,7 @@
             </div>
             <div class="l-modal__txt">トランザクション</div>
             <div class="l-modal__txt">
-              <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+              <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
             <div class="l-modal__close" @click="$emit('closeModal')">
                 <div class="l-modal__close__icon" ></div>

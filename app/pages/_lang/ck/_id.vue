@@ -126,6 +126,7 @@
     <modal
       v-if="modal"
       v-on:closeModal="closeModal"
+      v-on:transitionOrder="transitionOrder"
       :ogp="ogp"
       :asset="asset"
       :hash="hash"
@@ -149,7 +150,7 @@ export default {
   },
   data() {
     return {
-      modal: false,
+      modal: true,
       modalNo: '',
       tokenOwner: false,
       hash: '',
@@ -214,6 +215,9 @@ export default {
   },
   methods: {
     closeModal() {
+      this.modal = false
+    },
+    transitionOrder() {
       const router = this.$router
       this.modal = false
       router.push({ path: '/ck/order/' + this.hash })
@@ -284,11 +288,15 @@ export default {
       client.contract.ck.methods
         .approve(client.contract.bazaaar_v1.options.address, params.id)
         .send({ from: account.address })
-        .on('transactionHash', function(hash) {
+        .on('transactionHash', hash => {
           console.log(hash)
           this.hash = hash
           this.modalNo = 2
           this.modal = true
+        })
+        .on('receipt', receipt => {
+          console.log(receipt)
+          location.reload();
         })
     },
     async cancel() {
@@ -316,7 +324,7 @@ export default {
           ],
         )
         .send({ from: account.address })
-        .on('transactionHash', function(hash) {
+        .on('transactionHash', hash => {
           console.log(hash)
           this.hash = hash
           this.modalNo = 3

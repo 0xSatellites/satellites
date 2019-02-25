@@ -34,7 +34,7 @@
               twitterに投稿
             </a>
           </div>
-          <div class="l-modal__close" @click="$emit('closeModal')">
+          <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">閉じる</div>
           </div>
@@ -51,11 +51,13 @@
           <div class="l-modal__title">承認処理受付しました！</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.ck.image_url" alt="" width="50%" />
+              <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
           <div class="l-modal__txt">トランザクション</div>
-            <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
+            <div class="l-modal__txt">
+               <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+              </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">閉じる</div>
@@ -74,11 +76,13 @@
           <div class="l-modal__title">キャンセルしました！</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.ck.image_url" alt="" width="50%" />
+              <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
           <div class="l-modal__txt">トランザクション</div>
-            <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
+            <div class="l-modal__txt">
+              <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+              </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">閉じる</div>
@@ -98,8 +102,9 @@
                 </div>
             </div>
             <div class="l-modal__txt">トランザクション</div>
-            <div class="l-modal__txt"><nuxt-link :to="'https://etherscan.io/tx/' + hash">Ethescan</nuxt-link></div>
-
+            <div class="l-modal__txt">
+              <a href='https://etherscan.io/tx/' + hash>Ethescan</a>
+            </div>
             <div class="l-modal__close" @click="$emit('closeModal')">
                 <div class="l-modal__close__icon" ></div>
                 <div class="l-modal__close__txt u-obj--sp">閉じる</div>

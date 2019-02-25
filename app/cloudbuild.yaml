@@ -6,5 +6,5 @@ steps:
   args: ['run','build:${_PROJECT_ENV}']
   dir: 'app'
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["app", "deploy"]
+  args: ["app", "deploy", "app.yaml"]
   dir: 'app'

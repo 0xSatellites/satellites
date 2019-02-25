@@ -182,6 +182,7 @@ export default {
     }
   },
   async asyncData({ store, params }) {
+    console.log('debug: load ck/_id')
     const asset = await kitty.getKittyById(params.id)
     store.dispatch('asset/setAsset', asset)
   },

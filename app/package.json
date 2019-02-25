@@ -20,7 +20,7 @@
     "@nuxtjs/pwa": "^2.6.0",
     "@nuxtjs/vuetify": "^0.5.3",
     "cross-env": "^5.2.0",
-    "firebase": "^5.5.6",
+    "firebase": "^5.8.4",
     "nuxt": "^2.3.4",
     "nuxt-maintenance-mode": "^0.3.0",
     "vue-i18n": "^8.8.1",

@@ -2,9 +2,7 @@ const config = require('./config.json')
 const project = process.env.GCLOUD_PROJECT.split('-')[2]
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
-admin.initializeApp({
-  credential: admin.credential.applicationDefault()
-})
+admin.initializeApp()
 const db = admin.firestore()
 const settings = { timestampsInSnapshots: true }
 db.settings(settings)

@@ -21,7 +21,7 @@
                   ><input type="text" v-model="price" id="amount" /> ETH</label
                 >
               </div>
-              <div class="l-item__action__textarea">
+              <div class="l-item__action__textarea" v-if="approved && owned">
                 <div>{{ $t('id.option') }}</div>
               <textarea
                 v-model="msg"
@@ -75,7 +75,7 @@
                 <div class="l-item__action__btns" v-else-if="approved && !order.id">
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved"
+                    :disabled="!valid || loading || !approved || !checkbox"
                     color="#3498db"
                     large
                     @click="order_v1"
@@ -93,7 +93,7 @@
                 <div class="l-item__action__btns" v-else-if="approved && order.id">
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved"
+                    :disabled="!valid || loading || !approved || !checkbox"
                     color="#3498db"
                     large
                     @click="order_v1('change')"
@@ -108,7 +108,7 @@
                   </v-btn>
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved"
+                    :disabled="!valid || loading || !approved || !checkbox"
                     color="#3498db"
                     large
                     @click="cancel"
@@ -123,7 +123,7 @@
                   </v-btn>
                 </div>
 
-                <v-flex center>
+                <v-flex center v-if="approved && owned">
                   <v-checkbox
                     class="center"
                     v-model="checkbox"
@@ -237,7 +237,7 @@ export default {
     async order_v1(type) {
       console.log('order_v1')
 
-      //this.loading = true
+      this.loading = true
       const account = this.account
       const asset = this.asset.ck
       const params = this.$route.params
@@ -255,7 +255,6 @@ export default {
 
       if (approved == client.contract.bazaaar_v1.options.address) {
         console.log('approved')
-        console.log(client.contract.bazaaar_v1)
         const nonce = await client.contract.bazaaar_v1.methods
           .nonce_(
             account.address,
@@ -289,12 +288,13 @@ export default {
         var result = await functions.call('order', datas)
         this.hash = result.hash
         this.ogp = result.ogp
-        this.loading = false
         this.modalNo = 1
         this.modal = true
       }
+      this.loading = false
     },
     async approve() {
+      this.loading = true
       const account = this.account
       const params = this.$route.params
       client.contract.ck.methods
@@ -305,9 +305,11 @@ export default {
           this.hash = hash
           this.modalNo = 2
           this.modal = true
+          this.loading = false
         })
     },
     async cancel() {
+      this.loading = true
       const account = this.account
       const order = this.order
       console.log(order)
@@ -337,6 +339,7 @@ export default {
           this.hash = hash
           this.modalNo = 3
           this.modal = true
+          this.loading = false
         })
     }
   }

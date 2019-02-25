@@ -22,6 +22,7 @@
           color="#3498db"
           large
           @click="purchase"
+          :disabled="!checkbox"
           value="purchase"
           >購入する
            <v-progress-circular size=16 class="ma-2" v-if="loading"

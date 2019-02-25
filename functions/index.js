@@ -62,7 +62,7 @@ exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
     console.info("START order")
-    console.info("INPUT data:" + data)
+    console.info("INPUT data:" + params)
 
     const order = params.order
     const hash = await bazaaar_v1.methods

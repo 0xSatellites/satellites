@@ -22,15 +22,19 @@
     "@nuxtjs/vuetify": "^0.5.3",
     "cross-env": "^5.2.0",
     "firebase": "^5.8.4",
+    "node-sass": "^4.11.0",
     "nuxt": "^2.3.4",
     "nuxt-maintenance-mode": "^0.3.0",
+    "sass-loader": "^7.1.0",
     "vue-i18n": "^8.8.1",
-    "web3": "^1.0.0-beta.46"
+    "web3": "^1.0.0-beta.46",
+    "websocket": "^1.0.28"
   },
   "devDependencies": {
-    "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
-    "prettier": "^1.16.4",
-    "sass-loader": "^7.1.0"
+    "prettier": "^1.16.4"
+  },
+  "engines": {
+    "node": "8.x.x"
   }
 }

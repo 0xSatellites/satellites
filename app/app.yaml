@@ -1,4 +1,5 @@
-runtime: nodejs8
+runtime: nodejs10
+
 instance_class: F2
 
 handlers:
@@ -14,3 +15,7 @@ handlers:
   - url: /.*
     script: auto
     secure: always
+
+env_variables:
+  HOST: '0.0.0.0'
+  NODE_ENV: 'production'

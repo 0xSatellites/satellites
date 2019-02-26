@@ -344,7 +344,7 @@ exports.orderPeriodicUpdatePubSub = functions
       soldPromises.push(
         db
           .collection('order')
-          .where('hash', '==', eventResolved[0][i].returnValues.hash)
+          .where('hash', '==', eventResolved[0][i].raw.data.topics[1])
           .where('valid', '==', true)
           .get()
       )
@@ -359,6 +359,7 @@ exports.orderPeriodicUpdatePubSub = functions
       )
     }
     for (var i = 0; i < eventResolved[1].length; i++) {
+      console.log(i , eventResolved[1][i].returnValues)
       cancelledPromises.push(
         db
           .collection('order')
@@ -383,6 +384,7 @@ exports.orderPeriodicUpdatePubSub = functions
     console.log(orderResolved[1].length)
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
+      console.log(orderResolved[0][i])
       orderResolved[0][i].forEach(function(doc) {
         console.log('sold: ' + doc.data())
         processed.push(doc.id)
@@ -396,6 +398,7 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
+      console.log(orderResolved[0][i])
       orderResolved[1][i].forEach(function(doc) {
         if(!processed.includes(doc.id)){
           console.log('cancel: ' + doc.data())

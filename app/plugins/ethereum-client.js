@@ -63,7 +63,8 @@ const signOrder = async order => {
     order.creatorRoyaltyRatio,
     order.referralRatio
   )
-  const sig = await web3.eth.personal.sign(data, order.maker)
+  const sig = await web3.eth.personal.sign(data, order.maker, '')
+
   order.r = sig.substring(0, 66)
   order.s = '0x' + sig.substring(66, 130)
   order.v = '0x' + sig.substring(130, 132)

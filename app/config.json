@@ -12,7 +12,7 @@
     },
     "bucket":{
         "sand":"blockbase-bazaaar-sand.appspot.com",
-        "staging":"blockbase-bazaaar-staging.appspot.com",
+        "staging":"sage-now-232912.appspot.com",
         "production":"blockbase-bazaaar-production.appspot.com"
     },
     "constant":{

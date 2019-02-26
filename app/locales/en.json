@@ -3,12 +3,12 @@
         "title": "bazaaar"
     },
     "index":{
-        "title1":"Easy ",
-        "title2":"peasy",
-        "tagline":"Digital Asset's Trading Matching Service",
+        "title1":" ",
+        "title2":"Easy",
+        "tagline":"Digital Asset's Trade Matching Service",
         "subTitle1":"Fair Value",
         "subTitle2":"SNS Order",
-        "subTitle3":"white List",
+        "subTitle3":"White List",
         "subDiscription1":"You can estimate an appropriate price from past transactions.",
         "subDiscription2":"Order information will be uploaded on each SNS and expand the market place.",
         "subDiscription3":"We deal only with digital assets which are not interpreted as crypto currency.",
@@ -32,8 +32,7 @@
         "company": "company"
     },
     "id":{
-        "option": "option",
-        "inputMessage": "inputMessage",
+        "inputMessage": "Opitional Message",
         "approve": "approve",
         "sell": "sell",
         "change": "change",

@@ -16,6 +16,7 @@
     "start": "nuxt start --hostname 0.0.0.0 --port 8080"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^2.6.0",
     "@nuxtjs/vuetify": "^0.5.3",

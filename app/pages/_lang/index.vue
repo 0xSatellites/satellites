@@ -32,15 +32,15 @@
         <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
-            <div>
             <nuxt-link :to="'/ck/order/' + order.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
-              <div class="c-card__name">Gen.{{ order.metadata.generation }}</div>
+              <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ order.id }}</div>
-              <div class="c-card__txt">Crypto Kitties</div>
-              <div class="c-card__eth">Ξ {{ order.price / 1000000000000000000}} ETH</div>
+              <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(order.metadata.status.cooldown_index)}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
-          </div>
         </li>
         </ul>
     </section>
@@ -98,6 +98,8 @@
 <script>
 
 import firestore from '~/plugins/firestore'
+import client from '~/plugins/ethereum-client'
+import kitty from '~/plugins/kitty'
 
 export default {
   data() {
@@ -117,6 +119,17 @@ export default {
       return this.$store.getters['order/orders']
     },
   },
+  methods: {
+    coolDownIndexToSpeed(index) {
+      return kitty.coolDownIndexToSpeed(index)
+    },
+    getRarity(asset) {
+        return kitty.getRarity(asset)
+    },
+    fromWei(wei) {
+        return client.utils.fromWei(wei)
+    }
+  }
 }
 
 </script>

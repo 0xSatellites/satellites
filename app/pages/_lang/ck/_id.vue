@@ -8,30 +8,36 @@
           </div>
         </div>
         <div>
-          <div class="l-item__name">Gen.{{ asset.generation }}</div>
+          <div class="l-item__name">{{ asset.name.substring(0,25) }}</div>
           <div class="l-item__txt"># {{ asset.id }}</div>
           <div class="l-item__txt">
-            Cooldown Index {{ asset.status.cooldown_index }}
+            CryptoKitties
           </div>
-          <div class="l-item__txt">Crypto Kitties</div>
+          <ul class="l-item__data">
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
+          </ul>
+          <ul class="l-item__data">
+          <li><strong>Gen：</strong> {{asset.generation}} </li>
+          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
+          </ul>
+
           <v-form>
             <div class="l-item__action">
-              <div class="l-item__action__price">
+              <div class="l-item__action__price" v-if="approved && owned">
                 <label
                   ><input type="text" v-model="price" id="amount" /> ETH</label
                 >
               </div>
               <div class="l-item__action__textarea" v-if="approved && owned">
-                <div>{{ $t('id.option') }}</div>
-              <textarea
-                v-model="msg"
-                name=""
-                id=""
-                box
-                auto-grow
-                placeholder = "一言メッセージを記入できます"
-              >
-              </textarea>
+                <textarea
+                  v-model="msg"
+                  name=""
+                  id=""
+                  box
+                  auto-grow
+                  :placeholder="$t('id.inputMessage')"
+                >
+                </textarea>
               </div>
 
               <!--
@@ -72,7 +78,10 @@
                   </v-btn>
                 </div>
 
-                <div class="l-item__action__btns" v-else-if="approved && !order.id">
+                <div
+                  class="l-item__action__btns"
+                  v-else-if="approved && !order.id"
+                >
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
                     :disabled="!valid || loading || !approved || !checkbox"
@@ -90,7 +99,10 @@
                   </v-btn>
                 </div>
 
-                <div class="l-item__action__btns" v-else-if="approved && order.id">
+                <div
+                  class="l-item__action__btns"
+                  v-else-if="approved && order.id"
+                >
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
                     :disabled="!valid || loading || !approved || !checkbox"
@@ -98,7 +110,7 @@
                     large
                     @click="order_v1('change')"
                   >
-                    {{order.price / 1000000000000000000}} -> change
+                    {{ order.price / 1000000000000000000 }} -> change
                     <v-progress-circular
                       size="16"
                       class="ma-2"
@@ -230,6 +242,12 @@ export default {
     }
   },
   methods: {
+    coolDownIndexToSpeed(index) {
+      return kitty.coolDownIndexToSpeed(index)
+    },
+    getRarity(asset) {
+        return kitty.getRarity(asset)
+    },
     closeModal() {
       this.modal = false
     },
@@ -240,7 +258,6 @@ export default {
     },
     async order_v1(type) {
       console.log('order_v1')
-
       this.loading = true
       const account = this.account
       const asset = this.asset.ck
@@ -248,7 +265,10 @@ export default {
       const router = this.$router
       const amount = this.price
       const wei = client.utils.toWei(amount)
-      if(type == 'change' && this.order.price / 1000000000000000000 <= amount){
+      if (
+        type == 'change' &&
+        this.order.price / 1000000000000000000 <= amount
+      ) {
         alert('make it cheeper')
         return
       }
@@ -292,7 +312,7 @@ export default {
         }
         try {
           var result = await functions.call('order', datas)
-        } catch (err){
+        } catch (err) {
           alert(err)
         }
         this.hash = result.hash
@@ -318,9 +338,9 @@ export default {
         })
         .on('receipt', receipt => {
           console.log(receipt)
-          location.reload();
+          location.reload()
         })
-        .on('error', err => alert(err));
+        .on('error', err => alert(err))
     },
     async cancel() {
       this.loading = true
@@ -335,7 +355,7 @@ export default {
             order.maker,
             order.taker,
             order.creatorRoyaltyRecipient,
-            order.asset,
+            order.asset
           ],
           [
             order.id,
@@ -345,7 +365,7 @@ export default {
             order.expiration,
             order.creatorRoyaltyRatio,
             order.referralRatio
-          ],
+          ]
         )
         .send({ from: account.address })
         .on('transactionHash', hash => {
@@ -355,7 +375,7 @@ export default {
           this.modal = true
           this.loading = false
         })
-        .on('error', err => alert(err));
+        .on('error', err => alert(err))
     }
   }
 }

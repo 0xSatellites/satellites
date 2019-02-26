@@ -9,7 +9,7 @@
         </dl>
         <dl class="l-personal__balance">
           <dt>{{ $t('myitems.balance') }}：</dt>
-          <dd>{{ account.balance / 1000000000000000000 }} ETH</dd>
+          <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000 ) / 10000 }} ETH</dd>
         </dl>
       </div>
     </section>
@@ -28,18 +28,19 @@
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-            <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
+              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
-              <div class="c-card__name">Gen.{{ ck.generation }}</div>
+              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ ck.id }}</div>
-              <div class="c-card__txt">Crypto Kitties</div>
+              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
             </nuxt-link>
           </div>
         </li>
         <div v-else>No kitty!!</div>
       </ul>
     </section>
-
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
@@ -105,6 +106,14 @@ export default {
         result.push(order.id)
       }
       return result
+    }
+  },
+  methods: {
+    coolDownIndexToSpeed(index) {
+      return kitty.coolDownIndexToSpeed(index)
+    },
+    getRarity(asset) {
+        return kitty.getRarity(asset)
     }
   },
   data() {

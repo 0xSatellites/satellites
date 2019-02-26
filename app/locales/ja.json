@@ -3,8 +3,8 @@
         "title": "bazaaar バザー"
     },
     "index":{
-        "title1":"誰でも",
-        "title2":"カンタン",
+        "title1":"日本",
+        "title2":"初",
         "tagline":"デジタルアセットの取引マッチングサービス",
         "subTitle1":"フェアバリュー",
         "subTitle2":"SNSオーダー",
@@ -32,8 +32,7 @@
         "company": "運営会社"
     },
     "id":{
-        "option": "オプション設定",
-        "inputMessage": "一言メッセージ",
+        "inputMessage": "一言メッセージを入力できます（オプション）",
         "approve": "承認する",
         "sell": "出品する",
         "change": "金額変更する",

@@ -26,7 +26,7 @@
     "@google-cloud/logging-winston": "^0.11.0",
     "firebase-admin": "^6.5.1",
     "forever": "^0.15.3",
-    "web3": "1.0.0-beta.41",
+    "web3": "^1.0.0-beta.46",
     "winston": "^3.2.1"
   }
 }

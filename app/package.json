@@ -13,7 +13,7 @@
     "build:stg": "NODE_ENV=staging nuxt build",
     "build:prod": "NODE_ENV=production nuxt build",
     "build:maintenance": "MAINTENANCE_MODE=true nuxt build",
-    "start": "nuxt start"
+    "start": "nuxt start --hostname 0.0.0.0 --port 8080"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.7.2",
@@ -25,12 +25,12 @@
     "nuxt": "^2.3.4",
     "nuxt-maintenance-mode": "^0.3.0",
     "vue-i18n": "^8.8.1",
-    "web3": "^1.0.0-beta.46"
-  },
-  "devDependencies": {
+    "web3": "^1.0.0-beta.46",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
     "prettier": "^1.16.4",
     "sass-loader": "^7.1.0"
+  },
+  "devDependencies": {
   }
 }

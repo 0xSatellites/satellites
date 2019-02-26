@@ -71,7 +71,7 @@
     },
     "host":{
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",
-        "staging":"https://blockbase-bazaaar-staging.appspot.com/",
+        "staging":"sage-now-232912.appspot.com/",
         "production":"https://bazaaar.io/"
     }
 }

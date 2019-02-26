@@ -352,7 +352,7 @@ exports.orderPeriodicUpdatePubSub = functions
         db
           .collection('order')
           .where('asset', '==', eventResolved[0][i].returnValues.asset)
-          .where('id', '==', eventResolved[0][i].returnValues.id)
+          .where('id', '==', eventResolved[0][i].returnValues.id.toString())
           .where('maker', '==', eventResolved[0][i].returnValues.maker)
           .where('valid', '==', true)
           .get()
@@ -363,9 +363,9 @@ exports.orderPeriodicUpdatePubSub = functions
       cancelledPromises.push(
         db
           .collection('order')
-          .where('id', '==', eventResolved[1][i].returnValues.id)
-          .where('maker', '==', eventResolved[1][i].returnValues.maker)
           .where('asset', '==', eventResolved[1][i].returnValues.asset)
+          .where('id', '==', eventResolved[1][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[1][i].returnValues.maker)
           .where('valid', '==', true)
           .get()
       )
@@ -398,7 +398,7 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
-      console.log(orderResolved[0][i])
+      console.log(orderResolved[1][i])
       orderResolved[1][i].forEach(function(doc) {
         if(!processed.includes(doc.id)){
           console.log('cancel: ' + doc.data())

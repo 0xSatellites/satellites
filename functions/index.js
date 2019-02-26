@@ -377,7 +377,10 @@ exports.orderPeriodicUpdatePubSub = functions
     )
 
     console.info("INFO orderPeriodicUpdate 2")
-    console.log(orderResolved[0], orderResolved[1])
+    console.log(orderResolved[0])
+    console.log(orderResolved[1])
+    console.log(orderResolved[0].length)
+    console.log(orderResolved[1].length)
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
       orderResolved[0][i].forEach(function(doc) {

@@ -81,15 +81,3 @@ contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
 })
 
 console.log("server on.")
-
-
-const registerMessage = {
-  transactionHash: 'ok'
-}
-const topic = pubsub.topic('orderPeriodicUpdate');
-topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
-  if (err) {
-    logger.error(err);
-  }
-})
-

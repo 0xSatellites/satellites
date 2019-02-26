@@ -339,12 +339,11 @@ exports.orderPeriodicUpdatePubSub = functions
     const deactivateDocOGPPromises = []
     const now = new Date().getTime()
     for (var i = 0; i < eventResolved[0].length; i++) {
-      console.log(i , eventResolved[0][i].returnValues)
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
         db
           .collection('order')
-          .where('hash', '==', eventResolved[0][i].raw.data.topics[1])
+          .where('hash', '==', eventResolved[0][i].raw.topics[1])
           .where('valid', '==', true)
           .get()
       )
@@ -359,7 +358,6 @@ exports.orderPeriodicUpdatePubSub = functions
       )
     }
     for (var i = 0; i < eventResolved[1].length; i++) {
-      console.log(i , eventResolved[1][i].returnValues)
       cancelledPromises.push(
         db
           .collection('order')
@@ -378,15 +376,9 @@ exports.orderPeriodicUpdatePubSub = functions
     )
 
     console.info("INFO orderPeriodicUpdate 2")
-    console.log(orderResolved[0])
-    console.log(orderResolved[1])
-    console.log(orderResolved[0].length)
-    console.log(orderResolved[1].length)
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
-      console.log(orderResolved[0][i])
       orderResolved[0][i].forEach(function(doc) {
-        console.log('sold: ' + doc.data())
         processed.push(doc.id)
         let ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
@@ -398,10 +390,8 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
-      console.log(orderResolved[1][i])
       orderResolved[1][i].forEach(function(doc) {
         if(!processed.includes(doc.id)){
-          console.log('cancel: ' + doc.data())
           let ref = db.collection('order').doc(doc.id)
           batch.update(ref, {
             result: { status: 'cancelled' },

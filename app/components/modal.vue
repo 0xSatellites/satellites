@@ -17,12 +17,15 @@
           <div class="l-modal__btn">
             <a
               :href="
-                'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
+                'https://twitter.com/share?url=' +
+                  host +
+                  'ck/order/' +
                   hash +
                   '&text=' +
-                  '出品されました！ ' +
-                  asset.name +
-                  '/ LV.' +
+                  'NOW ON SALE!! ' +
+                  '/ Id.' +
+                  asset.id +
+                  '/ Gen.' +
                   asset.generation +
                   '&hashtags=bazaaar, バザール, CryptoKitties'
               "
@@ -117,7 +120,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo'],
+    props: ['ogp','asset','hash','modalNo', 'host'],
     computed: {
     order() {
       return this.$store.getters['order/order']

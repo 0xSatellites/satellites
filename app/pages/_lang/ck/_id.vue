@@ -146,6 +146,7 @@
       :ogp="ogp"
       :asset="asset"
       :hash="hash"
+      :host="host"
       :modalNo="modalNo"
     ></modal>
   </div>
@@ -159,7 +160,8 @@ import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
 
 const config = require('../../../config.json')
-
+const project = process.env.project
+const host = config.host[project]
 export default {
   components: {
     Modal
@@ -178,7 +180,8 @@ export default {
       approved: false,
       owned: false,
       owner: '',
-      msg: ''
+      msg: '',
+      host
     }
   },
   async asyncData({ store, params }) {

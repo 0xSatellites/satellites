@@ -42,12 +42,12 @@
             "messagingSenderId":"218093511875"
         },
         "staging": {
-            "apiKey": "AIzaSyBsh6dJs45zY9cjQSMJzRRxvaktF9ra_mY",
-            "authDomain": "blockbase-bazaaar-staging.firebaseapp.com",
-            "databaseURL": "https://blockbase-bazaaar-staging.firebaseio.com",
-            "projectId": "blockbase-bazaaar-staging",
-            "storageBucket": "blockbase-bazaaar-staging.appspot.com",
-            "messagingSenderId": "1053944125393"
+            "apiKey": "AIzaSyAZAPOgUMQKPxrclsJoBBYXNDA08ET1Fqg",
+            "authDomain": "sage-now-232912.firebaseapp.com",
+            "databaseURL": "https://sage-now-232912.firebaseio.com",
+            "projectId": "sage-now-232912",
+            "storageBucket": "sage-now-232912.appspot.com",
+            "messagingSenderId": "96606651007"
         },
         "production": {
         }

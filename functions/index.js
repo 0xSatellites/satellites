@@ -319,7 +319,6 @@ exports.orderPeriodicUpdatePubSub = functions
   .pubsub.topic('orderPeriodicUpdate')
   .onPublish(async message => {
     console.info("START orderPeriodicUpdate")
-    console.info("INPUT data:" + message.json)
     const eventPromises = [
       bazaaar_v1.getPastEvents('OrderMatched', {
         fromBlock: (await web3.eth.getBlockNumber()) - 150,

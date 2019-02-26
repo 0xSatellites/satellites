@@ -13,7 +13,7 @@
     "build:stg": "NODE_ENV=staging nuxt build",
     "build:prod": "NODE_ENV=production nuxt build",
     "build:maintenance": "MAINTENANCE_MODE=true nuxt build",
-    "start": "nuxt start --hostname 0.0.0.0 --port 8080"
+    "start": "nuxt start"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.7.2",

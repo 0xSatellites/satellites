@@ -1,5 +1,5 @@
 runtime: nodejs8
-env: standard
+instance_class: F4
 
 handlers:
   - url: /_nuxt
@@ -14,3 +14,6 @@ handlers:
   - url: /.*
     script: auto
     secure: always
+
+env_variables:
+  HOST: '0.0.0.0'

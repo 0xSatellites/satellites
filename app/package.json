@@ -32,5 +32,8 @@
     "nodemon": "^1.18.9",
     "prettier": "^1.16.4",
     "sass-loader": "^7.1.0"
+  },
+  "engines": {
+    "node": "8.x.x"
   }
 }

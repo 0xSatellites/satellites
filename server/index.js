@@ -82,7 +82,7 @@ contract.bazaaar_v1.events.OrderCancelled(null, async function(error, result) {
 
 console.log("server on.")
 
-/*
+
 const registerMessage = {
   transactionHash: 'ok'
 }
@@ -92,4 +92,4 @@ topic.publish(Buffer.from(JSON.stringify(registerMessage)), function (err) {
     logger.error(err);
   }
 })
-*/
+

@@ -21,7 +21,7 @@
     "contract":{
         "sand":{
             "bazaaar_v1":"0xD78309087c48eEb209D1738e3E25Ec5C1aBCe023",
-            "ck":"0x16baf0de678e52367adc69fd067e5edd1d33e3bf"
+            "ck":"0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF"
         },
         "staging":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",

@@ -1,4 +1,4 @@
-runtime: nodejs8.15
+runtime: nodejs8
 
 instance_class: F2
 

@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.GCLOUD_PROJECT.split('-')[2]
+const project = process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -330,6 +330,7 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
+    console.log(eventResolved)
     console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()
     const takers = []

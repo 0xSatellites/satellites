@@ -331,7 +331,7 @@ exports.orderPeriodicUpdatePubSub = functions
     ]
     const eventResolved = await Promise.all(eventPromises)
     console.info("INFO orderPeriodicUpdate 1")
-    console.info("INFO" + eventResolved[0])
+    console.log(eventResolved[0][0].returnValues.taker)
     const batch = db.batch()
     const takers = []
     const soldPromises = []

@@ -4,9 +4,6 @@
   "description": "bazaaar.io",
   "author": "BlockBase",
   "private": true,
-  "engines": {
-    "node": "8.12.0"
-  },
   "scripts": {
     "dev": "NODE_ENV=sand nuxt --hostname 0.0.0.0 --port 3000",
     "dev:stg": "NODE_ENV=staging nuxt --hostname 0.0.0.0 --port 3000",
@@ -35,5 +32,8 @@
     "nodemon": "^1.18.9",
     "prettier": "^1.16.4",
     "sass-loader": "^7.1.0"
+  },
+  "engines": {
+    "node": "8.15.0"
   }
 }

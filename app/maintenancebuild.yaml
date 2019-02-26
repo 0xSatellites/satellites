@@ -1,0 +1,10 @@
+steps:
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+  dir: 'app'
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['run','build:maintenance']
+  dir: 'app'
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["app", "deploy", "app.yaml", "-v", "maintenance"]
+  dir: 'app'

@@ -114,7 +114,7 @@ exports.order = functions
     c.fillStyle = '#ffff00'
     c.font = "bold 60px 'Noto Sans JP'"
     if (!params.msg) {
-      c.fillText('NOW ON SALE!', 840, 120, 720)
+      c.fillText('NOW ON SALE!!', 840, 120, 720)
     } else {
       const msg = params.msg.replace(/\r?\n/g, '')
       c.fillText(msg.substr(0, 9), 840, 80, 720)
@@ -123,7 +123,7 @@ exports.order = functions
     c.fillStyle = '#fff'
     c.font = "40px 'Noto Sans JP'"
     c.fillText(
-      'ID.' + order.id + '/' + 'Gen.' + metadata.generation,
+      'Id.' + order.id + '/' + 'Gen.' + metadata.generation,
       840,
       255,
       720

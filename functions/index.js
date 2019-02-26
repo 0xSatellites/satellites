@@ -174,17 +174,17 @@ exports.order = functions
     await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     console.info("INFO order 5")
     const msssage =
-      'https://bazaaar.io/ck/order/' +
-      order.hash +
-      '&text=' +
-      'NOW ON SALE! ' +
-      '/ ID.' +
+      'NOW ON SALE!!' +
+      ' / Id.' +
       order.id +
-      '/ Gen.' +
+      ' / Gen.' +
       metadata.generation +
-      '/ Cooldown.' +
+      ' / Cooldown.' +
       metadata.status.cooldown_index +
-      '&hashtags=bazaaar, CryptoKitties'
+      ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
+      config.host[project] +
+      'ck/order/' +
+      order.hash
     client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
       if(error) throw error;
     });

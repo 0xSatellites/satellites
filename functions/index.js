@@ -331,7 +331,6 @@ exports.orderPeriodicUpdatePubSub = functions
     ]
     const eventResolved = await Promise.all(eventPromises)
     console.info("INFO orderPeriodicUpdate 1")
-    console.log(eventResolved[0][0].returnValues.taker)
     const batch = db.batch()
     const takers = []
     const soldPromises = []
@@ -339,6 +338,7 @@ exports.orderPeriodicUpdatePubSub = functions
     const deactivateDocOGPPromises = []
     const now = new Date().getTime()
     for (var i = 0; i < eventResolved[0].length; i++) {
+      console.log("Num: " +i + " hash: " +eventResolved[0][i].returnValues.taker)
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
         db

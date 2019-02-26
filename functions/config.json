@@ -68,5 +68,10 @@
     },
     "token":{
         "kitty":"NjRDB41VxE4elimp3ggfuOy_qUbWbOL5mmYvjG8aH-c"
+    },
+    "host":{
+        "sand":"https://blockbase-bazaaar-sand.appspot.com/",
+        "staging":"https://blockbase-bazaaar-staging.appspot.com/",
+        "production":"https://bazaaar.io/"
     }
 }

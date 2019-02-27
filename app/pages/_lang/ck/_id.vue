@@ -180,7 +180,7 @@ export default {
   },
   data() {
     return {
-      modal: true,
+      modal: false,
       modalNo: '',
       tokenOwner: false,
       hash: '',

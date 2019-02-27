@@ -196,9 +196,13 @@ export default {
       host
     }
   },
-  async asyncData({ store, params }) {
-    const asset = await kitty.getKittyById(params.id)
-    store.dispatch('asset/setAsset', asset)
+  async asyncData({ store, params, error }) {
+    try {
+      const asset = await kitty.getKittyById(params.id)
+      store.dispatch('asset/setAsset', asset)
+    } catch(err){
+      error({ statusCode: 404, message: 'Post not found' })
+    }
   },
   mounted: async function() {
     const store = this.$store

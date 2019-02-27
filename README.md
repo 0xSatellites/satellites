@@ -1,3 +1,1 @@
 # bazaaar.io
-
-## staging

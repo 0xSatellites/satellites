@@ -13,7 +13,7 @@
     "bucket":{
         "sand":"blockbase-bazaaar-sand.appspot.com",
         "staging":"alien-outlet-233005.appspot.com",
-        "production":"blockbase-bazaaar-production.appspot.com"
+        "production":"bold-vial-233010.appspot.com"
     },
     "constant":{
         "nulladdress":"0x0000000000000000000000000000000000000000"
@@ -50,6 +50,12 @@
             "messagingSenderId": "1000240438302"
         },
         "production": {
+          "apiKey": "AIzaSyBh4vDBGn5aRmuxUepMt6NNrJFFx1fuyao",
+          "authDomain": "bold-vial-233010.firebaseapp.com",
+          "databaseURL": "https://bold-vial-233010.firebaseio.com",
+          "projectId": "bold-vial-233010",
+          "storageBucket": "bold-vial-233010.appspot.com",
+          "messagingSenderId": "753820180931"
         }
     },
     "node":{
@@ -72,6 +78,6 @@
     "host":{
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",
         "staging":"https://alien-outlet-233005.appspot.com/",
-        "production":"https://bazaaar.io/"
+        "production":"https://bold-vial-233010.appspot.com/"
     }
 }

@@ -1,7 +1,8 @@
 {
     "meta":{
         "title": "bazaaar バザー",
-        "description": "日本初 NFTデジタルアセットの取引マッチングサービス"
+        "description": "日本初 NFTデジタルアセットの取引マッチングサービス",
+        "image": "https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_jp.png?alt=media&token=bfcdcc0a-eeda-4fa8-b1f8-1cab1ee65e37"
     },
     "index":{
         "title1":"日本",

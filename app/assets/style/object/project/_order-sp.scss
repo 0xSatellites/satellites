@@ -207,6 +207,15 @@ background: rgba(0,0,0,0.5);
   text-align: center;
   color: #575656;
   }
+  // 追加1
+  &__txt1{
+    padding-top: floor-decimal(20vw * 100 / 375, 2);
+    font-size: floor-decimal(10vw * 100 / 375, 2);
+    line-height: 1.5;
+    font-weight: normal;
+    text-align: center;
+    color: #575656;
+    }
 
   &__btn{
   width: floor-decimal(240vw * 100 / 375, 2);

@@ -189,6 +189,15 @@ background: rgba(0,0,0,0.5);
   text-align: center;
   color: #575656;
   }
+  //追加
+  &__txt1{
+    padding-top: 10px;
+    font-size: 10px;
+    line-height: 1.5;
+    font-weight: normal;
+    text-align: center;
+    color: #575656;
+    }
 
   &__btn{
   width: 212px;

@@ -130,17 +130,21 @@ export default {
       hash: ''
     }
   },
-  async asyncData({ store, params }) {
-    const order = await firestore.doc('order', params.hash)
-    await store.dispatch('order/setOrder', order)
 
-    const recommend = await firestore.getRelatedValidOrders(
-      params.hash,
-      order.maker,
-      order.id
-    )
-    console.log(recommend)
-    await store.dispatch('order/setOrders', recommend)
+  async asyncData({ store, params, error }) {
+    try {
+      const order = await firestore.doc('order', params.hash)
+      await store.dispatch('order/setOrder', order)
+      const recommend = await firestore.getRelatedValidOrders(
+        params.hash,
+        order.maker,
+        order.id
+      )
+      await store.dispatch('order/setOrders', recommend)
+    } catch(err){
+      error({ statusCode: 404, message: 'Post not found' })
+    }
+
   },
   mounted: async function() {
     const store = this.$store

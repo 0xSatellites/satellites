@@ -5,15 +5,15 @@
         "image": "https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_en.png?alt=media&token=ab2df93f-2e58-4a3a-824a-14e9e5cde222"
     },
     "index":{
-        "title1":" ",
-        "title2":"Easy",
+        "title1":"Brand",
+        "title2":"New!!",
         "tagline":"Digital Asset's Trade Matching Service",
-        "subTitle1":"Fair Value",
-        "subTitle2":"SNS Order",
-        "subTitle3":"White List",
-        "subDiscription1":"You can estimate an appropriate price from past transactions.",
-        "subDiscription2":"Order information will be uploaded on each SNS and expand the market place.",
-        "subDiscription3":"We deal only with digital assets which are not interpreted as crypto currency.",
+        "subTitle1":"Social Media Order",
+        "subTitle2":"White List",
+        "subTitle3":"Specialized Interface",
+        "subDiscription1":"Order will be on Social Media like twitter for the P2P interactive order matching.",
+        "subDiscription2":"We deal only with digital assets which are not interpreted as crypto currency.",
+        "subDiscription3":"Interface is specialized for each digital assets for the better userbility.",
         "newAssets":"New Assets",
         "handlingAssets":"Handling Assets",
         "partners":"Partners"
@@ -46,5 +46,8 @@
         "title1": "メンテナンス中",
         "title2": "Under maintenance",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
+    },
+    "kitty":{
+        "message": "You don't have kitty now!!"
     }
 }

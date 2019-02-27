@@ -14,9 +14,10 @@
       </div>
     </section>
     <section class="l-personal" v-else>
-      <h2 class="l-personal__title">get metamask and login</h2>
+      <h2 class="l-personal__title">Get <a href="https://metamask.io/">metamask</a> and login</h2>
     </section>
-    <section class="c-index c-index--mypage">
+
+    <section class="c-index c-index--mypage" v-if="account.address">
       <ul>
         <v-progress-circular
           class="loading "
@@ -38,8 +39,23 @@
             </nuxt-link>
           </div>
         </li>
-        <div v-else>No kitty!!</div>
+
       </ul>
+        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+          <a href="https://www.cryptokitties.co/">
+                <v-card>
+                  <v-img
+                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
+                  aspect-ratio="1.75"
+                  ></v-img>
+                  <v-card-title primary-title>
+                  <div class="text-box">
+                      <h3 class="headline mb-0">{{ $t('kitty.message') }}</h3>
+                  </div>
+                  </v-card-title>
+                </v-card>
+              </a>
+          </v-flex>
     </section>
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">

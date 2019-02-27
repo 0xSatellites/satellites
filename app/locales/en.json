@@ -1,7 +1,8 @@
 {
     "meta":{
         "title": "bazaaar",
-        "description": "NFT Digital Asset's Trade Matching Service"
+        "description": "NFT Digital Asset's Trade Matching Service",
+        "image": "https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_en.png?alt=media&token=ab2df93f-2e58-4a3a-824a-14e9e5cde222"
     },
     "index":{
         "title1":" ",

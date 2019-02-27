@@ -2,6 +2,9 @@
   "name": "bazaaar.io",
   "description": "bazaaar.io",
   "scripts": {
+    "rule:dev": "firebase use dev && firebase deploy --only 'firestore,storage'",
+    "rule:stg": "firebase use stg && firebase deploy --only 'firestore,storage'",
+    "rule:prd": "firebase use prd && firebase deploy --only 'firestore,storage'",
     "serve:dev": "firebase use dev && firebase serve",
     "serve:stg": "firebase use stg && firebase serve",
     "serve:prd": "firebase use prd && firebase serve",

@@ -68,22 +68,23 @@
         </v-form>
       </div>
     </section>
-    <section class="c-index c-index--recommend" v-if="recommend.lengh">
+    <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
+      <div>
       <h2 class="c-index__title">関連アセット</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
-            <div class="c-card__img">
-              <img :src="recommend.metadata.image_url" alt="" />
-            </div>
-            <div class="c-card__name">{{ recommend.metadata.name }}</div>
-            <div class="c-card__txt">#{{ recommend.id }}</div>
-            <div class="c-card__eth">
-              {{ recommend.price / 1000000000000000000 }} ETH
-            </div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
       </ul>
+            </div>
     </section>
     <div></div>
     <modal
@@ -112,7 +113,11 @@ export default {
   head() {
     var order = this.order
     return {
-      meta: [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
+      meta: [
+        { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
+        { hid: 'og:description', property: 'og:description', content: this.$t('meta.description')  },
+        { hid: 'og:image', property: 'og:image', content: order.ogp }
+        ]
     }
   },
   data() {
@@ -125,6 +130,7 @@ export default {
       hash: ''
     }
   },
+
   async asyncData({ store, params, error }) {
     try {
       const order = await firestore.doc('order', params.hash)
@@ -138,6 +144,7 @@ export default {
     } catch(err){
       error({ statusCode: 404, message: 'Post not found' })
     }
+
   },
   mounted: async function() {
     const store = this.$store

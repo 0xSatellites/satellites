@@ -39,27 +39,6 @@
                 >
                 </textarea>
               </div>
-
-              <!--
-              <v-expansion-panel>
-                <v-expansion-panel-content>
-                  <div slot="header" class="text-xs-center">{{ $t('id.option') }}</div>
-                  <v-card>
-                    <p class="text-xs-center">{{ $t('id.inputMessage') }}</p>
-                    <v-container fluid grid-list-md>
-                      <div class="l-item__action__textarea">
-                      <textarea
-                        v-model="msg"
-                        name=""
-                        id=""
-                        box
-                        auto-grow
-                      ></textarea>
-                      </div>
-                    </v-container>
-                  </v-card>
-                </v-expansion-panel-content>
-              </v-expansion-panel> -->
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
@@ -134,16 +113,13 @@
                     ></v-progress-circular>
                   </v-btn>
                 </div>
-
-                <v-flex center v-if="approved && owned">
-                  <v-checkbox
-                    class="center"
-                    v-model="checkbox"
-                    :rules="[v => !!v || '']"
-                    label="利用規約に同意する"
-                    required
-                  ></v-checkbox>
-                </v-flex>
+                <v-checkbox
+                  v-model="checkbox"
+                  :rules="[v => !!v || '']"
+                  label="利用規約に同意する"
+                  required
+                  v-if="approved && owned"
+                ></v-checkbox>
               </div>
             </div>
           </v-form>
@@ -343,7 +319,7 @@ export default {
           this.modal = true
           this.loading = false
         })
-        .on('receipt', receipt => {
+        .on('confirmation', (confirmationNumber, receipt) => {
           console.log(receipt)
           location.reload()
         })

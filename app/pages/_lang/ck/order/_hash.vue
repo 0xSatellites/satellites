@@ -112,7 +112,11 @@ export default {
   head() {
     var order = this.order
     return {
-      meta: [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
+      meta: [
+        { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
+        { hid: 'og:description', property: 'og:description', content: this.$t('meta.description')  },
+        { hid: 'og:image', property: 'og:image', content: order.ogp }
+        ]
     }
   },
   data() {

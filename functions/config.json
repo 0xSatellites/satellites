@@ -71,7 +71,7 @@
     },
     "host":{
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",
-        "staging":"alien-outlet-233005.appspot.com/",
+        "staging":"https://alien-outlet-233005.appspot.com/",
         "production":"https://bazaaar.io/"
     }
 }

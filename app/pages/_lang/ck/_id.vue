@@ -126,6 +126,24 @@
         </div>
       </div>
     </section>
+    <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
+      <div>
+      <h2 class="c-index__title">関連アセット</h2>
+      <ul>
+        <li v-for="(recommend, i) in recommend" :key="i">
+          <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
+        </li>
+      </ul>
+            </div>
+    </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
     <modal
       v-if="modal"
@@ -177,6 +195,8 @@ export default {
     try {
       const asset = await kitty.getKittyById(params.id)
       store.dispatch('asset/setAsset', asset)
+      const recommend = await firestore.getLatestValidOrders(4)
+      await store.dispatch('order/setOrders', recommend)
     } catch(err){
       error({ statusCode: 404, message: 'Post not found' })
     }
@@ -223,6 +243,9 @@ export default {
     },
     order() {
       return this.$store.getters['order/order']
+    },
+    recommend() {
+      return this.$store.getters['order/orders']
     }
   },
   methods: {
@@ -231,6 +254,9 @@ export default {
     },
     getRarity(asset) {
         return kitty.getRarity(asset)
+    },
+    fromWei(wei) {
+        return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false
@@ -301,7 +327,6 @@ export default {
             msg: this.msg
           }
           var result = await functions.call('order', datas)
-        
           this.hash = result.hash
           this.ogp = result.ogp
           this.modalNo = 1

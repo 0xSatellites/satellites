@@ -63,7 +63,7 @@
           <td v-if="props.item.maker == account.address">sold</td>
           <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
-          <td>{{ props.item.price / 1000000000000000000 }} ETH</td>
+          <td>{{ fromWei(props.item.price) }} ETH</td>
         </template>
       </v-data-table>
     </section>
@@ -130,7 +130,10 @@ export default {
     },
     getRarity(asset) {
         return kitty.getRarity(asset)
-    }
+    },
+    fromWei(wei) {
+        return client.utils.fromWei(wei)
+    },
   },
   data() {
     return {

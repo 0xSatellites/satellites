@@ -7,13 +7,13 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">出品されました！</div>
+          <div class="l-modal__title">{{$t('model.sell')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="ogp" alt="" width="85%" />
             </div>
           </div>
-          <div class="l-modal__txt">SNSに投稿しましょう</div>
+          <div class="l-modal__txt">{{$t('model.postOnSocialMedia')}}</div>
           <div class="l-modal__btn">
             <a
               :href="
@@ -27,19 +27,19 @@
                   asset.id +
                   '/ Gen.' +
                   asset.generation +
-                  '&hashtags=bazaaar, バザール, CryptoKitties'
+                  '&hashtags=bazaaar, バザー, CryptoKitties'
               "
               class="twitter-share-button"
               data-size="large"
               data-show-count="false"
               target="”_blank”"
             >
-              twitterに投稿
+              {{$t('model.tweet')}}
             </a>
           </div>
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
           </div>
         </div>
       </div>
@@ -51,20 +51,20 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">承認処理受付しました！</div>
+          <div class="l-modal__title">{{$t('model.approveProcessStarted')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
-          <div class="l-modal__txt1">トランザクション</div>
+          <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">承認完了後、出品可能になるまで少しお時間がかかります</div>
+            <div class="l-modal__txt1">{{$t('model.before')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
           </div>
         </div>
       </div>
@@ -77,19 +77,19 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">キャンセルしました！</div>
+          <div class="l-modal__title">{{$t('model.cancel')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
-          <div class="l-modal__txt1">トランザクション</div>
+          <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
               </div>
           <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
           </div>
         </div>
       </div>
@@ -99,21 +99,21 @@
     <div class="l-modal">
         <div class="l-modal__frame">
             <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-            <div class="l-modal__title">購入処理が完了しました！</div>
+            <div class="l-modal__title">{{$t('model.purchase')}}</div>
             <div class="l-modal__og">
                 <div id="modalImg">
                     <img  :src="order.metadata.image_url" alt=""  width="50%">
                 </div>
             </div>
-            <div class="l-modal__txt1">トランザクション</div>
+            <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">※購入完了後マイページの反映には少しお時間がかかります</div>
+            <div class="l-modal__txt1">{{$t('model.mypage')}}</div>
             <p ></p>
             <div class="l-modal__close" @click="$emit('transitionTop')">
                 <div class="l-modal__close__icon" ></div>
-                <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+                <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
             </div>
         </div>
         </div>

@@ -44,16 +44,17 @@ const getRelatedValidOrders = async (hash, maker, id) => {
     .where('id', '==', id)
     .where('valid', '==', true).get()
   snapshots.forEach(doc => {
-    added.push(doc.id)
-    if(doc.id !== hash){
-      result.push(doc.data())
+    if(doc.id == hash){
+      added.push(doc.id)
     }
   })
   snapshots = await db.collection('order')
     .where('valid', '==', true)
-    .orderBy('created', 'desc').limit(3).get()
+    .orderBy('created', 'desc').limit(5).get()
     snapshots.forEach(doc => {
-      if(!added.includes(doc.id)) result.push(doc.data())
+      if(!added.includes(doc.id) && result.length < 4){
+        result.push(doc.data())
+      }
     })
   return result
 }

@@ -46,7 +46,7 @@ module.exports = {
   */
   plugins: [
     '~/plugins/i18n.js',
-    { src: '~plugins/ga.js', ssr: true }
+    { src: '~plugins/ga.js', ssr: false }
   ],
   vendor: [
     'vue-i18n'

@@ -11,15 +11,15 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: pkg.description,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description },
-      { hid: 'og:site_name', property: 'og:site_name', content: pkg.name },
+      { hid: 'og:site_name', property: 'og:site_name', content: pkg.description },
       { hid: 'og:type', property: 'og:type', content: 'website' },
       { hid: 'og:url', property: 'og:url', content: 'https://bazaaar.io' },
-      { hid: 'og:title', property: 'og:title', content: pkg.name },
+      { hid: 'og:title', property: 'og:title', content: pkg.description },
       { hid: 'og:description', property: 'og:description', content: pkg.description },
       { hid: 'og:image', property: 'og:image', content: 'https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_jp.png?alt=media&token=bfcdcc0a-eeda-4fa8-b1f8-1cab1ee65e37' },
       { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image'}

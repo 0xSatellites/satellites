@@ -45,7 +45,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/i18n.js'
+    '~/plugins/i18n.js',
+    { src: '~plugins/ga.js', ssr: true }
   ],
   vendor: [
     'vue-i18n'

@@ -116,7 +116,7 @@
                 <v-checkbox
                   v-model="checkbox"
                   :rules="[v => !!v || '']"
-                  label="利用規約に同意する"
+                  :label="$t('id.agree')"
                   required
                   v-if="approved && owned"
                 ></v-checkbox>

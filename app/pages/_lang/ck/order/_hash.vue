@@ -21,11 +21,11 @@
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
-          <v-checkbox
+          <v-checkbox   
             class="center"
             v-model="checkbox"
             :rules="[v => !!v || '']"
-            label="利用規約に同意する"
+            :label="$t('hash.agree')"
             required
             v-if="!owner(order.maker)"
           ></v-checkbox>
@@ -37,7 +37,7 @@
               @click="purchase"
               :disabled="!checkbox"
               value="purchase"
-              >購入する
+              >{{$t('hash.purchase')}}
               <v-progress-circular
                 size="16"
                 class="ma-2"
@@ -51,7 +51,7 @@
                   'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
                     order.hash +
                     '&text=' +
-                    '出品されました! ' +
+                    $t('hash.sell') +
                     order.metadata.name +
                     '/ Gen.' +
                     order.metadata.generation +
@@ -71,7 +71,7 @@
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
       <div>
-      <h2 class="c-index__title">関連アセット</h2>
+      <h2 class="c-index__title">{{$t('hash.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">

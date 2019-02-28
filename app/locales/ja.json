@@ -16,7 +16,8 @@
         "subDiscription3":"アセットごとに開発されたインターフェースがユーザビリティを高めます。",
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
-        "partners":"パートナー"
+        "partners":"パートナー",
+        "holdLanguage": "/ja/ck/order/"
     },
     "header":{
         "mypage": "マイページ",
@@ -25,6 +26,18 @@
         "japanese": "日本語",
         "topHD": "/ja/",
         "mypageHD": "/ja/myitems"
+    },
+    "model":{
+        "sell": "出品されました!",
+        "postOnSocialMedia": "SNSに投稿しましょう",
+        "tweet": "twitterに投稿",
+        "close": "閉じる",
+        "approveProcessStarted": "承認処理を受付ました！",
+        "transaction": "トランザクション",
+        "before": "承認完了後、出品可能になるまで少しお時間がかかります",
+        "cancel": "キャンセルしました！",
+        "purchase": "購入処理を受付ました！",
+        "mypage": "※購入完了後マイページの反映には少しお時間がかかります"
     },
     "myitems":{
         "mypage": "マイページ",
@@ -42,6 +55,12 @@
         "sell": "出品する",
         "change": "金額変更する",
         "cancel": "キャンセルする",
+        "agree": "利用規約に同意する"
+    },
+    "hash":{
+        "purchase": "購入する",
+        "relatedAsset": "関連アセット",
+        "sell": "出品されました!",
         "agree": "利用規約に同意する"
     },
     "maintenance":{

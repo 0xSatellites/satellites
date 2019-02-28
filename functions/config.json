@@ -12,8 +12,8 @@
     },
     "bucket":{
         "sand":"blockbase-bazaaar-sand.appspot.com",
-        "staging":"sage-now-232912.appspot.com",
-        "production":"blockbase-bazaaar-production.appspot.com"
+        "staging":"alien-outlet-233005.appspot.com",
+        "production":"bold-vial-233010.appspot.com"
     },
     "constant":{
         "nulladdress":"0x0000000000000000000000000000000000000000"
@@ -42,14 +42,20 @@
             "messagingSenderId":"218093511875"
         },
         "staging": {
-            "apiKey": "AIzaSyAZAPOgUMQKPxrclsJoBBYXNDA08ET1Fqg",
-            "authDomain": "sage-now-232912.firebaseapp.com",
-            "databaseURL": "https://sage-now-232912.firebaseio.com",
-            "projectId": "sage-now-232912",
-            "storageBucket": "sage-now-232912.appspot.com",
-            "messagingSenderId": "96606651007"
+            "apiKey": "AIzaSyD-0XGHiEscDvHbrzOwe90f5JH1FhpHkDE",
+            "authDomain": "alien-outlet-233005.firebaseapp.com",
+            "databaseURL": "https://alien-outlet-233005.firebaseio.com",
+            "projectId": "alien-outlet-233005",
+            "storageBucket": "alien-outlet-233005.appspot.com",
+            "messagingSenderId": "1000240438302"
         },
         "production": {
+          "apiKey": "AIzaSyBh4vDBGn5aRmuxUepMt6NNrJFFx1fuyao",
+          "authDomain": "bold-vial-233010.firebaseapp.com",
+          "databaseURL": "https://bold-vial-233010.firebaseio.com",
+          "projectId": "bold-vial-233010",
+          "storageBucket": "bold-vial-233010.appspot.com",
+          "messagingSenderId": "753820180931"
         }
     },
     "node":{
@@ -71,7 +77,7 @@
     },
     "host":{
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",
-        "staging":"sage-now-232912.appspot.com/",
+        "staging":"https://alien-outlet-233005.appspot.com/",
         "production":"https://bazaaar.io/"
     }
 }

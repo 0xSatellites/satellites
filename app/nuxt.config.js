@@ -21,7 +21,7 @@ module.exports = {
       { hid: 'og:url', property: 'og:url', content: 'https://bazaaar.io' },
       { hid: 'og:title', property: 'og:title', content: pkg.name },
       { hid: 'og:description', property: 'og:description', content: pkg.description },
-      { hid: 'og:image', property: 'og:image', content: '' },
+      { hid: 'og:image', property: 'og:image', content: 'https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_jp.png?alt=media&token=bfcdcc0a-eeda-4fa8-b1f8-1cab1ee65e37' },
       { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image'}
     ],
     link: [
@@ -45,7 +45,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/i18n.js'
+    '~/plugins/i18n.js',
+    { src: '~plugins/ga.js', ssr: false }
   ],
   vendor: [
     'vue-i18n'

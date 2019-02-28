@@ -90,6 +90,7 @@
     <modal
       v-if="modal"
       v-on:closeModal="closeModal"
+      v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
     ></modal>
@@ -218,6 +219,11 @@ export default {
     },
     closeModal() {
       this.modal = false
+    },
+    transitionTop() {
+      const router = this.$router
+      this.modal = false
+      router.push({ path: '/'})
     }
   }
 }

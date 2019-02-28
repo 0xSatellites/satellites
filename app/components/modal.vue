@@ -60,7 +60,8 @@
           <div class="l-modal__txt1">トランザクション</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
-              </div>
+            </div>
+            <div class="l-modal__txt1">承認完了後、出品可能になるまで少しお時間がかかります</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">閉じる</div>
@@ -86,7 +87,7 @@
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
               </div>
-          <div class="l-modal__close" @click="$emit('closeModal')">
+          <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">閉じる</div>
           </div>
@@ -108,9 +109,9 @@
             <div class="l-modal__txt">
               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">購入完了後マイページの反映には少しお時間がかかります</div>
+            <div class="l-modal__txt1">※購入完了後マイページの反映には少しお時間がかかります</div>
             <p ></p>
-            <div class="l-modal__close" @click="$emit('closeModal')">
+            <div class="l-modal__close" @click="$emit('transitionTop')">
                 <div class="l-modal__close__icon" ></div>
                 <div class="l-modal__close__txt u-obj--sp">閉じる</div>
             </div>
@@ -140,5 +141,4 @@ export default {
 .white_text {
   color: white;
 }
-
 </style>

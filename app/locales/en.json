@@ -16,7 +16,8 @@
         "subDiscription3":"Interface is specialized for each digital assets for the better userbility.",
         "newAssets":"New Assets",
         "handlingAssets":"Handling Assets",
-        "partners":"Partners"
+        "partners":"Partners",
+        "holdLanguage": "/ck/order/"
     },
     "header":{
         "mypage": "MyPage",
@@ -25,6 +26,18 @@
         "japanese": "JapaneseVer",
         "topHD": "/",
         "mypageHD": "/myitems"
+    },
+    "model":{
+        "sell": "NOW ON SALE!!",
+        "postOnSocialMedia": "Post on Social Media",
+        "tweet": "Tweet",
+        "close": "Close",
+        "approveProcessStarted": "Approve started!",
+        "transaction": "Transaction",
+        "before": " It takes while before the asset is ready for sales",
+        "cancel": "Cancel started!",
+        "purchase": "Purchase started!",
+        "mypage": "It takes while before it reflects to mypage"
     },
     "myitems":{
         "mypage": "Mypage",
@@ -42,7 +55,13 @@
         "sell": "sell",
         "change": "change",
         "cancel": "cancel",
-        "agree": "Agree with the Terms"
+        "agree": "Agree to the Terms"
+    },
+    "hash":{
+        "purchase": "Purchase",
+        "relatedAsset": "Related Assets",
+        "sell": "NOW ON SALE!!",
+        "agree": "Agree to the Terms"
     },
     "maintenance":{
         "_comment": "メンテナンスモードはstoreが機能しないので言語選択による表示が出来ない。そのため日本語と英語同時に表示する",

@@ -119,14 +119,19 @@ exports.order = functions
     if (!params.msg) {
       c.fillText('NOW ON SALE!!', 840, 120, 720)
     } else {
-      const msg = params.msg.replace(/\r?\n/g, '')
-      c.fillText(msg.substr(0, 9), 840, 80, 720)
-      c.fillText(msg.substr(9, 18), 840, 160, 720)
+      if(params.msg.length <= 9){
+        const msg = params.msg.replace(/\r?\n/g, '')
+        c.fillText(msg, 840, 120, 720)
+      } else {
+        const msg = params.msg.replace(/\r?\n/g, '')
+        c.fillText(msg.substr(0, 9), 840, 80, 720)
+        c.fillText(msg.substr(9, 9), 840, 160, 720)
+      }
     }
     c.fillStyle = '#fff'
     c.font = "40px 'Noto Sans JP'"
     c.fillText(
-      'Id.' + order.id + '/' + 'Gen.' + metadata.generation,
+      'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
       840,
       255,
       720

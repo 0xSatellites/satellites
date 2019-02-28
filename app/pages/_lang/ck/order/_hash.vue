@@ -178,39 +178,43 @@ export default {
         return client.utils.fromWei(wei)
     },
     async purchase() {
-      const account = this.account
-      const order = this.order
+      try{
+        const account = this.account
+        const order = this.order
 
-      await client.contract.bazaaar_v1.methods
-        .orderMatch_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset,
-            order.maker
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ],
-          order.v,
-          order.r,
-          order.s
-        )
-        .send({ from: account.address, value: order.price })
-        .on('transactionHash', hash => {
-          console.log(hash)
-          this.hash = hash
-          this.modal = true
-        })
-        .on('error', err => alert(err))
+        await client.contract.bazaaar_v1.methods
+          .orderMatch_(
+            [
+              order.proxy,
+              order.maker,
+              order.taker,
+              order.creatorRoyaltyRecipient,
+              order.asset,
+              order.maker
+            ],
+            [
+              order.id,
+              order.price,
+              order.nonce,
+              order.salt,
+              order.expiration,
+              order.creatorRoyaltyRatio,
+              order.referralRatio
+            ],
+            order.v,
+            order.r,
+            order.s
+          )
+          .send({ from: account.address, value: order.price })
+          .on('transactionHash', hash => {
+            console.log(hash)
+            this.hash = hash
+            this.modal = true
+          })
+        } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false;
+        }
     },
     closeModal() {
       this.modal = false

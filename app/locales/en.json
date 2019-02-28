@@ -49,5 +49,8 @@
     },
     "kitty":{
         "message": "You don't have kitty now!!"
+    },
+    "error":{
+        "message": "error"
     }
 }

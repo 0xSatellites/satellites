@@ -169,7 +169,7 @@ export default {
       owned: false,
       owner: '',
       msg: '',
-      host
+      host,
     }
   },
   async asyncData({ store, params, error }) {
@@ -240,72 +240,75 @@ export default {
       router.push({ path: '/ck/order/' + this.hash })
     },
     async order_v1(type) {
-      console.log('order_v1')
-      this.loading = true
-      const account = this.account
-      const asset = this.asset.ck
-      const params = this.$route.params
-      const router = this.$router
-      const amount = this.price
-      const wei = client.utils.toWei(amount)
-      if (
-        type == 'change' &&
-        this.order.price / 1000000000000000000 <= amount
-      ) {
-        alert('make it cheeper')
-        return
-      }
+      try {
+        console.log('order_v1')
+        this.loading = true
+        const account = this.account
+        const asset = this.asset.ck
+        const params = this.$route.params
+        const router = this.$router
+        const amount = this.price
+        const wei = client.utils.toWei(amount)
+        if (
+          type == 'change' &&
+          this.order.price / 1000000000000000000 <= amount
+        ) {
+          alert('make it cheeper')
+          return
+        }
 
-      const approved = await client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
-        .call()
-
-      if (approved == client.contract.bazaaar_v1.options.address) {
-        console.log('approved')
-        const nonce = await client.contract.bazaaar_v1.methods
-          .nonce_(
-            account.address,
-            client.contract.ck.options.address,
-            params.id
-          )
+        const approved = await client.contract.ck.methods
+          .kittyIndexToApproved(params.id)
           .call()
 
-        const salt = Math.floor(Math.random() * 1000000000)
-        const date = new Date()
-        date.setDate(date.getDate() + 7)
-        const expiration = Math.round(date.getTime() / 1000)
-        const order = {
-          proxy: client.contract.bazaaar_v1.options.address,
-          maker: account.address,
-          taker: config.constant.nulladdress,
-          creatorRoyaltyRecipient: account.address,
-          asset: client.contract.ck.options.address,
-          id: params.id,
-          price: wei,
-          nonce: nonce,
-          salt: salt,
-          expiration: expiration,
-          creatorRoyaltyRatio: 0,
-          referralRatio: 0
-        }
-        const signedOrder = await client.signOrder(order)
-        const datas = {
-          order: signedOrder,
-          msg: this.msg
-        }
-        try {
+        if (approved == client.contract.bazaaar_v1.options.address) {
+          console.log('approved')
+          const nonce = await client.contract.bazaaar_v1.methods
+            .nonce_(
+              account.address,
+              client.contract.ck.options.address,
+              params.id
+            )
+            .call()
+
+          const salt = Math.floor(Math.random() * 1000000000)
+          const date = new Date()
+          date.setDate(date.getDate() + 7)
+          const expiration = Math.round(date.getTime() / 1000)
+          const order = {
+            proxy: client.contract.bazaaar_v1.options.address,
+            maker: account.address,
+            taker: config.constant.nulladdress,
+            creatorRoyaltyRecipient: account.address,
+            asset: client.contract.ck.options.address,
+            id: params.id,
+            price: wei,
+            nonce: nonce,
+            salt: salt,
+            expiration: expiration,
+            creatorRoyaltyRatio: 0,
+            referralRatio: 0
+          }
+          const signedOrder = await client.signOrder(order)
+          const datas = {
+            order: signedOrder,
+            msg: this.msg
+          }
           var result = await functions.call('order', datas)
-        } catch (err) {
-          alert(err)
+        
+          this.hash = result.hash
+          this.ogp = result.ogp
+          this.modalNo = 1
+          this.modal = true
         }
-        this.hash = result.hash
-        this.ogp = result.ogp
-        this.modalNo = 1
-        this.modal = true
+        this.loading = false
+      } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false;
       }
-      this.loading = false
     },
     async approve() {
+      try{
       this.loading = true
       const account = this.account
       const params = this.$route.params
@@ -323,42 +326,50 @@ export default {
           console.log(receipt)
           location.reload()
         })
-        .on('error', err => alert(err))
+      } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false;
+      }
     },
     async cancel() {
-      this.loading = true
-      const account = this.account
-      const order = this.order
-      console.log(order)
+      try{
+        this.loading = true
+        const account = this.account
+        const order = this.order
+        console.log(order)
 
-      await client.contract.bazaaar_v1.methods
-        .orderCancel_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ]
-        )
-        .send({ from: account.address })
-        .on('transactionHash', hash => {
-          console.log(hash)
-          this.hash = hash
-          this.modalNo = 3
-          this.modal = true
-          this.loading = false
-        })
-        .on('error', err => alert(err))
+        await client.contract.bazaaar_v1.methods
+          .orderCancel_(
+            [
+              order.proxy,
+              order.maker,
+              order.taker,
+              order.creatorRoyaltyRecipient,
+              order.asset
+            ],
+            [
+              order.id,
+              order.price,
+              order.nonce,
+              order.salt,
+              order.expiration,
+              order.creatorRoyaltyRatio,
+              order.referralRatio
+            ]
+          )
+          .send({ from: account.address })
+          .on('transactionHash', hash => {
+            console.log(hash)
+            this.hash = hash
+            this.modalNo = 3
+            this.modal = true
+            this.loading = false
+          })
+      } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false;
+
+      }
     }
   }
 }

@@ -47,5 +47,8 @@
     },
     "kitty":{
         "message": "キティ持ってないにゃ"
+    },
+    "error":{
+        "message": "エラー"
     }
 }

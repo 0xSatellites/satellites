@@ -9,9 +9,9 @@
         <nav class="l-header__nav">
           <ul>
             <li>
-              <nuxt-link :to="'/myitems'" class="pa-1">{{$t('header.mypage')}}</nuxt-link>
+              <nuxt-link :to="'/myitems'" class="pa-3">{{$t('header.mypage')}}</nuxt-link>
 
-              <nuxt-link :to="'/myitems'" class="pa-1">{{$t('header.howto')}}</nuxt-link>
+              <!-- <nuxt-link :to="'/myitems'" class="pa-1">{{$t('header.howto')}}</nuxt-link> -->
               <NuxtLink v-if="$i18n.locale === 'en'" :to="`/ja` + $route.fullPath" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>
               <NuxtLink v-else :to="$route.fullPath.replace(/^\/[^\/]+/, '')" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
             </li>

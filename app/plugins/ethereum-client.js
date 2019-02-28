@@ -19,19 +19,25 @@ const account = {
 }
 
 const activate = async provider => {
-  web3.setProvider(provider)
-  const accounts = await web3.eth.getAccounts()
-  account.address = accounts[0]
-  account.balance = await web3.eth.getBalance(accounts[0])
-  setInterval(async () => {
-    web3.eth.getAccounts().then(accounts => {
-      if (account.address != accounts[0]) {
-        account.address = accounts[0]
-        location.reload()
-      }
-    })
-  }, 100)
-  return account
+  try{
+    web3.setProvider(provider)
+    const accounts = await web3.eth.getAccounts()
+    if(accounts.length > 0) {
+      account.address = accounts[0]
+      account.balance = await web3.eth.getBalance(accounts[0])
+      setInterval(async () => {
+        web3.eth.getAccounts().then(accounts => {
+          if (account.address != accounts[0]) {
+            account.address = accounts[0]
+            location.reload()
+          }
+        })
+      }, 100)
+    }
+    return account
+  } catch (err) {
+    alert(err)
+  }
 }
 
 const ownedTokens = async name => {
@@ -63,7 +69,7 @@ const signOrder = async order => {
     order.creatorRoyaltyRatio,
     order.referralRatio
   )
-  const sig = await web3.eth.personal.sign(data, order.maker, '')
+  const sig = await web3.eth.personal.sign(data, order.maker)
 
   order.r = sig.substring(0, 66)
   order.s = '0x' + sig.substring(66, 130)

@@ -1,17 +1,19 @@
 {
     "meta":{
-        "title": "bazaaar バザー"
+        "title": "bazaaar バザー",
+        "description": "日本初 NFTデジタルアセットの取引マッチングサービス",
+        "image": "https://firebasestorage.googleapis.com/v0/b/blockbase-bazaaar-sand.appspot.com/o/og%2Fogp_jp.png?alt=media&token=bfcdcc0a-eeda-4fa8-b1f8-1cab1ee65e37"
     },
     "index":{
         "title1":"日本",
         "title2":"初",
-        "tagline":"デジタルアセットの取引マッチングサービス",
-        "subTitle1":"フェアバリュー",
-        "subTitle2":"SNSオーダー",
-        "subTitle3":"ホワイトリスト",
-        "subDiscription1":"過去の取引履歴から適正な価格を求めることができます。",
-        "subDiscription2":"オーダー情報は各SNS上にアップされ、マーケットの場を広げます。",
-        "subDiscription3":"仮想通貨に該当しないと解釈されているデジタルアセットのみを扱っています。",
+        "tagline":"デジタルアセットの取引マッチング",
+        "subTitle1":"SNSオーダー",
+        "subTitle2":"ホワイトリスト",
+        "subTitle3":"特化型インターフェイス",
+        "subDiscription1":"SNSを取引板に見立てオーダー情報を発信することで、マッチングの場を広げます。",
+        "subDiscription2":"仮想通貨に該当しないと解釈されているデジタルアセットのみを扱っています。",
+        "subDiscription3":"アセットごとに開発されたインターフェースがユーザビリティを高めます。",
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
         "partners":"パートナー"
@@ -42,5 +44,11 @@
     "maintenance":{
         "title": "メンテナンス中",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
+    },
+    "kitty":{
+        "message": "キティ持ってないにゃ"
+    },
+    "error":{
+        "message": "エラー"
     }
 }

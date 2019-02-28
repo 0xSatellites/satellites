@@ -68,27 +68,29 @@
         </v-form>
       </div>
     </section>
-    <section class="c-index c-index--recommend" v-if="recommend.lengh">
+    <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
+      <div>
       <h2 class="c-index__title">関連アセット</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
-            <div class="c-card__img">
-              <img :src="recommend.metadata.image_url" alt="" />
-            </div>
-            <div class="c-card__name">{{ recommend.metadata.name }}</div>
-            <div class="c-card__txt">#{{ recommend.id }}</div>
-            <div class="c-card__eth">
-              {{ recommend.price / 1000000000000000000 }} ETH
-            </div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
       </ul>
+            </div>
     </section>
     <div></div>
     <modal
       v-if="modal"
       v-on:closeModal="closeModal"
+      v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
     ></modal>
@@ -112,7 +114,11 @@ export default {
   head() {
     var order = this.order
     return {
-      meta: [{ hid: 'og:image', property: 'og:image', content: order.ogp }]
+      meta: [
+        { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
+        { hid: 'og:description', property: 'og:description', content: this.$t('meta.description')  },
+        { hid: 'og:image', property: 'og:image', content: order.ogp }
+        ]
     }
   },
   data() {
@@ -125,16 +131,21 @@ export default {
       hash: ''
     }
   },
-  async asyncData({ store, params }) {
-    const order = await firestore.doc('order', params.hash)
-    await store.dispatch('order/setOrder', order)
 
-    const recommend = await firestore.getRelatedValidOrders(
-      params.hash,
-      order.maker,
-      order.id
-    )
-    await store.dispatch('order/setOrders', recommend)
+  async asyncData({ store, params, error }) {
+    try {
+      const order = await firestore.doc('order', params.hash)
+      await store.dispatch('order/setOrder', order)
+      const recommend = await firestore.getRelatedValidOrders(
+        params.hash,
+        order.maker,
+        order.id
+      )
+      await store.dispatch('order/setOrders', recommend)
+    } catch(err){
+      error({ statusCode: 404, message: 'Post not found' })
+    }
+
   },
   mounted: async function() {
     const store = this.$store
@@ -168,42 +179,51 @@ export default {
         return client.utils.fromWei(wei)
     },
     async purchase() {
-      const account = this.account
-      const order = this.order
+      try{
+        const account = this.account
+        const order = this.order
 
-      await client.contract.bazaaar_v1.methods
-        .orderMatch_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset,
-            order.maker
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ],
-          order.v,
-          order.r,
-          order.s
-        )
-        .send({ from: account.address, value: order.price })
-        .on('transactionHash', hash => {
-          console.log(hash)
-          this.hash = hash
-          this.modal = true
-        })
-        .on('error', err => alert(err))
+        await client.contract.bazaaar_v1.methods
+          .orderMatch_(
+            [
+              order.proxy,
+              order.maker,
+              order.taker,
+              order.creatorRoyaltyRecipient,
+              order.asset,
+              order.maker
+            ],
+            [
+              order.id,
+              order.price,
+              order.nonce,
+              order.salt,
+              order.expiration,
+              order.creatorRoyaltyRatio,
+              order.referralRatio
+            ],
+            order.v,
+            order.r,
+            order.s
+          )
+          .send({ from: account.address, value: order.price })
+          .on('transactionHash', hash => {
+            console.log(hash)
+            this.hash = hash
+            this.modal = true
+          })
+        } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false;
+        }
     },
     closeModal() {
       this.modal = false
+    },
+    transitionTop() {
+      const router = this.$router
+      this.modal = false
+      router.push({ path: '/'})
     }
   }
 }

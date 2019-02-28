@@ -321,11 +321,11 @@ exports.orderPeriodicUpdatePubSub = functions
     console.info("START orderPeriodicUpdate")
     const eventPromises = [
       bazaaar_v1.getPastEvents('OrderMatched', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 150,
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
         toBlock: 'latest'
       }),
       bazaaar_v1.getPastEvents('OrderCancelled', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 150,
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
         toBlock: 'latest'
       })
     ]

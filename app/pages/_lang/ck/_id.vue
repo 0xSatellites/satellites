@@ -63,7 +63,7 @@
                 >
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox"
+                    :disabled="!valid || loading || !approved || !checkbox ||!account.address"
                     color="#3498db"
                     large
                     @click="order_v1"

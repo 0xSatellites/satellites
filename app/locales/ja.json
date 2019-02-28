@@ -22,7 +22,9 @@
         "mypage": "マイページ",
         "howto": "使い方",
         "english": "英語",
-        "japanese": "日本語"
+        "japanese": "日本語",
+        "topHD": "/ja/",
+        "mypageHD": "/ja/myitems"
     },
     "myitems":{
         "mypage": "マイページ",
@@ -30,8 +32,9 @@
         "balance": "残高"
     },
     "footer":{
+        "company": "運営会社",
         "terms": "利用規約",
-        "company": "運営会社"
+        "contact": "お問い合わせ"
     },
     "id":{
         "inputMessage": "一言メッセージを入力できます（オプション）",

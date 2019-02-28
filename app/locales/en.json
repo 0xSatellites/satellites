@@ -22,7 +22,9 @@
         "mypage": "MyPage",
         "howto": "HowTo",
         "english": "EnglishVer",
-        "japanese": "JapaneseVer"
+        "japanese": "JapaneseVer",
+        "topHD": "/",
+        "mypageHD": "/myitems"
     },
     "myitems":{
         "mypage": "Mypage",
@@ -30,8 +32,9 @@
         "balance": "balance"
     },
     "footer":{
+        "company": "company",
         "terms": "terms",
-        "company": "company"
+        "contact": "contact"
     },
     "id":{
         "inputMessage": "Opitional Message",

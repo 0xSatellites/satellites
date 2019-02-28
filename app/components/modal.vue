@@ -39,7 +39,7 @@
           </div>
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp"><a :href="'/'">閉じる</a></div>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@
               </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp"><a :href="'/'">閉じる</a></div>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
               </div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+            <div class="l-modal__close__txt u-obj--sp"><a :href="'/'">閉じる</a></div>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@
             <p ></p>
             <div class="l-modal__close" @click="$emit('closeModal')">
                 <div class="l-modal__close__icon" ></div>
-                <div class="l-modal__close__txt u-obj--sp">閉じる</div>
+                <div class="l-modal__close__txt u-obj--sp"><a :href="'/'">閉じる</a></div>
             </div>
         </div>
         </div>
@@ -140,5 +140,6 @@ export default {
 .white_text {
   color: white;
 }
+a:visited { color: #6E6E6E; }
 
 </style>

@@ -130,6 +130,7 @@
     <modal
       v-if="modal"
       v-on:closeModal="closeModal"
+      v-on:transitionTop="transitionTop"
       v-on:transitionOrder="transitionOrder"
       :ogp="ogp"
       :asset="asset"
@@ -233,6 +234,11 @@ export default {
     },
     closeModal() {
       this.modal = false
+    },
+    transitionTop() {
+      const router = this.$router
+      this.modal = false
+      router.push({ path: '/'})
     },
     transitionOrder() {
       const router = this.$router

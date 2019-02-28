@@ -25,7 +25,7 @@
             <div class="l-item__action">
               <div class="l-item__action__price" v-if="approved && owned">
                 <label
-                  ><input type="text" v-model="price" id="amount" /> ETH</label
+                  ><input type="text" v-model="price" id="amount"/> ETH</label
                 >
               </div>
               <div class="l-item__action__textarea" v-if="approved && owned">
@@ -89,7 +89,7 @@
                     large
                     @click="order_v1('change')"
                   >
-                    {{ order.price / 1000000000000000000 }} -> change
+                    DISCOUNT
                     <v-progress-circular
                       size="16"
                       class="ma-2"
@@ -211,6 +211,7 @@ export default {
         .getLowestCostOrderByMakerId(client.account.address, params.id)
         .then(order => {
           store.dispatch('order/setOrder', order)
+          this.price = client.utils.fromWei(order.price)
         })
     }
   },
@@ -260,6 +261,7 @@ export default {
           this.order.price / 1000000000000000000 <= amount
         ) {
           alert('make it cheeper')
+          this.loading = false
           return
         }
 
@@ -301,7 +303,6 @@ export default {
             msg: this.msg
           }
           var result = await functions.call('order', datas)
-        
           this.hash = result.hash
           this.ogp = result.ogp
           this.modalNo = 1

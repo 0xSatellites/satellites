@@ -27,6 +27,7 @@
             :rules="[v => !!v || '']"
             label="利用規約に同意する"
             required
+            v-if="!owner(order.maker)"
           ></v-checkbox>
           <div class="l-information__action">
             <v-btn
@@ -224,6 +225,9 @@ export default {
       const router = this.$router
       this.modal = false
       router.push({ path: '/'})
+    },
+    owner(maker) {
+      return maker == this.account.address
     }
   }
 }

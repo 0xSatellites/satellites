@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = process.env.GCLOUD_PROJECT.split('-')[2]
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -61,8 +61,11 @@ exports.order = functions
   .https.onCall(async (params, context) => {
     console.info("START order")
     console.info("INPUT data:" + params)
-
     const order = params.order
+    if(order.asset != config.contract[project].ck) {
+      console.info("Invalid Address")
+      return
+    }
     const hash = await bazaaar_v1.methods
       .requireValidOrder_(
         [
@@ -112,7 +115,7 @@ exports.order = functions
     c.textBaseline = 'top'
     c.textAlign = 'center'
     c.fillStyle = '#ffff00'
-    c.font = "bold 60px 'Noto Sans JP'"
+    c.font = "bold 60px 'Noto Sans JP Bold'"
     if (!params.msg) {
       c.fillText('NOW ON SALE!!', 840, 120, 720)
     } else {

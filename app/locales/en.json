@@ -22,7 +22,9 @@
         "mypage": "MyPage",
         "howto": "HowTo",
         "english": "EnglishVer",
-        "japanese": "JapaneseVer"
+        "japanese": "JapaneseVer",
+        "topJA": "/",
+        "mypageJA": "/myitems"
     },
     "myitems":{
         "mypage": "Mypage",

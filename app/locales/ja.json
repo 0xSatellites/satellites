@@ -23,8 +23,8 @@
         "howto": "使い方",
         "english": "英語",
         "japanese": "日本語",
-        "topJA": "/ja/",
-        "mypageJA": "/ja/myitems"
+        "topHD": "/ja/",
+        "mypageHD": "/ja/myitems"
     },
     "myitems":{
         "mypage": "マイページ",

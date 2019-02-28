@@ -8,7 +8,7 @@
           </div>
         </div>
         <div>
-          <div class="l-item__name">{{ asset.name.substring(0,25) }}</div>
+          <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
           <div class="l-item__txt"># {{ asset.id }}</div>
           <div class="l-item__txt">
             CryptoKitties

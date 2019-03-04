@@ -21,7 +21,7 @@
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
-          <v-checkbox   
+          <v-checkbox
             class="center"
             v-model="checkbox"
             :rules="[v => !!v || '']"

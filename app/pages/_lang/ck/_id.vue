@@ -25,7 +25,8 @@
             <div class="l-item__action">
               <div class="l-item__action__price" v-if="approved && owned">
                 <label
-                  ><input type="text" v-model="price" id="amount"/> ETH</label
+                  ><input type="text" v-model="price" id="amount"/> ETH
+                  <input type="text" style="display:none"></label
                 >
               </div>
               <div class="l-item__action__textarea" v-if="approved && owned">

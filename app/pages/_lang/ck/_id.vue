@@ -155,6 +155,7 @@
       :asset="asset"
       :hash="hash"
       :host="host"
+      :coolDownIndex="coolDownIndex"
       :modalNo="modalNo"
     ></modal>
   </div>
@@ -193,6 +194,7 @@ export default {
       owner: '',
       msg: '',
       host,
+      coolDownIndex: ""
     }
   },
   async asyncData({ store, params, error }) {
@@ -255,6 +257,7 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
+      this.coolDownIndex = kitty.coolDownIndexToSpeed(index)
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
@@ -332,7 +335,8 @@ export default {
           const signedOrder = await client.signOrder(order)
           const datas = {
             order: signedOrder,
-            msg: this.msg
+            msg: this.msg,
+            coolDownIndex: this.coolDownIndex
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

@@ -136,7 +136,7 @@ exports.order = functions
       255,
       720
     )
-    c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
+    c.fillText(params.coolDownIndex, 840, 305, 720)
     c.font = "bold 75px 'Noto Sans JP Bold'"
     c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
     const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -187,8 +187,8 @@ exports.order = functions
       order.id +
       ' / Gen.' +
       metadata.generation +
-      ' / Cooldown.' +
-      metadata.status.cooldown_index +
+      ' / ' +
+      params.coolDownIndex +
       ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
       config.host[project] +
       'ck/order/' +

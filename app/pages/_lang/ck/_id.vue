@@ -129,7 +129,7 @@
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
       <div>
-      <h2 class="c-index__title">関連アセット</h2>
+      <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">

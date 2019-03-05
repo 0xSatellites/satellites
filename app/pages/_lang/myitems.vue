@@ -29,7 +29,7 @@
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>出品中</div>
+              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
               <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>

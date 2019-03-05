@@ -85,7 +85,7 @@
                 >
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox"
+                    :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
                     color="#3498db"
                     large
                     @click="order_v1('change')"
@@ -100,7 +100,7 @@
                   </v-btn>
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox"
+                    :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
                     color="#3498db"
                     large
                     @click="cancel"
@@ -109,7 +109,7 @@
                     <v-progress-circular
                       size="16"
                       class="ma-2"
-                      v-if="loading"
+                      v-if="loadingCancel"
                       indeterminate
                     ></v-progress-circular>
                   </v-btn>
@@ -183,6 +183,9 @@ export default {
       ogp: '',
       price: '',
       loading: false,
+      loadingCancel: false,
+      waitDiscount: false,
+      waitCancel: false,
       valid: true,
       checkbox: false,
       approved: false,
@@ -277,6 +280,7 @@ export default {
       try {
         console.log('order_v1')
         this.loading = true
+        this.waitCancel = true
         const account = this.account
         const asset = this.asset.ck
         const params = this.$route.params
@@ -289,6 +293,7 @@ export default {
         ) {
           alert('make it cheeper')
           this.loading = false
+          this.waitCancel = false
           return
         }
 
@@ -336,9 +341,11 @@ export default {
           this.modal = true
         }
         this.loading = false
+        this.waitCancel = false
       } catch (err) {
         alert(this.$t('error.message'))
-        this.loading = false;
+        this.loading = false
+        this.waitCancel = false
       }
     },
     async approve() {
@@ -367,7 +374,8 @@ export default {
     },
     async cancel() {
       try{
-        this.loading = true
+        this.loadingCancel = true
+        this.waitDiscount = true
         const account = this.account
         const order = this.order
         console.log(order)
@@ -397,12 +405,13 @@ export default {
             this.hash = hash
             this.modalNo = 3
             this.modal = true
-            this.loading = false
+            this.loadingCancel = false
+            this.waitDiscount = false
           })
       } catch (err) {
         alert(this.$t('error.message'))
-        this.loading = false;
-
+        this.loadingCancel = false
+        this.waitDiscount = false
       }
     }
   }

@@ -48,6 +48,7 @@
     "footer":{
         "company": "company",
         "terms": "terms",
+        "info": "info",
         "contact": "contact"
     },
     "id":{

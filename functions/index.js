@@ -60,7 +60,8 @@ exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
     console.info("START order")
-    console.info("INPUT data:" + params)
+    console.info("INPUT data")
+    console.info(params)
     const order = params.order
     if(order.asset != config.contract[project].ck) {
       console.info("Invalid Address")
@@ -136,7 +137,7 @@ exports.order = functions
       255,
       720
     )
-    c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
+    c.fillText(params.coolDownIndex, 840, 305, 720)
     c.font = "bold 75px 'Noto Sans JP Bold'"
     c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
     const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -187,8 +188,8 @@ exports.order = functions
       order.id +
       ' / Gen.' +
       metadata.generation +
-      ' / Cooldown.' +
-      metadata.status.cooldown_index +
+      ' / ' +
+      params.coolDownIndex +
       ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
       config.host[project] +
       'ck/order/' +
@@ -200,7 +201,8 @@ exports.order = functions
       ogp: ogp,
       hash: hash
     }
-    console.info("OUTPUT data:" + result)
+    console.info("OUTPUT data")
+    console.info(result)
     console.info("END order")
     return result
   })
@@ -338,7 +340,10 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
-    console.log(eventResolved)
+    console.info("INFO Cancel")
+    console.info(eventResolved[0][0])
+    console.info("INFO Sold")
+    console.info(eventResolved[1][0])
     console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()
     const takers = []

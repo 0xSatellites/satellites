@@ -42,7 +42,8 @@
     "myitems":{
         "mypage": "マイページ",
         "address": "アドレス",
-        "balance": "残高"
+        "balance": "残高",
+        "sell": "出品中"
     },
     "footer":{
         "company": "運営会社",
@@ -55,7 +56,8 @@
         "sell": "出品する",
         "change": "金額変更する",
         "cancel": "キャンセルする",
-        "agree": "利用規約に同意する"
+        "agree": "利用規約に同意する",
+        "relatedAsset": "関連アセット"
     },
     "hash":{
         "purchase": "購入する",

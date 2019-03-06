@@ -31,11 +31,11 @@
           ></v-checkbox>
           <div class="l-information__action">
             <v-btn
-              class="l-information__action__btn white_text"
+              class="l-item__action__btn l-item__action__btn--type1 white_text"
               color="#3498db"
               large
               @click="purchase"
-              :disabled="!checkbox"
+              :disabled="!checkbox || loading"
               value="purchase"
               >{{$t('hash.purchase')}}
               <v-progress-circular
@@ -181,6 +181,7 @@ export default {
     },
     async purchase() {
       try{
+        this.loading = true
         const account = this.account
         const order = this.order
 
@@ -212,6 +213,7 @@ export default {
             console.log(hash)
             this.hash = hash
             this.modal = true
+            this.loading = false
           })
         } catch (err) {
         alert(this.$t('error.message'))

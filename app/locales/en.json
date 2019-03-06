@@ -42,7 +42,8 @@
     "myitems":{
         "mypage": "Mypage",
         "address": "address",
-        "balance": "balance"
+        "balance": "balance",
+        "sell": "NOW ON SALE"
     },
     "footer":{
         "company": "company",
@@ -55,7 +56,8 @@
         "sell": "sell",
         "change": "change",
         "cancel": "cancel",
-        "agree": "Agree to the Terms"
+        "agree": "Agree to the Terms",
+        "relatedAsset": "Related Assets"
     },
     "hash":{
         "purchase": "Purchase",

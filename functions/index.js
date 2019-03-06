@@ -60,7 +60,8 @@ exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
     console.info("START order")
-    console.info("INPUT data:" + params)
+    console.info("INPUT data")
+    console.info(params)
     const order = params.order
     if(order.asset != config.contract[project].ck) {
       console.info("Invalid Address")
@@ -200,7 +201,8 @@ exports.order = functions
       ogp: ogp,
       hash: hash
     }
-    console.info("OUTPUT data:" + result)
+    console.info("OUTPUT data")
+    console.info(result)
     console.info("END order")
     return result
   })
@@ -338,7 +340,10 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
-    console.log(eventResolved)
+    console.info("INFO Cancel")
+    console.info(eventResolved[0][0])
+    console.info("INFO Sold")
+    console.info(eventResolved[1][0])
     console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()
     const takers = []

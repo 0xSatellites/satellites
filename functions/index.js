@@ -14,7 +14,7 @@ const axios = require('axios')
 const {google} = require('googleapis')
 const cloudbilling = google.cloudbilling('v1')
 const {auth} = require('google-auth-library')
-const billion = `projects/${ config.billion[project]}`
+const billion = `projects/${config.billion[project]}`
 const Canvas = require('canvas')
 Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Regular.otf', {
   family: 'Noto Sans JP'

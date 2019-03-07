@@ -10,6 +10,11 @@
     "bazaaar":{
         "host":"http://localhost:3000/"
     },
+    "billion":{
+        "sand":"blockbase-bazaaar-sand",
+        "staging":"alien-outlet-233005",
+        "production":"bold-vial-233010"
+    },
     "bucket":{
         "sand":"blockbase-bazaaar-sand.appspot.com",
         "staging":"alien-outlet-233005.appspot.com",

@@ -32,7 +32,11 @@ const client = new twitter({
   access_token_key: process.env.TWITTER_ACCESSTOKEN_KEY,
   access_token_secret: process.env.TWITTER_ACCESSTOKEN_SECRET
 })
-
+const {google} = require('googleapis');
+const cloudbilling = google.cloudbilling('v1');
+const {auth} = require('google-auth-library');
+const PROJECT_NAME = `projects/${project}`;
+console.log(PROJECT_NAME)
 const deactivateDocOGP = async doc => {
   console.info("START deactivateDocOGP")
   const canvas = Canvas.createCanvas(1200, 630)
@@ -54,6 +58,69 @@ const deactivateDocOGP = async doc => {
   const file = bucket.file(doc.hash + '.png')
   await file.save(imageBuffer, { metadata: { contentType: 'image/png' } })
   console.info("END deactivateDocOGP")
+}
+
+exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe').onPublish((event) => {
+  const pubsubData = JSON.parse(Buffer.from(event.data.data, 'base64').toString());
+  if (pubsubData.costAmount <= pubsubData.budgetAmount) {
+    return Promise.resolve('No action shall be taken on current cost ' +
+      pubsubData.costAmount);
+  }
+
+  return setAuthCredential()
+    .then(() => isBillingEnabled(PROJECT_NAME))
+    .then((enabled) => {
+      if (enabled) {
+        return disableBillingForProject(PROJECT_NAME);
+      }
+      return Promise.resolve('Billing already in disabled state');
+    });
+});
+
+/**
+ * @return {Promise} Credentials set globally
+ */
+function setAuthCredential() {
+  return auth.getApplicationDefault()
+    .then((res) => {
+      let client2 = res.credential;
+      if (client2.createScopedRequired && client2.createScopedRequired()) {
+        client2 = client2.createScoped([
+          'https://www.googleapis.com/auth/cloud-billing'
+        ]);
+      }
+
+      // Set credential globally for all requests
+      google.options({
+        auth: client2
+      });
+    });
+}
+
+/**
+ * @param {string} projectName Name of project to check if billing is enabled
+ * @return {Promise} Whether project has billing enabled or not
+ */
+function isBillingEnabled(projectName) {
+  return cloudbilling.projects.getBillingInfo({
+    name: projectName
+  }).then((res) => res.data.billingEnabled);
+};
+
+/**
+ * @param {string} projectName Name of project disable billing on
+ * @return {Promise} Text containing response from disabling billing
+ */
+function disableBillingForProject(projectName) {
+  return cloudbilling.projects.updateBillingInfo({
+    name: projectName,
+    // Setting this to empty is equivalent to disabling billing.
+    resource: {
+      'billingAccountName': ''
+    }
+  }).then((res) => {
+    return 'Billing disabled successfully: ' + JSON.stringify(res.data);
+  });
 }
 
 exports.order = functions

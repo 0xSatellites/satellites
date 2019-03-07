@@ -11,6 +11,10 @@ const { promisify } = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 const axios = require('axios')
+const {google} = require('googleapis')
+const cloudbilling = google.cloudbilling('v1')
+const {auth} = require('google-auth-library')
+const billion = `projects/${ config.billion[project]}`
 const Canvas = require('canvas')
 Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Regular.otf', {
   family: 'Noto Sans JP'
@@ -32,11 +36,7 @@ const client = new twitter({
   access_token_key: process.env.TWITTER_ACCESSTOKEN_KEY,
   access_token_secret: process.env.TWITTER_ACCESSTOKEN_SECRET
 })
-const {google} = require('googleapis');
-const cloudbilling = google.cloudbilling('v1');
-const {auth} = require('google-auth-library');
-const PROJECT_NAME = `projects/${project}`;
-console.log(PROJECT_NAME)
+
 const deactivateDocOGP = async doc => {
   console.info("START deactivateDocOGP")
   const canvas = Canvas.createCanvas(1200, 630)
@@ -68,10 +68,10 @@ exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe'
   }
 
   return setAuthCredential()
-    .then(() => isBillingEnabled(PROJECT_NAME))
+    .then(() => isBillingEnabled(billion))
     .then((enabled) => {
       if (enabled) {
-        return disableBillingForProject(PROJECT_NAME);
+        return disableBillingForProject(billion);
       }
       return Promise.resolve('Billing already in disabled state');
     });

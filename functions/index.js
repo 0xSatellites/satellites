@@ -340,9 +340,9 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
-    console.info("INFO Cancel")
-    console.info(eventResolved[0][0])
     console.info("INFO Sold")
+    console.info(eventResolved[0][0])
+    console.info("INFO Cancel")
     console.info(eventResolved[1][0])
     console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()

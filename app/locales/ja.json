@@ -17,6 +17,8 @@
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
         "partners":"パートナー",
+        "contact":"お問い合わせ",
+        "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
         "holdLanguage": "/ja/ck/order/"
     },
     "header":{

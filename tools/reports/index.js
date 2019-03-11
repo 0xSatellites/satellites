@@ -1,12 +1,6 @@
-const admin = require('firebase-admin');
+const admin = require('firebase-admin')
+admin.initializeApp()
 const functions = require('firebase-functions');
-
-var serviceAccount = require('./blockbase-bazaaar-sand-firebase-adminsdk-g8ket-3e86aa8c6f.json'); //本番環境のとき要変更
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://blockbase-bazaaar-sand.firebaseio.com" //本番環境のとき要変更
-});
 
 var db = admin.firestore();
 var day = new Date();
@@ -44,7 +38,7 @@ exports.dailyReports = functions
     })
 
     var result3 =db.collection('order')
-      .where('result', '==', null)
+      .where('valid', '==', true)
       .get()
       .then(snapshot =>{
         var currentOrders =snapshot.docs.length

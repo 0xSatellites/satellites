@@ -56,6 +56,7 @@ const deactivateDocOGP = async doc => {
   console.info("END deactivateDocOGP")
 }
 
+
 exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {

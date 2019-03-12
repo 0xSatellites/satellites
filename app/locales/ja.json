@@ -17,6 +17,8 @@
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
         "partners":"パートナー",
+        "contact":"お問い合わせ",
+        "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
         "holdLanguage": "/ja/ck/order/"
     },
     "header":{
@@ -42,11 +44,13 @@
     "myitems":{
         "mypage": "マイページ",
         "address": "アドレス",
-        "balance": "残高"
+        "balance": "残高",
+        "sell": "出品中"
     },
     "footer":{
         "company": "運営会社",
         "terms": "利用規約",
+        "info": "新着情報",
         "contact": "お問い合わせ"
     },
     "id":{
@@ -55,7 +59,8 @@
         "sell": "出品する",
         "change": "金額変更する",
         "cancel": "キャンセルする",
-        "agree": "利用規約に同意する"
+        "agree": "利用規約に同意する",
+        "relatedAsset": "関連アセット"
     },
     "hash":{
         "purchase": "購入する",

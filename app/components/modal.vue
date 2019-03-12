@@ -23,10 +23,13 @@
                   hash +
                   '&text=' +
                   'NOW ON SALE!! ' +
-                  '/ Id.' +
+                  ' / Id.' +
                   asset.id +
-                  '/ Gen.' +
+                  ' / Gen.' +
                   asset.generation +
+                  ' / ' +
+                  coolDownIndex +
+                  ' / from @bazaaario' +
                   '&hashtags=bazaaar, バザー, CryptoKitties'
               "
               class="twitter-share-button"
@@ -123,7 +126,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex'],
     computed: {
     order() {
       return this.$store.getters['order/order']

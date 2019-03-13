@@ -73,7 +73,8 @@
         }
     },
     "token":{
-        "kitty":"NjRDB41VxE4elimp3ggfuOy_qUbWbOL5mmYvjG8aH-c"
+        "kitty":"NjRDB41VxE4elimp3ggfuOy_qUbWbOL5mmYvjG8aH-c",
+        "oink":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1"
     },
     "host":{
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",

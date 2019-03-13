@@ -4,12 +4,12 @@ const functions = require('firebase-functions');
 
 var db = admin.firestore();
 var day = new Date();
-var yesturday = day.setDate(day.getDate() - 1) ;
+var yesterday = day.setDate(day.getDate() - 1) ;
 
 
 exports.dailyReports = functions
   .https.onRequest(async () => {
-  var result1 = db.collection('order').where("created", ">", yesturday).get()
+  var result1 = db.collection('order').where("created", ">", yesterday).get()
   .then(snapshot => {
       orders = snapshot.size
       result1 = "24h売り注文数：" + orders
@@ -20,7 +20,7 @@ exports.dailyReports = functions
   var arr = [];
   var volume = 0;
   var result2 =db.collection('order')
-      .where('created', '>', yesturday)
+      .where('created', '>', yesterday)
       .where('result.status', '==', "sold")
       .get()
       .then(snapshot =>{

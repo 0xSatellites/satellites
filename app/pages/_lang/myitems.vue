@@ -88,7 +88,7 @@ export default {
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
-      kitty.getKittiesByWalletAddress('client.account.address').then(tokens => {
+      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
         store.dispatch('asset/setAssets', tokens)
       })

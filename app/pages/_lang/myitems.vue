@@ -26,16 +26,16 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+        <li v-for="(ctn, i) in myitems" :key="i + '-ctn'" v-else-if="myitems.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="ck.image_url" /></div>
-              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="ctn.image_url" /></div>
+              <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ ck.id }}</div>
-              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
+              <div class="c-card__txt"># {{ ctn.id }}</div>
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{coolDownIndexToSpeed(ctn.status.cooldown_index)}}</div>
             </nuxt-link>
           </div>
         </li>
@@ -67,6 +67,7 @@
         </template>
       </v-data-table>
     </section>
+<!--    <div @click="test">テスト</div> -->
 
   </div>
 </template>
@@ -74,6 +75,7 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
+import oink from '~/plugins/oink'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
@@ -88,7 +90,11 @@ export default {
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
-      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
+      // kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
+      //   this.loading = false
+      //   store.dispatch('asset/setAssets', tokens)
+      // })
+      oink.getOinksByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
         store.dispatch('asset/setAssets', tokens)
       })
@@ -134,6 +140,12 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
+    // async test(){
+    //   const myitem = await client.contract.ctn.methods
+    //       .tokensOfOwner(client.account.address)
+    //       .call()
+    //       console.log(myitem)
+    // }
   },
   data() {
     return {

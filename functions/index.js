@@ -64,7 +64,8 @@ const PROJECT_NAME = `projects/${config.billion[project]}`;
 
 exports.subscribe = (event) => {
   console.log(event)
-  const pubsubData = JSON.parse(Buffer.from(event.data.data, 'base64').toString());
+  console.log(event.data)
+  const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString());
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
     return Promise.resolve('No action shall be taken on current cost ' +
       pubsubData.costAmount);

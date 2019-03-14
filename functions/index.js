@@ -85,16 +85,16 @@ exports.subscribe = (event) => {
 function setAuthCredential() {
   return auth.getApplicationDefault()
     .then((res) => {
-      let client = res.credential;
-      if (client.createScopedRequired && client.createScopedRequired()) {
-        client = client.createScoped([
+      let client2 = res.credential;
+      if (client2.createScopedRequired && client2.createScopedRequired()) {
+        client2 = client2.createScoped([
           'https://www.googleapis.com/auth/cloud-billing'
         ]);
       }
 
       // Set credential globally for all requests
       google.options({
-        auth: client
+        auth: client2
       });
     });
 }

@@ -11,10 +11,7 @@ const { promisify } = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 const axios = require('axios')
-const {google} = require('googleapis')
-const cloudbilling = google.cloudbilling('v1')
-const {auth} = require('google-auth-library')
-const billion = `projects/${config.billion[project]}`
+
 const Canvas = require('canvas')
 Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Regular.otf', {
   family: 'Noto Sans JP'
@@ -60,7 +57,12 @@ const deactivateDocOGP = async doc => {
   console.info("END deactivateDocOGP")
 }
 
-exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe').onPublish((event) => {
+const {google} = require('googleapis');
+const cloudbilling = google.cloudbilling('v1');
+const {auth} = require('google-auth-library');
+const PROJECT_NAME = `projects/${config.billion[project]}`;
+
+exports.subscribe = (event) => {
   const pubsubData = JSON.parse(Buffer.from(event.data.data, 'base64').toString());
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
     return Promise.resolve('No action shall be taken on current cost ' +
@@ -68,14 +70,14 @@ exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe'
   }
 
   return setAuthCredential()
-    .then(() => isBillingEnabled(billion))
+    .then(() => isBillingEnabled(PROJECT_NAME))
     .then((enabled) => {
       if (enabled) {
-        return disableBillingForProject(billion);
+        return disableBillingForProject(PROJECT_NAME);
       }
       return Promise.resolve('Billing already in disabled state');
     });
-});
+};
 
 /**
  * @return {Promise} Credentials set globally
@@ -83,16 +85,16 @@ exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe'
 function setAuthCredential() {
   return auth.getApplicationDefault()
     .then((res) => {
-      let client2 = res.credential;
-      if (client2.createScopedRequired && client2.createScopedRequired()) {
-        client2 = client2.createScoped([
+      let client = res.credential;
+      if (client.createScopedRequired && client.createScopedRequired()) {
+        client = client.createScoped([
           'https://www.googleapis.com/auth/cloud-billing'
         ]);
       }
 
       // Set credential globally for all requests
       google.options({
-        auth: client2
+        auth: client
       });
     });
 }
@@ -122,6 +124,7 @@ function disableBillingForProject(projectName) {
     return 'Billing disabled successfully: ' + JSON.stringify(res.data);
   });
 }
+
 
 exports.order = functions
   .region('asia-northeast1')

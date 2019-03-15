@@ -11,6 +11,7 @@ const { promisify } = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 const axios = require('axios')
+
 const Canvas = require('canvas')
 Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Regular.otf', {
   family: 'Noto Sans JP'

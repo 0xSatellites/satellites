@@ -25,7 +25,8 @@
             <div class="l-item__action">
               <div class="l-item__action__price" v-if="approved && owned">
                 <label
-                  ><input type="text" v-model="price" id="amount"/> ETH</label
+                  ><input type="text" v-model="price" id="amount"/> ETH
+                  <input type="text" style="display:none"></label
                 >
               </div>
               <div class="l-item__action__textarea" v-if="approved && owned">
@@ -84,7 +85,7 @@
                 >
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox"
+                    :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
                     color="#3498db"
                     large
                     @click="order_v1('change')"
@@ -99,7 +100,7 @@
                   </v-btn>
                   <v-btn
                     class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox"
+                    :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
                     color="#3498db"
                     large
                     @click="cancel"
@@ -108,7 +109,7 @@
                     <v-progress-circular
                       size="16"
                       class="ma-2"
-                      v-if="loading"
+                      v-if="loadingCancel"
                       indeterminate
                     ></v-progress-circular>
                   </v-btn>
@@ -128,7 +129,7 @@
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
       <div>
-      <h2 class="c-index__title">関連アセット</h2>
+      <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
@@ -154,6 +155,7 @@
       :asset="asset"
       :hash="hash"
       :host="host"
+      :coolDownIndex="coolDownIndex"
       :modalNo="modalNo"
     ></modal>
   </div>
@@ -182,6 +184,9 @@ export default {
       ogp: '',
       price: '',
       loading: false,
+      loadingCancel: false,
+      waitDiscount: false,
+      waitCancel: false,
       valid: true,
       checkbox: false,
       approved: false,
@@ -189,6 +194,7 @@ export default {
       owner: '',
       msg: '',
       host,
+      coolDownIndex: ""
     }
   },
   async asyncData({ store, params, error }) {
@@ -251,6 +257,7 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
+      this.coolDownIndex = kitty.coolDownIndexToSpeed(index)
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
@@ -276,6 +283,7 @@ export default {
       try {
         console.log('order_v1')
         this.loading = true
+        this.waitCancel = true
         const account = this.account
         const asset = this.asset.ck
         const params = this.$route.params
@@ -288,6 +296,7 @@ export default {
         ) {
           alert('make it cheeper')
           this.loading = false
+          this.waitCancel = false
           return
         }
 
@@ -326,7 +335,8 @@ export default {
           const signedOrder = await client.signOrder(order)
           const datas = {
             order: signedOrder,
-            msg: this.msg
+            msg: this.msg,
+            coolDownIndex: this.coolDownIndex
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash
@@ -335,9 +345,11 @@ export default {
           this.modal = true
         }
         this.loading = false
+        this.waitCancel = false
       } catch (err) {
         alert(this.$t('error.message'))
-        this.loading = false;
+        this.loading = false
+        this.waitCancel = false
       }
     },
     async approve() {
@@ -366,7 +378,8 @@ export default {
     },
     async cancel() {
       try{
-        this.loading = true
+        this.loadingCancel = true
+        this.waitDiscount = true
         const account = this.account
         const order = this.order
         console.log(order)
@@ -396,12 +409,13 @@ export default {
             this.hash = hash
             this.modalNo = 3
             this.modal = true
-            this.loading = false
+            this.loadingCancel = false
+            this.waitDiscount = false
           })
       } catch (err) {
         alert(this.$t('error.message'))
-        this.loading = false;
-
+        this.loadingCancel = false
+        this.waitDiscount = false
       }
     }
   }

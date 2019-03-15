@@ -72,7 +72,7 @@
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
-                <v-flex xs6 md3>
+                <v-flex xs6 sm3>
                 <a href="https://tokenpocket.jp/ja/">
                     <v-card class="partner pa-3">
                         <v-img
@@ -82,11 +82,41 @@
                     </v-card>
                 </a>
                 </v-flex>
-                <v-flex xs6 md3>
+                <v-flex xs6 sm3>
                 <a href="https://www.go-wallet.app/">
                     <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/GoWallet.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+                    </v-card>
+                </a>
+                </v-flex>
+            </v-layout>
+        </v-container>
+    </section>
+    <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.contact') }}</h2>
+        <v-layout justify-center>
+            <p>{{ $t('index.contactText') }}</p>
+        </v-layout>
+        <v-container grid-list-md align-center justify-space-between>
+            <v-layout row wrap justify-center>
+                <v-flex xs4 sm2>
+                <a href="https://twitter.com/bazaaario">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/sns/Twitter_Logo_Blue.png')"
+                        aspect-ratio="1"
+                        ></v-img>
+                    </v-card>
+                </a>
+                </v-flex>
+                <v-flex xs4 sm2>
+                <a href="mailto:bazaaar@block-base.co">
+                    <v-card class="partner">
+                        <v-img
+                        v-bind:src="require('~/assets/img/sns/Gmail_Logo.png')"
                         aspect-ratio="1"
                         ></v-img>
                     </v-card>

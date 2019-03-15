@@ -8,7 +8,7 @@ const instance = axios.create({
   })
 
 const getKittiesByWalletAddress = async address => {
-    const result = await instance.get('kitties?owner_wallet_address='+ address)
+    const result = await instance.get('kitties?owner_wallet_address='+ address +'&limit=100')
     return result.data.kitties
   }
 

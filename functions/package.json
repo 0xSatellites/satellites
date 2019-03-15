@@ -20,7 +20,9 @@
     "firebase-functions": "^2.1.0",
     "fs": "0.0.1-security",
     "twitter": "^1.7.1",
-    "web3": "1.0.0-beta.46"
+    "web3": "1.0.0-beta.46",
+    "google-auth-library": "1.5.0",
+    "googleapis": "30.0.0"
   },
   "private": true,
   "devDependencies": {

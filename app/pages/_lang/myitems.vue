@@ -67,7 +67,6 @@
         </template>
       </v-data-table>
     </section>
-<!--    <div @click="test">テスト</div> -->
 
   </div>
 </template>
@@ -90,10 +89,11 @@ export default {
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
-      // kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
-      //   this.loading = false
-      //   store.dispatch('asset/setAssets', tokens)
-      // })
+      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
+        this.loading = false
+        store.dispatch('asset/setAssets', tokens)
+      })
+
       oink.getOinksByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
         store.dispatch('asset/setAssets', tokens)
@@ -140,12 +140,6 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
-    // async test(){
-    //   const myitem = await client.contract.ctn.methods
-    //       .tokensOfOwner(client.account.address)
-    //       .call()
-    //       console.log(myitem)
-    // }
   },
   data() {
     return {

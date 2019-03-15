@@ -17,8 +17,8 @@
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status)}}</li>
+          <li><strong>Gen：</strong> {{generation}} </li>
+          <li><strong>Cooldown：</strong> {{oinkCooldownIndex}}</li>
           </ul>
 
           <v-form>
@@ -166,6 +166,7 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import oink from '~/plugins/oink'
+import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
 
 const config = require('../../../config.json')
@@ -194,7 +195,8 @@ export default {
       owner: '',
       msg: '',
       host,
-      coolDownIndex: ""
+      oinkCooldownIndex: '',
+      generation: ''
     }
   },
   async asyncData({ store, params, error }) {
@@ -239,6 +241,13 @@ export default {
           store.dispatch('order/setOrder', order)
           this.price = client.utils.fromWei(order.price)
         })
+
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+           this.generation = entities.generation
+           this.oinkCooldownIndex = entities.cooldownIndex
+
     }
   },
   computed: {
@@ -257,8 +266,8 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      this.coolDownIndex = oink.coolDownIndexToSpeed(index)
-      return oink.coolDownIndexToSpeed(index)
+      this.cooldownIndex = kitty.coolDownIndexToSpeed(index)
+      return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
         return oink.getRarity(asset)

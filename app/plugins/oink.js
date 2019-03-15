@@ -14,7 +14,8 @@ const instance2 = axios.create({
 
 const getOinksByWalletAddress = async address => {
     const result = await instance2.get('assets/?owner='+ address +"&asset_contract_address=" + config.token.oink)
-    return result.data
+    console.log(result.data.assets[0])
+    return result.data.assets
 }
 
 const getOinkById = async id => {

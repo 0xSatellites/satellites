@@ -60,6 +60,7 @@
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
+          <td>{{ timeConverter(props.item.modified) }}</td>
           <td v-if="props.item.maker == account.address">sold</td>
           <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
@@ -134,10 +135,14 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
+    timeConverter(timestamp){
+      return kitty.timeConverter(timestamp)
+    }
   },
   data() {
     return {
       headers: [
+        { text: 'date', value: 'date' },
         { text: 'result', value: 'result' },
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }

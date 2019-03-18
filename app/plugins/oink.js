@@ -7,10 +7,16 @@ const instance = axios.create({
     headers: {'x-api-token': config.token.oink}
   })
 
-const getKittiesByWalletAddress = async address => {
-    const result = await instance.get('kitties?owner_wallet_address='+ address)
-    return result.data.kitties
-  }
+const instance2 = axios.create({
+    baseURL: 'https://api.opensea.io/api/v1/',
+    headers: {'X-API-KEY': config.token.opensea}
+  })
+
+const getOinksByWalletAddress = async address => {
+    const result = await instance2.get('assets/?owner='+ address +"&asset_contract_address=" + config.token.oink)
+    console.log(result.data.assets[0])
+    return result.data.assets
+}
 
 const getOinkById = async id => {
   const result = await instance.get('metadata?'+ id)
@@ -32,7 +38,7 @@ const coolDownIndexToSpeed = index => {
     return 'Brisk'
     case 7:
     case 8:
-    return 'Plodding'
+    return 'Ploddy'
     case 9:
     case 10:
     return 'Slow'
@@ -46,6 +52,7 @@ const coolDownIndexToSpeed = index => {
   }
 }
 
+
 const getRarity = kitty => {
   var rarity = 3
   if(kitty.is_fancy) rarity++
@@ -55,7 +62,7 @@ const getRarity = kitty => {
 
 const oink = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
-  getKittiesByWalletAddress: getKittiesByWalletAddress,
+  getOinksByWalletAddress: getOinksByWalletAddress,
   getOinkById: getOinkById,
   getRarity:getRarity
 }

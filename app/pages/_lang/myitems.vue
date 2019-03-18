@@ -104,6 +104,7 @@
           <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
           <td>{{ fromWei(props.item.price) }} ETH</td>
+          <td>{{ timeConverter(props.item.modified)}}</td>
         </template>
       </v-data-table>
     </section>
@@ -185,13 +186,17 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
+    timeConverter(timestamp){
+      return kitty.timeConverter(timestamp)
+    }
   },
   data() {
     return {
       headers: [
         { text: 'result', value: 'result' },
         { text: 'id', value: 'id' },
-        { text: 'price', value: 'price' }
+        { text: 'price', value: 'price' },
+        { text: 'timestamp', value: 'timestamp' }
       ],
       loading: false
     }

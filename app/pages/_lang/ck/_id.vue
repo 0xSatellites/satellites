@@ -1,5 +1,10 @@
 <template>
   <div>
+    <v-container fill-heigh v-if="loading" class="overlay">
+        <v-layout column justify-center align-center>
+            <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>
+        </v-layout>
+    </v-container>
     <section class="l-item">
       <div class="l-item__frame">
         <div>
@@ -70,15 +75,19 @@
                     @click="order_v1"
                   >
                     {{ $t('id.sell') }}
-                    <v-progress-circular
-                      size="16"
+                  </v-btn>
+                </div>
+                  <v-container fill-heigh v-if="loading">
+                    <v-layout column justify-center align-center>
+                      <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>
+                    </v-layout>
+                  </v-container>
+                <!-- <v-progress-circular
+                      size="100"
                       class="ma-2"
                       v-if="loading"
                       indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-
+                    ></v-progress-circular> -->
                 <div
                   class="l-item__action__btns"
                   v-else-if="approved && order.id"
@@ -167,6 +176,7 @@ import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
+
 
 const config = require('../../../config.json')
 const project = process.env.project

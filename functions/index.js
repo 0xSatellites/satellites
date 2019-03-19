@@ -491,3 +491,44 @@ exports.orderPeriodicUpdatePubSub = functions
     await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     console.info("END orderPeriodicUpdate")
   })
+
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => res.send(
+  "This is bazaaar API"
+));
+
+app.get('/latestorders', async (req, res) => {
+  const result = []
+  console.log(req.query.limit)
+
+  var param = req.query.limit
+  var limit = Number(param)
+  console.log(limit)
+  const snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .orderBy('created', 'desc').limit(limit).get()
+
+  snapshots.forEach(function(doc){
+    var data ={
+      'price': doc.data().price,
+      'id' : doc.data().id,
+      'image': doc.data().metadata.image_url,
+      'ogp': doc.data().ogp,
+      'url': config.host[project] +'/ck/order/' + doc.data().hash
+    }
+    console.log(doc.data())
+    result.push(data)
+  })
+  res.send(result)
+});
+
+app.get('order/:hash', (req, res) => res.send(
+
+));
+
+exports.api = functions
+  .region('asia-northeast1')
+  .https.onRequest(app);

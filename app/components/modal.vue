@@ -7,13 +7,13 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">{{$t('model.sell')}}</div>
+          <div class="l-modal__title">{{$t('modal.sell')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="ogp" alt="" width="85%" />
             </div>
           </div>
-          <div class="l-modal__txt">{{$t('model.postOnSocialMedia')}}</div>
+          <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
           <div class="l-modal__btn">
             <a
               :href="
@@ -37,12 +37,12 @@
               data-show-count="false"
               target="”_blank”"
             >
-              {{$t('model.tweet')}}
+              {{$t('modal.tweet')}}
             </a>
           </div>
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
           </div>
         </div>
       </div>
@@ -54,20 +54,20 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">{{$t('model.approveProcessStarted')}}</div>
+          <div class="l-modal__title">{{$t('modal.approveProcessStarted')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
-          <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
+          <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">{{$t('model.before')}}</div>
+            <div class="l-modal__txt1">{{$t('modal.before')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
           </div>
         </div>
       </div>
@@ -80,19 +80,19 @@
           <div class="l-modal__icon">
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
-          <div class="l-modal__title">{{$t('model.cancel')}}</div>
+          <div class="l-modal__title">{{$t('modal.cancel')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
             </div>
           </div>
-          <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
+          <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
               </div>
           <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
           </div>
         </div>
       </div>
@@ -102,24 +102,32 @@
     <div class="l-modal">
         <div class="l-modal__frame">
             <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-            <div class="l-modal__title">{{$t('model.purchase')}}</div>
+            <div class="l-modal__title">{{$t('modal.purchase')}}</div>
             <div class="l-modal__og">
                 <div id="modalImg">
                     <img  :src="order.metadata.image_url" alt=""  width="50%">
                 </div>
             </div>
-            <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
+            <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">{{$t('model.mypage')}}</div>
+            <div class="l-modal__txt1">{{$t('modal.mypage')}}</div>
             <p ></p>
             <div class="l-modal__close" @click="$emit('transitionTop')">
                 <div class="l-modal__close__icon" ></div>
-                <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>
+                <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
             </div>
         </div>
         </div>
+    </transition>
+    <!-- OGP描画中のローディング -->
+    <transition name="modal" v-else-if="modalNo == 5">
+      <div class="l-modal">
+        <div class="l-modal__frame loading">
+              <video src="~/assets/img/modal/loading.mp4" loop autoplay width="50%"></video>
+        </div>
+      </div>
     </transition>
 </div>
 </template>
@@ -143,5 +151,11 @@ export default {
 
 .white_text {
   color: white;
+}
+
+.loading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

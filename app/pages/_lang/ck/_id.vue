@@ -1,10 +1,5 @@
 <template>
   <div>
-    <v-container fill-heigh v-if="loading" class="overlay">
-        <v-layout column justify-center align-center>
-            <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>
-        </v-layout>
-    </v-container>
     <section class="l-item">
       <div class="l-item__frame">
         <div>
@@ -77,17 +72,6 @@
                     {{ $t('id.sell') }}
                   </v-btn>
                 </div>
-                  <v-container fill-heigh v-if="loading">
-                    <v-layout column justify-center align-center>
-                      <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>
-                    </v-layout>
-                  </v-container>
-                <!-- <v-progress-circular
-                      size="100"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular> -->
                 <div
                   class="l-item__action__btns"
                   v-else-if="approved && order.id"
@@ -290,10 +274,13 @@ export default {
       router.push({ path: '/ck/order/' + this.hash })
     },
     async order_v1(type) {
+      const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
       try {
         console.log('order_v1')
         this.loading = true
         this.waitCancel = true
+        this.modalNo = 5
+        this.modal = true
         const account = this.account
         const asset = this.asset.ck
         const params = this.$route.params
@@ -306,6 +293,7 @@ export default {
         ) {
           alert('make it cheeper')
           this.loading = false
+          this.modal = false
           this.waitCancel = false
           return
         }
@@ -351,6 +339,8 @@ export default {
           var result = await functions.call('order', datas)
           this.hash = result.hash
           this.ogp = result.ogp
+          this.modal = false
+          await sleep(1)
           this.modalNo = 1
           this.modal = true
         }
@@ -359,6 +349,7 @@ export default {
       } catch (err) {
         alert(this.$t('error.message'))
         this.loading = false
+        this.modal = false
         this.waitCancel = false
       }
     },

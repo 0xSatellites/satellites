@@ -57,6 +57,77 @@ const deactivateDocOGP = async doc => {
   console.info("END deactivateDocOGP")
 }
 
+const {google} = require('googleapis');
+const cloudbilling = google.cloudbilling('v1');
+const {auth} = require('google-auth-library');
+const PROJECT_NAME = `projects/${config.billion[project]}`;
+
+exports.subscribe = (event) => {
+  console.log(event)
+  console.log(event.data)
+  const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString());
+  if (pubsubData.costAmount <= pubsubData.budgetAmount) {
+    return Promise.resolve('No action shall be taken on current cost ' +
+      pubsubData.costAmount);
+  }
+
+  return setAuthCredential()
+    .then(() => isBillingEnabled(PROJECT_NAME))
+    .then((enabled) => {
+      if (enabled) {
+        return disableBillingForProject(PROJECT_NAME);
+      }
+      return Promise.resolve('Billing already in disabled state');
+    });
+};
+
+/**
+ * @return {Promise} Credentials set globally
+ */
+function setAuthCredential() {
+  return auth.getApplicationDefault()
+    .then((res) => {
+      let client2 = res.credential;
+      if (client2.createScopedRequired && client2.createScopedRequired()) {
+        client2 = client2.createScoped([
+          'https://www.googleapis.com/auth/cloud-billing'
+        ]);
+      }
+
+      // Set credential globally for all requests
+      google.options({
+        auth: client2
+      });
+    });
+}
+
+/**
+ * @param {string} projectName Name of project to check if billing is enabled
+ * @return {Promise} Whether project has billing enabled or not
+ */
+function isBillingEnabled(projectName) {
+  return cloudbilling.projects.getBillingInfo({
+    name: projectName
+  }).then((res) => res.data.billingEnabled);
+};
+
+/**
+ * @param {string} projectName Name of project disable billing on
+ * @return {Promise} Text containing response from disabling billing
+ */
+function disableBillingForProject(projectName) {
+  return cloudbilling.projects.updateBillingInfo({
+    name: projectName,
+    // Setting this to empty is equivalent to disabling billing.
+    resource: {
+      'billingAccountName': ''
+    }
+  }).then((res) => {
+    return 'Billing disabled successfully: ' + JSON.stringify(res.data);
+  });
+}
+
+
 exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
@@ -138,7 +209,7 @@ exports.order = functions
       255,
       720
     )
-    c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
+    c.fillText(params.coolDownIndex, 840, 305, 720)
     c.font = "bold 75px 'Noto Sans JP Bold'"
     c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
     const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -189,8 +260,8 @@ exports.order = functions
       order.id +
       ' / Gen.' +
       metadata.generation +
-      ' / Cooldown.' +
-      metadata.status.cooldown_index +
+      ' / ' +
+      params.coolDownIndex +
       ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
       config.host[project] +
       'ck/order/' +

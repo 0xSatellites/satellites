@@ -62,7 +62,7 @@
           </div>
           <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
-               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
+               <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
             </div>
             <div class="l-modal__txt1">{{$t('model.before')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
@@ -88,7 +88,7 @@
           </div>
           <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
-               <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
+               <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
               </div>
           <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
@@ -110,7 +110,7 @@
             </div>
             <div class="l-modal__txt1">{{$t('model.transaction')}}</div>
             <div class="l-modal__txt">
-              <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
+              <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
             </div>
             <div class="l-modal__txt1">{{$t('model.mypage')}}</div>
             <p ></p>

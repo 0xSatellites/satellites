@@ -55,6 +55,8 @@
             <img src="~/assets/img/modal/icon.svg" alt="" />
           </div>
           <div class="l-modal__title">{{$t('model.approveProcessStarted')}}</div>
+          <div class="l-modal__txt">{{$t('model.announce')}}</div>
+          <div class="l-modal__txt">{{$t('model.description')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
@@ -64,7 +66,6 @@
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash">Ethescan</a>
             </div>
-            <div class="l-modal__txt1">{{$t('model.before')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('model.close')}}</div>

@@ -21,6 +21,10 @@
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
         "holdLanguage": "/ja/ck/order/"
     },
+    "assets":{
+        "kitty":"CryptoKitties",
+        "oink":"くりぷ豚"
+    },
     "header":{
         "mypage": "マイページ",
         "howto": "使い方",
@@ -72,8 +76,9 @@
         "title": "メンテナンス中",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
     },
-    "kitty":{
-        "message": "キティ持ってないにゃ"
+    "empty":{
+        "kitty": "キティ持ってないにゃ",
+        "oink": "くりぷトン持ってないのだいん"
     },
     "error":{
         "message": "エラー"

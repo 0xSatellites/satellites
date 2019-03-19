@@ -18,6 +18,7 @@
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -50,7 +51,7 @@
                   ></v-img>
                   <v-card-title primary-title>
                   <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('kitty.message') }}</h3>
+                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
                   </div>
                   </v-card-title>
                 </v-card>
@@ -58,6 +59,7 @@
           </v-flex>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -82,15 +84,15 @@
 
       </ul>
         <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.cryptokitties.co/">
+          <a href="https://www.crypt-oink.io">
                 <v-card>
                   <v-img
-                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
+                  v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
                   aspect-ratio="1.75"
                   ></v-img>
                   <v-card-title primary-title>
                   <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('kitty.message') }}</h3>
+                      <h3 class="headline mb-0">{{ $t('empty.oink') }}</h3>
                   </div>
                   </v-card-title>
                 </v-card>

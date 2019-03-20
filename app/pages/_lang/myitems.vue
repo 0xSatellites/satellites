@@ -70,7 +70,7 @@
         ></v-progress-circular>
         <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
           <div>
-            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+            <nuxt-link :to="'/ctn/' + ctn.token_id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.token_id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image_url" /></div>

@@ -172,10 +172,6 @@ export default {
         margin: auto;
     }
 
-    a{
-        text-decoration: none
-    }
-
     .partner{
         margin-right: 1em;
     }

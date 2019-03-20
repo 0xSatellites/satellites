@@ -154,4 +154,8 @@ export default {
   margin-top: 30px;
   display: block;
 }
+
+.text-box{
+  margin: auto;
+}
 </style>

@@ -240,6 +240,7 @@ export default {
           this.price = client.utils.fromWei(order.price)
         })
       this.coolDownIndex = coolDownIndexToSpeed(asset.status.cooldown_index)
+
     }
   },
   computed: {
@@ -336,7 +337,7 @@ export default {
           const datas = {
             order: signedOrder,
             msg: this.msg,
-            coolDownIndexToSpeed: this.coolDownIndex
+            coolDownIndexSpeed: this.coolDownIndex
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

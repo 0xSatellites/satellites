@@ -20,7 +20,9 @@
         "partners":"パートナー",
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
-        "holdLanguage": "/ja/ck/order/"
+        "holdLanguage": "/ja/ck/order/",
+        "holdLanguageCK": "/ja/ck/order/",
+        "holdLanguageCTN": "/ja/ctn/order/"
     },
     "assets":{
         "kitty":"CryptoKitties",

@@ -335,8 +335,7 @@ export default {
           const signedOrder = await client.signOrder(order)
           const datas = {
             order: signedOrder,
-            msg: this.msg,
-            coolDownIndexSpeed: this.coolDownIndex
+            msg: this.msg
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

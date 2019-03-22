@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = process.env.GCLOUD_PROJECT.split('-')[2]
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -30,6 +30,11 @@ const bazaaar_v2 = new web3.eth.Contract(
   config.abi.bazaaar_v2,
   config.contract[project].bazaaar_v2
 )
+const ctn = new web3.eth.Contract(
+  config.abi.ctn,
+  config.contract[project].ctn
+)
+
 const twitter = require('twitter')
 const client = new twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -37,6 +42,35 @@ const client = new twitter({
   access_token_key: process.env.TWITTER_ACCESSTOKEN_KEY,
   access_token_secret: process.env.TWITTER_ACCESSTOKEN_SECRET
 })
+
+const coolDownIndexToSpeed = index => {
+  switch(index) {
+    case 0:
+    return 'Fast'
+    case 1:
+    case 2:
+    return 'Swift'
+    case 3:
+    case 4:
+    return 'Snappy'
+    case 5:
+    case 6:
+    return 'Brisk'
+    case 7:
+    case 8:
+    return 'Plodding'
+    case 9:
+    case 10:
+    return 'Slow'
+    case 11:
+    case 12:
+    return 'Sluggish'
+    case 13:
+    return 'Catatonic'
+    default:
+    return 'unknown'
+  }
+}
 
 const deactivateDocOGP = async doc => {
   console.info("START deactivateDocOGP")
@@ -219,7 +253,7 @@ exports.order = functions
         255,
         720
       )
-      c.fillText(params.coolDownIndexSpeed, 840, 305, 720)
+      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -271,7 +305,7 @@ exports.order = functions
         ' / Gen.' +
         metadata.generation +
         ' / ' +
-        params.coolDownIndexSpeed +
+        coolDownIndexToSpeed(metadata.status.cooldown_index) +
         ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
         config.host[project] +
         'ck/order/' +
@@ -319,9 +353,13 @@ exports.order = functions
       })
       console.info("INFO order 2")
       let metadata = response.data
+      const entities = await ctn.methods.getEntity(order.id).call()
+      console.log(entities)
       metadata.image_url = metadata.image
-      metadata.generation = params.generation
-      metadata.status.cooldown_index = params.cooldown_index
+      metadata.generation = await entities.generation
+      metadata.status = {}
+      metadata.status.cooldown_index = await entities.cooldownIndex
+      console.log(metadata.status.cooldown_index)
       const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'
       })
@@ -361,7 +399,7 @@ exports.order = functions
         255,
         720
       )
-      c.fillText(params.coolDownIndexSpeed, 840, 305, 720)
+      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -413,7 +451,7 @@ exports.order = functions
         ' / Gen.' +
         metadata.generation +
         ' / ' +
-        params.coolDownIndexSpeed +
+        coolDownIndexToSpeed(metadata.status.cooldown_index) +
         ' / #bazaaar #バザー #NFT #Cryptn from @bazaaario ' +
         config.host[project] +
         'ctn/order/' +
@@ -459,7 +497,7 @@ exports.orderMatchedPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(194, 258))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address) {
+    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
       console.info("INFO orderMached 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -525,7 +563,7 @@ exports.orderCancelledPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(130, 194))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address) {
+    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
       console.info("INFO orderCancelled 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -565,13 +603,21 @@ exports.orderPeriodicUpdatePubSub = functions
       bazaaar_v1.getPastEvents('OrderCancelled', {
         fromBlock: (await web3.eth.getBlockNumber()) - 25,
         toBlock: 'latest'
+      }),
+      bazaaar_v2.getPastEvents('OrderMatched', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
+      }),
+      bazaaar_v2.getPastEvents('OrderCancelled', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
     console.info("INFO Sold")
-    console.info(eventResolved[0][0])
+    console.info(eventResolved[2][0])
     console.info("INFO Cancel")
-    console.info(eventResolved[1][0])
+    console.info(eventResolved[3][0])
     console.info("INFO orderPeriodicUpdate 1")
     const batch = db.batch()
     const takers = []
@@ -605,6 +651,36 @@ exports.orderPeriodicUpdatePubSub = functions
           .where('asset', '==', eventResolved[1][i].returnValues.asset)
           .where('id', '==', eventResolved[1][i].returnValues.id.toString())
           .where('maker', '==', eventResolved[1][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
+    for (var i = 0; i < eventResolved[2].length; i++) {
+      takers.push(eventResolved[2][i].returnValues.taker)
+      soldPromises.push(
+        db
+          .collection('order')
+          .where('hash', '==', eventResolved[2][i].raw.topics[1])
+          .where('valid', '==', true)
+          .get()
+      )
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[2][i].returnValues.asset)
+          .where('id', '==', eventResolved[2][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[2][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
+    for (var i = 0; i < eventResolved[3].length; i++) {
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[3][i].returnValues.asset)
+          .where('id', '==', eventResolved[3][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[3][i].returnValues.maker)
           .where('valid', '==', true)
           .get()
       )

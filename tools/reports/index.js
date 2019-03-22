@@ -7,8 +7,9 @@ var day = new Date();
 var yesterday = day.setDate(day.getDate() - 1) ;
 
 
-exports.dailyReports = functions
-  .https.onRequest(async () => {
+exports.dailyReportPubSub = functions
+  .pubsub.topic('dailyReport')
+  .onPublish(async () => {
   var result1 = db.collection('order').where("created", ">", yesterday).get()
   .then(snapshot => {
       orders = snapshot.size

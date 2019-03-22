@@ -11,10 +11,7 @@ const { promisify } = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 const axios = require('axios')
-const {google} = require('googleapis')
-const cloudbilling = google.cloudbilling('v1')
-const {auth} = require('google-auth-library')
-const billion = `projects/${config.billion[project]}`
+
 const Canvas = require('canvas')
 Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Regular.otf', {
   family: 'Noto Sans JP'
@@ -60,36 +57,49 @@ const deactivateDocOGP = async doc => {
   console.info("END deactivateDocOGP")
 }
 
-exports.subscribe = functions.region('asia-northeast1').pubsub.topic('subscribe').onPublish((event) => {
-  const pubsubData = JSON.parse(Buffer.from(event.data.data, 'base64').toString());
+const {google} = require('googleapis');
+const cloudbilling = google.cloudbilling('v1');
+const {auth} = require('google-auth-library');
+const PROJECT_NAME = `projects/${config.billion[project]}`;
+
+exports.subscribe = (event) => {
+  console.log(event)
+  console.log(event.data)
+  const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString());
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
+    console.log("INFO 1")
     return Promise.resolve('No action shall be taken on current cost ' +
       pubsubData.costAmount);
   }
-
+  console.log("INFO 2")
   return setAuthCredential()
-    .then(() => isBillingEnabled(billion))
+    .then(() => isBillingEnabled(PROJECT_NAME))
     .then((enabled) => {
       if (enabled) {
-        return disableBillingForProject(billion);
+        console.log("INFO 3")
+        return disableBillingForProject(PROJECT_NAME);
       }
+      console.log("INFO 4")
       return Promise.resolve('Billing already in disabled state');
     });
-});
+};
 
 /**
  * @return {Promise} Credentials set globally
  */
 function setAuthCredential() {
+  console.log("INFO 5")
   return auth.getApplicationDefault()
     .then((res) => {
       let client2 = res.credential;
+      console.log("INFO 6")
       if (client2.createScopedRequired && client2.createScopedRequired()) {
+        console.log("INFO 7")
         client2 = client2.createScoped([
           'https://www.googleapis.com/auth/cloud-billing'
         ]);
       }
-
+      console.log("INFO 8")
       // Set credential globally for all requests
       google.options({
         auth: client2
@@ -102,6 +112,7 @@ function setAuthCredential() {
  * @return {Promise} Whether project has billing enabled or not
  */
 function isBillingEnabled(projectName) {
+  console.log("INFO 9")
   return cloudbilling.projects.getBillingInfo({
     name: projectName
   }).then((res) => res.data.billingEnabled);
@@ -112,6 +123,7 @@ function isBillingEnabled(projectName) {
  * @return {Promise} Text containing response from disabling billing
  */
 function disableBillingForProject(projectName) {
+  console.log("INFO 10")
   return cloudbilling.projects.updateBillingInfo({
     name: projectName,
     // Setting this to empty is equivalent to disabling billing.
@@ -122,6 +134,7 @@ function disableBillingForProject(projectName) {
     return 'Billing disabled successfully: ' + JSON.stringify(res.data);
   });
 }
+
 
 exports.order = functions
   .region('asia-northeast1')
@@ -204,7 +217,7 @@ exports.order = functions
       255,
       720
     )
-    c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
+    c.fillText(params.coolDownIndex, 840, 305, 720)
     c.font = "bold 75px 'Noto Sans JP Bold'"
     c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
     const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -255,8 +268,8 @@ exports.order = functions
       order.id +
       ' / Gen.' +
       metadata.generation +
-      ' / Cooldown.' +
-      metadata.status.cooldown_index +
+      ' / ' +
+      params.coolDownIndex +
       ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
       config.host[project] +
       'ck/order/' +

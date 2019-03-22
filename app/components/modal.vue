@@ -133,6 +133,36 @@
         </div>
       </div>
     </transition>
+    <!-- Metamask等おすすめ画面 -->
+    <transition name="modal" v-else-if="modalNo == 6">
+      <div class="l-modal">
+        <div class="l-modal__frame">
+          <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
+            <div class="l-modal__title">残高が足りないか、ウォレットへのログインがありません。</div>
+            <div class="l-modal__og">
+                <div id="modalImg">
+                    <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
+                    <img src="~/assets/img/partner/tokenpocket.png" alt=""  width="50%">
+                    </a>
+                </div>
+                <div id="modalImg">
+                    <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
+                    <img src="~/assets/img/partner/tokenpocket.png" alt=""  width="50%">
+                    </a>
+                </div>
+
+            </div>
+            <p ></p>
+            <div class="l-modal__close" @click="$emit('transitionTop')">
+                <div class="l-modal__close__icon" ></div>
+                <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
+            </div>
+              <!-- <div class="text-box"></div>
+              <h2 class="l-personal__title">Get <a href="https://metamask.io/">metamask</a> and login</h2>
+              <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">TokenPocket</a> and login</h2> -->
+        </div>
+      </div>
+    </transition>
 </div>
 </template>
 
@@ -161,5 +191,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.text-box{
+  margin: auto;
 }
 </style>

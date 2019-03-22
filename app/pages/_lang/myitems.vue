@@ -15,6 +15,8 @@
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/">metamask</a> and login</h2>
+      <div class="text-box">or</div>
+      <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">TokenPocket</a> and login</h2>
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">

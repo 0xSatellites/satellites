@@ -155,7 +155,7 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="coolDownIndex"
+      :coolDownIndex="oinkCooldownIndex"
       :modalNo="modalNo"
     ></modal>
   </div>
@@ -346,10 +346,7 @@ export default {
           const signedOrder = await client.signOrder(order)
           const datas = {
             order: signedOrder,
-            msg: this.msg,
-            cooldown_index: this.cooldown_index,
-            coolDownIndexSpeed: this.oinkCooldownIndex,
-            generation: this.generation,
+            msg: this.msg
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

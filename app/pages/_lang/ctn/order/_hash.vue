@@ -102,7 +102,8 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import Modal from '~/components/modal'
-import kitty from '~/plugins/kitty'
+import oink from '~/plugins/oink'
+
 import '@fortawesome/fontawesome-free/css/all.css'
 
 const config = require('../../../../config.json')
@@ -171,21 +172,22 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+        return oink.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
     async purchase() {
+       console.log(this.order)
       try{
         this.loading = true
         const account = this.account
         const order = this.order
 
-        await client.contract.bazaaar_v1.methods
+        await client.contract.bazaaar_v2.methods
           .orderMatch_(
             [
               order.proxy,

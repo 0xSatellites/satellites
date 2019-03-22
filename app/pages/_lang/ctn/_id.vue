@@ -132,7 +132,7 @@
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
+          <nuxt-link :to="'/ctn/order/' + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
@@ -166,7 +166,6 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import oink from '~/plugins/oink'
-import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
 
 const config = require('../../../config.json')
@@ -195,8 +194,8 @@ export default {
       owner: '',
       msg: '',
       host,
-      oinkCooldownIndex: '',
-      generation: ''
+      oinkCooldownIndex: 0,
+      generation: 0
     }
   },
   async asyncData({ store, params, error }) {
@@ -220,19 +219,19 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
-      client.contract.ck.methods
-        .kittyIndexToOwner(params.id)
+      client.contract.ctn.methods
+        .entityIndexToOwner(params.id)
         .call()
         .then(owner => {
           this.owned = owner == this.account.address
         })
 
-      client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
+      client.contract.ctn.methods
+        .entityIndexToApproved(params.id)
         .call()
         .then(approvedAddress => {
           this.approved =
-            approvedAddress == client.contract.bazaaar_v1.options.address
+            approvedAddress == client.contract.bazaaar_v2.options.address
         })
 
       firestore
@@ -245,9 +244,8 @@ export default {
       const entities = await client.contract.ctn.methods
            .getEntity(params.id)
            .call()
-           this.generation = entities.generation
-           this.oinkCooldownIndex = entities.cooldownIndex
-
+          this.generation = await entities.generation
+          this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
     }
   },
   computed: {
@@ -266,8 +264,7 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      this.cooldownIndex = kitty.coolDownIndexToSpeed(index)
-      return kitty.coolDownIndexToSpeed(index)
+      return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
         return oink.getRarity(asset)
@@ -286,7 +283,7 @@ export default {
     transitionOrder() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/ck/order/' + this.hash })
+      router.push({ path: '/ctn/order/' + this.hash })
     },
     async order_v1(type) {
       try {
@@ -294,7 +291,7 @@ export default {
         this.loading = true
         this.waitCancel = true
         const account = this.account
-        const asset = this.asset.ck
+        const asset = this.asset.ctn
         const params = this.$route.params
         const router = this.$router
         const amount = this.price
@@ -309,16 +306,15 @@ export default {
           return
         }
 
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
+        const approved = await client.contract.ctn.methods
+          .entityIndexToApproved(params.id)
           .call()
-
-        if (approved == client.contract.bazaaar_v1.options.address) {
+        if (approved == client.contract.bazaaar_v2.options.address) {
           console.log('approved')
-          const nonce = await client.contract.bazaaar_v1.methods
+          const nonce = await client.contract.bazaaar_v2.methods
             .nonce_(
               account.address,
-              client.contract.ck.options.address,
+              client.contract.ctn.options.address,
               params.id
             )
             .call()
@@ -328,11 +324,11 @@ export default {
           date.setDate(date.getDate() + 7)
           const expiration = Math.round(date.getTime() / 1000)
           const order = {
-            proxy: client.contract.bazaaar_v1.options.address,
+            proxy: client.contract.bazaaar_v2.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
             creatorRoyaltyRecipient: account.address,
-            asset: client.contract.ck.options.address,
+            asset: client.contract.ctn.options.address,
             id: params.id,
             price: wei,
             nonce: nonce,
@@ -345,7 +341,7 @@ export default {
           const datas = {
             order: signedOrder,
             msg: this.msg,
-            coolDownIndex: this.coolDownIndex
+            coolDownIndex: this.oinkCooldownIndex
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash
@@ -366,8 +362,8 @@ export default {
       this.loading = true
       const account = this.account
       const params = this.$route.params
-      client.contract.ck.methods
-        .approve(client.contract.bazaaar_v1.options.address, params.id)
+      client.contract.ctn.methods
+        .approve(client.contract.bazaaar_v2.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
           console.log(hash)
@@ -381,7 +377,7 @@ export default {
           location.reload()
         })
       } catch (err) {
-        alert(this.$t('error.message'))
+        alert(err)
         this.loading = false;
       }
     },
@@ -393,7 +389,7 @@ export default {
         const order = this.order
         console.log(order)
 
-        await client.contract.bazaaar_v1.methods
+        await client.contract.bazaaar_v2.methods
           .orderCancel_(
             [
               order.proxy,

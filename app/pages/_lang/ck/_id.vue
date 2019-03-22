@@ -336,7 +336,7 @@ export default {
           const datas = {
             order: signedOrder,
             msg: this.msg,
-            coolDownIndex: this.coolDownIndex
+            coolDownIndexToSpeed: this.coolDownIndex
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

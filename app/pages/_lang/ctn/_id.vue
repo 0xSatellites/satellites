@@ -194,6 +194,7 @@ export default {
       owner: '',
       msg: '',
       host,
+      cooldownIndex: 0,
       oinkCooldownIndex: 0,
       generation: 0
     }
@@ -245,6 +246,7 @@ export default {
            .getEntity(params.id)
            .call()
           this.generation = await entities.generation
+          this.cooldownIndex = await entities.cooldownIndex
           this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
     }
   },
@@ -341,7 +343,9 @@ export default {
           const datas = {
             order: signedOrder,
             msg: this.msg,
-            coolDownIndex: this.oinkCooldownIndex
+            cooldownIndex: this.cooldownIndex,
+            coolDownIndexToSpeed: this.oinkCooldownIndex,
+            generation: this.generation,
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash

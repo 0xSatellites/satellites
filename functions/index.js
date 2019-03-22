@@ -26,6 +26,10 @@ const bazaaar_v1 = new web3.eth.Contract(
   config.abi.bazaaar_v1,
   config.contract[project].bazaaar_v1
 )
+const bazaaar_v2 = new web3.eth.Contract(
+  config.abi.bazaaar_v2,
+  config.contract[project].bazaaar_v2
+)
 const twitter = require('twitter')
 const client = new twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,

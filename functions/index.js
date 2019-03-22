@@ -219,7 +219,7 @@ exports.order = functions
         255,
         720
       )
-      c.fillText('Cooldown.' + metadata.status.cooldown_index, 840, 305, 720)
+      c.fillText(params.coolDownIndexToSpeed, 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -270,8 +270,8 @@ exports.order = functions
         order.id +
         ' / Gen.' +
         metadata.generation +
-        ' / Cooldown.' +
-        metadata.status.cooldown_index +
+        ' / ' +
+        params.coolDownIndexToSpeed +
         ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
         config.host[project] +
         'ck/order/' +
@@ -318,8 +318,11 @@ exports.order = functions
         responseType: 'json'
       })
       console.info("INFO order 2")
-      const metadata = response.data
-      const imagePromise = axios.get(metadata.image, {
+      let metadata = response.data
+      metadata.image_url = metadata.image
+      metadata.generation = params.generation
+      metadata.status.cooldown_index = params.cooldown_index
+      const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'
       })
       const promises = [readFile('./assets/img/template_en.png'), imagePromise]
@@ -353,12 +356,12 @@ exports.order = functions
       c.fillStyle = '#fff'
       c.font = "40px 'Noto Sans JP'"
       c.fillText(
-        'Id.' + order.id + ' / ' + 'Description.' + metadata.description,
+        'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
         840,
         255,
         720
       )
-      c.fillText('Name.' + metadata.name, 840, 305, 720)
+      c.fillText(params.coolDownIndexToSpeed, 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -407,10 +410,10 @@ exports.order = functions
         'NOW ON SALE!!' +
         ' / Id.' +
         order.id +
-        ' / Description.' +
-        metadata.description +
-        ' / Name.' +
-        metadata.name +
+        ' / Gen.' +
+        metadata.generation +
+        ' / ' +
+        params.coolDownIndexToSpeed +
         ' / #bazaaar #バザー #NFT #Cryptn from @bazaaario ' +
         config.host[project] +
         'ctn/order/' +

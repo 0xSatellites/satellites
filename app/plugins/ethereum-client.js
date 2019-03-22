@@ -11,6 +11,11 @@ const contract = {
     config.abi.ck,
     config.contract[process.env.project].ck
   ),
+  ctn: new web3.eth.Contract(
+    config.abi.ctn,
+    config.contract[process.env.project].ctn
+  ),
+  ctn_distributer: config.contract[process.env.project].ctn_distributer
 }
 
 const account = {

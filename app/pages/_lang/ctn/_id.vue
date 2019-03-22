@@ -4,21 +4,21 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img :src="asset.image_url" alt="" />
+            <img :src="asset.image" alt="" />
           </div>
         </div>
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
-          <div class="l-item__txt"># {{ asset.id }}</div>
+          <div class="l-item__txt">{{ asset.description }}</div>
           <div class="l-item__txt">
-            CryptoKitties
+            Crypt-Oink
           </div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
+          <li><strong>Gen：</strong> {{generation}} </li>
+          <li><strong>Cooldown：</strong> {{oinkCooldownIndex}}</li>
           </ul>
 
           <v-form>
@@ -70,8 +70,15 @@
                     @click="order_v1"
                   >
                     {{ $t('id.sell') }}
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
                   </v-btn>
                 </div>
+
                 <div
                   class="l-item__action__btns"
                   v-else-if="approved && order.id"
@@ -158,9 +165,9 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import oink from '~/plugins/oink'
 import kitty from '~/plugins/kitty'
 import Modal from '~/components/modal'
-
 
 const config = require('../../../config.json')
 const project = process.env.project
@@ -188,12 +195,13 @@ export default {
       owner: '',
       msg: '',
       host,
-      coolDownIndex: ""
+      oinkCooldownIndex: '',
+      generation: ''
     }
   },
   async asyncData({ store, params, error }) {
     try {
-      const asset = await kitty.getKittyById(params.id)
+      const asset = await oink.getOinkById(params.id)
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
@@ -233,6 +241,13 @@ export default {
           store.dispatch('order/setOrder', order)
           this.price = client.utils.fromWei(order.price)
         })
+
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+           this.generation = entities.generation
+           this.oinkCooldownIndex = entities.cooldownIndex
+
     }
   },
   computed: {
@@ -251,11 +266,11 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      this.coolDownIndex = kitty.coolDownIndexToSpeed(index)
+      this.cooldownIndex = kitty.coolDownIndexToSpeed(index)
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+        return oink.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
@@ -328,7 +343,7 @@ export default {
             salt: salt,
             expiration: expiration,
             creatorRoyaltyRatio: 0,
-            referralRatio: 0
+            referralRatio: 1000
           }
           const signedOrder = await client.signOrder(order)
           const datas = {

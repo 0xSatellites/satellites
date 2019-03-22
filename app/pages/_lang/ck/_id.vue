@@ -239,6 +239,7 @@ export default {
           store.dispatch('order/setOrder', order)
           this.price = client.utils.fromWei(order.price)
         })
+      this.coolDownIndex = coolDownIndexToSpeed(asset.status.cooldown_index)
     }
   },
   computed: {
@@ -257,7 +258,6 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      this.coolDownIndex = kitty.coolDownIndexToSpeed(index)
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {

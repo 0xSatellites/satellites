@@ -343,7 +343,7 @@ export default {
           const datas = {
             order: signedOrder,
             msg: this.msg,
-            cooldownIndex: this.cooldownIndex,
+            cooldown_index: this.cooldownIndex,
             coolDownIndexToSpeed: this.oinkCooldownIndex,
             generation: this.generation,
           }

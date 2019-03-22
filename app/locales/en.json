@@ -45,7 +45,9 @@
         "description": "It takes while before the asset is ready for sales",
         "cancel": "Cancel started!",
         "purchase": "Purchase started!",
-        "mypage": "It takes while before it reflects to mypage"
+        "mypage": "It takes while before it reflects to mypage",
+        "error":"Do you have your wallet ready and enough balance?",
+        "error2":"Please prepare a wallet from the following services"
     },
     "myitems":{
         "mypage": "Mypage",

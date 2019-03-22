@@ -216,8 +216,9 @@ export default {
             this.loading = false
           })
         } catch (err) {
-        alert(this.$t('error.message'))
         this.loading = false;
+        this.modalNo = 6
+        this.modal = true
         }
     },
     closeModal() {

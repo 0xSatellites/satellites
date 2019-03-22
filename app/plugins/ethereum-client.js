@@ -15,6 +15,7 @@ const contract = {
     config.abi.ctn,
     config.contract[process.env.project].ctn
   ),
+  ctn_distributer: config.contract[process.env.project].ctn_distributer
 }
 
 const account = {

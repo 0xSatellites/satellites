@@ -193,7 +193,7 @@ export default {
               order.taker,
               order.creatorRoyaltyRecipient,
               order.asset,
-              order.maker
+              client.contract.ctn_distributer
             ],
             [
               order.id,

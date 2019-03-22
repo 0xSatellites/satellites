@@ -49,13 +49,14 @@
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
-            <v-layout>
-                <v-flex xs12 sm6 offset-sm3>
+        <v-container grid-list-md align-center justify-space-between>
+            <v-layout row wrap justify-center>
+                <v-flex xs6 sm4>
                 <a href="https://www.cryptokitties.co/">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
-                        aspect-ratio="1.75"
+                        aspect-ratio="1.2"
                         ></v-img>
 
                         <v-card-title primary-title>
@@ -66,7 +67,24 @@
                     </v-card>
                 </a>
                 </v-flex>
+                <v-flex xs6 sm4>
+                <a href="https://www.crypt-oink.io/">
+                    <v-card>
+                        <v-img
+                        v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
+                        aspect-ratio="1.2"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">Crypt-Oink</h3>
+                        </div>
+                        </v-card-title>
+                    </v-card>
+                </a>
+                </v-flex>
             </v-layout>
+        </v-container>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.market') }}</h2>

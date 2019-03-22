@@ -53,7 +53,6 @@ const getRarity = kitty => {
   return rarity
 }
 
-
 const timeConverter = timestamp =>{
   var _d = new Date(timestamp);
 

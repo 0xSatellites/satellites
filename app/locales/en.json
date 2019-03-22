@@ -22,6 +22,10 @@
         "contactText":"Please contact us via Twitter or email.",
         "holdLanguage": "/ck/order/"
     },
+    "assets":{
+        "kitty":"CryptoKitties",
+        "oink":"Crypt-Oink"
+    },
     "header":{
         "mypage": "MyPage",
         "howto": "HowTo",
@@ -75,8 +79,9 @@
         "title2": "Under maintenance",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
     },
-    "kitty":{
-        "message": "You don't have kitty now!!"
+    "empty":{
+        "kitty": "You don't have kitty now!!",
+        "oink": "You don't have Crypton now!!"
     },
     "error":{
         "message": "error"

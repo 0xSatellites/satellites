@@ -41,7 +41,8 @@
         "close": "Close",
         "approveProcessStarted": "Approve started!",
         "transaction": "Transaction",
-        "before": " It takes while before the asset is ready for sales",
+        "announce": "Once its approved, please make a sell order",
+        "description": "It takes while before the asset is ready for sales",
         "cancel": "Cancel started!",
         "purchase": "Purchase started!",
         "mypage": "It takes while before it reflects to mypage"

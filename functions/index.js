@@ -57,6 +57,85 @@ const deactivateDocOGP = async doc => {
   console.info("END deactivateDocOGP")
 }
 
+const {google} = require('googleapis');
+const cloudbilling = google.cloudbilling('v1');
+const {auth} = require('google-auth-library');
+const PROJECT_NAME = `projects/${config.billion[project]}`;
+
+exports.subscribe = (event) => {
+  console.log(event)
+  console.log(event.data)
+  const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString());
+  if (pubsubData.costAmount <= pubsubData.budgetAmount) {
+    console.log("INFO 1")
+    return Promise.resolve('No action shall be taken on current cost ' +
+      pubsubData.costAmount);
+  }
+  console.log("INFO 2")
+  return setAuthCredential()
+    .then(() => isBillingEnabled(PROJECT_NAME))
+    .then((enabled) => {
+      if (enabled) {
+        console.log("INFO 3")
+        return disableBillingForProject(PROJECT_NAME);
+      }
+      console.log("INFO 4")
+      return Promise.resolve('Billing already in disabled state');
+    });
+};
+
+/**
+ * @return {Promise} Credentials set globally
+ */
+function setAuthCredential() {
+  console.log("INFO 5")
+  return auth.getApplicationDefault()
+    .then((res) => {
+      let client2 = res.credential;
+      console.log("INFO 6")
+      if (client2.createScopedRequired && client2.createScopedRequired()) {
+        console.log("INFO 7")
+        client2 = client2.createScoped([
+          'https://www.googleapis.com/auth/cloud-billing'
+        ]);
+      }
+      console.log("INFO 8")
+      // Set credential globally for all requests
+      google.options({
+        auth: client2
+      });
+    });
+}
+
+/**
+ * @param {string} projectName Name of project to check if billing is enabled
+ * @return {Promise} Whether project has billing enabled or not
+ */
+function isBillingEnabled(projectName) {
+  console.log("INFO 9")
+  return cloudbilling.projects.getBillingInfo({
+    name: projectName
+  }).then((res) => res.data.billingEnabled);
+};
+
+/**
+ * @param {string} projectName Name of project disable billing on
+ * @return {Promise} Text containing response from disabling billing
+ */
+function disableBillingForProject(projectName) {
+  console.log("INFO 10")
+  return cloudbilling.projects.updateBillingInfo({
+    name: projectName,
+    // Setting this to empty is equivalent to disabling billing.
+    resource: {
+      'billingAccountName': ''
+    }
+  }).then((res) => {
+    return 'Billing disabled successfully: ' + JSON.stringify(res.data);
+  });
+}
+
+
 exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {

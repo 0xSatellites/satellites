@@ -138,28 +138,49 @@
       <div class="l-modal">
         <div class="l-modal__frame">
           <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
-            <div class="l-modal__title">残高が足りないか、ウォレットへのログインがありません。</div>
+            <div class="l-modal__title">{{$t('modal.error')}}</div>
+            <div class="l-modal__txt">{{$t('modal.error2')}}</div>
             <div class="l-modal__og">
-                <div id="modalImg">
-                    <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
-                    <img src="~/assets/img/partner/tokenpocket.png" alt=""  width="50%">
+             <v-container grid-list-md align-center justify-space-between>
+                <v-layout row wrap justify-center>
+                  <v-flex xs6 sm3>
+                    <a href="https://metamask.io/">
+                        <v-card class="partner pa-3">
+                            <v-img
+                            v-bind:src="require('~/assets/img/modal/metamask.jpeg')"
+                            aspect-ratio="1"
+                            ></v-img>
+                        </v-card>
                     </a>
-                </div>
-                <div id="modalImg">
+                    </v-flex>
+                    <v-flex xs6 sm3>
                     <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
-                    <img src="~/assets/img/partner/tokenpocket.png" alt=""  width="50%">
+                        <v-card class="partner pa-3">
+                            <v-img
+                            v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
+                            aspect-ratio="1"
+                            ></v-img>
+                        </v-card>
                     </a>
-                </div>
-
+                    </v-flex>
+                    <v-flex xs6 sm3>
+                    <a href="https://www.go-wallet.app/">
+                        <v-card class="partner pa-3">
+                            <v-img
+                            v-bind:src="require('~/assets/img/partner/GoWallet.png')"
+                            aspect-ratio="1"
+                            ></v-img>
+                        </v-card>
+                    </a>
+                    </v-flex>
+                </v-layout>
+            </v-container>
             </div>
             <p ></p>
             <div class="l-modal__close" @click="$emit('transitionTop')">
                 <div class="l-modal__close__icon" ></div>
                 <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
             </div>
-              <!-- <div class="text-box"></div>
-              <h2 class="l-personal__title">Get <a href="https://metamask.io/">metamask</a> and login</h2>
-              <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">TokenPocket</a> and login</h2> -->
         </div>
       </div>
     </transition>

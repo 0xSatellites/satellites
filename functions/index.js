@@ -358,7 +358,7 @@ exports.order = functions
       metadata.image_url = metadata.image
       metadata.generation = await entities.generation
       metadata.status = {}
-      metadata.status.cooldown_index = await entities.cooldownIndex
+      metadata.status.cooldown_index = await Number(entities.cooldownIndex)
       console.log(metadata.status.cooldown_index)
       const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'

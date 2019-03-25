@@ -1,0 +1,4 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'myTokens', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'tools/reports'

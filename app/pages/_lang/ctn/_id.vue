@@ -139,6 +139,7 @@
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
+              <div>{{recommend.metadata.status.cooldown_index}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
@@ -155,7 +156,7 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="oinkCooldownIndex"
+      :coolDownIndex="coolDownIndex"
       :modalNo="modalNo"
     ></modal>
   </div>
@@ -194,7 +195,6 @@ export default {
       owner: '',
       msg: '',
       host,
-      cooldown_index: 0,
       oinkCooldownIndex: 0,
       generation: 0
     }
@@ -245,6 +245,7 @@ export default {
       const entities = await client.contract.ctn.methods
            .getEntity(params.id)
            .call()
+          console.log(entities)
           this.generation = await entities.generation
           this.cooldown_index = await entities.cooldownIndex
           this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
@@ -269,10 +270,10 @@ export default {
       return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return oink.getRarity(asset)
+      return oink.getRarity(asset)
     },
     fromWei(wei) {
-        return client.utils.fromWei(wei)
+      return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false

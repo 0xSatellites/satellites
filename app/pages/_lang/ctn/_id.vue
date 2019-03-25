@@ -256,13 +256,14 @@ export default {
         .getLowestCostOrderByMakerId(client.account.address, params.id)
         .then(order => {
           store.dispatch('order/setOrder', order)
-          this.price = client.utils.fromWei(order.price)
+          if(order.price){
+            this.price = client.utils.fromWei(order.price)
+          }
         })
 
       const entities = await client.contract.ctn.methods
            .getEntity(params.id)
            .call()
-          console.log(entities)
           this.generation = await entities.generation
           this.cooldown_index = await entities.cooldownIndex
           this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))

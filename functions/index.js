@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.GCLOUD_PROJECT.split('-')[2]
+const project = process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -358,7 +358,7 @@ exports.order = functions
       metadata.image_url = metadata.image
       metadata.generation = await entities.generation
       metadata.status = {}
-      metadata.status.cooldown_index = await entities.cooldownIndex
+      metadata.status.cooldown_index = await Number(entities.cooldownIndex)
       console.log(metadata.status.cooldown_index)
       const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'

@@ -12,5 +12,8 @@
     "deploy:stg": "firebase use stg && firebase deploy",
     "deploy:prd": "firebase use prd && firebase deploy",
     "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "axios": "^0.18.0"
   }
 }

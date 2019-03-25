@@ -125,7 +125,7 @@
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link v-if="recommend === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
+          <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
@@ -134,7 +134,7 @@
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
-          <nuxt-link v-else-if="recommend === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
+          <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>

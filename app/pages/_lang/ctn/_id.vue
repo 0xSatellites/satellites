@@ -245,8 +245,11 @@ export default {
         .entityIndexToApproved(params.id)
         .call()
         .then(approvedAddress => {
+          console.log(approvedAddress)
           this.approved =
             approvedAddress == client.contract.bazaaar_v2.options.address
+          console.log(client.contract.bazaaar_v2.options.address)
+
         })
 
       firestore
@@ -348,15 +351,15 @@ export default {
             proxy: client.contract.bazaaar_v2.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: account.address,
+            creatorRoyaltyRecipient: config.recipient[project].ctn,
             asset: client.contract.ctn.options.address,
             id: params.id,
             price: wei,
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: 0,
-            referralRatio: 1000
+            creatorRoyaltyRatio: 500,
+            referralRatio: 500
           }
           const signedOrder = await client.signOrder(order)
           const datas = {
@@ -398,9 +401,12 @@ export default {
         .on('confirmation', (confirmationNumber, receipt) => {
           console.log(receipt)
           location.reload()
+        }).catch((err) => {
+          alert(this.$t('error.message'))
+          this.loading = false;
         })
       } catch (err) {
-        alert(err)
+        alert(this.$t('error.message'))
         this.loading = false;
       }
     },

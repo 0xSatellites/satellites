@@ -30,7 +30,7 @@
     "contract":{
         "sand":{
             "bazaaar_v1":"0xD78309087c48eEb209D1738e3E25Ec5C1aBCe023",
-            "bazaaar_v2":"0xd3e01223beffb405441a954c2ceab25989360800",
+            "bazaaar_v2":"0xD3E01223BEFfB405441a954C2CeAB25989360800",
             "ck":"0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF",
             "ctn":"0x587Ae915D4ccaa5C2220c638069f2605e1F7404C",
             "ctn_distributer":"0x1fa1c7d7c794f50e0400bbfccc405ae7870a5726"

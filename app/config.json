@@ -30,7 +30,7 @@
     "contract":{
         "sand":{
             "bazaaar_v1":"0xD78309087c48eEb209D1738e3E25Ec5C1aBCe023",
-            "bazaaar_v2":"0xd3e01223beffb405441a954c2ceab25989360800",
+            "bazaaar_v2":"0xD3E01223BEFfB405441a954C2CeAB25989360800",
             "ck":"0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF",
             "ctn":"0x587Ae915D4ccaa5C2220c638069f2605e1F7404C",
             "ctn_distributer":"0x1fa1c7d7c794f50e0400bbfccc405ae7870a5726"
@@ -97,5 +97,19 @@
         "sand":"https://blockbase-bazaaar-sand.appspot.com/",
         "staging":"https://alien-outlet-233005.appspot.com/",
         "production":"https://bazaaar.io/"
+    },
+    "recipient":{
+        "sand":{
+            "bazaaar":"0x5692Af1f5384b15e881E6D9a6A0DE248D104050A",
+            "ctn":"0x2840CBd74EF8ea9d8Bdd35F33CC77024792D2DfD"
+        },
+        "staging":{
+            "bazaaar":"",
+            "ctn":""
+        },
+        "production":{
+            "bazaaar":"",
+            "ctn":""
+        }
     }
 }

@@ -233,7 +233,7 @@ export default {
           store.dispatch('order/setOrder', order)
           this.price = client.utils.fromWei(order.price)
         })
-      this.coolDownIndex = this.coolDownIndexToSpeed(asset.status.cooldown_index)
+      // this.coolDownIndex = this.coolDownIndexToSpeed(asset.status.cooldown_index)
     }
   },
   computed: {
@@ -370,6 +370,9 @@ export default {
         .on('confirmation', (confirmationNumber, receipt) => {
           console.log(receipt)
           location.reload()
+        }).catch((err) => {
+          alert(this.$t('error.message'))
+          this.loading = false;
         })
       } catch (err) {
         alert(this.$t('error.message'))

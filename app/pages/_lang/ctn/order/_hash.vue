@@ -106,6 +106,7 @@ import oink from '~/plugins/oink'
 
 import '@fortawesome/fontawesome-free/css/all.css'
 
+const project = process.env.project
 const config = require('../../../../config.json')
 
 export default {
@@ -195,7 +196,7 @@ export default {
               order.taker,
               order.creatorRoyaltyRecipient,
               order.asset,
-              client.contract.ctn_distributer
+              config.recipient[project].bazaaar
             ],
             [
               order.id,

@@ -22,6 +22,7 @@
     "google-auth-library": "^3.1.1",
     "googleapis": "^38.0.0",
     "twitter": "^1.7.1",
+    "typedarray-to-buffer": "^3.1.5",
     "web3": "1.0.0-beta.46"
   },
   "private": true,

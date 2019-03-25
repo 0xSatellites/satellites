@@ -72,14 +72,14 @@
         ></v-progress-circular>
         <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
           <div>
-            <nuxt-link :to="'/ctn/' + ctn.token_id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ctn.token_id.toString())'>{{ $t('myitems.sell') }}</div>
+            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="ctn.image_url" /></div>
+              <div class="c-card__img"><img :src="ctn.image" /></div>
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ ctn.token_id }}</div>
-              <div class="c-card__txt">Gen {{ctn.generation}} : {{coolDownIndexToSpeed(ctn.cooldown_index)}}</div>
+              <!-- <div class="c-card__txt"># {{ ctn.token_id }}</div>
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{coolDownIndexToSpeed(ctn.cooldown_index)}}</div> -->
             </nuxt-link>
           </div>
         </li>
@@ -144,6 +144,7 @@ export default {
 
       oink.getOinksByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
+        console.log(tokens)
         store.dispatch('oink/setOinks', tokens)
       })
 

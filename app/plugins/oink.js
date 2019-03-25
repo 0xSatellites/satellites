@@ -23,7 +23,7 @@ const getOinkById = async id => {
   return result.data
 }
 
-const coolDownIndexToSpeed = async index => {
+const coolDownIndexToSpeed = index => {
   switch(index) {
     case 0:
     return 'Fast'

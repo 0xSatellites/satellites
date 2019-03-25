@@ -233,7 +233,6 @@ export default {
           store.dispatch('order/setOrder', order)
           this.price = client.utils.fromWei(order.price)
         })
-      this.coolDownIndex = this.coolDownIndexToSpeed(asset.status.cooldown_index)
     }
   },
   computed: {

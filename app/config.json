@@ -39,13 +39,13 @@
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
-            "ctn":""
+            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1"
         },
         "production":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
-            "ctn":""
+            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1"
         }
     },
     "firebase":{

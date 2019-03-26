@@ -61,7 +61,7 @@
 
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.image_url" alt="" width="50%" />
+              <img :src="asset.image" alt="" width="40%" />
             </div>
           </div>
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>

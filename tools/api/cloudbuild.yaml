@@ -1,4 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'myTokens', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
-  dir: 'tools/reports/'
+  args: ['beta', 'functions', 'deploy', 'getOinksByAddress', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'tools/api/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'getOinkById', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'tools/api/'

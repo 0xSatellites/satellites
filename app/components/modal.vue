@@ -62,7 +62,7 @@
 
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.image" alt="" width="40%" />
+              <img :src="asset.image_url" alt="" width="40%" />
             </div>
           </div>
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
@@ -109,8 +109,7 @@
             <div class="l-modal__icon"><img src="~/assets/img/modal/icon.svg" alt=""></div>
             <div class="l-modal__title">{{$t('modal.purchase')}}</div>
             <div class="l-modal__og">
-                <div id="modalImg">
-                    <img  :src="order.metadata.image_url" alt=""  width="50%">
+                <div id="modalImg"> height="30%">
                 </div>
             </div>
             <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>

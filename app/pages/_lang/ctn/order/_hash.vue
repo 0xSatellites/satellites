@@ -224,14 +224,15 @@ export default {
           )
           .send({ from: account.address, value: order.price })
           .on('transactionHash', hash => {
-            console.log(hash)
+            // console.log(hash)
             this.hash = hash
             this.modal = true
             this.loading = false
           })
         } catch (err) {
-        alert(this.$t('error.message'))
         this.loading = false;
+        this.modalNo = 6
+        this.modal = true
         }
     },
     closeModal() {

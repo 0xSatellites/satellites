@@ -78,8 +78,8 @@
               <div class="c-card__img"><img :src="ctn.image" /></div>
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <!-- <div class="c-card__txt"># {{ ctn.token_id }}</div>
-              <div class="c-card__txt">Gen {{ctn.generation}} : {{coolDownIndexToSpeed(ctn.cooldown_index)}}</div> -->
+              <div class="c-card__txt"># {{ ctn.id }}</div>
+              <div class="c-card__txt">Gen {{ctn.id}} : {{coolDownIndexToSpeed(ctn.id)}}</div>
             </nuxt-link>
           </div>
         </li>
@@ -144,7 +144,6 @@ export default {
 
       oink.getOinksByWalletAddress(client.account.address).then(tokens => {
         this.loading = false
-        console.log(tokens)
         store.dispatch('oink/setOinks', tokens)
       })
 

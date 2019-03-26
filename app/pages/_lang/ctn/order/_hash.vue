@@ -8,8 +8,8 @@
         <div class="l-information__name">
           {{ order.metadata.name }}
         </div>
-        <div class="l-information__txt">#{{ order.metadata.id }}</div>
-        <div class="l-information__txt">CryptoKitties</div>
+        <div class="l-information__txt">#{{ order.id }}</div>
+        <div class="l-information__txt">{{$t('assets.oink')}}</div>
         <ul class="l-information__data">
           <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></li>
         </ul>
@@ -48,14 +48,12 @@
             <div v-if="order.valid">
               <a
                 :href="
-                  'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
+                  'https://twitter.com/share?url=https://bazaaar.io/ctn/order/' +
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +
                     order.metadata.name +
-                    '/ Gen.' +
-                    order.metadata.generation +
-                    '&hashtags=bazaaar, バザール, CryptoKitties'
+                    '&hashtags=bazaaar, バザール, くりぷ豚'
                 "
                 class="twitter-share-button"
                 data-size="large"
@@ -74,13 +72,22 @@
       <h2 class="c-index__title">{{$t('hash.relatedAsset')}}</h2>
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link :to="'/ck/order/' + recommend.hash" class="c-card">
+          <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
+          <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <!-- <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div> -->
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
@@ -108,6 +115,8 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 const project = process.env.project
 const config = require('../../../../config.json')
+const ck = config.contract[project].ck
+const ctn = config.contract[project].ctn
 
 export default {
   components: {
@@ -131,7 +140,9 @@ export default {
       checkbox: false,
       modal: false,
       modalNo: 4,
-      hash: ''
+      hash: '',
+      ck,
+      ctn
     }
   },
 

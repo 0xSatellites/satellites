@@ -9,9 +9,7 @@
           </div>
           <div class="l-modal__title">{{$t('modal.sell')}}</div>
           <div class="l-modal__og">
-            <div id="modalImg">
               <img :src="ogp" alt="" width="85%" />
-            </div>
           </div>
           <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
           <div class="l-modal__btn">

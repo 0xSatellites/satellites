@@ -18,8 +18,8 @@
             <a
               :href="
                 'https://twitter.com/share?url=' +
-                  host +
-                  'ck/order/' +
+                  host + type.symbol +
+                  '/order/' +
                   hash +
                   '&text=' +
                   'NOW ON SALE!! ' +
@@ -30,7 +30,8 @@
                   ' / ' +
                   coolDownIndex +
                   ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, CryptoKitties'
+                  '&hashtags=bazaaar, バザー, ' +
+                  type.name
               "
               class="twitter-share-button"
               data-size="large"
@@ -189,7 +190,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex', 'type'],
     computed: {
     order() {
       return this.$store.getters['order/order']

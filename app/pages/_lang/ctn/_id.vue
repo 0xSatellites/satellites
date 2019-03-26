@@ -216,7 +216,9 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      const asset = await oink.getOinkById(params.id)
+      let result = await oink.getOinkById(params.id)
+      result.image_url = result.image
+      const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)

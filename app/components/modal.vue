@@ -126,7 +126,7 @@
     <transition name="modal" v-else-if="modalNo == 5">
       <div class="l-modal">
         <div class="l-modal__frame loading">
-              <video src="~/assets/img/modal/loading.mp4" loop autoplay width="50%"></video>
+              <img src="~/assets/img/modal/loading.gif" width="50%" alt="">
         </div>
       </div>
     </transition>

@@ -89,7 +89,7 @@
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
-              <!-- <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div> -->
+              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>

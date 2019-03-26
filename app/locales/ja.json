@@ -16,10 +16,17 @@
         "subDiscription3":"アセットごとに開発されたインターフェースがユーザビリティを高めます。",
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
+        "market":"マーケット",
         "partners":"パートナー",
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
-        "holdLanguage": "/ja/ck/order/"
+        "holdLanguage": "/ja/ck/order/",
+        "holdLanguageCK": "/ja/ck/order/",
+        "holdLanguageCTN": "/ja/ctn/order/"
+    },
+    "assets":{
+        "kitty":"CryptoKitties",
+        "oink":"くりぷ豚"
     },
     "header":{
         "mypage": "マイページ",
@@ -29,17 +36,19 @@
         "topHD": "/ja/",
         "mypageHD": "/ja/myitems"
     },
-    "model":{
+    "modal":{
         "sell": "出品されました!",
         "postOnSocialMedia": "SNSに投稿しましょう",
         "tweet": "twitterに投稿",
         "close": "閉じる",
         "approveProcessStarted": "承認処理を受付ました！",
         "transaction": "トランザクション",
-        "before": "承認完了後、出品可能になるまで少しお時間がかかります",
+        "announce": "承認完了後、出品手続きを行ってください",
         "cancel": "キャンセルしました！",
         "purchase": "購入処理を受付ました！",
-        "mypage": "※購入完了後マイページの反映には少しお時間がかかります"
+        "mypage": "※購入完了後マイページの反映には少しお時間がかかります",
+        "error":"残高が足りないか、ウォレットが設定されていません",
+        "error2":"以下のサービスからウォレットをご用意ください"
     },
     "myitems":{
         "mypage": "マイページ",
@@ -55,6 +64,7 @@
     },
     "id":{
         "inputMessage": "一言メッセージを入力できます（オプション）",
+        "fee":"手数料10%を頂戴します",
         "approve": "承認する",
         "sell": "出品する",
         "change": "金額変更する",
@@ -72,8 +82,9 @@
         "title": "メンテナンス中",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
     },
-    "kitty":{
-        "message": "キティ持ってないにゃ"
+    "empty":{
+        "kitty": "キティ持ってないにゃ",
+        "oink": "くりぷトン持ってないのだいん"
     },
     "error":{
         "message": "エラー"

@@ -1,52 +1,85 @@
 <template>
 <v-content>
-    <v-container>
-        <v-card-text color="teal">
-            <div class="display-1 text-md-center">Information</div>
-            <div class="info__news">
-                <div class="info__news__item">
-                    <p class="info__news__item__datetime">2019.03.01</p>
-                    <a href="https://harukataro.com/bazaaar/" class="info__news__item__title">ブロックチェーンブロガーのはるかさんにbazaaar.ioの使い方を記事にしていただきました！</a>
-                </div>
-                <div class="info__news__item">
-                    <p class="info__news__item__datetime">2019.03.01</p>
-                    <a href="https://dappsmarket.net/other/bazaaar-io-howtoplay/" class="info__news__item__title">dApps marketさんにbazaaar.ioの使い方を記事にしていただきました！</a>
-                </div>
-            </div>
-        </v-card-text>
-    </v-container>
+    <v-card-text color="teal">
+    <div class="display-1 text-md-center pa-3">Information</div>
+        <v-layout row>
+            <v-flex xs12 sm8 offset-sm2>
+            <v-card flat>
+                <v-divider></v-divider>
+                <template v-for="(item, index) in items">
+
+                    <v-divider
+                    v-if="item.divider"
+                    :key="index"
+                    ></v-divider>
+
+                    <v-card
+                    flat
+                    v-else
+                    :key="item.title"
+                    avatar
+                    :href="item.url"
+                    target="_blank"
+                    class="news__item"
+                    >
+                    <v-list-tile-avatar class="news__item__avatar">
+                        <img :src="item.avatar">
+                    </v-list-tile-avatar>
+                    <div class="news__item__text">
+                        <div class="news__date">{{item.date}}</div>
+                        <div>{{item.title}}</div>
+                    </div>
+                    </v-card>
+                </template>
+                <v-divider></v-divider>
+            </v-card>
+            </v-flex>
+        </v-layout>
+    </v-card-text>
 </v-content>
 </template>
 
 <script>
+export default {
+    data () {
+      return {
+        items: [
+          {
+            avatar: 'https://harukataro.com/wp-content/uploads/2018/08/inu-1-150x150.png',
+            date: '2019.03.01',
+            title: "ブロックチェーンブロガーのはるかさんにbazaaar.ioの使い方を記事にしていただきました！",
+            url:'https://harukataro.com/bazaaar/'
+          },
+          { divider: true, inset: true },
+          {
+            avatar: 'https://dappsmarket.net/wp-content/themes/dappsmarket2/images/prof.png',
+            date: '2019.03.01',
+            title: "dApps marketさんにbazaaar.ioの使い方を記事にしていただきました！",
+            url: 'https://dappsmarket.net/other/bazaaar-io-howtoplay/'
+          },
+        ]
+      }
+    },
+  }
 </script>
 
 <style scoped>
-    .info__news {
-    transform: translateY(-10rem);
-    background-color: #fff;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.04);
-    padding: 3rem;
-    width: 100%;
-    position: relative;
-    margin-top: 10rem;
-    }
+.news__date{
+    color:grey;
+    font-size:0.9em;
+}
 
-    .info__news__item{
-        margin-bottom: 2rem;
-        z-index: 10000;
-        position: relative;
-    }
+.news__item{
+    padding: 0 16px;
+    display: flex;
+}
 
-    .info__news__item__datetime{
-        margin: 0;
-        font-size: .6rem;
-        margin-bottom: .5rem;
-    }
+.news__item__avatar{
+    min-width: 56px;
+    align-items: center;
+}
 
-    .info__news__item__title{
-        margin: 0;
-        font-size: 1rem;
-        color: black;
-    }
+.news__item__text{
+    padding: 20px 0;
+}
 </style>

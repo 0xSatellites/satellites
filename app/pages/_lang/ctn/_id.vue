@@ -165,8 +165,9 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="coolDownIndex"
+      :coolDownIndex="oinkCooldownIndex"
       :modalNo="modalNo"
+      :type="type"
     ></modal>
   </div>
 </template>
@@ -183,8 +184,6 @@ const project = process.env.project
 const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
-
-
 export default {
   components: {
     Modal
@@ -211,7 +210,8 @@ export default {
       oinkCooldownIndex: 0,
       generation: 0,
       ck,
-      ctn
+      ctn,
+      type: { name: 'くりぷ豚', symbol: 'ctn'}
     }
   },
   async asyncData({ store, params, error }) {

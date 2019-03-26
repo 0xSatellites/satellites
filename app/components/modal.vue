@@ -18,8 +18,8 @@
             <a
               :href="
                 'https://twitter.com/share?url=' +
-                  host +
-                  'ck/order/' +
+                  host + type.symbol +
+                  '/order/' +
                   hash +
                   '&text=' +
                   'NOW ON SALE!! ' +
@@ -30,7 +30,8 @@
                   ' / ' +
                   coolDownIndex +
                   ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, CryptoKitties'
+                  '&hashtags=bazaaar, バザー, ' +
+                  type.name
               "
               class="twitter-share-button"
               data-size="large"
@@ -57,8 +58,6 @@
 
           <div class="l-modal__title">{{$t('modal.approveProcessStarted')}}</div>
           <div class="l-modal__txt">{{$t('modal.announce')}}</div>
-          <div class="l-modal__txt">{{$t('modal.description')}}</div>
-
           <div class="l-modal__og">
             <div id="modalImg">
               <img :src="asset.image" alt="" width="40%" />
@@ -86,9 +85,7 @@
           </div>
           <div class="l-modal__title">{{$t('modal.cancel')}}</div>
           <div class="l-modal__og">
-            <div id="modalImg">
               <img :src="asset.image_url" alt="" width="50%" />
-            </div>
           </div>
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
@@ -189,7 +186,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex', 'type'],
     computed: {
     order() {
       return this.$store.getters['order/order']

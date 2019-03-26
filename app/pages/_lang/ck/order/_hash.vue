@@ -115,6 +115,7 @@ import kitty from '~/plugins/kitty'
 import '@fortawesome/fontawesome-free/css/all.css'
 
 const config = require('../../../../config.json')
+const project = process.env.project
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 

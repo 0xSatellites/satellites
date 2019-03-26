@@ -159,6 +159,7 @@
       :host="host"
       :coolDownIndex="coolDownIndex"
       :modalNo="modalNo"
+      :type="type"
     ></modal>
   </div>
 </template>
@@ -201,7 +202,8 @@ export default {
       host,
       coolDownIndex: "",
       ck,
-      ctn
+      ctn,
+      type: { name: 'CryptoKitties', symbol: 'ck'}
     }
   },
   async asyncData({ store, params, error }) {

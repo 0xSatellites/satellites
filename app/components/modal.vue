@@ -106,7 +106,7 @@
             <div class="l-modal__title">{{$t('modal.purchase')}}</div>
             <div class="l-modal__og">
                 <div id="modalImg">
-                  <img :src="order.metadata.image_url" alt="" width="45%" />
+                    <img  :src="order.metadata.image_url" alt=""  width="50%">
                 </div>
             </div>
             <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>

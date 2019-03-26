@@ -179,6 +179,10 @@ background: rgba(0,0,0,0.5);
     canvas{
     width: 412px;
     }
+    #modalImg img{
+      width: 300px; height: 250px;
+      object-fit: cover;
+    }
   }
 
   &__txt{

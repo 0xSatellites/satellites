@@ -7,10 +7,19 @@ const contract = {
     config.abi.bazaaar_v1,
     config.contract[process.env.project].bazaaar_v1
   ),
+  bazaaar_v2: new web3.eth.Contract(
+    config.abi.bazaaar_v2,
+    config.contract[process.env.project].bazaaar_v2
+  ),
   ck: new web3.eth.Contract(
     config.abi.ck,
     config.contract[process.env.project].ck
   ),
+  ctn: new web3.eth.Contract(
+    config.abi.ctn,
+    config.contract[process.env.project].ctn
+  ),
+  ctn_distributer: config.contract[process.env.project].ctn_distributer
 }
 
 const account = {

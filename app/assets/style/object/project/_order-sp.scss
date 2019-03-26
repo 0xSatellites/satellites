@@ -197,6 +197,9 @@ background: rgba(0,0,0,0.5);
     canvas{
     width: floor-decimal(275vw * 100 / 375, 2);
     }
+    image{
+      object-fit: contain
+    }
   }
 
   &__txt{

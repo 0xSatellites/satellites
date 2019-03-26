@@ -44,7 +44,6 @@
         "approveProcessStarted": "Approve started!",
         "transaction": "Transaction",
         "announce": "Once its approved, please make a sell order",
-        "description": "It takes while before the asset is ready for sales",
         "cancel": "Cancel started!",
         "purchase": "Purchase started!",
         "mypage": "It takes while before it reflects to mypage",
@@ -65,6 +64,7 @@
     },
     "id":{
         "inputMessage": "Opitional Message",
+        "fee":"10% fee will be charged",
         "approve": "approve",
         "sell": "sell",
         "change": "change",

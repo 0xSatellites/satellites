@@ -60,7 +60,7 @@
           <div class="l-modal__txt">{{$t('modal.announce')}}</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.image_url" alt="" width="40%" />
+              <img :src="asset.image_url" alt=""  />
             </div>
           </div>
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
@@ -85,7 +85,9 @@
           </div>
           <div class="l-modal__title">{{$t('modal.cancel')}}</div>
           <div class="l-modal__og">
-              <img :src="asset.image_url" alt="" width="45%" />
+             <div id="modalImg">
+              <img :src="asset.image_url" alt=""  />
+             </div>
           </div>
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
@@ -106,7 +108,7 @@
             <div class="l-modal__title">{{$t('modal.purchase')}}</div>
             <div class="l-modal__og">
                 <div id="modalImg">
-                  <img :src="order.metadata.image_url" alt="" width="45%" />
+                    <img  :src="order.metadata.image_url" alt="">
                 </div>
             </div>
             <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
@@ -140,7 +142,7 @@
             <div class="l-modal__og">
              <v-container grid-list-md align-center justify-space-between>
                 <v-layout row wrap justify-center>
-                  <v-flex xs6 sm3>
+                  <v-flex xs4 sm3>
                     <a href="https://metamask.io/">
                         <v-card class="partner pa-3">
                             <v-img
@@ -150,7 +152,7 @@
                         </v-card>
                     </a>
                     </v-flex>
-                    <v-flex xs6 sm3>
+                    <v-flex xs4 sm3>
                     <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
                         <v-card class="partner pa-3">
                             <v-img
@@ -160,7 +162,7 @@
                         </v-card>
                     </a>
                     </v-flex>
-                    <v-flex xs6 sm3>
+                    <v-flex xs4 sm3>
                     <a href="https://www.go-wallet.app/">
                         <v-card class="partner pa-3">
                             <v-img
@@ -214,4 +216,5 @@ export default {
 .text-box{
   margin: auto;
 }
+
 </style>

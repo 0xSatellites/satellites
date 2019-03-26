@@ -197,14 +197,16 @@ background: rgba(0,0,0,0.5);
     canvas{
     width: floor-decimal(275vw * 100 / 375, 2);
     }
-    image{
-      object-fit: contain
+    #modalImg img{
+      width: floor-decimal(250vw * 100 / 375, 2);
+      height:floor-decimal(180vw * 100 / 375, 2);
+      object-fit: cover;
     }
   }
 
   &__txt{
-  padding-top: floor-decimal(30vw * 100 / 375, 2);
-  font-size: floor-decimal(20vw * 100 / 375, 2);
+  padding-top: floor-decimal(10vw * 100 / 375, 2);
+  font-size: floor-decimal(15vw * 100 / 375, 2);
   line-height: 1.5;
   font-weight: normal;
   text-align: center;

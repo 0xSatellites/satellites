@@ -65,6 +65,7 @@
     },
     "id":{
         "inputMessage": "Opitional Message",
+        "fee":"10% fee will be charged",
         "approve": "approve",
         "sell": "sell",
         "change": "change",

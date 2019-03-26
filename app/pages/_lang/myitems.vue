@@ -79,7 +79,7 @@
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ ctn.id }}</div>
-              <div class="c-card__txt">Gen {{ctn.id}} : {{coolDownIndexToSpeed(ctn.id)}}</div>
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div>
             </nuxt-link>
           </div>
         </li>
@@ -113,7 +113,7 @@
         </template>
       </v-data-table>
     </section>
-
+<!-- <v-btn @click="oinkCoolDownIndexToSpeed(3)"></v-btn> -->
 
   </div>
 </template>
@@ -193,7 +193,15 @@ export default {
     },
     timeConverter(timestamp){
       return kitty.timeConverter(timestamp)
-    }
+    },
+    // oinkCoolDownIndexToSpeed(index){
+    //   oink.coolDownIndexToSpeed(index)
+    //   .then(result => {
+    //     console.log(result)
+    //     return result
+    //   })
+    // }
+
   },
   data() {
     return {

@@ -1,4 +1,5 @@
 const axios = require("axios")
+// import client from '~/plugins/ethereum-client'
 
 const config = require('../config.json')
 
@@ -22,6 +23,13 @@ const result = await instance.get('getOinkById?id='+ id)
 }
 
 const coolDownIndexToSpeed = index => {
+  // const entities = await client.contract.ctn.methods
+  //          .getEntity(id)
+  //          .call()
+  // console.log(entities)
+  // const Num = await entities.cooldownIndex
+  // const number =Number(Num)
+  // console.log(Num)
   switch(index) {
     case 0:
     return 'Fast'

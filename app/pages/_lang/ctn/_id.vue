@@ -29,6 +29,7 @@
                   <input type="text" style="display:none"></label
                 >
               </div>
+              <div v-if="approved && owned">{{$t("id.fee")}}</div>
               <div class="l-item__action__textarea" v-if="approved && owned">
                 <textarea
                   v-model="msg"

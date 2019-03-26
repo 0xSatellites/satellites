@@ -452,7 +452,7 @@ exports.order = functions
         metadata.generation +
         ' / ' +
         coolDownIndexToSpeed(metadata.status.cooldown_index) +
-        ' / #bazaaar #バザー #NFT #Cryptn from @bazaaario ' +
+        ' / #bazaaar #バザー #NFT #くりぷ豚 from @bazaaario ' +
         config.host[project] +
         'ctn/order/' +
         order.hash

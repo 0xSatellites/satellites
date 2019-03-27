@@ -374,7 +374,7 @@ exports.order = functions
       const c = canvas.getContext('2d')
       c.clearRect(0, 0, 1200, 630)
       c.drawImage(templateImg, 0, 0)
-      c.drawImage(characterImg, 15, 90, 450, 450)
+      c.drawImage(characterImg, 15, 50, 450, 515)
       c.textBaseline = 'top'
       c.textAlign = 'center'
       c.fillStyle = '#ffff00'

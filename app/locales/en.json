@@ -16,10 +16,17 @@
         "subDiscription3":"Interface is specialized for each digital assets for the better userbility.",
         "newAssets":"New Assets",
         "handlingAssets":"Handling Assets",
+        "market":"Market",
         "partners":"Partners",
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
-        "holdLanguage": "/ck/order/"
+        "holdLanguage": "/ck/order/",
+        "holdLanguageCK": "/ja/ck/order/",
+        "holdLanguageCTN": "/ja/ctn/order/"
+    },
+    "assets":{
+        "kitty":"CryptoKitties",
+        "oink":"Crypt-Oink"
     },
     "header":{
         "mypage": "MyPage",
@@ -29,17 +36,19 @@
         "topHD": "/",
         "mypageHD": "/myitems"
     },
-    "model":{
+    "modal":{
         "sell": "NOW ON SALE!!",
         "postOnSocialMedia": "Post on Social Media",
         "tweet": "Tweet",
         "close": "Close",
         "approveProcessStarted": "Approve started!",
         "transaction": "Transaction",
-        "before": " It takes while before the asset is ready for sales",
+        "announce": "Once its approved, please make a sell order",
         "cancel": "Cancel started!",
         "purchase": "Purchase started!",
-        "mypage": "It takes while before it reflects to mypage"
+        "mypage": "It takes while before it reflects to mypage",
+        "error":"Do you have your wallet ready and enough balance?",
+        "error2":"Please prepare a wallet from the following services"
     },
     "myitems":{
         "mypage": "Mypage",
@@ -55,6 +64,7 @@
     },
     "id":{
         "inputMessage": "Opitional Message",
+        "fee":"10% fee will be charged",
         "approve": "approve",
         "sell": "sell",
         "change": "change",
@@ -74,8 +84,9 @@
         "title2": "Under maintenance",
         "description": "ご利用の皆様にはご迷惑をおかけし、大変申し訳ございません。恐れ入りますが、時間を空けてご再訪ください"
     },
-    "kitty":{
-        "message": "You don't have kitty now!!"
+    "empty":{
+        "kitty": "You don't have kitty now!!",
+        "oink": "You don't have Crypton now!!"
     },
     "error":{
         "message": "error"

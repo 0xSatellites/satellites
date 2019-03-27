@@ -11,3 +11,6 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'orderPeriodicUpdatePubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderPeriodicUpdate']
   dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'subscribe', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=subscribe']
+  dir: 'functions/'

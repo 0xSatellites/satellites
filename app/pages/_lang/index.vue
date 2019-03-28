@@ -104,6 +104,10 @@
         </v-container>
     </section>
     <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.info') }}</h2>
+        <info></info>
+    </section>
+    <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
@@ -169,6 +173,8 @@ import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
+import info from '~/components/info'
+
 
 const config = require('../../config.json')
 const project = process.env.project
@@ -184,6 +190,9 @@ export default {
         ck,
         ctn
       }
+  },
+  components: {
+    info
   },
   head() {
     return { title: this.$t('meta.title') }

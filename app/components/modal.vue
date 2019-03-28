@@ -65,7 +65,7 @@
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
             </div>
-
+          <div class="l-modal__txt1">{{$t('modal.approve')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
@@ -90,7 +90,7 @@
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
-              </div>
+            </div>
           <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>

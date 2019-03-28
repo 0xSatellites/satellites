@@ -6,7 +6,7 @@
         <div><a href="https://block-base.co/" target="_blank">{{$t('footer.company')}}</a>｜
         <a href="/terms">{{$t('footer.terms')}}</a>｜
         <a href="/info">{{$t('footer.info')}}</a>｜
-        <a href="https://twitter.com/bazaaario" >{{$t('footer.contact')}}</a>
+        <a href="https://twitter.com/bazaaario" target="_blank">{{$t('footer.contact')}}</a>
         </div>
     </div>
 </footer>

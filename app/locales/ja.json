@@ -62,7 +62,9 @@
         "company": "運営会社",
         "terms": "利用規約",
         "info": "新着情報",
-        "contact": "お問い合わせ"
+        "contact": "お問い合わせ",
+        "infoHD": "/ja/info",
+        "termsHD": "/ja/terms"
     },
     "id":{
         "inputMessage": "一言メッセージを入力できます（オプション）",

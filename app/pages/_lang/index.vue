@@ -61,7 +61,7 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm4>
-                <a href="https://www.cryptokitties.co/">
+                <a href="https://www.cryptokitties.co/" target="_blank">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
@@ -77,7 +77,7 @@
                 </a>
                 </v-flex>
                 <v-flex xs6 sm4>
-                <a href="https://www.crypt-oink.io/">
+                <a href="https://www.crypt-oink.io/" target="_blank">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
@@ -138,7 +138,7 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs4 sm2>
-                <a href="https://twitter.com/bazaaario">
+                <a href="https://twitter.com/bazaaario" target="_blank">
                     <v-card class="partner">
                         <v-img
                         v-bind:src="require('~/assets/img/sns/Twitter_Logo_Blue.png')"

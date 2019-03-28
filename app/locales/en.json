@@ -62,7 +62,9 @@
         "company": "company",
         "terms": "terms",
         "info": "info",
-        "contact": "contact"
+        "contact": "contact",
+        "infoHD": "/info",
+        "termsHD": "/terms"
     },
     "id":{
         "inputMessage": "Opitional Message",

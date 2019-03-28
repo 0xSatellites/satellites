@@ -85,7 +85,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loading">
           <a href="https://www.crypt-oink.io">
                 <v-card>
                   <v-img
@@ -109,7 +109,6 @@
           <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
           <td>{{ fromWei(props.item.price) }} ETH</td>
-          <td>{{ timeConverter(props.item.modified)}}</td>
         </template>
       </v-data-table>
     </section>
@@ -209,8 +208,7 @@ export default {
         { text: 'date', value: 'date' },
         { text: 'result', value: 'result' },
         { text: 'id', value: 'id' },
-        { text: 'price', value: 'price' },
-        { text: 'timestamp', value: 'timestamp' }
+        { text: 'price', value: 'price' }
       ],
       loading: false
     }

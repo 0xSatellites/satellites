@@ -17,6 +17,7 @@
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
         "market":"マーケット",
+        "info":"新着情報",
         "partners":"パートナー",
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
@@ -89,5 +90,9 @@
     },
     "error":{
         "message": "エラー"
+    },
+    "info":{
+        "title":"新着情報"
     }
+
 }

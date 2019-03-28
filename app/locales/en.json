@@ -17,6 +17,7 @@
         "newAssets":"New Assets",
         "handlingAssets":"Handling Assets",
         "market":"Market",
+        "info":"Information",
         "partners":"Partners",
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
@@ -91,5 +92,8 @@
     },
     "error":{
         "message": "error"
+    },
+    "info":{
+        "title":"Information"
     }
 }

@@ -313,6 +313,24 @@ exports.order = functions
       client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
         if(error) throw error;
       });
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / Id.' +
+            order.id +
+            ' / Gen.' +
+            metadata.generation +
+            ' / ' +
+            coolDownIndexToSpeed(metadata.status.cooldown_index) +
+            ' / #CryptoKitties ' +
+            config.discord.endpoint[project] +
+            "ck/order/" +
+            hash
+        }
+      })
       const result = {
         ogp: ogp,
         hash: hash
@@ -458,7 +476,25 @@ exports.order = functions
         order.hash
       client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
         if(error) throw error;
-      });
+      })
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / Id.' +
+            order.id +
+            ' / Gen.' +
+            metadata.generation +
+            ' / ' +
+            coolDownIndexToSpeed(metadata.status.cooldown_index) +
+            ' / #くりぷ豚 ' +
+            config.discord.endpoint[project] +
+            "ctn/order/" +
+            hash
+        }
+      })
       const result = {
         ogp: ogp,
         hash: hash

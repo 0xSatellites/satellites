@@ -180,8 +180,6 @@ const config = require('../../config.json')
 const project = process.env.project
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
-console.log(ck)
-console.log(ctn)
 
 
 export default {

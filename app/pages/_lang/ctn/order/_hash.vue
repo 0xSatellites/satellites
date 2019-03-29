@@ -227,7 +227,6 @@ export default {
           )
           .send({ from: account.address, value: order.price })
           .on('transactionHash', hash => {
-            // console.log(hash)
             this.hash = hash
             this.modal = true
             this.loading = false

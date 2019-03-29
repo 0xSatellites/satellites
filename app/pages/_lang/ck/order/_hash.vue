@@ -242,7 +242,11 @@ export default {
     transitionTop() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/'})
+      if(this.$route.fullPath.match(/ja/)){
+        router.push({ path: '/ja/'})
+      } else {
+        router.push({ path: '/'})
+      }
     },
     owner(maker) {
       return maker == this.account.address

@@ -21,9 +21,8 @@
         "partners":"Partners",
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
-        "holdLanguage": "/ck/order/",
-        "holdLanguageCK": "/ja/ck/order/",
-        "holdLanguageCTN": "/ja/ctn/order/"
+        "holdLanguageCK": "/ck/order/",
+        "holdLanguageCTN": "/ctn/order/"
     },
     "assets":{
         "kitty":"CryptoKitties",

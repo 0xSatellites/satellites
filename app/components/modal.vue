@@ -26,7 +26,7 @@
                   ' / Gen.' +
                   asset.generation +
                   ' / ' +
-                  coolDownIndex +
+                  asset.status.cooldown_index_to_speed +
                   ' / from @bazaaario' +
                   '&hashtags=bazaaar, バザー, ' +
                   type.name
@@ -186,7 +186,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex', 'type'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'type'],
     computed: {
     order() {
       return this.$store.getters['order/order']

@@ -165,7 +165,6 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="oinkCooldownIndex"
       :modalNo="modalNo"
       :type="type"
     ></modal>
@@ -216,8 +215,18 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+      const generation = await entities.generation
+      const cooldown_index = await entities.cooldownIndex
       let result = await oink.getOinkById(params.id)
+      result.id = params.id
       result.image_url = result.image
+      result.generation = generation
+      result.status = {}
+      result.status.cooldown_index_to_speed = await oink.coolDownIndexToSpeed(Number(cooldown_index))
+      console.log(result)
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)

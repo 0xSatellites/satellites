@@ -157,7 +157,6 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="coolDownIndex"
       :modalNo="modalNo"
       :type="type"
     ></modal>
@@ -200,7 +199,6 @@ export default {
       owner: '',
       msg: '',
       host,
-      coolDownIndex: "",
       ck,
       ctn,
       type: { name: 'CryptoKitties', symbol: 'ck'}
@@ -209,6 +207,7 @@ export default {
   async asyncData({ store, params, error }) {
     try {
       const asset = await kitty.getKittyById(params.id)
+      asset.status.cooldown_index_to_speed = await kitty.coolDownIndexToSpeed(Number(asset.status.cooldown_index))
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)

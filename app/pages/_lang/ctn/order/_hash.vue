@@ -21,7 +21,7 @@
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
-          <div>(<a href="/terms">{{$t('id.terms')}}</a>)</div>
+          <div class="l-information__txt">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
           <div class="checkbox_center">
           <v-checkbox
             class="center"
@@ -276,8 +276,4 @@ export default {
   margin: 0 auto;
 }
 
-.checkbox_center{
-  display: inline-block;
-  margin: 0 auto;
-}
 </style>

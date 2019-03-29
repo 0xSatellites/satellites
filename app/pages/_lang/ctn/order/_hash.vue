@@ -21,6 +21,8 @@
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
+          <div>(<a href="/terms">{{$t('id.terms')}}</a>)</div>
+          <div class="checkbox_center">
           <v-checkbox
             class="center"
             v-model="checkbox"
@@ -29,6 +31,7 @@
             required
             v-if="!owner(order.maker)"
           ></v-checkbox>
+          </div>
           <div class="l-information__action">
             <v-btn
               class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -271,6 +274,11 @@ export default {
 }
 
 .v-input__control {
+  margin: 0 auto;
+}
+
+.checkbox_center{
+  display: inline-block;
   margin: 0 auto;
 }
 </style>

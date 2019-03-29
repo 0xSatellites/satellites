@@ -73,6 +73,7 @@
         "change": "change",
         "cancel": "cancel",
         "agree": "Agree to the Terms",
+        "terms":"Terms",
         "relatedAsset": "Related Assets"
     },
     "hash":{

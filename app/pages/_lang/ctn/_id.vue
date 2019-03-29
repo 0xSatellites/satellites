@@ -41,6 +41,15 @@
                 >
                 </textarea>
               </div>
+              <div v-if="approved && owned" class="small">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
+              <v-checkbox
+                  v-model="checkbox"
+                  :rules="[v => !!v || '']"
+                  :label="$t('id.agree')"
+                  required
+                  v-if="approved && owned"
+                  height ="20"
+                ></v-checkbox>
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
@@ -115,13 +124,6 @@
                     ></v-progress-circular>
                   </v-btn>
                 </div>
-                <v-checkbox
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  :label="$t('id.agree')"
-                  required
-                  v-if="approved && owned"
-                ></v-checkbox>
               </div>
             </div>
           </v-form>
@@ -467,5 +469,9 @@ export default {
 
 .white_text {
   color: white;
+}
+
+.small{
+  font-size: 60%;
 }
 </style>

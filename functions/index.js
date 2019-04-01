@@ -806,35 +806,3 @@ app.get('/latestorders', async (req, res) => {
 exports.api = functions
   .region('asia-northeast1')
   .https.onRequest(app);
-
-exports.latestorders = functions
-.https.onRequest(async (req, res) =>{
-  const result = []
-  const param = req.query.limit
-  const limit = Number(param)
-  const snapshots = await db.collection('order')
-    .where('valid', '==', true)
-    .orderBy('created', 'desc').limit(limit).get()
-  let name = ""
-  snapshots.forEach(function(doc){
-    if(doc.data().asset == config.contract[project].ck){
-      name = 'ck'
-    }
-    else if(doc.data().asset == config.contract[project].ctn){
-      asset = 'ctn'
-    }
-    const data ={
-      'price': doc.data().price,
-      'id' : doc.data().id,
-      'name': doc.data().metadata.name,
-      'image': doc.data().metadata.image_url,
-      'generation': doc.data().metadata.generation,
-      'cooldown_index': doc.data().metadata.status.cooldown_index,
-      'ogp': doc.data().ogp,
-      'url': config.host[project] + name +'/order/' + doc.data().hash
-    }
-    result.push(data)
-  })
-  res.json(result)
-
-  });

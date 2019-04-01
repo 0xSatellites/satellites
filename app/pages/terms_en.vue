@@ -217,8 +217,9 @@ Patent, utility model rights, breeder's rights, design rights, copyright, right 
             <li>The validity, interpretation and performance of this agreement shall be governed by and interpreted in accordance with the laws of Japan.</li>
             <li>For disputes, litigation or any other disputes between the Company and users etc., depending on the amount of complaint, the Tokyo Summary Court or Tokyo District Court shall be the exclusive agreement jurisdiction court.</li>
         </ol>
-
+        <div class="pt-4">
         <p>Effective February 1, 2019</p>
+        </div>
 
     </v-card-text>
     </v-container>

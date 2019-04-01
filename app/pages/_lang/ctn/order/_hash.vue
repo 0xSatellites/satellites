@@ -8,8 +8,8 @@
         <div class="l-information__name">
           {{ order.metadata.name }}
         </div>
-        <div class="l-information__txt">#{{ order.metadata.id }}</div>
-        <div class="l-information__txt">CryptoKitties</div>
+        <div class="l-information__txt">#{{ order.id }}</div>
+        <div class="l-information__txt">{{$t('assets.oink')}}</div>
         <ul class="l-information__data">
           <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></li>
         </ul>
@@ -22,14 +22,16 @@
         </ul>
         <v-form v-model="valid" class="center">
           <div class="l-information__txt">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
-          <div class="checkbox_center"><v-checkbox
+          <div class="checkbox_center">
+          <v-checkbox
             class="center"
             v-model="checkbox"
             :rules="[v => !!v || '']"
             :label="$t('hash.agree')"
             required
             v-if="!owner(order.maker)"
-          ></v-checkbox></div>
+          ></v-checkbox>
+          </div>
           <div class="l-information__action">
             <v-btn
               class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -49,14 +51,12 @@
             <div v-if="order.valid">
               <a
                 :href="
-                  'https://twitter.com/share?url=https://bazaaar.io/ck/order/' +
+                  'https://twitter.com/share?url=https://bazaaar.io/ctn/order/' +
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +
                     order.metadata.name +
-                    '/ Gen.' +
-                    order.metadata.generation +
-                    '&hashtags=bazaaar, バザール, CryptoKitties'
+                    '&hashtags=bazaaar, バザール, くりぷ豚'
                 "
                 class="twitter-share-button"
                 data-size="large"
@@ -112,11 +112,12 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import Modal from '~/components/modal'
-import kitty from '~/plugins/kitty'
+import oink from '~/plugins/oink'
+
 import '@fortawesome/fontawesome-free/css/all.css'
 
-const config = require('../../../../config.json')
 const project = process.env.project
+const config = require('../../../../config.json')
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 
@@ -186,21 +187,22 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+        return oink.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
     async purchase() {
+       console.log(this.order)
       try{
         this.loading = true
         const account = this.account
         const order = this.order
 
-        await client.contract.bazaaar_v1.methods
+        await client.contract.bazaaar_v2.methods
           .orderMatch_(
             [
               order.proxy,
@@ -208,7 +210,7 @@ export default {
               order.taker,
               order.creatorRoyaltyRecipient,
               order.asset,
-              order.maker
+              config.recipient[project].bazaaar
             ],
             [
               order.id,
@@ -225,7 +227,6 @@ export default {
           )
           .send({ from: account.address, value: order.price })
           .on('transactionHash', hash => {
-            console.log(hash)
             this.hash = hash
             this.modal = true
             this.loading = false
@@ -269,6 +270,10 @@ export default {
 
 .white_text {
   color: white;
+}
+
+.v-input__control {
+  margin: 0 auto;
 }
 
 </style>

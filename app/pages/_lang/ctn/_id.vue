@@ -4,21 +4,21 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img :src="asset.image_url" alt="" />
+            <img :src="asset.image" alt="" />
           </div>
         </div>
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
-          <div class="l-item__txt"># {{ asset.id }}</div>
+          <div class="l-item__txt">{{ asset.description }}</div>
           <div class="l-item__txt">
-            CryptoKitties
+            Crypt-Oink
           </div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
+          <li><strong>Gen：</strong> {{generation}} </li>
+          <li><strong>Cooldown：</strong> {{oinkCooldownIndex}}</li>
           </ul>
 
           <v-form>
@@ -29,6 +29,7 @@
                   <input type="text" style="display:none"></label
                 >
               </div>
+              <div v-if="approved && owned">{{$t("id.fee")}}</div>
               <div class="l-item__action__textarea" v-if="approved && owned">
                 <textarea
                   v-model="msg"
@@ -79,8 +80,15 @@
                     @click="order_v1"
                   >
                     {{ $t('id.sell') }}
+                    <v-progress-circular
+                      size="16"
+                      class="ma-2"
+                      v-if="loading"
+                      indeterminate
+                    ></v-progress-circular>
                   </v-btn>
                 </div>
+
                 <div
                   class="l-item__action__btns"
                   v-else-if="approved && order.id"
@@ -169,9 +177,8 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import kitty from '~/plugins/kitty'
+import oink from '~/plugins/oink'
 import Modal from '~/components/modal'
-
 
 const config = require('../../../config.json')
 const project = process.env.project
@@ -201,15 +208,28 @@ export default {
       owner: '',
       msg: '',
       host,
+      oinkCooldownIndex: 0,
+      generation: 0,
       ck,
       ctn,
-      type: { name: 'CryptoKitties', symbol: 'ck'}
+      type: { name: 'くりぷ豚', symbol: 'ctn'}
     }
   },
   async asyncData({ store, params, error }) {
     try {
-      const asset = await kitty.getKittyById(params.id)
-      asset.status.cooldown_index_to_speed = await kitty.coolDownIndexToSpeed(Number(asset.status.cooldown_index))
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+      const generation = await entities.generation
+      const cooldown_index = await entities.cooldownIndex
+      let result = await oink.getOinkById(params.id)
+      result.id = params.id
+      result.image_url = result.image
+      result.generation = generation
+      result.status = {}
+      result.status.cooldown_index_to_speed = await oink.coolDownIndexToSpeed(Number(cooldown_index))
+      console.log(result)
+      const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
@@ -228,28 +248,39 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
-      client.contract.ck.methods
-        .kittyIndexToOwner(params.id)
+      client.contract.ctn.methods
+        .entityIndexToOwner(params.id)
         .call()
         .then(owner => {
           this.owned = owner == this.account.address
         })
 
-      client.contract.ck.methods
-        .kittyIndexToApproved(params.id)
+      client.contract.ctn.methods
+        .entityIndexToApproved(params.id)
         .call()
         .then(approvedAddress => {
+          console.log(approvedAddress)
           this.approved =
-            approvedAddress == client.contract.bazaaar_v1.options.address
+            approvedAddress == client.contract.bazaaar_v2.options.address
+          console.log(client.contract.bazaaar_v2.options.address)
+
         })
 
       firestore
         .getLowestCostOrderByMakerId(client.account.address, params.id)
         .then(order => {
           store.dispatch('order/setOrder', order)
-          this.price = client.utils.fromWei(order.price)
+          if(order.price){
+            this.price = client.utils.fromWei(order.price)
+          }
         })
 
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+          this.generation = await entities.generation
+          this.cooldown_index = await entities.cooldownIndex
+          this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
     }
   },
   computed: {
@@ -268,13 +299,13 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+      return oink.getRarity(asset)
     },
     fromWei(wei) {
-        return client.utils.fromWei(wei)
+      return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false
@@ -287,7 +318,7 @@ export default {
     transitionOrder() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/ck/order/' + this.hash })
+      router.push({ path: '/ctn/order/' + this.hash })
     },
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
@@ -298,7 +329,7 @@ export default {
         this.modalNo = 5
         this.modal = true
         const account = this.account
-        const asset = this.asset.ck
+        const asset = this.asset.ctn
         const params = this.$route.params
         const router = this.$router
         const amount = this.price
@@ -314,16 +345,15 @@ export default {
           return
         }
 
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
+        const approved = await client.contract.ctn.methods
+          .entityIndexToApproved(params.id)
           .call()
-
-        if (approved == client.contract.bazaaar_v1.options.address) {
+        if (approved == client.contract.bazaaar_v2.options.address) {
           console.log('approved')
-          const nonce = await client.contract.bazaaar_v1.methods
+          const nonce = await client.contract.bazaaar_v2.methods
             .nonce_(
               account.address,
-              client.contract.ck.options.address,
+              client.contract.ctn.options.address,
               params.id
             )
             .call()
@@ -333,18 +363,18 @@ export default {
           date.setDate(date.getDate() + 7)
           const expiration = Math.round(date.getTime() / 1000)
           const order = {
-            proxy: client.contract.bazaaar_v1.options.address,
+            proxy: client.contract.bazaaar_v2.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: account.address,
-            asset: client.contract.ck.options.address,
+            creatorRoyaltyRecipient: config.recipient[project].ctn,
+            asset: client.contract.ctn.options.address,
             id: params.id,
             price: wei,
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: 0,
-            referralRatio: 0
+            creatorRoyaltyRatio: 500,
+            referralRatio: 500
           }
           const signedOrder = await client.signOrder(order)
           const datas = {
@@ -373,8 +403,8 @@ export default {
       this.loading = true
       const account = this.account
       const params = this.$route.params
-      client.contract.ck.methods
-        .approve(client.contract.bazaaar_v1.options.address, params.id)
+      client.contract.ctn.methods
+        .approve(client.contract.bazaaar_v2.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
           console.log(hash)
@@ -403,7 +433,7 @@ export default {
         const order = this.order
         console.log(order)
 
-        await client.contract.bazaaar_v1.methods
+        await client.contract.bazaaar_v2.methods
           .orderCancel_(
             [
               order.proxy,

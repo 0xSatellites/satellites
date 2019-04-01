@@ -35,7 +35,7 @@
         <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
-            <nuxt-link :to="$t('index.holdLanguage') + order.hash" class="c-card">
+            <nuxt-link v-if="order.asset === ck" :to="$t('index.holdLanguageCK') + order.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
@@ -44,18 +44,28 @@
               <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(order.metadata.status.cooldown_index)}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
+            <nuxt-link v-else-if="order.asset === ctn" :to="$t('index.holdLanguageCTN') + order.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ order.id }}</div>
+              <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(Number(order.metadata.status.cooldown_index))}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
+            </nuxt-link>
         </li>
         </ul>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
-            <v-layout>
-                <v-flex xs12 sm6 offset-sm3>
-                <a href="https://www.cryptokitties.co/">
+        <v-container grid-list-md align-center justify-space-between>
+            <v-layout row wrap justify-center>
+                <v-flex xs6 sm4>
+                <a href="https://www.cryptokitties.co/" target="_blank">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
-                        aspect-ratio="1.75"
+                        aspect-ratio="1.2"
                         ></v-img>
 
                         <v-card-title primary-title>
@@ -66,7 +76,24 @@
                     </v-card>
                 </a>
                 </v-flex>
+                <v-flex xs6 sm4>
+                <a href="https://www.crypt-oink.io/" target="_blank">
+                    <v-card>
+                        <v-img
+                        v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
+                        aspect-ratio="1.2"
+                        ></v-img>
+
+                        <v-card-title primary-title>
+                        <div class="text-box">
+                            <h3 class="headline mb-0">Crypt-Oink</h3>
+                        </div>
+                        </v-card-title>
+                    </v-card>
+                </a>
+                </v-flex>
             </v-layout>
+        </v-container>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.market') }}</h2>
@@ -75,6 +102,10 @@
                 <a class="twitter-timeline" data-width="420" data-height="600" data-theme="light" data-link-color="#2B7BB9" href="https://twitter.com/bazaaario?ref_src=twsrc%5Etfw">Tweets by bazaaario</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </v-layout>
         </v-container>
+    </section>
+    <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.info') }}</h2>
+        <info></info>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
@@ -111,7 +142,7 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs4 sm2>
-                <a href="https://twitter.com/bazaaario">
+                <a href="https://twitter.com/bazaaario" target="_blank">
                     <v-card class="partner">
                         <v-img
                         v-bind:src="require('~/assets/img/sns/Twitter_Logo_Blue.png')"
@@ -141,11 +172,25 @@
 import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
+import oink from '~/plugins/oink'
+import info from '~/components/info'
+
+
+const config = require('../../config.json')
+const project = process.env.project
+const ck = config.contract[project].ck
+const ctn = config.contract[project].ctn
+
 
 export default {
   data() {
     return {
+        ck,
+        ctn
       }
+  },
+  components: {
+    info
   },
   head() {
     return { title: this.$t('meta.title') }
@@ -165,7 +210,13 @@ export default {
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+      return kitty.getRarity(asset)
+    },
+    coolDownIndexToSpeed(index) {
+      return oink.coolDownIndexToSpeed(index)
+    },
+    getRarity(asset) {
+      return oink.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
@@ -178,10 +229,6 @@ export default {
 <style scope>
     .text-box{
         margin: auto;
-    }
-
-    a{
-        text-decoration: none
     }
 
     .partner{

@@ -179,6 +179,10 @@ background: rgba(0,0,0,0.5);
     canvas{
     width: 412px;
     }
+    #modalImg img{
+      width: 300px; height: 250px;
+      object-fit: cover;
+    }
   }
 
   &__txt{
@@ -260,7 +264,7 @@ background: rgba(0,0,0,0.5);
 
 }
 
-//Vuetifyのデフォルトを上書きしました。
-.v-input__control{
+.checkbox_center{
+  display: inline-block;
   margin: 0 auto;
 }

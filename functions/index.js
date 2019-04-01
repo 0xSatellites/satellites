@@ -770,32 +770,38 @@ app.get('/', (req, res) => res.send(
 
 app.get('/latestorders', async (req, res) => {
   const result = []
-  console.log(req.query.limit)
-
-  var param = req.query.limit
-  var limit = Number(param)
-  console.log(limit)
+  const param = req.query.limit
+  const limit = Number(param)
   const snapshots = await db.collection('order')
     .where('valid', '==', true)
     .orderBy('created', 'desc').limit(limit).get()
-
+  let name = ""
   snapshots.forEach(function(doc){
-    var data ={
+    if(doc.data().asset == config.contract[project].ck){
+      name = 'ck'
+    }
+    else if(doc.data().asset == config.contract[project].ctn){
+      asset = 'ctn'
+    }
+    const data ={
       'price': doc.data().price,
       'id' : doc.data().id,
+      'name': doc.data().metadata.name,
       'image': doc.data().metadata.image_url,
+      'generation': doc.data().metadata.generation,
+      'cooldown_index': doc.data().metadata.status.cooldown_index,
       'ogp': doc.data().ogp,
-      'url': config.host[project] +'/ck/order/' + doc.data().hash
+      'url': config.host[project] + name +'/order/' + doc.data().hash
     }
-    console.log(doc.data())
     result.push(data)
   })
-  res.send(result)
+  res.json(result)
 });
 
-app.get('order/:hash', (req, res) => res.send(
-
-));
+// app.get('/order', async(req, res) => {
+//   const param = req.query.hash
+//   //on going
+// });
 
 exports.api = functions
   .region('asia-northeast1')

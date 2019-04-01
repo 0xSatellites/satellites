@@ -9,7 +9,8 @@
         <nav class="l-header__nav">
           <ul>
             <li>
-              <nuxt-link :to="$t('header.mypageHD')" class="pa-3">{{$t('header.mypage')}}</nuxt-link>
+              <nuxt-link :to="$t('header.mypageHD')" class="py-3 px-2">{{$t('header.mypage')}}</nuxt-link>
+              <nuxt-link :to="$t('header.marketHD')" class="py-3 px-2">{{$t('header.market')}}</nuxt-link>
 
               <!-- <nuxt-link :to="'/myitems'" class="pa-1">{{$t('header.howto')}}</nuxt-link> -->
               <NuxtLink v-if="$i18n.locale === 'en' && $route.fullPath === '/ja/'" :to="`/ja`" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>

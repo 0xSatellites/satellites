@@ -30,11 +30,13 @@
     },
     "header":{
         "mypage": "マイページ",
+        "market":"マーケット",
         "howto": "使い方",
         "english": "英語",
         "japanese": "日本語",
         "topHD": "/ja/",
-        "mypageHD": "/ja/myitems"
+        "mypageHD": "/ja/myitems",
+        "marketHD": "/ja/market"
     },
     "modal":{
         "sell": "出品されました!",
@@ -95,6 +97,9 @@
     },
     "info":{
         "title":"新着情報"
+    },
+    "market":{
+        "title":"Market"
     }
 
 }

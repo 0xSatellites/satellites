@@ -30,11 +30,13 @@
     },
     "header":{
         "mypage": "MyPage",
+        "market":"Market",
         "howto": "HowTo",
         "english": "EnglishVer",
         "japanese": "JapaneseVer",
         "topHD": "/",
-        "mypageHD": "/myitems"
+        "mypageHD": "/myitems",
+        "marketHD": "/market"
     },
     "modal":{
         "sell": "NOW ON SALE!!",
@@ -97,5 +99,8 @@
     },
     "info":{
         "title":"Information"
+    },
+    "market":{
+        "title":"Market"
     }
 }

@@ -104,6 +104,7 @@
       v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
+      :type="type"
     ></modal>
   </div>
 </template>
@@ -145,7 +146,8 @@ export default {
       modalNo: 4,
       hash: '',
       ck,
-      ctn
+      ctn,
+      type: 'ctn'
     }
   },
 

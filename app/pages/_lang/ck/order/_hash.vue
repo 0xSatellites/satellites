@@ -104,6 +104,7 @@
       v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
+      :url="url"
     ></modal>
   </div>
 </template>
@@ -144,7 +145,8 @@ export default {
       modalNo: 4,
       hash: '',
       ck,
-      ctn
+      ctn,
+      url: {type: 'ck', hash: ''}
     }
   },
 
@@ -172,6 +174,7 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+    this.url.hash = this.$nuxt.$route.params.hash
   },
   computed: {
     account() {

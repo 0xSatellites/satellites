@@ -67,12 +67,6 @@
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
                         aspect-ratio="1.2"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">CryptoKitties</h3>
-                        </div>
-                        </v-card-title>
                     </v-card>
                 </a>
                 </v-flex>
@@ -83,12 +77,6 @@
                         v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
                         aspect-ratio="1.2"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">Crypt-Oink</h3>
-                        </div>
-                        </v-card-title>
                     </v-card>
                 </a>
                 </v-flex>

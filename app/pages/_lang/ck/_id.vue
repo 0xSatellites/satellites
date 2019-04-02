@@ -377,14 +377,12 @@ export default {
         .approve(client.contract.bazaaar_v1.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
-          console.log(hash)
           this.hash = hash
           this.modalNo = 2
           this.modal = true
           this.loading = false
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(receipt)
           location.reload()
         }).catch((err) => {
           alert(this.$t('error.message'))

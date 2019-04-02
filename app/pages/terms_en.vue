@@ -226,7 +226,7 @@ Patent, utility model rights, breeder's rights, design rights, copyright, right 
   </v-content>
 </template>
 
-<style>
+<style scoped>
     table{
         border: solid 1px #000000; border-collapse: collapse;
     }

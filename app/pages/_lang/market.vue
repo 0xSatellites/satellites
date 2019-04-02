@@ -13,6 +13,7 @@
                     item-value="marketAsset"
                     label="asset"
                     v-model="selectedAsset"
+                    attach
                     ></v-select>
                 </v-flex>
 
@@ -24,6 +25,7 @@
                     item-value="sortBy"
                     label="sort"
                     v-model="selectedSort"
+                    attach
                     ></v-select>
                 </v-flex>
             </v-layout>
@@ -153,7 +155,5 @@ export default {
 
 </script>
 <style>
-.v-menu__content{
-    left:0px
-}
+
 </style>

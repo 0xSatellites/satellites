@@ -100,15 +100,15 @@
     },
     "recipient":{
         "sand":{
-            "bazaaar":"0xbF49a6fF10E9C4Cf5fd9942F6a5C7fB40FCc0Fa0",
-            "ctn":"0x35DcC7A57Ad2dEE6A10EbECc2370669ceBB57516"
+            "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
+            "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51"
         },
         "staging":{
-            "bazaaar":"0xfEB6acd9701aD1A9A33bFe4CA9AB122403974A23",
+            "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51"
         },
         "production":{
-            "bazaaar":"0xfEB6acd9701aD1A9A33bFe4CA9AB122403974A23",
+            "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51"
         }
     }

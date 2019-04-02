@@ -146,7 +146,7 @@ export default {
       hash: '',
       ck,
       ctn,
-      url: {type: 'ck', hash: ''}
+      url: {type: 'ck', hash: '', project: ''}
     }
   },
 
@@ -175,6 +175,7 @@ export default {
       }
     }
     this.url.hash = this.$nuxt.$route.params.hash
+    this.url.project = config.host[project]
   },
   computed: {
     account() {

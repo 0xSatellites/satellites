@@ -186,7 +186,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'url'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'url', 'type'],
     computed: {
     order() {
       return this.$store.getters['order/order']

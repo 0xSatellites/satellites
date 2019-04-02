@@ -200,7 +200,6 @@ export default {
         return client.utils.fromWei(wei)
     },
     async purchase() {
-      console.log(this.order)
       try{
         this.loading = true
         const account = this.account

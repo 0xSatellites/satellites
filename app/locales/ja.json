@@ -26,7 +26,7 @@
         "holdLanguageCTN": "/ja/ctn/order/"
     },
     "assets":{
-        "kitty":"CryptoKitties",
+        "kitty":"クリプトキティ",
         "oink":"くりぷ豚"
     },
     "header":{
@@ -55,7 +55,7 @@
         "error2":"以下のサービスからウォレットをご用意ください"
     },
     "myitems":{
-        "mypage": "Mypage",
+        "mypage": "マイページ",
         "address": "アドレス",
         "balance": "残高",
         "sell": "出品中"

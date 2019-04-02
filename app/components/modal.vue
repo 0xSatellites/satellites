@@ -151,7 +151,7 @@
                     </a>
                     </v-flex>
                     <v-flex xs4 sm3>
-                    <a :href="'https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/'+ type + '/order/' + hash"  target="_blank">
+                    <a :href="'https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/'+ url.type + '/order/' + url.hash"  target="_blank">
                         <v-card class="partner pa-3">
                             <v-img
                             v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
@@ -186,7 +186,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'type'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'url'],
     computed: {
     order() {
       return this.$store.getters['order/order']

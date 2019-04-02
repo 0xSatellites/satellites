@@ -104,7 +104,7 @@
       v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
-      :type="type"
+      :url="url"
     ></modal>
   </div>
 </template>
@@ -147,7 +147,7 @@ export default {
       hash: '',
       ck,
       ctn,
-      type: 'ctn'
+      url: {type: 'ctn', hash: ''}
     }
   },
 
@@ -175,6 +175,7 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+    this.url.hash = this.$nuxt.$route.params.hash
   },
   computed: {
     account() {
@@ -198,7 +199,7 @@ export default {
         return client.utils.fromWei(wei)
     },
     async purchase() {
-       console.log(this.order)
+      console.log(this.order)
       try{
         this.loading = true
         const account = this.account

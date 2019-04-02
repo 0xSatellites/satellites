@@ -96,7 +96,7 @@
         </v-container>
     </section>
     <section class="c-index">
-        <h2 class="c-index__title">{{ $t('index.market') }}</h2>
+        <h2 class="c-index__title">{{ $t('index.tweet') }}</h2>
         <v-container grid-list-md align-center>
             <v-layout justify-center>
                 <a class="twitter-timeline" data-width="420" data-height="600" data-theme="light" data-link-color="#2B7BB9" href="https://twitter.com/bazaaario?ref_src=twsrc%5Etfw">Tweets by bazaaario</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

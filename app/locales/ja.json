@@ -17,6 +17,7 @@
         "newAssets":"新着アセット",
         "handlingAssets":"取り扱いアセット",
         "market":"マーケット",
+        "tweet":"Tweets",
         "info":"新着情報",
         "partners":"パートナー",
         "contact":"お問い合わせ",
@@ -54,7 +55,7 @@
         "error2":"以下のサービスからウォレットをご用意ください"
     },
     "myitems":{
-        "mypage": "マイページ",
+        "mypage": "Mypage",
         "address": "アドレス",
         "balance": "残高",
         "sell": "出品中"

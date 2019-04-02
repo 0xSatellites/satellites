@@ -310,27 +310,34 @@ exports.order = functions
         config.host[project] +
         'ck/order/' +
         order.hash
-      client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-        if(error) throw error;
-      });
-      await axios({
-        method:'post',
-        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-        data: {
-          content:
-            'NOW ON SALE!!' +
-            ' / Id.' +
-            order.id +
-            ' / Gen.' +
-            metadata.generation +
-            ' / ' +
-            coolDownIndexToSpeed(metadata.status.cooldown_index) +
-            ' / #CryptoKitties ' +
-            config.discord.endpoint[project] +
-            "ck/order/" +
-            hash
-        }
-      })
+      try{
+        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+          if(error) throw error;
+        })
+      } catch (err) {
+        console.info('Twitter API Down')
+      }
+      // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //   if(error) throw error;
+      // });
+      // await axios({
+      //   method:'post',
+      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      //   data: {
+      //     content:
+      //       'NOW ON SALE!!' +
+      //       ' / Id.' +
+      //       order.id +
+      //       ' / Gen.' +
+      //       metadata.generation +
+      //       ' / ' +
+      //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
+      //       ' / #CryptoKitties ' +
+      //       config.discord.endpoint[project] +
+      //       "ck/order/" +
+      //       hash
+      //   }
+      // })
       const result = {
         ogp: ogp,
         hash: hash

@@ -29,6 +29,25 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
   return result
 }
 
+const getMarket = async (asset, by, order) =>{
+  if(asset == 'all'){
+    var result = []
+    const snapshots = await db.collection('order')
+      .where('valid', '==', true)
+      .orderBy(by, order).get()
+    snapshots.forEach(doc => result.push(doc.data()))
+    return result
+  }else{
+    var result = []
+    const snapshots = await db.collection('order')
+      .where('asset', '==', config.contract[process.env.project][asset])
+      .where('valid', '==', true)
+      .orderBy(by, order).get()
+    snapshots.forEach(doc => result.push(doc.data()))
+    return result
+  }
+}
+
 const getOrdersByMaker = async maker => {
   const result = []
   const snapshots = await db.collection('order').where('maker', '==', maker).get()
@@ -101,6 +120,7 @@ const firestore = {
   doc:doc,
   getLatestValidOrders:getLatestValidOrders,
   getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
+  getMarket:getMarket,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

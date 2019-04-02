@@ -12,8 +12,8 @@ exports.dailyReportPubSub = functions
   .onPublish(async () => {
   var result1 = db.collection('order').where("created", ">", yesterday).get()
   .then(snapshot => {
-      orders = snapshot.size
-      result1 = "24h売り注文数：" + orders
+      var yesterdayOrders = snapshot.docs.length
+      result1 = "24h売り注文数：" + yesterdayOrders
     })
   .catch((err) => {
         console.log('Error getting documents', err);
@@ -21,7 +21,7 @@ exports.dailyReportPubSub = functions
   var arr = [];
   var volume = 0;
   var result2 =db.collection('order')
-      .where('created', '>', yesterday)
+      .where('modified', '>', yesterday)
       .where('result.status', '==', "sold")
       .get()
       .then(snapshot =>{

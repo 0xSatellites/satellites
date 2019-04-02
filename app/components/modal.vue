@@ -26,7 +26,7 @@
                   ' / Gen.' +
                   asset.generation +
                   ' / ' +
-                  coolDownIndex +
+                  asset.status.cooldown_index_to_speed +
                   ' / from @bazaaario' +
                   '&hashtags=bazaaar, バザー, ' +
                   type.name
@@ -65,7 +65,7 @@
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
             </div>
-
+          <div class="l-modal__txt1">{{$t('modal.approve')}}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
@@ -90,7 +90,7 @@
           <div class="l-modal__txt1">{{$t('modal.transaction')}}</div>
             <div class="l-modal__txt">
                <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
-              </div>
+            </div>
           <div class="l-modal__close" @click="$emit('transitionTop')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
@@ -141,7 +141,7 @@
              <v-container grid-list-md align-center justify-space-between>
                 <v-layout row wrap justify-center>
                   <v-flex xs4 sm3>
-                    <a href="https://metamask.io/">
+                    <a href="https://metamask.io/" target="_blank">
                         <v-card class="partner pa-3">
                             <v-img
                             v-bind:src="require('~/assets/img/modal/metamask.jpeg')"
@@ -151,7 +151,7 @@
                     </a>
                     </v-flex>
                     <v-flex xs4 sm3>
-                    <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">
+                    <a :href="'https://tokenpocket.github.io/applink?dappUrl=' + url.project + url.type + '/order/' + url.hash"  target="_blank">
                         <v-card class="partner pa-3">
                             <v-img
                             v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
@@ -161,7 +161,7 @@
                     </a>
                     </v-flex>
                     <v-flex xs4 sm3>
-                    <a href="https://www.go-wallet.app/">
+                    <a href="https://www.go-wallet.app/" target="_blank">
                         <v-card class="partner pa-3">
                             <v-img
                             v-bind:src="require('~/assets/img/partner/GoWallet.png')"
@@ -186,7 +186,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'coolDownIndex', 'type'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'url'],
     computed: {
     order() {
       return this.$store.getters['order/order']

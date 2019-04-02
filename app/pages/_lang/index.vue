@@ -61,34 +61,22 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm4>
-                <a href="https://www.cryptokitties.co/">
+                <a href="https://www.cryptokitties.co/" target="_blank">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
                         aspect-ratio="1.2"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">CryptoKitties</h3>
-                        </div>
-                        </v-card-title>
                     </v-card>
                 </a>
                 </v-flex>
                 <v-flex xs6 sm4>
-                <a href="https://www.crypt-oink.io/">
+                <a href="https://www.crypt-oink.io/" target="_blank">
                     <v-card>
                         <v-img
                         v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
                         aspect-ratio="1.2"
                         ></v-img>
-
-                        <v-card-title primary-title>
-                        <div class="text-box">
-                            <h3 class="headline mb-0">Crypt-Oink</h3>
-                        </div>
-                        </v-card-title>
                     </v-card>
                 </a>
                 </v-flex>
@@ -96,7 +84,7 @@
         </v-container>
     </section>
     <section class="c-index">
-        <h2 class="c-index__title">{{ $t('index.market') }}</h2>
+        <h2 class="c-index__title">{{ $t('index.tweet') }}</h2>
         <v-container grid-list-md align-center>
             <v-layout justify-center>
                 <a class="twitter-timeline" data-width="420" data-height="600" data-theme="light" data-link-color="#2B7BB9" href="https://twitter.com/bazaaario?ref_src=twsrc%5Etfw">Tweets by bazaaario</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -104,11 +92,15 @@
         </v-container>
     </section>
     <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.info') }}</h2>
+        <info></info>
+    </section>
+    <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm3>
-                <a href="https://tokenpocket.jp/ja/">
+                <a href="https://tokenpocket.jp/ja/" target="_blank">
                     <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
@@ -118,7 +110,7 @@
                 </a>
                 </v-flex>
                 <v-flex xs6 sm3>
-                <a href="https://www.go-wallet.app/">
+                <a href="https://www.go-wallet.app/" target="_blank">
                     <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/GoWallet.png')"
@@ -138,7 +130,7 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs4 sm2>
-                <a href="https://twitter.com/bazaaario">
+                <a href="https://twitter.com/bazaaario" target="_blank">
                     <v-card class="partner">
                         <v-img
                         v-bind:src="require('~/assets/img/sns/Twitter_Logo_Blue.png')"
@@ -169,13 +161,13 @@ import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
+import info from '~/components/info'
+
 
 const config = require('../../config.json')
 const project = process.env.project
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
-console.log(ck)
-console.log(ctn)
 
 
 export default {
@@ -184,6 +176,9 @@ export default {
         ck,
         ctn
       }
+  },
+  components: {
+    info
   },
   head() {
     return { title: this.$t('meta.title') }

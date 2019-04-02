@@ -112,7 +112,7 @@
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm3>
-                <a href="https://tokenpocket.jp/ja/">
+                <a href="https://tokenpocket.jp/ja/" target="_blank">
                     <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
@@ -122,7 +122,7 @@
                 </a>
                 </v-flex>
                 <v-flex xs6 sm3>
-                <a href="https://www.go-wallet.app/">
+                <a href="https://www.go-wallet.app/" target="_blank">
                     <v-card class="partner pa-3">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/GoWallet.png')"

@@ -17,7 +17,7 @@
                     ></v-select>
                 </v-flex>
 
-                <v-flex xs12 sm6 d-flex>
+                <!-- <v-flex xs12 sm6 d-flex>
                     <v-select
                     v-on:change="setSort"
                     :items="sorts"
@@ -27,7 +27,7 @@
                     v-model="selectedSort"
                     attach
                     ></v-select>
-                </v-flex>
+                </v-flex> -->
             </v-layout>
             </v-container>
 

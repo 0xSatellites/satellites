@@ -228,7 +228,6 @@ export default {
       result.generation = generation
       result.status = {}
       result.status.cooldown_index_to_speed = await oink.coolDownIndexToSpeed(Number(cooldown_index))
-      console.log(result)
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
@@ -380,7 +379,6 @@ export default {
             msg: this.msg
           }
           var result = await functions.call('order', datas)
-          console.log(result)
           this.hash = result.hash
           this.ogp = result.ogp
           this.modal = false
@@ -406,14 +404,12 @@ export default {
         .approve(client.contract.bazaaar_v2.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
-          console.log(hash)
           this.hash = hash
           this.modalNo = 2
           this.modal = true
           this.loading = false
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(receipt)
           location.reload()
         }).catch((err) => {
           alert(this.$t('error.message'))
@@ -430,7 +426,6 @@ export default {
         this.waitDiscount = true
         const account = this.account
         const order = this.order
-        console.log(order)
 
         await client.contract.bazaaar_v2.methods
           .orderCancel_(
@@ -453,7 +448,6 @@ export default {
           )
           .send({ from: account.address })
           .on('transactionHash', hash => {
-            console.log(hash)
             this.hash = hash
             this.modalNo = 3
             this.modal = true

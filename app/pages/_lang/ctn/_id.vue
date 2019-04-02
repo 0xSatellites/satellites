@@ -41,6 +41,15 @@
                 >
                 </textarea>
               </div>
+              <div v-if="approved && owned" class="small">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
+              <v-checkbox
+                  v-model="checkbox"
+                  :rules="[v => !!v || '']"
+                  :label="$t('id.agree')"
+                  required
+                  v-if="approved && owned"
+                  height ="20"
+                ></v-checkbox>
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
@@ -115,13 +124,6 @@
                     ></v-progress-circular>
                   </v-btn>
                 </div>
-                <v-checkbox
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  :label="$t('id.agree')"
-                  required
-                  v-if="approved && owned"
-                ></v-checkbox>
               </div>
             </div>
           </v-form>
@@ -165,7 +167,6 @@
       :asset="asset"
       :hash="hash"
       :host="host"
-      :coolDownIndex="oinkCooldownIndex"
       :modalNo="modalNo"
       :type="type"
     ></modal>
@@ -216,8 +217,18 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
+      const entities = await client.contract.ctn.methods
+           .getEntity(params.id)
+           .call()
+      const generation = await entities.generation
+      const cooldown_index = await entities.cooldownIndex
       let result = await oink.getOinkById(params.id)
+      result.id = params.id
       result.image_url = result.image
+      result.generation = generation
+      result.status = {}
+      result.status.cooldown_index_to_speed = await oink.coolDownIndexToSpeed(Number(cooldown_index))
+      console.log(result)
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
@@ -248,10 +259,8 @@ export default {
         .entityIndexToApproved(params.id)
         .call()
         .then(approvedAddress => {
-          console.log(approvedAddress)
           this.approved =
             approvedAddress == client.contract.bazaaar_v2.options.address
-          console.log(client.contract.bazaaar_v2.options.address)
 
         })
 
@@ -371,6 +380,7 @@ export default {
             msg: this.msg
           }
           var result = await functions.call('order', datas)
+          console.log(result)
           this.hash = result.hash
           this.ogp = result.ogp
           this.modal = false
@@ -467,5 +477,9 @@ export default {
 
 .white_text {
   color: white;
+}
+
+.small{
+  font-size: 60%;
 }
 </style>

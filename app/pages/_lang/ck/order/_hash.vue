@@ -21,14 +21,15 @@
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
-          <v-checkbox
+          <div class="l-information__txt">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
+          <div class="checkbox_center"><v-checkbox
             class="center"
             v-model="checkbox"
             :rules="[v => !!v || '']"
             :label="$t('hash.agree')"
             required
             v-if="!owner(order.maker)"
-          ></v-checkbox>
+          ></v-checkbox></div>
           <div class="l-information__action">
             <v-btn
               class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -103,6 +104,7 @@
       v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
+      :url="url"
     ></modal>
   </div>
 </template>
@@ -143,7 +145,8 @@ export default {
       modalNo: 4,
       hash: '',
       ck,
-      ctn
+      ctn,
+      url: {type: 'ck', hash: '', project: ''}
     }
   },
 
@@ -171,6 +174,8 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+    this.url.hash = this.$nuxt.$route.params.hash
+    this.url.project = config.host[project]
   },
   computed: {
     account() {
@@ -241,7 +246,11 @@ export default {
     transitionTop() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/'})
+      if(this.$route.fullPath.match(/ja/)){
+        router.push({ path: '/ja/'})
+      } else {
+        router.push({ path: '/'})
+      }
     },
     owner(maker) {
       return maker == this.account.address
@@ -266,7 +275,4 @@ export default {
   color: white;
 }
 
-.v-input__control {
-  margin: 0 auto;
-}
 </style>

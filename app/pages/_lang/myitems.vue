@@ -14,9 +14,9 @@
       </div>
     </section>
     <section class="l-personal" v-else>
-      <h2 class="l-personal__title">Get <a href="https://metamask.io/">metamask</a> or</h2>
-      <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/">TokenPocket</a> or</h2>
-      <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/">GO!WALLET</a> and login</h2>
+      <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
+      <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/" target="_blank">TokenPocket</a> or</h2>
+      <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
@@ -45,7 +45,7 @@
 
       </ul>
         <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.cryptokitties.co/">
+          <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
                   v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
@@ -85,8 +85,8 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.crypt-oink.io">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loading">
+          <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
                   v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
@@ -109,7 +109,6 @@
           <td v-else>purchased</td>
           <td>{{ props.item.id }}</td>
           <td>{{ fromWei(props.item.price) }} ETH</td>
-          <td>{{ timeConverter(props.item.modified)}}</td>
         </template>
       </v-data-table>
     </section>
@@ -209,8 +208,7 @@ export default {
         { text: 'date', value: 'date' },
         { text: 'result', value: 'result' },
         { text: 'id', value: 'id' },
-        { text: 'price', value: 'price' },
-        { text: 'timestamp', value: 'timestamp' }
+        { text: 'price', value: 'price' }
       ],
       loading: false
     }

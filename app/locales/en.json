@@ -17,12 +17,13 @@
         "newAssets":"New Assets",
         "handlingAssets":"Handling Assets",
         "market":"Market",
+        "tweet":"Tweets",
+        "info":"Information",
         "partners":"Partners",
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
-        "holdLanguage": "/ck/order/",
-        "holdLanguageCK": "/ja/ck/order/",
-        "holdLanguageCTN": "/ja/ctn/order/"
+        "holdLanguageCK": "/ck/order/",
+        "holdLanguageCTN": "/ctn/order/"
     },
     "assets":{
         "kitty":"CryptoKitties",
@@ -30,11 +31,13 @@
     },
     "header":{
         "mypage": "MyPage",
+        "market":"Market",
         "howto": "HowTo",
         "english": "EnglishVer",
         "japanese": "JapaneseVer",
         "topHD": "/",
-        "mypageHD": "/myitems"
+        "mypageHD": "/myitems",
+        "marketHD": "/market"
     },
     "modal":{
         "sell": "NOW ON SALE!!",
@@ -46,6 +49,7 @@
         "announce": "Once its approved, please make a sell order",
         "cancel": "Cancel started!",
         "purchase": "Purchase started!",
+        "approve": "It takes while before it reflects",
         "mypage": "It takes while before it reflects to mypage",
         "error":"Do you have your wallet ready and enough balance?",
         "error2":"Please prepare a wallet from the following services"
@@ -60,7 +64,9 @@
         "company": "company",
         "terms": "terms",
         "info": "info",
-        "contact": "contact"
+        "contact": "contact",
+        "infoHD": "/info",
+        "termsHD": "/terms"
     },
     "id":{
         "inputMessage": "Opitional Message",
@@ -70,6 +76,7 @@
         "change": "change",
         "cancel": "cancel",
         "agree": "Agree to the Terms",
+        "terms":"Terms",
         "relatedAsset": "Related Assets"
     },
     "hash":{
@@ -90,5 +97,11 @@
     },
     "error":{
         "message": "error"
+    },
+    "info":{
+        "title":"Information"
+    },
+    "market":{
+        "title":"Market"
     }
 }

@@ -310,9 +310,34 @@ exports.order = functions
         config.host[project] +
         'ck/order/' +
         order.hash
-      client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-        if(error) throw error;
-      });
+      try{
+        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+          if(error) throw error;
+        })
+      } catch (err) {
+        console.info('Twitter API Down')
+      }
+      // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //   if(error) throw error;
+      // });
+      // await axios({
+      //   method:'post',
+      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      //   data: {
+      //     content:
+      //       'NOW ON SALE!!' +
+      //       ' / Id.' +
+      //       order.id +
+      //       ' / Gen.' +
+      //       metadata.generation +
+      //       ' / ' +
+      //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
+      //       ' / #CryptoKitties ' +
+      //       config.discord.endpoint[project] +
+      //       "ck/order/" +
+      //       hash
+      //   }
+      // })
       const result = {
         ogp: ogp,
         hash: hash
@@ -458,7 +483,25 @@ exports.order = functions
         order.hash
       client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
         if(error) throw error;
-      });
+      })
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / Id.' +
+            order.id +
+            ' / Gen.' +
+            metadata.generation +
+            ' / ' +
+            coolDownIndexToSpeed(metadata.status.cooldown_index) +
+            ' / #くりぷ豚 ' +
+            config.discord.endpoint[project] +
+            "ctn/order/" +
+            hash
+        }
+      })
       const result = {
         ogp: ogp,
         hash: hash
@@ -723,3 +766,50 @@ exports.orderPeriodicUpdatePubSub = functions
     await Promise.all(savePromises.concat(deactivateDocOGPPromises))
     console.info("END orderPeriodicUpdate")
   })
+
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => res.send(
+  "This is bazaaar API"
+));
+
+app.get('/latestorders', async (req, res) => {
+  const result = []
+  const param = req.query.limit
+  const limit = Number(param)
+  const snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .orderBy('created', 'desc').limit(limit).get()
+  let name = ""
+  snapshots.forEach(function(doc){
+    if(doc.data().asset == config.contract[project].ck){
+      name = 'ck'
+    }
+    else if(doc.data().asset == config.contract[project].ctn){
+      asset = 'ctn'
+    }
+    const data ={
+      'price': doc.data().price,
+      'id' : doc.data().id,
+      'name': doc.data().metadata.name,
+      'image': doc.data().metadata.image_url,
+      'generation': doc.data().metadata.generation,
+      'cooldown_index': doc.data().metadata.status.cooldown_index,
+      'ogp': doc.data().ogp,
+      'url': config.host[project] + name +'/order/' + doc.data().hash
+    }
+    result.push(data)
+  })
+  res.json(result)
+});
+
+// app.get('/order', async(req, res) => {
+//   const param = req.query.hash
+//   //on going
+// });
+
+exports.api = functions
+  .region('asia-northeast1')
+  .https.onRequest(app);

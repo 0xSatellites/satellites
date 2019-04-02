@@ -259,10 +259,8 @@ export default {
         .entityIndexToApproved(params.id)
         .call()
         .then(approvedAddress => {
-          console.log(approvedAddress)
           this.approved =
             approvedAddress == client.contract.bazaaar_v2.options.address
-          console.log(client.contract.bazaaar_v2.options.address)
 
         })
 
@@ -382,6 +380,7 @@ export default {
             msg: this.msg
           }
           var result = await functions.call('order', datas)
+          console.log(result)
           this.hash = result.hash
           this.ogp = result.ogp
           this.modal = false

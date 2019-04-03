@@ -391,7 +391,7 @@ export default {
       const account = this.account
       const params = this.$route.params
       client.contract.mchh.methods
-        .approve(client.contract.bazaaar_v3.options.address, params.id)
+        .setApprovalForAll(client.contract.bazaaar_v3.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
           console.log(hash)

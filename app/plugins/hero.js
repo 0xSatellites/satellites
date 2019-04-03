@@ -6,8 +6,8 @@ const instance = axios.create({
   baseURL: 'https://www.mycryptoheroes.net/'
 })
 
-const getOinksByWalletAddress = async address => {
-    const result = await instance.get('getOinksByAddress?address=' + address)
+const getHeroByWalletAddress = async address => {
+    const result = await instance.get('getHeroByAddress?address=' + address)
     return result.data
 }
 
@@ -17,13 +17,6 @@ const result = await instance.get('metadata/hero/'+ id)
 }
 
 const coolDownIndexToSpeed = index => {
-  // const entities = await client.contract.ctn.methods
-  //          .getEntity(id)
-  //          .call()
-  // console.log(entities)
-  // const Num = await entities.cooldownIndex
-  // const number =Number(Num)
-  // console.log(Num)
   switch(index) {
     case 0:
     return 'Fast'
@@ -62,7 +55,7 @@ const getRarity = kitty => {
 
 const hero = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
-  getOinksByWalletAddress: getOinksByWalletAddress,
+  getHeroByWalletAddress: getHeroByWalletAddress,
   getHeroById: getHeroById,
   getRarity:getRarity
 }

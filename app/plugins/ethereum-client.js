@@ -27,6 +27,10 @@ const contract = {
   mchh: new web3.eth.Contract(
     config.abi.mchh,
     config.contract[process.env.project].mchh
+  ),
+  mche: new web3.eth.Contract(
+    config.abi.mche,
+    config.contract[process.env.project].mche
   )
 }
 

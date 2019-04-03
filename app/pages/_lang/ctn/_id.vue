@@ -320,7 +320,7 @@ export default {
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
       try {
-        console.log('order_v1')
+        console.log('order_v2')
         this.loading = true
         this.waitCancel = true
         this.modalNo = 5

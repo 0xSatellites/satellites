@@ -113,7 +113,7 @@ contract BazaaarProtocol_v3 is Pausable {
             order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
         }
         if(amount.referral > 0){
-            referralRecipient.transfer(amount.referral);
+            require(referralRecipient.call.value(amount.referral)());
         }
         if(amount.maker > 0 ){
             order.maker.transfer(amount.maker);

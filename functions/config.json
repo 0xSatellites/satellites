@@ -40,23 +40,32 @@
         "sand":{
             "bazaaar_v1":"0xD78309087c48eEb209D1738e3E25Ec5C1aBCe023",
             "bazaaar_v2":"0xD3E01223BEFfB405441a954C2CeAB25989360800",
+            "bazaaar_v3":"0x8870fa0bcd9ea5f779eecaf202b4787a623d0c5b",
             "ck":"0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF",
             "ctn":"0x587Ae915D4ccaa5C2220c638069f2605e1F7404C",
-            "mchh":"",
-            "mche":"",
-            "mch_distributer":"0x1fa1c7d7c794f50e0400bbfccc405ae7870a5726"
+            "mchh":"0xc106D47FB4bF5F9EbaF46E3219Ef3fABCbd26606",
+            "mche":"0x5220Debd5a575d1BF85b5531c9E0f6CeD243975C",
+            "mch_distributer":"0x0a7c935c8df4090c4436af8504aa5559c9382be3"
         },
         "staging":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"0xa965f09A38B08b6938AcBeE45f871D7A4Dc6E781",
+            "bazaaar_v3":"",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
-            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1"
+            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
+            "mchh":"0x273f7f8e6489682df756151f5525576e322d51a3",
+            "mche":"0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
+            "mch_distributer":""
         },
         "production":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"0xa965f09A38B08b6938AcBeE45f871D7A4Dc6E781",
+            "bazaaar_v3":"",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
-            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1"
+            "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
+            "mchh":"0x273f7f8e6489682df756151f5525576e322d51a3",
+            "mche":"0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
+            "mch_distributer":""
         }
     },
     "firebase":{

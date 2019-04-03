@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = process.env.GCLOUD_PROJECT.split('-')[2]
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -29,6 +29,10 @@ const bazaaar_v1 = new web3.eth.Contract(
 const bazaaar_v2 = new web3.eth.Contract(
   config.abi.bazaaar_v2,
   config.contract[project].bazaaar_v2
+)
+const bazaaar_v3 = new web3.eth.Contract(
+  config.abi.bazaaar_v3,
+  config.contract[project].bazaaar_v3
 )
 const ctn = new web3.eth.Contract(
   config.abi.ctn,
@@ -173,6 +177,73 @@ function disableBillingForProject(projectName) {
   });
 }
 
+async function metadata(asset, id){
+
+  var response
+  if(asset == 'mchh') {
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'hero/' + id,
+      responseType:'json'
+    })
+
+    let promises = []
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
+      responseType:'json'
+    }))
+
+    let resolved = await Promise.all(promises)
+
+    response = general.data
+    response.hero_type = resolved[0].data
+    response.active_skill = resolved[1].data
+    response.passive_skill = resolved[2].data
+  } else if (asset == 'mche'){
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extension/' + id,
+      responseType:'json'
+    })
+
+    let promises = []
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
+      responseType:'json'
+    }))
+
+    let resolved = await Promise.all(promises)
+
+    response = general.data
+    response.extension_type = resolved[0].data
+    response.skill = resolved[1].data
+  }
+  return response
+}
+
+exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  return await metadata(data.asset, data.id)
+})
 
 exports.order = functions
   .region('asia-northeast1')
@@ -499,6 +570,311 @@ exports.order = functions
             ' / #くりぷ豚 ' +
             config.discord.endpoint[project] +
             "ctn/order/" +
+            hash
+        }
+      })
+      const result = {
+        ogp: ogp,
+        hash: hash
+      }
+      console.info("OUTPUT data")
+      console.info(result)
+      console.info("END order")
+      return result
+    } else if (order.asset == config.contract[project].mchh) {
+      const hash = await bazaaar_v3.methods
+        .requireValidOrder_(
+          [
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.creatorRoyaltyRecipient,
+            order.asset
+          ],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ],
+          order.v,
+          order.r,
+          order.s
+        )
+        .call()
+      console.info("INFO order 1")
+      const metadata = await metadata('mchh', order.id)
+      console.log(metadata)
+      console.info("INFO order 2")
+      const imagePromise = axios.get(metadata.general.image_url, {
+        responseType: 'arraybuffer'
+      })
+      const promises = [readFile('./assets/img/template_en.png'), imagePromise]
+      const resolved = await Promise.all(promises)
+      console.info("INFO order 3")
+      const templateImg = new Canvas.Image()
+      const characterImg = new Canvas.Image()
+      templateImg.src = resolved[0]
+      characterImg.src = resolved[1].data
+      const canvas = Canvas.createCanvas(1200, 630)
+      const c = canvas.getContext('2d')
+      c.clearRect(0, 0, 1200, 630)
+      c.drawImage(templateImg, 0, 0)
+      c.drawImage(characterImg, 15, 50, 450, 515)
+      c.textBaseline = 'top'
+      c.textAlign = 'center'
+      c.fillStyle = '#ffff00'
+      c.font = "bold 60px 'Noto Sans JP Bold'"
+      if (!params.msg) {
+        c.fillText('NOW ON SALE!!', 840, 120, 720)
+      } else {
+        if(params.msg.length <= 9){
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg, 840, 120, 720)
+        } else {
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg.substr(0, 9), 840, 80, 720)
+          c.fillText(msg.substr(9, 9), 840, 160, 720)
+        }
+      }
+      c.fillStyle = '#fff'
+      c.font = "40px 'Noto Sans JP'"
+      c.fillText(
+        'Id.' + order.id + ' / ' + 'Lv.' + metadata.general.lv,
+        840,
+        255,
+        720
+      )
+      c.fillText(metadata.general.description, 840, 305, 720)
+      c.font = "bold 75px 'Noto Sans JP Bold'"
+      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+      const base64EncodedImageString = canvas.toDataURL().substring(22)
+      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+      const file = bucket.file(hash + '.png')
+      const ogp =
+        'https://firebasestorage.googleapis.com/v0/b/' +
+        bucket.name +
+        '/o/' +
+        encodeURIComponent(hash + '.png') +
+        '?alt=media'
+      const now = new Date().getTime()
+      order.hash = hash
+      order.metadata = metadata
+      order.ogp = ogp
+      order.created = now
+      order.valid = true
+      const batch = db.batch()
+      const deactivateDocOGPPromises = []
+      const snapshots = await db
+        .collection('order')
+        .where('maker', '==', order.maker)
+        .where('asset', '==', order.asset)
+        .where('id', '==', order.id)
+        .where('valid', '==', true)
+        .get()
+      console.info("INFO order 4")
+      snapshots.forEach(function(doc) {
+        const ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {
+          result: { status: 'cancelled' },
+          valid: false,
+          modified: now
+        })
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+      })
+      const ref = db.collection('order').doc(hash)
+      batch.set(ref, order)
+      const savePromises = [
+        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+        batch.commit()
+      ]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+      console.info("INFO order 5")
+      const msssage =
+        'NOW ON SALE!!' +
+        ' / Id.' +
+        order.id +
+        ' / Lv.' +
+        metadata.general.lv +
+        ' / ' +
+        metadata.general.description +
+        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        config.host[project] +
+        'mchh/order/' +
+        order.hash
+      client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+        if(error) throw error;
+      })
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / Id.' +
+            order.id +
+            ' / Lv.' +
+            metadata.general.lv +
+            ' / ' +
+            metadata.general.description +
+            ' / #MCH ' +
+            config.discord.endpoint[project] +
+            "mchh/order/" +
+            hash
+        }
+      })
+      const result = {
+        ogp: ogp,
+        hash: hash
+      }
+      console.info("OUTPUT data")
+      console.info(result)
+      console.info("END order")
+      return result
+    }else if (order.asset == config.contract[project].mche) {
+      const hash = await bazaaar_v3.methods
+        .requireValidOrder_(
+          [
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.creatorRoyaltyRecipient,
+            order.asset
+          ],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ],
+          order.v,
+          order.r,
+          order.s
+        )
+        .call()
+      console.info("INFO order 1")
+      const metadata = await metadata('mchh', order.id)
+      console.info("INFO order 2")
+      const imagePromise = axios.get(metadata.general.image_url, {
+        responseType: 'arraybuffer'
+      })
+      const promises = [readFile('./assets/img/template_en.png'), imagePromise]
+      const resolved = await Promise.all(promises)
+      console.info("INFO order 3")
+      const templateImg = new Canvas.Image()
+      const characterImg = new Canvas.Image()
+      templateImg.src = resolved[0]
+      characterImg.src = resolved[1].data
+      const canvas = Canvas.createCanvas(1200, 630)
+      const c = canvas.getContext('2d')
+      c.clearRect(0, 0, 1200, 630)
+      c.drawImage(templateImg, 0, 0)
+      c.drawImage(characterImg, 15, 50, 450, 515)
+      c.textBaseline = 'top'
+      c.textAlign = 'center'
+      c.fillStyle = '#ffff00'
+      c.font = "bold 60px 'Noto Sans JP Bold'"
+      if (!params.msg) {
+        c.fillText('NOW ON SALE!!', 840, 120, 720)
+      } else {
+        if(params.msg.length <= 9){
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg, 840, 120, 720)
+        } else {
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg.substr(0, 9), 840, 80, 720)
+          c.fillText(msg.substr(9, 9), 840, 160, 720)
+        }
+      }
+      c.fillStyle = '#fff'
+      c.font = "40px 'Noto Sans JP'"
+      c.fillText(
+        'Id.' + order.id + ' / ' + 'Lv.' + metadata.general.lv,
+        840,
+        255,
+        720
+      )
+      c.fillText(metadata.general.description, 840, 305, 720)
+      c.font = "bold 75px 'Noto Sans JP Bold'"
+      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+      const base64EncodedImageString = canvas.toDataURL().substring(22)
+      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+      const file = bucket.file(hash + '.png')
+      const ogp =
+        'https://firebasestorage.googleapis.com/v0/b/' +
+        bucket.name +
+        '/o/' +
+        encodeURIComponent(hash + '.png') +
+        '?alt=media'
+      const now = new Date().getTime()
+      order.hash = hash
+      order.metadata = metadata
+      order.ogp = ogp
+      order.created = now
+      order.valid = true
+      const batch = db.batch()
+      const deactivateDocOGPPromises = []
+      const snapshots = await db
+        .collection('order')
+        .where('maker', '==', order.maker)
+        .where('asset', '==', order.asset)
+        .where('id', '==', order.id)
+        .where('valid', '==', true)
+        .get()
+      console.info("INFO order 4")
+      snapshots.forEach(function(doc) {
+        const ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {
+          result: { status: 'cancelled' },
+          valid: false,
+          modified: now
+        })
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+      })
+      const ref = db.collection('order').doc(hash)
+      batch.set(ref, order)
+      const savePromises = [
+        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+        batch.commit()
+      ]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+      console.info("INFO order 5")
+      const msssage =
+        'NOW ON SALE!!' +
+        ' / Id.' +
+        order.id +
+        ' / Lv.' +
+        metadata.general.lv +
+        ' / ' +
+        metadata.general.description +
+        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        config.host[project] +
+        'mche/order/' +
+        order.hash
+      client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+        if(error) throw error;
+      })
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / Id.' +
+            order.id +
+            ' / Gen.' +
+            metadata.general.lv +
+            ' / ' +
+            metadata.general.description +
+            ' / #MCH ' +
+            config.discord.endpoint[project] +
+            "mche/order/" +
             hash
         }
       })

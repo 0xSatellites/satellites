@@ -250,16 +250,12 @@ export default {
         })
 
       client.contract.mchh.methods
-        .getApproved(params.id)
+        .isApprovedForAll(this.account.address, client.contract.bazaaar_v3.options.address)
         .call()
-        .then(approvedAddress => {
-          console.log(approvedAddress)
-          this.approved =
-            approvedAddress == client.contract.bazaaar_v3.options.address
-          console.log(client.contract.bazaaar_v3.options.address)
-
+        .then(result => {
+          this.approved = result
         })
-
+      
       firestore
         .getLowestCostOrderByMakerId(client.account.address, params.id)
         .then(order => {
@@ -331,11 +327,11 @@ export default {
           this.waitCancel = false
           return
         }
-
         const approved = await client.contract.mchh.methods
-          .getApproved(params.id)
+          .isApprovedForAll(account.address, client.contract.bazaaar_v3.options.address)
           .call()
-        if (approved == client.contract.bazaaar_v3.options.address) {
+        console.log(approved)
+        if (approved) {
           console.log('approved')
           const nonce = await client.contract.bazaaar_v3.methods
             .nonce_(
@@ -344,16 +340,20 @@ export default {
               params.id
             )
             .call()
-
+          console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
+          console.log(2)
           const date = new Date()
+          console.log(3)
           date.setDate(date.getDate() + 7)
+          console.log(4)
           const expiration = Math.round(date.getTime() / 1000)
+          console.log(5)
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: config.recipient[project].mchh,
+            creatorRoyaltyRecipient: config.recipient[project].mch,
             asset: client.contract.mchh.options.address,
             id: params.id,
             price: wei,
@@ -363,12 +363,16 @@ export default {
             creatorRoyaltyRatio: 500,
             referralRatio: 500
           }
+          console.log(params.id)
           const signedOrder = await client.signOrder(order)
+          console.log(7)
           const datas = {
             order: signedOrder,
             msg: this.msg
           }
+          console.log(1)
           var result = await functions.call('order', datas)
+          console.log(2)
           this.hash = result.hash
           this.ogp = result.ogp
           this.modal = false
@@ -379,7 +383,7 @@ export default {
         this.loading = false
         this.waitCancel = false
       } catch (err) {
-        alert(this.$t('error.message'))
+        alert(err)
         this.loading = false
         this.modal = false
         this.waitCancel = false

@@ -189,6 +189,7 @@ const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
+const mche = config.contract[project].mche
 
 export default {
   components: {
@@ -216,6 +217,7 @@ export default {
       ck,
       ctn,
       mchh,
+      mche,
       type: { name: 'マイクリヒーロー', symbol: 'mchh'}
     }
   },
@@ -310,7 +312,7 @@ export default {
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
       try {
-        console.log('order_v1')
+        console.log('order_v3')
         this.loading = true
         this.waitCancel = true
         this.modalNo = 5

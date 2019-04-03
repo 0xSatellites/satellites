@@ -179,7 +179,7 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import oink from '~/plugins/oink'
+import extensions from '~/plugins/extension'
 import functions from '~/plugins/functions'
 import extension from '~/plugins/extension'
 import Modal from '~/components/modal'
@@ -190,6 +190,8 @@ const project = process.env.project
 const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
+const mche = config.contract[project].mche
 export default {
   components: {
     Modal
@@ -217,6 +219,8 @@ export default {
       generation: 0,
       ck,
       ctn,
+      mchh,
+      mche,
       type: { name: 'くりぷ豚', symbol: 'ctn'}
     }
   },
@@ -243,21 +247,21 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
-      client.contract.ctn.methods
-        .entityIndexToOwner(params.id)
+      client.contract.mche.methods
+        .ownerOf(params.id)
         .call()
         .then(owner => {
           this.owned = owner == this.account.address
         })
 
-      client.contract.ctn.methods
-        .entityIndexToApproved(params.id)
+      client.contract.mche.methods
+        .getApproved(params.id)
         .call()
         .then(approvedAddress => {
           console.log(approvedAddress)
           this.approved =
-            approvedAddress == client.contract.bazaaar_v2.options.address
-          console.log(client.contract.bazaaar_v2.options.address)
+            approvedAddress == client.contract.bazaaar_3.options.address
+          console.log(client.contract.bazaaar_v3.options.address)
 
         })
 
@@ -270,12 +274,6 @@ export default {
           }
         })
 
-      const entities = await client.contract.ctn.methods
-           .getEntity(params.id)
-           .call()
-          this.generation = await entities.generation
-          this.cooldown_index = await entities.cooldownIndex
-          this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
     }
   },
   computed: {
@@ -294,10 +292,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
+      return extension.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-      return oink.getRarity(asset)
+      return extension.getRarity(asset)
     },
     fromWei(wei) {
       return client.utils.fromWei(wei)
@@ -313,18 +311,18 @@ export default {
     transitionOrder() {
       const router = this.$router
       this.modal = false
-      router.push({ path: '/ctn/order/' + this.hash })
+      router.push({ path: '/mche/order/' + this.hash })
     },
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
       try {
-        console.log('order_v1')
+        console.log('order_v3')
         this.loading = true
         this.waitCancel = true
         this.modalNo = 5
         this.modal = true
         const account = this.account
-        const asset = this.asset.ctn
+        const asset = this.asset.mche
         const params = this.$route.params
         const router = this.$router
         const amount = this.price
@@ -340,15 +338,15 @@ export default {
           return
         }
 
-        const approved = await client.contract.ctn.methods
-          .entityIndexToApproved(params.id)
+        const approved = await client.contract.mche.methods
+          .getApproved(params.id)
           .call()
-        if (approved == client.contract.bazaaar_v2.options.address) {
+        if (approved == client.contract.bazaaar_v3.options.address) {
           console.log('approved')
-          const nonce = await client.contract.bazaaar_v2.methods
+          const nonce = await client.contract.bazaaar_v3.methods
             .nonce_(
               account.address,
-              client.contract.ctn.options.address,
+              client.contract.mche.options.address,
               params.id
             )
             .call()
@@ -358,11 +356,11 @@ export default {
           date.setDate(date.getDate() + 7)
           const expiration = Math.round(date.getTime() / 1000)
           const order = {
-            proxy: client.contract.bazaaar_v2.options.address,
+            proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: config.recipient[project].ctn,
-            asset: client.contract.ctn.options.address,
+            creatorRoyaltyRecipient: config.recipient[project].mche,
+            asset: client.contract.mche.options.address,
             id: params.id,
             price: wei,
             nonce: nonce,
@@ -398,8 +396,8 @@ export default {
       this.loading = true
       const account = this.account
       const params = this.$route.params
-      client.contract.ctn.methods
-        .approve(client.contract.bazaaar_v2.options.address, params.id)
+      client.contract.mche.methods
+        .setApprovalForAll(client.contract.bazaaar_3.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
           console.log(hash)
@@ -428,7 +426,7 @@ export default {
         const order = this.order
         console.log(order)
 
-        await client.contract.bazaaar_v2.methods
+        await client.contract.bazaaar_v3.methods
           .orderCancel_(
             [
               order.proxy,

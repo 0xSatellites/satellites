@@ -101,7 +101,8 @@
               </a>
           </v-flex>
     </section>
-    <section class="c-index c-index--mypage" v-if="account.address">
+    <!-- <section class="c-index c-index--mypage" v-if="account.address">
+      {{myheros}}
       <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
       <ul>
         <v-progress-circular
@@ -111,7 +112,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+        <li v-for="(mchh, i) in myheros" :key="i + '-ck'" v-else-if="myheros.length">
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -141,7 +142,7 @@
                 </v-card>
               </a>
           </v-flex>
-    </section>
+    </section> -->
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
@@ -189,9 +190,14 @@ export default {
         store.dispatch('oink/setOinks', tokens)
       })
 
-      hero.getHeroByWalletAddress(client.account.address).then(tokens => {
-        this.loading = false
-        store.dispatch('hero/setHeros', tokens)
+      client.ownedTokens('mchh').then(async function(tokens) {
+          const promises = []
+          for(var token of tokens){
+            promises.push(functions.call('metadata', {asset:'mchh', id:token}))
+          }
+          const result = await Promise.all(promises)
+          console.log(result)
+          store.dispatch('hero/setHeros', result)
       })
 
       firestore
@@ -201,6 +207,7 @@ export default {
       firestore
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
+
 
     }
   },

@@ -52,6 +52,15 @@
               <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(Number(order.metadata.status.cooldown_index))}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
+            <nuxt-link v-else-if="order.asset === mchh" :to="$t('index.holdLanguageMCHH') + order.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ order.id }}</div>
+              <div class="c-card__txt">Lv. {{order.metadata.attributes.lv}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
+            </nuxt-link>
         </li>
         </ul>
         </section>
@@ -68,6 +77,7 @@ const config = require('../../config.json')
 const project = process.env.project
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
 
 
 
@@ -76,6 +86,7 @@ export default {
     return {
         ck,
         ctn,
+        mchh,
         selectedAsset: 'all',
         selectedSort:'created_desc',
         assets:[
@@ -90,6 +101,10 @@ export default {
         {
           name: 'Crypt-Oink',
           marketAsset: 'ctn'
+        },
+        {
+          name: 'MyCryptoHeros',
+          marketAsset: 'mchh'
         },
         ],
         sorts:[

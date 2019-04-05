@@ -155,6 +155,15 @@
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
+          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
         </li>
       </ul>
             </div>
@@ -218,7 +227,7 @@ export default {
       ctn,
       mchh,
       mche,
-      type: { name: 'マイクリヒーロー', symbol: 'mchh'}
+      type: { name: 'マイクリ', symbol: 'mchh'}
     }
   },
   async asyncData({ store, params, error }) {
@@ -257,7 +266,7 @@ export default {
         .then(result => {
           this.approved = result
         })
-      
+
       firestore
         .getLowestCostOrderByMakerId(client.account.address, params.id)
         .then(order => {
@@ -348,14 +357,12 @@ export default {
           const date = new Date()
           console.log(3)
           date.setDate(date.getDate() + 7)
-          console.log(4)
           const expiration = Math.round(date.getTime() / 1000)
-          console.log(5)
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: config.recipient[project].mch,
+            creatorRoyaltyRecipient: account.address,
             asset: client.contract.mchh.options.address,
             id: params.id,
             price: wei,
@@ -365,21 +372,17 @@ export default {
             creatorRoyaltyRatio: 500,
             referralRatio: 500
           }
-          console.log(params.id)
           const signedOrder = await client.signOrder(order)
-          console.log(7)
           const datas = {
             order: signedOrder,
             msg: this.msg
           }
-          console.log(1)
           var result = await functions.call('order', datas)
-          console.log(2)
           this.hash = result.hash
           this.ogp = result.ogp
           this.modal = false
           await sleep(1)
-          this.modalNo = 1
+          this.modalNo = 7
           this.modal = true
         }
         this.loading = false

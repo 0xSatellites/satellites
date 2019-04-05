@@ -23,11 +23,14 @@
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
         "holdLanguageCK": "/ja/ck/order/",
-        "holdLanguageCTN": "/ja/ctn/order/"
+        "holdLanguageCTN": "/ja/ctn/order/",
+        "holdLanguageMCHH": "/ja/mchh/order/",
+        "holdLanguageMCHE": "/ja/mche/order/"
     },
     "assets":{
         "kitty":"クリプトキティ",
-        "oink":"くりぷ豚"
+        "oink":"くりぷ豚",
+        "mch":"マイクリプトヒーローズ"
     },
     "header":{
         "mypage": "マイページ",
@@ -91,7 +94,8 @@
     },
     "empty":{
         "kitty": "キティ持ってないにゃ",
-        "oink": "くりぷトン持ってないのだいん"
+        "oink": "くりぷトン持ってないブー",
+        "mch":"ヒーローがいないよ"
     },
     "error":{
         "message": "エラー"

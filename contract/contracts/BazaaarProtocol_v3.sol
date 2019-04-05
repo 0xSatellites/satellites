@@ -183,7 +183,7 @@ contract BazaaarProtocol_v3 is Pausable {
         if (ERC721(order.asset).ownerOf(order.id) != order.maker) {
             return false;
         }
-        if (ERC721(order.asset).getApproved(order.id) != address(this) || !ERC721(order.asset).isApprovedForAll(order.maker, address(this))) {
+        if (ERC721(order.asset).getApproved(order.id) != address(this) && !ERC721(order.asset).isApprovedForAll(order.maker, address(this))) {
             return false;
         }
         return true;

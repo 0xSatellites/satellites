@@ -3,7 +3,7 @@ const config = require('../config.json')
 
 
 const instance = axios.create({
-  baseURL: 'https://www.mycryptoheroes.net/'
+  baseURL: 'https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/'
 })
 
 const getHeroByWalletAddress = async address => {
@@ -12,7 +12,7 @@ const getHeroByWalletAddress = async address => {
 }
 
 const getHeroById = async id => {
-const result = await instance.get('metadata/hero/'+ id)
+const result = await instance.get('getHeroById?id='+ id)
   return result.data
 }
 

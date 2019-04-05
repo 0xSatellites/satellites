@@ -102,9 +102,9 @@
           </v-flex>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-      {{myheros}}
+      <!-- {{myheros}} -->
       <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
-      <!-- <ul>
+      <ul>
         <v-progress-circular
           class="loading "
           v-if="this.loading === true"
@@ -112,22 +112,21 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(mchh, i) in myheros" :key="i + '-ck'" v-else-if="myheros.length">
+        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="ck.image_url" /></div>
-              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="mchh.image_url" /></div>
+              <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ ck.id }}</div>
-              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
+              <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
             </nuxt-link>
           </div>
         </li>
 
-      </ul> -->
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+      </ul>
+        <v-flex xs12 sm6 offset-sm3 v-if="!myheros.length && !this.loading">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img

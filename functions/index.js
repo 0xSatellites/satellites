@@ -1227,3 +1227,14 @@ app.get('/latestorders', async (req, res) => {
 exports.api = functions
   .region('asia-northeast1')
   .https.onRequest(app);
+
+
+  exports.getHeroById = functions
+  .region('asia-northeast1')
+  .https.onRequest(async (req, res) =>{
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET');
+      res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+      var result = await axios.get("https://www.mycryptoheroes.net/metadata/hero/"+ req.query.id)
+      res.json(result.data)
+    });

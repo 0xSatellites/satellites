@@ -188,30 +188,30 @@ async function metadata(asset, id){
     })
 
     let promises = []
-    promises.push(axios({
-      method:'get',
-      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
-      responseType:'json'
-    }))
+    // promises.push(axios({
+    //   method:'get',
+    //   url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+    //   responseType:'json'
+    // }))
 
-    promises.push(axios({
-      method:'get',
-      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
-      responseType:'json'
-    }))
+    // promises.push(axios({
+    //   method:'get',
+    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+    //   responseType:'json'
+    // }))
 
-    promises.push(axios({
-      method:'get',
-      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
-      responseType:'json'
-    }))
+    // promises.push(axios({
+    //   method:'get',
+    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
+    //   responseType:'json'
+    // }))
 
     let resolved = await Promise.all(promises)
 
     response = general.data
-    response.hero_type = resolved[0].data
-    response.active_skill = resolved[1].data
-    response.passive_skill = resolved[2].data
+    // response.hero_type = resolved[0].data
+    // response.active_skill = resolved[1].data
+    // response.passive_skill = resolved[2].data
   } else if (asset == 'mche'){
     let general = await axios({
       method:'get',
@@ -220,23 +220,23 @@ async function metadata(asset, id){
     })
 
     let promises = []
-    promises.push(axios({
-      method:'get',
-      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
-      responseType:'json'
-    }))
+    // promises.push(axios({
+    //   method:'get',
+    //   url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+    //   responseType:'json'
+    // }))
 
-    promises.push(axios({
-      method:'get',
-      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
-      responseType:'json'
-    }))
+    // promises.push(axios({
+    //   method:'get',
+    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
+    //   responseType:'json'
+    // }))
 
     let resolved = await Promise.all(promises)
 
     response = general.data
-    response.extension_type = resolved[0].data
-    response.skill = resolved[1].data
+    // response.extension_type = resolved[0].data
+    // response.skill = resolved[1].data
   }
   return response
 }
@@ -606,10 +606,10 @@ exports.order = functions
         )
         .call()
       console.info("INFO order 1")
-      const metadata = await metadata('mchh', order.id)
-      console.log(metadata)
+      console.log(order.id)
+      const meta = await metadata('mchh', order.id)
       console.info("INFO order 2")
-      const imagePromise = axios.get(metadata.general.image_url, {
+      const imagePromise = axios.get(meta.image_url, {
         responseType: 'arraybuffer'
       })
       const promises = [readFile('./assets/img/template_en.png'), imagePromise]
@@ -643,12 +643,12 @@ exports.order = functions
       c.fillStyle = '#fff'
       c.font = "40px 'Noto Sans JP'"
       c.fillText(
-        'Id.' + order.id + ' / ' + 'Lv.' + metadata.general.lv,
+        'Id.' + order.id + ' / ' + 'Lv.' + meta.attributes.lv,
         840,
         255,
         720
       )
-      c.fillText(metadata.general.description, 840, 305, 720)
+      c.fillText(meta.attributes.rarity, 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -662,7 +662,7 @@ exports.order = functions
         '?alt=media'
       const now = new Date().getTime()
       order.hash = hash
-      order.metadata = metadata
+      order.metadata = meta
       order.ogp = ogp
       order.created = now
       order.valid = true
@@ -698,9 +698,9 @@ exports.order = functions
         ' / Id.' +
         order.id +
         ' / Lv.' +
-        metadata.general.lv +
+        meta.attributes.lv +
         ' / ' +
-        metadata.general.description +
+        meta.attributes.rarity +
         ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
         config.host[project] +
         'mchh/order/' +
@@ -717,9 +717,9 @@ exports.order = functions
             ' / Id.' +
             order.id +
             ' / Lv.' +
-            metadata.general.lv +
+            meta.attributes.lv +
             ' / ' +
-            metadata.general.description +
+            meta.attributes.rarity +
             ' / #MCH ' +
             config.discord.endpoint[project] +
             "mchh/order/" +
@@ -759,7 +759,7 @@ exports.order = functions
         )
         .call()
       console.info("INFO order 1")
-      const metadata = await metadata('mchh', order.id)
+      const metadata = await metadata('mche', order.id)
       console.info("INFO order 2")
       const imagePromise = axios.get(metadata.general.image_url, {
         responseType: 'arraybuffer'

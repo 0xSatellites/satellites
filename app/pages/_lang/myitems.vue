@@ -101,10 +101,10 @@
               </a>
           </v-flex>
     </section>
-    <!-- <section class="c-index c-index--mypage" v-if="account.address">
+    <section class="c-index c-index--mypage" v-if="account.address">
       {{myheros}}
-      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
-      <ul>
+      <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
+      <!-- <ul>
         <v-progress-circular
           class="loading "
           v-if="this.loading === true"
@@ -126,23 +126,23 @@
           </div>
         </li>
 
-      </ul>
+      </ul> -->
         <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.cryptokitties.co/">
+          <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
-                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
-                  aspect-ratio="1.75"
+                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
+                  aspect-ratio="2.4"
                   ></v-img>
                   <v-card-title primary-title>
                   <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
+                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
                   </div>
                   </v-card-title>
                 </v-card>
               </a>
           </v-flex>
-    </section> -->
+    </section>
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">

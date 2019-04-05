@@ -93,6 +93,14 @@
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
+          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
         </li>
       </ul>
             </div>
@@ -120,6 +128,8 @@ const config = require('../../../../config.json')
 const project = process.env.project
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
+
 
 export default {
   components: {
@@ -146,6 +156,7 @@ export default {
       hash: '',
       ck,
       ctn,
+      mchh,
       url: {type: 'ck', hash: '', project: ''}
     }
   },

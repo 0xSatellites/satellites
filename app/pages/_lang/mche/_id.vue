@@ -221,7 +221,7 @@ export default {
       ctn,
       mchh,
       mche,
-      type: { name: 'くりぷ豚', symbol: 'ctn'}
+      type: { name: 'マイクリ', symbol: 'mche'}
     }
   },
   async asyncData({ store, params, error }) {

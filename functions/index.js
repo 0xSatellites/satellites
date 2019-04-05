@@ -1030,7 +1030,15 @@ exports.orderPeriodicUpdatePubSub = functions
       bazaaar_v2.getPastEvents('OrderCancelled', {
         fromBlock: (await web3.eth.getBlockNumber()) - 25,
         toBlock: 'latest'
-      })
+      }),
+      bazaaar_v3.getPastEvents('OrderMatched', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
+      }),
+      bazaaar_v3.getPastEvents('OrderCancelled', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
+      }),
     ]
     const eventResolved = await Promise.all(eventPromises)
     console.info("INFO Sold")
@@ -1100,6 +1108,36 @@ exports.orderPeriodicUpdatePubSub = functions
           .where('asset', '==', eventResolved[3][i].returnValues.asset)
           .where('id', '==', eventResolved[3][i].returnValues.id.toString())
           .where('maker', '==', eventResolved[3][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
+    for (var i = 0; i < eventResolved[4].length; i++) {
+      takers.push(eventResolved[4][i].returnValues.taker)
+      soldPromises.push(
+        db
+          .collection('order')
+          .where('hash', '==', eventResolved[4][i].raw.topics[1])
+          .where('valid', '==', true)
+          .get()
+      )
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[4][i].returnValues.asset)
+          .where('id', '==', eventResolved[4][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[4][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
+    for (var i = 0; i < eventResolved[5].length; i++) {
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[5][i].returnValues.asset)
+          .where('id', '==', eventResolved[5][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[5][i].returnValues.maker)
           .where('valid', '==', true)
           .get()
       )

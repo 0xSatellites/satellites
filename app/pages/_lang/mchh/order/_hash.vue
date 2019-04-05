@@ -9,13 +9,13 @@
           {{ order.metadata.name }}
         </div>
         <div class="l-information__txt">#{{ order.id }}</div>
-        <div class="l-information__txt">{{$t('assets.oink')}}</div>
+        <div class="l-information__txt">{{$t('assets.mch')}}</div>
         <ul class="l-information__data">
           <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></li>
         </ul>
         <ul class="l-information__data">
-          <li><strong>Gen：</strong> {{order.metadata.generation}} </li>
-          <!-- <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(order.metadata.status.cooldown_index)}}</li> -->
+          <li><strong>Rarity:</strong> {{order.metadata.attributes.rarity}} </li>
+          <li><strong>Lv.</strong> {{order.metadata.attributes.lv}} </li>
         </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
@@ -210,7 +210,7 @@ export default {
         const account = this.account
         const order = this.order
 
-        await client.contract.bazaaar_v2.methods
+        await client.contract.bazaaar_v3.methods
           .orderMatch_(
             [
               order.proxy,

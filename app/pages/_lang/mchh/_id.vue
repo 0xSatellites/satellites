@@ -362,7 +362,7 @@ export default {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: config.recipient[project].mch,
+            creatorRoyaltyRecipient: account.address,
             asset: client.contract.mchh.options.address,
             id: params.id,
             price: wei,

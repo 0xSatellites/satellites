@@ -759,9 +759,9 @@ exports.order = functions
         )
         .call()
       console.info("INFO order 1")
-      const metadata = await metadata('mche', order.id)
+      const meta = await metadata('mche', order.id)
       console.info("INFO order 2")
-      const imagePromise = axios.get(metadata.general.image_url, {
+      const imagePromise = axios.get(meta.image_url, {
         responseType: 'arraybuffer'
       })
       const promises = [readFile('./assets/img/template_en.png'), imagePromise]
@@ -795,12 +795,12 @@ exports.order = functions
       c.fillStyle = '#fff'
       c.font = "40px 'Noto Sans JP'"
       c.fillText(
-        'Id.' + order.id + ' / ' + 'Lv.' + metadata.general.lv,
+        'Id.' + order.id + ' / ' + 'Lv.' + meta.attributes.lv,
         840,
         255,
         720
       )
-      c.fillText(metadata.general.description, 840, 305, 720)
+      c.fillText(meta.attributes.rarity, 840, 305, 720)
       c.font = "bold 75px 'Noto Sans JP Bold'"
       c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
       const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -814,7 +814,7 @@ exports.order = functions
         '?alt=media'
       const now = new Date().getTime()
       order.hash = hash
-      order.metadata = metadata
+      order.metadata = meta
       order.ogp = ogp
       order.created = now
       order.valid = true
@@ -850,9 +850,9 @@ exports.order = functions
         ' / Id.' +
         order.id +
         ' / Lv.' +
-        metadata.general.lv +
+        meta.attributes.lv +
         ' / ' +
-        metadata.general.description +
+        meta.attributes.rarity +
         ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
         config.host[project] +
         'mche/order/' +
@@ -869,9 +869,9 @@ exports.order = functions
             ' / Id.' +
             order.id +
             ' / Gen.' +
-            metadata.general.lv +
+            meta.attributes.lv +
             ' / ' +
-            metadata.general.description +
+            meta.attributes.rarity +
             ' / #MCH ' +
             config.discord.endpoint[project] +
             "mche/order/" +
@@ -916,7 +916,10 @@ exports.orderMatchedPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(194, 258))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
+    if (address == bazaaar_v1.options.address ||
+        address == bazaaar_v2.options.address ||
+        address == bazaaar_v3.options.address
+    ){
       console.info("INFO orderMached 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -982,7 +985,10 @@ exports.orderCancelledPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(130, 194))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
+    if (address == bazaaar_v1.options.address ||
+        address == bazaaar_v2.options.address ||
+        address == bazaaar_v3.options.address
+    ){
       console.info("INFO orderCancelled 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -1203,6 +1209,12 @@ app.get('/latestorders', async (req, res) => {
     }
     else if(doc.data().asset == config.contract[project].ctn){
       asset = 'ctn'
+    }
+    else if(doc.data().asset == config.contract[project].mchh){
+      asset = 'mchh'
+    }
+    else if(doc.data().asset == config.contract[project].mche){
+      asset = 'mche'
     }
     const data ={
       'price': doc.data().price,

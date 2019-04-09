@@ -142,6 +142,49 @@
               </a>
           </v-flex>
     </section>
+    <section class="c-index c-index--mypage" v-if="account.address">
+    <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
+          <div>
+            <!-- mche.attributes.idのidないので対応する -->
+            <!-- とりあえすmche.attributes.lvにしている -->
+            <!-- idがないのでpages遷移はできない -->
+            <nuxt-link :to="'/mche/' + mche.attributes.lv" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="mche.image_url" /></div>
+              <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mche.attributes.lv }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+
+      </ul>
+     <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading">
+          <a href="https://www.mycryptoheroes.net">
+                <v-card>
+                  <v-img
+                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
+                  aspect-ratio="2.4"
+                  ></v-img>
+                  <v-card-title primary-title>
+                  <div class="text-box">
+                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
+                  </div>
+                  </v-card-title>
+                </v-card>
+              </a>
+          </v-flex>
+    </section>
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
@@ -163,6 +206,7 @@ import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
 import hero from '~/plugins/hero'
+import extension from '~/plugins/extension'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
@@ -171,6 +215,7 @@ export default {
     const myitems = this.myitems
     const myoinks = this.myoinks
     const myheros = this.myheros
+    const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
     if (typeof web3 != 'undefined') {
@@ -199,6 +244,16 @@ export default {
           store.dispatch('hero/setHeros', result)
       })
 
+      client.ownedTokens('mche').then(async function(tokens) {
+          const promises = []
+          for(var token of tokens){
+            promises.push(functions.call('metadata', {asset:'mche', id:token}))
+          }
+          const result = await Promise.all(promises)
+          console.log(result)
+          store.dispatch('extension/setExtensions', result)
+      })
+
       firestore
         .getValidOrdersByMaker(client.account.address)
         .then(orders => store.dispatch('order/setOrders', orders))
@@ -222,6 +277,9 @@ export default {
     },
     myheros() {
       return this.$store.getters['hero/heros']
+    },
+    myextensions() {
+      return this.$store.getters['extension/extensions']
     },
     orders() {
       return this.$store.getters['order/orders']

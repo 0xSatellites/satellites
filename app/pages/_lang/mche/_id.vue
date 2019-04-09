@@ -255,14 +255,10 @@ export default {
         })
 
       client.contract.mche.methods
-        .getApproved(params.id)
+        .isApprovedForAll(this.account.address, client.contract.bazaaar_v3.options.address)
         .call()
-        .then(approvedAddress => {
-          console.log(approvedAddress)
-          this.approved =
-            approvedAddress == client.contract.bazaaar_3.options.address
-          console.log(client.contract.bazaaar_v3.options.address)
-
+        .then(result => {
+          this.approved = result
         })
 
       firestore
@@ -273,7 +269,6 @@ export default {
             this.price = client.utils.fromWei(order.price)
           }
         })
-
     }
   },
   computed: {
@@ -338,19 +333,20 @@ export default {
           return
         }
 
-        const approved = await client.contract.mche.methods
-          .getApproved(params.id)
+        const approved = await client.contract.mchh.methods
+          .isApprovedForAll(account.address, client.contract.bazaaar_v3.options.address)
           .call()
-        if (approved == client.contract.bazaaar_v3.options.address) {
+        console.log(approved)
+        if (approved) {
           console.log('approved')
           const nonce = await client.contract.bazaaar_v3.methods
             .nonce_(
               account.address,
-              client.contract.mche.options.address,
+              client.contract.mchh.options.address,
               params.id
             )
             .call()
-
+          console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
           const date = new Date()
           date.setDate(date.getDate() + 7)
@@ -359,7 +355,7 @@ export default {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: config.recipient[project].mche,
+            creatorRoyaltyRecipient: account.address,
             asset: client.contract.mche.options.address,
             id: params.id,
             price: wei,
@@ -379,7 +375,7 @@ export default {
           this.ogp = result.ogp
           this.modal = false
           await sleep(1)
-          this.modalNo = 1
+          this.modalNo = 7
           this.modal = true
         }
         this.loading = false
@@ -397,7 +393,7 @@ export default {
       const account = this.account
       const params = this.$route.params
       client.contract.mche.methods
-        .setApprovalForAll(client.contract.bazaaar_3.options.address, params.id)
+        .setApprovalForAll(client.contract.bazaaar_v3.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
           console.log(hash)

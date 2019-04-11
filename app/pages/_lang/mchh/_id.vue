@@ -23,8 +23,8 @@
           </ul>
           <ul class="l-item__data">
             <!-- TODO 条件分岐 Active有無 -->
-          <li><span class="l-item__skill--type">Active</span></li>
-          <li><span class="l-item__skill--type">Passive</span></li>
+          <li><span class="l-item__skill--type">Active</span>{{asset.active_skill.name.ja}}</li>
+          <li><span class="l-item__skill--type">Passive</span>{{asset.passive_skill.name.ja}}</li>
           </ul>
 
           <v-form>
@@ -243,7 +243,7 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      let result = await hero.getHeroById(params.id)
+      let result = await functions.call("metadata", {asset:"mchh", id:params.id})
       const asset = result
 
       store.dispatch('asset/setAsset', asset)

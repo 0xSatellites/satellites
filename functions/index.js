@@ -181,12 +181,16 @@ async function metadata(asset, id){
 
   var response
   if(asset == 'mchh') {
+    console.log('START mchh')
+    console.log('START general')
     let general = await axios({
       method:'get',
       url:config.api.mch.metadata + 'hero/' + id,
       responseType:'json'
     })
 
+    console.log(general)
+    console.log('START heroType')
     let promises = []
     promises.push(await axios({
       method:'get',
@@ -194,18 +198,14 @@ async function metadata(asset, id){
       responseType:'json'
     }))
 
+    console.log('START skill')
     promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
       responseType:'json'
     }))
 
-    promises.push(await axios({
-      method:'get',
-      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
-      responseType:'json'
-    }))
-
+    console.log('START art, sell')
     if(general.art_history.length > 0 && general.data.current_art){
       promises.push(await axios({
         method:'get',
@@ -222,6 +222,7 @@ async function metadata(asset, id){
 
     let resolved = await Promise.all(promises)
 
+    console.log('START response')
     response = general.data
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
@@ -240,12 +241,15 @@ async function metadata(asset, id){
     }
 
   } else if (asset == 'mche'){
+    console.log('START mche')
+    console.log('START general')
     let general = await axios({
       method:'get',
       url:config.api.mch.metadata + 'extension/' + id,
       responseType:'json'
     })
-
+    console.log(general)
+    console.log('START extensionType')
     let promises = []
     promises.push(await axios({
       method:'get',
@@ -253,12 +257,14 @@ async function metadata(asset, id){
       responseType:'json'
     }))
 
+    console.log('START skill')
     promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
       responseType:'json'
     }))
 
+    console.log('START sell')
     if(general.extra_data.nickname) {
       response.sell = true
     } else {
@@ -267,10 +273,14 @@ async function metadata(asset, id){
 
     let resolved = await Promise.all(promises)
 
+    console.log('START response')
     response = general.data
     response.extension_type = resolved[0].data
     response.skill = resolved[1].data
+
   }
+  console.log(response)
+  console.log('END')
   return response
 }
 

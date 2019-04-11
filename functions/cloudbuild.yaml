@@ -14,3 +14,6 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'api', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'metadata', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'

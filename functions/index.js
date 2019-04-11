@@ -188,23 +188,37 @@ async function metadata(asset, id){
     })
 
     let promises = []
-    promises.push(axios({
+    promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
       responseType:'json'
     }))
 
-    promises.push(axios({
+    promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
       responseType:'json'
     }))
 
-    promises.push(axios({
+    promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
       responseType:'json'
     }))
+
+    if(general.art_history.length > 0 && general.data.current_art){
+      promises.push(await axios({
+        method:'get',
+        url:config.api.mch.metadata + 'ipfs/' + general.data.current_art,
+        responseType:'json'
+      }))
+      response.sell = true
+    } else if(general.art_history.length > 0) {
+      response.sell = true
+      response.royalty_rate = 0
+    } else {
+      response.sell = false
+    }
 
     let resolved = await Promise.all(promises)
 
@@ -212,6 +226,19 @@ async function metadata(asset, id){
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
+
+    if(resolved[3].data){
+      response.current_art_data = resolved[3].data
+      const likes = response.current_art_data.attributes.likes
+      if(likes >= 100) {
+        response.royalty_rate = 60
+      } else if(30 <= likes && likes < 100) {
+        response.royalty_rate = 30
+      } else {
+        response.royalty_rate = 0
+      }
+    }
+
   } else if (asset == 'mche'){
     let general = await axios({
       method:'get',
@@ -220,17 +247,23 @@ async function metadata(asset, id){
     })
 
     let promises = []
-    promises.push(axios({
+    promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
       responseType:'json'
     }))
 
-    promises.push(axios({
+    promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
       responseType:'json'
     }))
+
+    if(general.extra_data.nickname) {
+      response.sell = true
+    } else {
+      response.sell = false
+    }
 
     let resolved = await Promise.all(promises)
 

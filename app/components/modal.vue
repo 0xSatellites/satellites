@@ -12,8 +12,7 @@
               <img :src="ogp" alt="" width="85%" />
           </div>
           <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
-          <div class="l-modal__btn">
-            <a
+          <a
               :href="
                 'https://twitter.com/share?url=' +
                   host + type.symbol +
@@ -37,8 +36,9 @@
               target="”_blank”"
             >
               {{$t('modal.tweet')}}
-            </a>
+          <div class="l-modal__btn">
           </div>
+          </a>
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>

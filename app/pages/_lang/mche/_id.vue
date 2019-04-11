@@ -17,16 +17,14 @@
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
-            <li><strong>HP：</strong> {{asset.attributes.hp}}</li>
-            <li><strong>PHY:：</strong> {{asset.attributes.phy}} </li>
+            <li><strong>HP：</strong> {{asset.attributes.hp }}</li>
+            <li><strong>PHY：</strong> {{asset.attributes.phy }}</li>
+            <li><strong>INT：</strong> {{asset.attributes.int }}</li>
+            <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
           <ul class="l-item__data">
-            <li><strong>INT：</strong> {{asset.attributes.int}} </li>
-            <li><strong>AGI：</strong> {{asset.attributes.agi}} </li>
-          </ul>
-          <ul class="l-item__data">
-            <li><strong>Active_skill：</strong> {{asset.attributes.active_skill}} </li>
-            <li><strong>Rarity：</strong> {{asset.attributes.rarity}}</li>
+            <li><span class="l-item__skill--type">Active</span>{{asset.skill.name.ja}} </li>
+            <li><span class="l-item__skill--type">Passive</span> {{asset}}</li>
           </ul>
 
           <v-form>

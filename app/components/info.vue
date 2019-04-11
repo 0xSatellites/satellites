@@ -22,8 +22,8 @@
                         <div>{{item.title}}</div>
                     </div>
                     </v-card>
+                    <v-divider></v-divider>
                 </template>
-                <v-divider></v-divider>
             </v-card>
             <v-card flat v-else>
                 <v-divider></v-divider>
@@ -45,8 +45,8 @@
                         <div>{{item.title}}</div>
                     </div>
                     </v-card>
+                    <v-divider></v-divider>
                 </template>
-                <v-divider></v-divider>
             </v-card>
             </v-flex>
         </v-layout>

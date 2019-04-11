@@ -96,6 +96,17 @@
                     </v-card>
                 </a>
                 </v-flex>
+                <v-flex xs6 sm4>
+                <a href="https://www.mycryptoheroes.net/" target="_blank">
+                    <v-card>
+                        <v-img
+                        v-bind:src="require('~/assets/img/asset/MyCryptoHeros.jpg')"
+                        aspect-ratio="1.2"
+                        contain
+                        ></v-img>
+                    </v-card>
+                </a>
+                </v-flex>
             </v-layout>
         </v-container>
     </section>

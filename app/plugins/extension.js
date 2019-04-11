@@ -12,7 +12,7 @@ const getExtensionByWalletAddress = async address => {
 }
 
 const getExtensionById = async id => {
-  const result = await instance.get('getExtensionById?id='+ id)
+    const result = await instance.get('getExtensionById?id='+ id)
     return result.data
   }
 

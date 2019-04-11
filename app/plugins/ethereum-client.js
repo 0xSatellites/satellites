@@ -34,6 +34,12 @@ const contract = {
   )
 }
 
+const project = process.env.project
+const ck = config.contract[project].ck
+const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
+const mche = config.contract[project].mche
+
 const account = {
   address: null,
   balance: null
@@ -98,13 +104,27 @@ const signOrder = async order => {
   return order
 }
 
+
+const toAsset = asset => {
+  switch(asset) {
+  case ck:
+  return 'CryptoKitties'
+  case ctn:
+  return 'Crypt-Oink'
+  case mchh:
+  case mche:
+  return 'MyCryptoHeros'
+  }
+}
+
 const client = {
   account: account,
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
   signOrder:signOrder,
-  utils: web3.utils
+  utils: web3.utils,
+  toAsset: toAsset
 }
 
 export default client

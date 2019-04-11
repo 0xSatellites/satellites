@@ -206,14 +206,14 @@ async function metadata(asset, id){
     }))
 
     console.log('START art, sell')
-    if(general.art_history.length > 0 && general.data.current_art){
+    if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
       promises.push(await axios({
         method:'get',
-        url:config.api.mch.metadata + 'ipfs/' + general.data.current_art,
+        url:config.api.mch.metadata + 'ipfs/' + general.data.extra_data.current_art,
         responseType:'json'
       }))
       response.sell = true
-    } else if(general.art_history.length > 0) {
+    } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true
       response.royalty_rate = 0
     } else {
@@ -230,7 +230,7 @@ async function metadata(asset, id){
 
     if(resolved[3].data){
       response.current_art_data = resolved[3].data
-      const likes = response.current_art_data.attributes.likes
+      const likes = response.extra_data.current_art_data.attributes.likes
       if(likes >= 100) {
         response.royalty_rate = 60
       } else if(30 <= likes && likes < 100) {
@@ -264,7 +264,7 @@ async function metadata(asset, id){
     }))
 
     console.log('START sell')
-    if(general.extra_data.nickname) {
+    if(general.data.extra_data.nickname) {
       response.sell = true
     } else {
       response.sell = false

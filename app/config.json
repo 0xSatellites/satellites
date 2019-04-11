@@ -122,17 +122,17 @@
         "sand":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-            "mch": "0x04c599c3E1091CbD00e8da14Ed3a7E72cAeEdaF8"
+            "mch_distributer":"0x0a7c935c8df4090c4436af8504aa5559c9382be3"
         },
         "staging":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-            "mch": ""
+            "mch_distributer":""
         },
         "production":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-            "mch": ""
+            "mch_distributer":""
         }
     }
 }

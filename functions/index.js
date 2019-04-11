@@ -188,6 +188,7 @@ async function metadata(asset, id){
       url:config.api.mch.metadata + 'hero/' + id,
       responseType:'json'
     })
+    response = general.data
 
     console.log(general)
     console.log('START heroType')
@@ -223,7 +224,6 @@ async function metadata(asset, id){
     let resolved = await Promise.all(promises)
 
     console.log('START response')
-    response = general.data
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
@@ -248,7 +248,10 @@ async function metadata(asset, id){
       url:config.api.mch.metadata + 'extension/' + id,
       responseType:'json'
     })
+    response = general.data
 
+    console.log(general)
+    console.log('START extensionType')
     let promises = []
     promises.push(await axios({
       method:'get',
@@ -274,7 +277,6 @@ async function metadata(asset, id){
     let resolved = await Promise.all(promises)
 
     console.log('START response')
-    response = general.data
     response.extension_type = resolved[0].data
     response.skill = resolved[1].data
 

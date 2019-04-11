@@ -11,7 +11,6 @@
           <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
           <div class="l-item__txt">{{ asset.description }}</div>
           <div class="l-item__txt">
-            MyCryptoHeros
           </div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>

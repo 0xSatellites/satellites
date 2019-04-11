@@ -7,21 +7,25 @@
             <img :src="asset.image_url" alt="" />
           </div>
         </div>
+
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
           <div class="l-item__txt">{{ asset.description }}</div>
           <div class="l-item__txt">
-            MyCryptoHeros
           </div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
-          <li><strong>Active_skill：</strong> {{asset.attributes.active_skill}} </li>
-          <li><strong>Passive_skill:：</strong> {{asset.attributes.passive_skill}} </li>
+            <li><strong>HP：</strong> {{asset.attributes.hp}}</li>
+            <li><strong>PHY:：</strong> {{asset.attributes.phy}} </li>
           </ul>
           <ul class="l-item__data">
-            <li><strong>HP：</strong> {{asset.attributes.hp}}</li>
+            <li><strong>INT：</strong> {{asset.attributes.int}} </li>
+            <li><strong>AGI：</strong> {{asset.attributes.agi}} </li>
+          </ul>
+          <ul class="l-item__data">
+            <li><strong>Active_skill：</strong> {{asset.attributes.active_skill}} </li>
             <li><strong>Rarity：</strong> {{asset.attributes.rarity}}</li>
           </ul>
 
@@ -197,7 +201,6 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import extensions from '~/plugins/extension'
 import functions from '~/plugins/functions'
 import extension from '~/plugins/extension'
 import Modal from '~/components/modal'
@@ -244,7 +247,8 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      let result = await extension.getExtensionById(params.id)
+      let result = await functions.call("metadata", {asset:"mche", id:params.id})
+      console.log(result)
       const asset = result
 
       store.dispatch('asset/setAsset', asset)

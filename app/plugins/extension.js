@@ -12,7 +12,9 @@ const getExtensionByWalletAddress = async address => {
 }
 
 const getExtensionById = async id => {
-  const result = await instance.get('getExtensionById?id='+ id)
+  console.log(id)
+    const result = await instance.get('metadata?asset=mche&id=' + id)
+    console.log(result)
     return result.data
   }
 

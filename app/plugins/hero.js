@@ -12,7 +12,7 @@ const getHeroByWalletAddress = async address => {
 }
 
 const getHeroById = async id => {
-const result = await instance.get('getHeroById?id='+ id)
+  const result = await instance.get('getHeroById?id='+ id)
   return result.data
 }
 

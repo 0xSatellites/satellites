@@ -248,8 +248,7 @@ async function metadata(asset, id){
       url:config.api.mch.metadata + 'extension/' + id,
       responseType:'json'
     })
-    console.log(general)
-    console.log('START extensionType')
+
     let promises = []
     promises.push(await axios({
       method:'get',
@@ -257,8 +256,8 @@ async function metadata(asset, id){
       responseType:'json'
     }))
 
-    console.log('START skill')
-    promises.push(await axios({
+    promises.push(axios({
+
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
       responseType:'json'
@@ -270,6 +269,7 @@ async function metadata(asset, id){
     } else {
       response.sell = false
     }
+
 
     let resolved = await Promise.all(promises)
 

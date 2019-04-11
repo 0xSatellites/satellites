@@ -101,8 +101,8 @@
               </a>
           </v-flex>
     </section>
+    <!-- マイクリ -->
     <section class="c-index c-index--mypage" v-if="account.address">
-      <!-- {{myheros}} -->
       <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
       <ul>
         <v-progress-circular
@@ -124,14 +124,13 @@
             </nuxt-link>
           </div>
         </li>
-
-      </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myheros.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
                   v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
-                  aspect-ratio="2.4"
+                  aspect-ratio="1.75"
+                  contain
                   ></v-img>
                   <v-card-title primary-title>
                   <div class="text-box">
@@ -141,9 +140,9 @@
                 </v-card>
               </a>
           </v-flex>
+      </ul>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-    <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -169,21 +168,6 @@
         </li>
 
       </ul>
-     <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading">
-          <a href="https://www.mycryptoheroes.net">
-                <v-card>
-                  <v-img
-                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
-                  aspect-ratio="2.4"
-                  ></v-img>
-                  <v-card-title primary-title>
-                  <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
-                  </div>
-                  </v-card-title>
-                </v-card>
-              </a>
-          </v-flex>
     </section>
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
@@ -191,13 +175,12 @@
           <td>{{ timeConverter(props.item.modified) }}</td>
           <td v-if="props.item.maker == account.address">sold</td>
           <td v-else>purchased</td>
+          <td>{{ toAsset(props.item.asset) }}</td>
           <td>{{ props.item.id }}</td>
           <td>{{ fromWei(props.item.price) }} ETH</td>
         </template>
       </v-data-table>
     </section>
-
-
   </div>
 </template>
 
@@ -308,6 +291,9 @@ export default {
     timeConverter(timestamp){
       return kitty.timeConverter(timestamp)
     },
+    toAsset(asset){
+      return client.toAsset(asset)
+    }
     // oinkCoolDownIndexToSpeed(index){
     //   oink.coolDownIndexToSpeed(index)
     //   .then(result => {
@@ -322,6 +308,7 @@ export default {
       headers: [
         { text: 'date', value: 'date' },
         { text: 'result', value: 'result' },
+        { text: 'asset', value: 'asset' },
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],

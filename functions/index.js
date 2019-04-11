@@ -199,10 +199,17 @@ async function metadata(asset, id){
       responseType:'json'
     }))
 
-    console.log('START skill')
+    console.log('START active_skill_id')
     promises.push(await axios({
       method:'get',
       url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+      responseType:'json'
+    }))
+
+    console.log('START passive_skill_id')
+    promises.push(await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
       responseType:'json'
     }))
 
@@ -227,8 +234,8 @@ async function metadata(asset, id){
     response.hero_type = resolved[0].data
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
-
-    if(resolved[3].data){
+    console.log(response)
+    if(resolved.length === 4){
       response.current_art_data = resolved[3].data
       const likes = response.extra_data.current_art_data.attributes.likes
       if(likes >= 100) {

@@ -229,7 +229,7 @@ export default {
               order.taker,
               order.creatorRoyaltyRecipient,
               order.asset,
-              config.recipient[project].bazaaar
+              config.recipient[project].mch_distributer
             ],
             [
               order.id,

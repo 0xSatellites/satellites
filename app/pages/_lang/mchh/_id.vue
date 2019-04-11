@@ -242,7 +242,7 @@ export default {
     try {
       let result = await functions.call("metadata", {asset:"mchh", id:params.id})
       const asset = result
-
+      console.log(result)
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
@@ -265,6 +265,10 @@ export default {
         .ownerOf(params.id)
         .call()
         .then(owner => {
+          if(this.asset.sell){
+            this.owned = owner == this.account.address
+          }
+          //本番はartないアセットは売れないので下記は消す
           this.owned = owner == this.account.address
         })
 
@@ -366,19 +370,23 @@ export default {
           console.log(3)
           date.setDate(date.getDate() + 7)
           const expiration = Math.round(date.getTime() / 1000)
+          const creatorRoyaltyRecipientAddress = account.address
+          if(asset.extra_data.current_art) {
+            creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address
+          }
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,
             taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: account.address,
+            creatorRoyaltyRecipient: creatorRoyaltyRecipientAddress,
             asset: client.contract.mchh.options.address,
             id: params.id,
             price: wei,
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: 500,
-            referralRatio: 500
+            creatorRoyaltyRatio: asset.royalty_rate,
+            referralRatio: 1000 - asset.royalty_rate
           }
           const signedOrder = await client.signOrder(order)
           const datas = {

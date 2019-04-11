@@ -273,6 +273,10 @@ export default {
         .ownerOf(params.id)
         .call()
         .then(owner => {
+          if(this.asset.sell){
+            this.owned = owner == this.account.address
+          }
+          //本番はartないアセットは売れないので下記は消す
           this.owned = owner == this.account.address
         })
 

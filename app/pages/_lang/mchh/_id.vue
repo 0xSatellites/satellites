@@ -374,7 +374,7 @@ export default {
           date.setDate(date.getDate() + 7)
           const expiration = Math.round(date.getTime() / 1000)
           const creatorRoyaltyRecipientAddress = account.address
-          if(asset.extra_data.current_art) {
+          if(this.asset.extra_data.current_art) {
             creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address
           }
           const order = {
@@ -388,8 +388,8 @@ export default {
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: asset.royalty_rate,
-            referralRatio: 1000 - asset.royalty_rate
+            creatorRoyaltyRatio: this.asset.royalty_rate,
+            referralRatio: 1000 - this.asset.royalty_rate
           }
           const signedOrder = await client.signOrder(order)
           const datas = {

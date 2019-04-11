@@ -240,7 +240,7 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      let result = await hero.getHeroById(params.id)
+      let result = await functions.call("metadata", {asset:"mchh", id:params.id})
       const asset = result
 
       store.dispatch('asset/setAsset', asset)

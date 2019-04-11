@@ -188,55 +188,52 @@ async function metadata(asset, id){
     })
 
     let promises = []
-    // promises.push(axios({
-    //   method:'get',
-    //   url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
-    //   responseType:'json'
-    // }))
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+      responseType:'json'
+    }))
 
-    // promises.push(axios({
-    //   method:'get',
-    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
-    //   responseType:'json'
-    // }))
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+      responseType:'json'
+    }))
 
-    // promises.push(axios({
-    //   method:'get',
-    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
-    //   responseType:'json'
-    // }))
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
+      responseType:'json'
+    }))
 
     let resolved = await Promise.all(promises)
 
     response = general.data
-    // response.hero_type = resolved[0].data
-    // response.active_skill = resolved[1].data
-    // response.passive_skill = resolved[2].data
+    response.hero_type = resolved[0].data
+    response.active_skill = resolved[1].data
+    response.passive_skill = resolved[2].data
   } else if (asset == 'mche'){
     let general = await axios({
       method:'get',
       url:config.api.mch.metadata + 'extension/' + id,
       responseType:'json'
     })
-
     let promises = []
-    // promises.push(axios({
-    //   method:'get',
-    //   url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
-    //   responseType:'json'
-    // }))
-
-    // promises.push(axios({
-    //   method:'get',
-    //   url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
-    //   responseType:'json'
-    // }))
-
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+      responseType:'json'
+    }))
+    promises.push(axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
+      responseType:'json'
+    }))
     let resolved = await Promise.all(promises)
 
     response = general.data
-    // response.extension_type = resolved[0].data
-    // response.skill = resolved[1].data
+    response.extension_type = resolved[0].data
+    response.skill = resolved[1].data
   }
   return response
 }

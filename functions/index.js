@@ -239,9 +239,9 @@ async function metadata(asset, id){
       response.current_art_data = resolved[3].data
       const likes = response.extra_data.current_art_data.attributes.likes
       if(likes >= 100) {
-        response.royalty_rate = 60
+        response.royalty_rate = 600
       } else if(30 <= likes && likes < 100) {
-        response.royalty_rate = 30
+        response.royalty_rate = 300
       } else {
         response.royalty_rate = 0
       }

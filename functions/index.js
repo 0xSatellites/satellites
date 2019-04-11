@@ -226,6 +226,7 @@ async function metadata(asset, id){
       response.royalty_rate = 0
     } else {
       response.sell = false
+      response.royalty_rate = 0
     }
 
     let resolved = await Promise.all(promises)

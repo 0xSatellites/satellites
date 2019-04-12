@@ -11,12 +11,19 @@
         <div class="l-information__txt">#{{ order.id }}</div>
         <div class="l-information__txt">{{$t('assets.mch')}}</div>
         <ul class="l-information__data">
-          <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></li>
         </ul>
         <ul class="l-information__data">
-          <li><strong>Rarity:</strong> {{order.metadata.attributes.rarity}} </li>
-          <li><strong>Lv.</strong> {{order.metadata.attributes.lv}} </li>
+          <li><strong>HP：</strong> {{order.metadata.attributes.hp }}</li>
+          <li><strong>PHY：</strong> {{order.metadata.attributes.phy }}</li>
+          <li><strong>INT：</strong> {{order.metadata.attributes.int }}</li>
+          <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
         </ul>
+        <ul class="l-item__data">
+            <!-- TODO 条件分岐 Active有無 -->
+          <li><span class="l-item__skill--type">Active</span>{{order.metadata.active_skill.name.ja}}</li>
+          <li><span class="l-item__skill--type">Passive</span>{{order.metadata.passive_skill.name.ja}}</li>
+          </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
@@ -73,7 +80,7 @@
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -82,7 +89,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -91,7 +98,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -100,7 +107,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -127,7 +134,8 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import Modal from '~/components/modal'
-import oink from '~/plugins/oink'
+import common from '~/plugins/common'
+import hero from '~/plugins/hero'
 
 import '@fortawesome/fontawesome-free/css/all.css'
 
@@ -164,7 +172,7 @@ export default {
       ck,
       ctn,
       mchh,
-      mche
+      mche,
     }
   },
 
@@ -209,7 +217,10 @@ export default {
       return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return oink.getRarity(asset)
+        return common.getRarity(asset)
+    },
+    getHeroRarity(asset) {
+      return hero.getHeroRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

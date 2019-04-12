@@ -18,6 +18,73 @@
       <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/" target="_blank">TokenPocket</a> or</h2>
       <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
+          <div>
+            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="mchh.image_url" /></div>
+              <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
+          <a href="https://www.mycryptoheroes.net">
+                <v-card>
+                  <v-img
+                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
+                  aspect-ratio="1.75"
+                  contain
+                  ></v-img>
+                  <v-card-title primary-title>
+                  <div class="text-box">
+                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
+                  </div>
+                  </v-card-title>
+                </v-card>
+              </a>
+          </v-flex>
+      </ul>
+    </section>
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
+          <div>
+            <!-- mche.attributes.idのidないので対応する -->
+            <!-- とりあえすmche.attributes.lvにしている -->
+            <!-- idがないのでpages遷移はできない -->
+            <nuxt-link :to="'/mche/' + mche.attributes.lv" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="mche.image_url" /></div>
+              <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mche.attributes.lv }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+
+      </ul>
+    </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
@@ -102,73 +169,6 @@
           </v-flex>
     </section>
     <!-- マイクリ -->
-    <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
-      <ul>
-        <v-progress-circular
-          class="loading "
-          v-if="this.loading === true"
-          :size="50"
-          color="blue"
-          indeterminate
-        ></v-progress-circular>
-        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
-          <div>
-            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="mchh.image_url" /></div>
-              <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
-            </nuxt-link>
-          </div>
-        </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
-          <a href="https://www.mycryptoheroes.net">
-                <v-card>
-                  <v-img
-                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
-                  aspect-ratio="1.75"
-                  contain
-                  ></v-img>
-                  <v-card-title primary-title>
-                  <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
-                  </div>
-                  </v-card-title>
-                </v-card>
-              </a>
-          </v-flex>
-      </ul>
-    </section>
-    <section class="c-index c-index--mypage" v-if="account.address">
-      <ul>
-        <v-progress-circular
-          class="loading "
-          v-if="this.loading === true"
-          :size="50"
-          color="blue"
-          indeterminate
-        ></v-progress-circular>
-        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
-          <div>
-            <!-- mche.attributes.idのidないので対応する -->
-            <!-- とりあえすmche.attributes.lvにしている -->
-            <!-- idがないのでpages遷移はできない -->
-            <nuxt-link :to="'/mche/' + mche.attributes.lv" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="mche.image_url" /></div>
-              <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ mche.attributes.lv }}</div>
-            </nuxt-link>
-          </div>
-        </li>
-
-      </ul>
-    </section>
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
@@ -186,6 +186,7 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
+import common from '~/plugins/common'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
 import hero from '~/plugins/hero'
@@ -283,7 +284,7 @@ export default {
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+        return common.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

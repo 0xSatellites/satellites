@@ -12,9 +12,7 @@ const getExtensionByWalletAddress = async address => {
 }
 
 const getExtensionById = async id => {
-  console.log(id)
     const result = await instance.get('metadata?asset=mche&id=' + id)
-    console.log(result)
     return result.data
   }
 
@@ -47,20 +45,22 @@ const getExtensionById = async id => {
     }
 }
 
-
-
-const getRarity = kitty => {
-  var rarity = 3
-  if(kitty.is_fancy) rarity++
-  if(kitty.is_exclusive) rarity++
+const getExtensionRarity = extension => {
+  var rarity
+  if(extension.attributes.rarity=='Legendary') rarity =5
+  if(extension.attributes.rarity=='Epic') rarity =4
+  if(extension.attributes.rarity=='Rare') rarity =3
+  if(extension.attributes.rarity=='UnCommon') rarity =2
+  if(extension.attributes.rarity=='Common') rarity =1
   return rarity
 }
+
 
 const extension = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
   getExtensionByWalletAddress: getExtensionByWalletAddress,
   getExtensionById: getExtensionById,
-  getRarity:getRarity
+  getExtensionRarity: getExtensionRarity,
 }
 
 export default extension

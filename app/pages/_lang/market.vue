@@ -35,7 +35,7 @@
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
             <nuxt-link v-if="order.asset === ck" :to="$t('index.holdLanguageCK') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -44,7 +44,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
             <nuxt-link v-else-if="order.asset === ctn" :to="$t('index.holdLanguageCTN') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -53,7 +53,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
             <nuxt-link v-else-if="order.asset === mchh" :to="$t('index.holdLanguageMCHH') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -62,7 +62,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
             </nuxt-link>
             <nuxt-link v-else-if="order.asset === mche" :to="$t('index.holdLanguageMCHE') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -81,6 +81,7 @@ import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
+import common from '~/plugins/common'
 
 const config = require('../../config.json')
 const project = process.env.project
@@ -159,13 +160,7 @@ export default {
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-      return kitty.getRarity(asset)
-    },
-    coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
-    },
-    getRarity(asset) {
-      return oink.getRarity(asset)
+      return common.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

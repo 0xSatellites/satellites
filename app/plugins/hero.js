@@ -46,10 +46,13 @@ const coolDownIndexToSpeed = index => {
 }
 
 
-const getRarity = kitty => {
-  var rarity = 3
-  if(kitty.is_fancy) rarity++
-  if(kitty.is_exclusive) rarity++
+const getHeroRarity = hero => {
+  var rarity
+  if(hero.attributes.rarity=='Legendary') rarity =5
+  if(hero.attributes.rarity=='Epic') rarity =4
+  if(hero.attributes.rarity=='Rare') rarity =3
+  if(hero.attributes.rarity=='UnCommon') rarity =2
+  if(hero.attributes.rarity=='Novice') rarity =1
   return rarity
 }
 
@@ -57,7 +60,7 @@ const hero = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
   getHeroByWalletAddress: getHeroByWalletAddress,
   getHeroById: getHeroById,
-  getRarity:getRarity
+  getHeroRarity:getHeroRarity
 }
 
 export default hero

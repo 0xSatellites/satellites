@@ -14,7 +14,7 @@
             CryptoKitties
           </div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset)" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getKittyRarity(asset)" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
           <li><strong>Gen：</strong> {{asset.generation}} </li>
@@ -128,7 +128,7 @@
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -137,7 +137,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -146,7 +146,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -154,7 +154,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -187,6 +187,7 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import kitty from '~/plugins/kitty'
+import common from '~/plugins/common'
 import Modal from '~/components/modal'
 
 
@@ -293,7 +294,10 @@ export default {
       return kitty.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return kitty.getRarity(asset)
+        return common.getRarity(asset)
+    },
+    getKittyRarity(asset) {
+        return kitty.getKittyRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

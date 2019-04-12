@@ -59,7 +59,7 @@ const coolDownIndexToSpeed = index => {
 }
 
 
-const getRarity = kitty => {
+const getOinkRarity = kitty => {
   var rarity = 3
   if(kitty.is_fancy) rarity++
   if(kitty.is_exclusive) rarity++
@@ -70,7 +70,7 @@ const oink = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
   getOinksByWalletAddress: getOinksByWalletAddress,
   getOinkById: getOinkById,
-  getRarity:getRarity
+  getOinkRarity: getOinkRarity,
 }
 
 export default oink

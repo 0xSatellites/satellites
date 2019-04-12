@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="l-information">
+    <section class="l-information"  v-if="order.asset === mchh">
       <div class="l-information__img">
         <img class="ogpimg" :src="order.ogp" />
       </div>
@@ -19,15 +19,16 @@
           <li><strong>INT：</strong> {{order.metadata.attributes.int }}</li>
           <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
         </ul>
-        <ul class="l-item__data">
+        <ul class="l-information__data">
             <!-- TODO 条件分岐 Active有無 -->
           <li><span class="l-item__skill--type">Active</span>{{order.metadata.active_skill.name.ja}}</li>
           <li><span class="l-item__skill--type">Passive</span>{{order.metadata.passive_skill.name.ja}}</li>
-          </ul>
+        </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
+          <div class="checkbox_center">
           <v-checkbox
             class="center"
             v-model="checkbox"
@@ -36,6 +37,7 @@
             required
             v-if="!owner(order.maker)"
           ></v-checkbox>
+          </div>
           <div class="l-information__action">
             <v-btn
               class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -74,7 +76,7 @@
         </v-form>
       </div>
     </section>
-    <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
+   <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
       <div>
       <h2 class="c-index__title">{{$t('hash.relatedAsset')}}</h2>
       <ul>
@@ -100,16 +102,15 @@
           <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
@@ -200,6 +201,8 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+
+
   },
   computed: {
     account() {
@@ -214,7 +217,7 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
+      return common.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
         return common.getRarity(asset)

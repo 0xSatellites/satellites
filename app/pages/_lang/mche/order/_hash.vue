@@ -6,7 +6,7 @@
       </div>
       <div class="l-information__frame" v-if="order.valid">
         <div class="l-information__name">
-          {{ order.metadata.name }}
+          <!-- {{ order.metadata.name }} -->
         </div>
         <div class="l-information__txt">#{{ order.id }}</div>
         <div class="l-information__txt">{{$t('assets.mch')}}</div>
@@ -20,9 +20,14 @@
           <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
         </ul>
         <ul class="l-information__data">
+            <!-- TODO 条件分岐 Active有無 -->
+
+        </ul>
+        <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
         </ul>
         <v-form v-model="valid" class="center">
+          <div class="checkbox_center">
           <v-checkbox
             class="center"
             v-model="checkbox"
@@ -31,6 +36,7 @@
             required
             v-if="!owner(order.maker)"
           ></v-checkbox>
+          </div>
           <div class="l-information__action">
             <v-btn
               class="l-item__action__btn l-item__action__btn--type1 white_text"
@@ -104,7 +110,7 @@
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
@@ -174,6 +180,7 @@ export default {
   async asyncData({ store, params, error }) {
     try {
       const order = await firestore.doc('order', params.hash)
+            console.log(order)
       await store.dispatch('order/setOrder', order)
       const recommend = await firestore.getRelatedValidOrders(
         params.hash,
@@ -209,7 +216,7 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
+      return common.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
         return common.getRarity(asset)

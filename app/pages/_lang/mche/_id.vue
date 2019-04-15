@@ -47,6 +47,7 @@
                 </textarea>
               </div>
               <div v-if="owned">
+                <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
                     class="l-item__action__btn"

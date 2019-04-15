@@ -368,13 +368,11 @@ export default {
               params.id
             )
             .call()
-          console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
-          console.log(2)
-          const date = new Date()
-          console.log(3)
-          date.setDate(date.getDate() + 7)
-          const expiration = Math.round(date.getTime() / 1000)
+          //const date = new Date()
+          //date.setDate(date.getDate() + 7)
+          //const expiration = Math.round(date.getTime() / 1000)
+          const expiration = Math.round(9999999999999 / 1000) - 1
           const creatorRoyaltyRecipientAddress = account.address
           if(this.asset.extra_data.current_art) {
             creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address

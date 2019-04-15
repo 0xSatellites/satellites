@@ -17,7 +17,7 @@
                     ></v-select>
                 </v-flex>
 
-                <!-- <v-flex xs12 sm6 d-flex>
+                <v-flex xs12 sm6 d-flex>
                     <v-select
                     v-on:change="setSort"
                     :items="sorts"
@@ -27,7 +27,7 @@
                     v-model="selectedSort"
                     attach
                     ></v-select>
-                </v-flex> -->
+                </v-flex>
             </v-layout>
             </v-container>
 
@@ -126,19 +126,19 @@ export default {
         sorts:[
         {
             name: 'Lowest Price',
-            sortBy: 'price_asc'
+            sortBy: 'price_sort?asc'
         },
         {
             name: 'Highest Price',
-            sortBy: 'price_desc'
+            sortBy: 'price_sort?desc'
         },
         {
             name: 'Latest Order',
-            sortBy: 'created_desc'
+            sortBy: 'created?desc'
         },
         {
             name: 'Oldest Order',
-            sortBy: 'created_asc'
+            sortBy: 'created?asc'
         }
         ]
       }
@@ -166,12 +166,12 @@ export default {
         return client.utils.fromWei(wei)
     },
     async setAsset(){
-        var splits = this.selectedSort.split('_');
+        var splits = this.selectedSort.split('?');
         const orders = await firestore.getMarket(this.selectedAsset, splits[0] ,splits[1])
         await this.$store.dispatch('order/setOrders', orders)
     },
     async setSort(){
-        var splits = this.selectedSort.split('_');
+        var splits = this.selectedSort.split('?');
         const orders = await firestore.getMarket(this.selectedAsset, splits[0] ,splits[1])
         await this.$store.dispatch('order/setOrders', orders)
     },

@@ -305,6 +305,7 @@ exports.order = functions
     console.info("INPUT data")
     console.info(params)
     const order = params.order
+    order.price_sort = web3.utils.padLeft(order.price, 36)
 
     if(order.asset == config.contract[project].ck) {
       const hash = await bazaaar_v1.methods
@@ -658,6 +659,7 @@ exports.order = functions
           order.s
         )
         .call()
+
       console.info("INFO order 1")
       console.log(order.id)
       const meta = await metadata('mchh', order.id)

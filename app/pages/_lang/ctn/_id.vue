@@ -383,9 +383,10 @@ export default {
             .call()
 
           const salt = Math.floor(Math.random() * 1000000000)
-          const date = new Date()
-          date.setDate(date.getDate() + 7)
-          const expiration = Math.round(date.getTime() / 1000)
+          //const date = new Date()
+          //date.setDate(date.getDate() + 7)
+          //const expiration = Math.round(date.getTime() / 1000)
+          const expiration = Math.round(9999999999999 / 1000) - 1
           const order = {
             proxy: client.contract.bazaaar_v2.options.address,
             maker: account.address,

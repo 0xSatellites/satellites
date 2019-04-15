@@ -28,13 +28,12 @@
                     attach
                     ></v-select>
                 </v-flex>
-              <v-flex xs12 d-flex>
+              <v-flex xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
                 <div class="slidecontainer">
-                  Rarity: <span id="rarity_range">-</span>
-                  <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange">
+                  Rarity: {{search_rarity}}
+                  <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange" v-model="search_rarity" @change="updateRange()">
                 </div>
               </v-flex>
-
             </v-layout>
             </v-container>
 
@@ -159,12 +158,6 @@ export default {
     await store.dispatch('order/setOrders', orders)
   },
   mounted() {
-    //Slide
-    var rarityRange = document.getElementById("rarityRange");
-    var self = this
-    rarityRange.onchange = function() {
-      self.updateRange(this.value)
-    }
   },
   computed: {
     orders() {
@@ -181,10 +174,8 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
-    updateRange(val) {
+    updateRange() {
       this.search_rarity_status = true
-      this.search_rarity = val
-      document.getElementById("rarity_range").innerHTML = val
     },
     async setAsset(){
         var splits = this.selectedSort.split('?');

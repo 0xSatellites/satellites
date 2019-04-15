@@ -202,9 +202,14 @@ export default {
     const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
-    if (typeof web3 != 'undefined') {
+    if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
-        const account = await client.activate(web3.currentProvider)
+        var account
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
       this.loading = true

@@ -28,6 +28,13 @@
                     attach
                     ></v-select>
                 </v-flex>
+              <v-flex xs12 d-flex>
+                <div class="slidecontainer">
+                  Rarity: <span id="rarity_range">-</span>
+                  <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange">
+                </div>
+              </v-flex>
+
             </v-layout>
             </v-container>
 
@@ -91,7 +98,6 @@ const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
 
-
 export default {
   data() {
     return {
@@ -99,8 +105,10 @@ export default {
         ctn,
         mchh,
         mche,
+        search_rarity_status: false,
+        search_rarity: 0,
         selectedAsset: 'all',
-        selectedSort:'created_desc',
+        selectedSort:'created?desc',
         assets:[
         {
           name: 'All',
@@ -150,6 +158,14 @@ export default {
     const orders = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
     await store.dispatch('order/setOrders', orders)
   },
+  mounted() {
+    //Slide
+    var rarityRange = document.getElementById("rarityRange");
+    var self = this
+    rarityRange.onchange = function() {
+      self.updateRange(this.value)
+    }
+  },
   computed: {
     orders() {
       return this.$store.getters['order/orders']
@@ -164,6 +180,11 @@ export default {
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
+    },
+    updateRange(val) {
+      this.search_rarity_status = true
+      this.search_rarity = val
+      document.getElementById("rarity_range").innerHTML = val
     },
     async setAsset(){
         var splits = this.selectedSort.split('?');
@@ -180,5 +201,41 @@ export default {
 
 </script>
 <style>
+.slidecontainer {
+  width: 100%;
+}
 
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 2.5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+}
 </style>

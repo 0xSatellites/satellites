@@ -47,6 +47,7 @@
                 </textarea>
               </div>
               <div v-if="owned">
+                <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
                     class="l-item__action__btn"
@@ -263,7 +264,11 @@ export default {
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
-        const account = await client.activate(web3.currentProvider)
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
 
@@ -375,9 +380,10 @@ export default {
             .call()
           console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
-          const date = new Date()
-          date.setDate(date.getDate() + 7)
-          const expiration = Math.round(date.getTime() / 1000)
+          //const date = new Date()
+          //date.setDate(date.getDate() + 7)
+          //const expiration = Math.round(date.getTime() / 1000)
+          const expiration = Math.round(9999999999999 / 1000)  - 1
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,

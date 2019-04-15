@@ -39,29 +39,45 @@ const coolDownIndexToSpeed = index => {
 }
 
 
-const getRarity = asset => {
+const getRarity = (asset, type) => {
   var rarity
-  if(asset.asset == ck){
+  if(asset.asset == ck || type == 'ck'){
     rarity = 3
     if(asset.is_fancy) rarity++
     if(asset.is_exclusive) rarity++
   }
-  if(asset.asset == ctn){
+  if(asset.asset == ctn || type == 'ctn'){
     rarity = 3
   }
-  if(asset.asset == mchh){
-    if(asset.metadata.attributes.rarity=='Legendary') rarity =5
-    if(asset.metadata.attributes.rarity=='Epic') rarity =4
-    if(asset.metadata.attributes.rarity=='Rare') rarity =3
-    if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
-    if(asset.metadata.attributes.rarity=='Novice') rarity =1
+  if(asset.asset == mchh || type == 'mchh'){
+    if(asset.metadata){
+      if(asset.metadata.attributes.rarity=='Legendary') rarity =5
+      if(asset.metadata.attributes.rarity=='Epic') rarity =4
+      if(asset.metadata.attributes.rarity=='Rare') rarity =3
+      if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
+      if(asset.metadata.attributes.rarity=='Novice') rarity =1
+    } else {
+      if(asset.attributes.rarity=='Legendary') rarity =5
+      if(asset.attributes.rarity=='Epic') rarity =4
+      if(asset.attributes.rarity=='Rare') rarity =3
+      if(asset.attributes.rarity=='UnCommon') rarity =2
+      if(asset.attributes.rarity=='Novice') rarity =1
+    }
   }
-  if(asset.asset == mche){
-    if(asset.metadata.attributes.rarity=='Legendary') rarity =5
-    if(asset.metadata.attributes.rarity=='Epic') rarity =4
-    if(asset.metadata.attributes.rarity=='Rare') rarity =3
-    if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
-    if(asset.metadata.attributes.rarity=='Common') rarity =1
+  if(asset.asset == mche || type == 'mche'){
+    if(asset.metadata){
+      if(asset.metadata.attributes.rarity=='Legendary') rarity =5
+      if(asset.metadata.attributes.rarity=='Epic') rarity =4
+      if(asset.metadata.attributes.rarity=='Rare') rarity =3
+      if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
+      if(asset.metadata.attributes.rarity=='Common') rarity =1
+    } else {
+      if(asset.attributes.rarity=='Legendary') rarity =5
+      if(asset.attributes.rarity=='Epic') rarity =4
+      if(asset.attributes.rarity=='Rare') rarity =3
+      if(asset.attributes.rarity=='UnCommon') rarity =2
+      if(asset.attributes.rarity=='Common') rarity =1
+    }
   }
   return rarity
 }

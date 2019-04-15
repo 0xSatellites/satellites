@@ -80,7 +80,9 @@
         "cancel": "キャンセルする",
         "agree": "利用規約に同意する",
         "terms":"利用規約",
-        "relatedAsset": "関連アセット"
+        "relatedAsset": "関連アセット",
+        "mchh_condition": "※ヒーローはLv2以上かつ「アートエディット」が行われている必要があります。",
+        "mche_condition": "※エクステンションはLv2以上かつ「二つ名」が行われている必要があります。"
     },
     "hash":{
         "purchase": "購入する",

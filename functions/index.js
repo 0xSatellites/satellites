@@ -305,6 +305,7 @@ exports.order = functions
     console.info("INPUT data")
     console.info(params)
     const order = params.order
+    order.price_sort = web3.utils.padLeft(order.price, 36)
 
     if(order.asset == config.contract[project].ck) {
       const hash = await bazaaar_v1.methods
@@ -497,7 +498,7 @@ exports.order = functions
       console.info("INFO order 1")
       const response = await axios({
         method: 'get',
-        url: config.api.ctn.metadata + order.id,
+        url: config.api.ctn.metadata + order.id + '.json',
         responseType: 'json'
       })
       console.info("INFO order 2")
@@ -658,6 +659,7 @@ exports.order = functions
           order.s
         )
         .call()
+
       console.info("INFO order 1")
       console.log(order.id)
       const meta = await metadata('mchh', order.id)
@@ -1293,13 +1295,34 @@ exports.api = functions
   .region('asia-northeast1')
   .https.onRequest(app);
 
+exports.getOinksByAddress = functions
+.region('asia-northeast1')
+.https.onRequest(async (req, res) =>{
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    var result = await axios.get("https://api.crypt-oink.io/tokens_of?"+ req.query.address)
 
-  exports.getHeroById = functions
-  .region('asia-northeast1')
-  .https.onRequest(async (req, res) =>{
-      res.set('Access-Control-Allow-Origin', '*');
-      res.set('Access-Control-Allow-Methods', 'GET');
-      res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
-      var result = await axios.get("https://www.mycryptoheroes.net/metadata/hero/"+ req.query.id)
-      res.json(result.data)
-    });
+    const promises = []
+    for (var i = 0; i < result.data.length; i++) {
+        promises.push(axios.get(config.api.ctn.metadata + result.data[i] + '.json'))
+      }
+      tokens = await Promise.all(promises)
+      console.log(tokens)
+      const data =[]
+      for (var i = 0; i < tokens.length; i++) {
+          tokens[i].data.id = result.data[i]
+        data.push(tokens[i].data)
+      }
+    res.json(data)
+  });
+
+exports.getOinkById = functions
+.region('asia-northeast1')
+.https.onRequest(async (req, res) =>{
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
+    res.json(result.data)
+  });

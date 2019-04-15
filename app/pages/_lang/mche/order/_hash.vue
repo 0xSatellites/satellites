@@ -198,7 +198,11 @@ export default {
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
-        const account = await client.activate(web3.currentProvider)
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
     }

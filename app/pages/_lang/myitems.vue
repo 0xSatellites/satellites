@@ -32,7 +32,7 @@
           <div>
             <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="mchh.image_url" /></div>
               <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -74,7 +74,7 @@
             <!-- idがないのでpages遷移はできない -->
             <nuxt-link :to="'/mche/' + mche.attributes.lv" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="mche.image_url" /></div>
               <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -100,7 +100,7 @@
           <div>
             <nuxt-link :to="'/ck/' + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
               <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -141,7 +141,7 @@
           <div>
             <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -202,9 +202,14 @@ export default {
     const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
-    if (typeof web3 != 'undefined') {
+    if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
-        const account = await client.activate(web3.currentProvider)
+        var account
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
@@ -224,7 +229,6 @@ export default {
             promises.push(functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
-          console.log(result)
           store.dispatch('hero/setHeros', result)
       })
 
@@ -234,7 +238,6 @@ export default {
             promises.push(functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
-          console.log(result)
           store.dispatch('extension/setExtensions', result)
       })
 
@@ -283,8 +286,8 @@ export default {
     coolDownIndexToSpeed(index) {
       return kitty.coolDownIndexToSpeed(index)
     },
-    getRarity(asset) {
-        return common.getRarity(asset)
+    getRarity(asset, type) {
+        return common.getRarity(asset, type)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

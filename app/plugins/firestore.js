@@ -24,7 +24,7 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
     .where('maker', '==', maker)
     .where('id', '==', id)
     .where('valid', '==', true)
-    .orderBy('price').limit(1).get()
+    .orderBy('price_sort').limit(1).get()
   snapshots.forEach(doc => result = doc.data())
   return result
 }

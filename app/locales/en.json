@@ -61,7 +61,7 @@
         "mypage": "Mypage",
         "address": "address",
         "balance": "balance",
-        "sell": "NOW ON SALE"
+        "sell": "ON SALE"
     },
     "footer":{
         "company": "company",
@@ -80,7 +80,9 @@
         "cancel": "cancel",
         "agree": "Agree to the Terms",
         "terms":"Terms",
-        "relatedAsset": "Related Assets"
+        "relatedAsset": "Related Assets",
+        "mchh_condition": "*Hero should be Lv.2 or higher and Art Edit is done.",
+        "mche_condition": "*Extension should be Lv.2 or higher and Adding Nickname is done."
     },
     "hash":{
         "purchase": "Purchase",

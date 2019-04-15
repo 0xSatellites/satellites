@@ -48,6 +48,9 @@ const account = {
 const activate = async provider => {
   try{
     web3.setProvider(provider)
+    if(window.ethereum){
+      await ethereum.enable()
+    }
     const accounts = await web3.eth.getAccounts()
     if(accounts.length > 0) {
       account.address = accounts[0]

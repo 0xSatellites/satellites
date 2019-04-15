@@ -10,8 +10,6 @@
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
           <div class="l-item__txt">{{ asset.description }}</div>
-          <div class="l-item__txt">
-          </div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
@@ -48,6 +46,7 @@
                 </textarea>
               </div>
               <div v-if="owned">
+                <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
                     class="l-item__action__btn"
@@ -260,7 +259,11 @@ export default {
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
-        const account = await client.activate(web3.currentProvider)
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
 
@@ -369,13 +372,11 @@ export default {
               params.id
             )
             .call()
-          console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
-          console.log(2)
-          const date = new Date()
-          console.log(3)
-          date.setDate(date.getDate() + 7)
-          const expiration = Math.round(date.getTime() / 1000)
+          //const date = new Date()
+          //date.setDate(date.getDate() + 7)
+          //const expiration = Math.round(date.getTime() / 1000)
+          const expiration = Math.round(9999999999999 / 1000) - 1
           const creatorRoyaltyRecipientAddress = account.address
           if(this.asset.extra_data.current_art) {
             creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address

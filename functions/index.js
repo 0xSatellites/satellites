@@ -297,6 +297,7 @@ async function metadata(asset, id){
 }
 
 exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
   return await metadata(data.asset, data.id)
 })
 
@@ -960,7 +961,7 @@ exports.order = functions
       return
     }
   })
-
+/*
 exports.orderMatchedPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderMatched')
@@ -1083,6 +1084,7 @@ exports.orderCancelledPubSub = functions
     }
     console.info("END orderCancelled")
   })
+*/
 
 exports.orderPeriodicUpdatePubSub = functions
   .region('asia-northeast1')
@@ -1315,6 +1317,7 @@ exports.getOinksByAddress = functions
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'GET');
     res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     var result = await axios.get("https://api.crypt-oink.io/tokens_of?"+ req.query.address)
 
     const promises = []
@@ -1337,6 +1340,7 @@ exports.getOinkById = functions
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'GET');
     res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
     res.json(result.data)
   });

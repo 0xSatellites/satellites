@@ -62,7 +62,7 @@
                     '&text=' +
                     $t('hash.sell') +
                     order.metadata.name +
-                    '&hashtags=bazaaar, バザール, くりぷ豚'
+                    '&hashtags=bazaaar, バザール, マイクリ'
                 "
                 class="twitter-share-button"
                 data-size="large"

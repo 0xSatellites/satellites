@@ -34,7 +34,7 @@
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
-              <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="mchh.attributes.hero_name">{{ mchh.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
             </nuxt-link>
@@ -73,7 +73,7 @@
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
-              <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="mche.attributes.extension_name">{{ mche.attributes.extension_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mche.attributes.id }}</div>
             </nuxt-link>
@@ -197,6 +197,7 @@ export default {
     const myoinks = this.myoinks
     const myheros = this.myheros
     const myextensions = this.myextensions
+    console.log(this.myextensions)
     const order = this.order
     const store = this.$store
     var account
@@ -223,7 +224,7 @@ export default {
       client.ownedTokens('mchh').then(async function(tokens) {
           const promises = []
           for(var token of tokens){
-            promises.push(functions.call('metadata', {asset:'mchh', id:token}))
+            promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('hero/setHeros', result)
@@ -232,7 +233,7 @@ export default {
       client.ownedTokens('mche').then(async function(tokens) {
           const promises = []
           for(var token of tokens){
-            promises.push(functions.call('metadata', {asset:'mche', id:token}))
+            promises.push(await functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('extension/setExtensions', result)

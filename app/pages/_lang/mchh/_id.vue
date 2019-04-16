@@ -255,7 +255,7 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
-
+    var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client

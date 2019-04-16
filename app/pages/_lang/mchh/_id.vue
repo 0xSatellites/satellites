@@ -8,8 +8,9 @@
           </div>
         </div>
         <div>
-          <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
-          <div class="l-item__txt">{{ asset.description }}</div>
+          <div class="l-item__name"  v-if="asset.name">{{ asset.attributes.hero_name }}</div>
+          <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
+          
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
@@ -168,7 +169,7 @@
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="recommend.metadata.attributes.extension_name">{{ recommend.metadata.attributes.extension_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
@@ -247,6 +248,7 @@ export default {
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
+      console.log(recommend)
       await store.dispatch('order/setOrders', recommend)
     } catch(err){
       error({ statusCode: 404, message: 'Post not found' })
@@ -255,6 +257,8 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
+    console.log(this.recommend)
+
     var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {

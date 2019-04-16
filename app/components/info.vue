@@ -62,6 +62,12 @@ export default {
       bool: true,
       items: [
           {
+            avatar: 'https://cdn.profile-image.st-hatena.com/users/sencho0927/profile.png?1520144457',
+            date: '2019.04.16',
+            title: "fukuharaさんにbazaaar.ioの使い方を記事にしていただきました！",
+            url: 'https://www.fukuhara-sencho.com/entry/2019/04/04/102916'
+          },
+          {
             avatar: 'https://harukataro.com/wp-content/uploads/2018/08/inu-1-150x150.png',
             date: '2019.03.01',
             title: "ブロックチェーンブロガーのはるかさんにbazaaar.ioの使い方を記事にしていただきました！",
@@ -72,7 +78,7 @@ export default {
             date: '2019.03.01',
             title: "dApps marketさんにbazaaar.ioの使い方を記事にしていただきました！",
             url: 'https://dappsmarket.net/other/bazaaar-io-howtoplay/'
-          }
+          },
         ]
     }
   },

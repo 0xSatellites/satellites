@@ -195,7 +195,7 @@ async function metadata(asset, id){
     let promises = []
     promises.push(await axios({
       method:'get',
-      url:config.api.mch.metadataSand + 'heroType/'+ general.data.extra_data.hero_type,
+      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
       responseType:'json'
     }))
 
@@ -263,7 +263,7 @@ async function metadata(asset, id){
     let promises = []
     promises.push(await axios({
       method:'get',
-      url:config.api.mch.metadataSand + 'extensionType/'+ general.data.extra_data.extension_type,
+      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
       responseType:'json'
     }))
 

@@ -197,7 +197,6 @@ export default {
     const myoinks = this.myoinks
     const myheros = this.myheros
     const myextensions = this.myextensions
-    console.log(this.myextensions)
     const order = this.order
     const store = this.$store
     var account

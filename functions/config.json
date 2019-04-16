@@ -22,7 +22,8 @@
             "metadata":"https://s3-ap-northeast-1.amazonaws.com/crypton-live/metadata/"
         },
         "mch":{
-            "metadata":"https://www.mycryptoheroes.net/metadata/"
+            "metadata":"https://www.mycryptoheroes.net/metadata/",
+            "metadataSand":"https://www.origin.sand.mch.djty.co/metadata/"
         }
     },
     "bazaaar":{

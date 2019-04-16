@@ -11,7 +11,7 @@
         <div class="l-information__txt">#{{ order.id }}</div>
         <div class="l-information__txt">{{$t('assets.oink')}}</div>
         <ul class="l-information__data">
-          <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order.metadata)" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></li>
         </ul>
         <ul class="l-information__data">
           <li><strong>Gen：</strong> {{order.metadata.generation}} </li>
@@ -76,7 +76,7 @@
       <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -85,12 +85,29 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend.metadata)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
               <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
+          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+          </nuxt-link>
+          <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="recommend.metadata.attributes.extension_name">{{ recommend.metadata.attributes.extension_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ recommend.id }}</div>
+              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
@@ -112,8 +129,10 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import Modal from '~/components/modal'
 import oink from '~/plugins/oink'
+import common from '~/plugins/common'
+import Modal from '~/components/modal'
+
 
 import '@fortawesome/fontawesome-free/css/all.css'
 
@@ -121,6 +140,9 @@ const project = process.env.project
 const config = require('../../../../config.json')
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
+const mche = config.contract[project].mche
+
 
 export default {
   components: {
@@ -147,6 +169,8 @@ export default {
       hash: '',
       ck,
       ctn,
+      mchh,
+      mche,
       url: {type: 'ctn', hash: '', project: ''}
     }
   },
@@ -168,10 +192,15 @@ export default {
   },
   mounted: async function() {
     const store = this.$store
+    var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
-        const account = await client.activate(web3.currentProvider)
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
     }
@@ -194,7 +223,7 @@ export default {
       return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return oink.getRarity(asset)
+        return common.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

@@ -23,11 +23,14 @@
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
         "holdLanguageCK": "/ck/order/",
-        "holdLanguageCTN": "/ctn/order/"
+        "holdLanguageCTN": "/ctn/order/",
+        "holdLanguageMCHH": "/mchh/order/",
+        "holdLanguageMCHE": "/mche/order/"
     },
     "assets":{
         "kitty":"CryptoKitties",
-        "oink":"Crypt-Oink"
+        "oink":"Crypt-Oink",
+        "mch":"MyCryptoHeros"
     },
     "header":{
         "mypage": "MyPage",
@@ -58,7 +61,7 @@
         "mypage": "Mypage",
         "address": "address",
         "balance": "balance",
-        "sell": "NOW ON SALE"
+        "sell": "ON SALE"
     },
     "footer":{
         "company": "company",
@@ -77,7 +80,9 @@
         "cancel": "cancel",
         "agree": "Agree to the Terms",
         "terms":"Terms",
-        "relatedAsset": "Related Assets"
+        "relatedAsset": "Related Assets",
+        "mchh_condition": "*Hero should be Lv.2 or higher and Art Edit is done.",
+        "mche_condition": "*Extension should be Lv.2 or higher and Adding Nickname is done."
     },
     "hash":{
         "purchase": "Purchase",
@@ -93,7 +98,8 @@
     },
     "empty":{
         "kitty": "You don't have kitty now!!",
-        "oink": "You don't have Crypton now!!"
+        "oink": "You don't have Crypton now!!",
+        "mch":"You don't have Hero now!!"
     },
     "error":{
         "message": "error"

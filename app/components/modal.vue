@@ -12,8 +12,7 @@
               <img :src="ogp" alt="" width="85%" />
           </div>
           <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
-          <div class="l-modal__btn">
-            <a
+          <a
               :href="
                 'https://twitter.com/share?url=' +
                   host + type.symbol +
@@ -37,8 +36,9 @@
               target="”_blank”"
             >
               {{$t('modal.tweet')}}
-            </a>
+          <div class="l-modal__btn">
           </div>
+          </a>
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
@@ -178,6 +178,50 @@
                 <div class="l-modal__close__icon" ></div>
                 <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
             </div>
+        </div>
+      </div>
+    </transition>
+    <!-- マイクリ出品&値下げ -->
+    <transition name="modal" v-if="modalNo == 7">
+      <div class="l-modal">
+        <div class="l-modal__frame">
+          <div class="l-modal__icon">
+            <img src="~/assets/img/modal/icon.svg" alt="" />
+          </div>
+          <div class="l-modal__title">{{$t('modal.sell')}}</div>
+          <div class="l-modal__og">
+              <img :src="ogp" alt="" width="85%" />
+          </div>
+          <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
+          <div class="l-modal__btn">
+            <a
+              :href="
+                'https://twitter.com/share?url=' +
+                  host + type.symbol +
+                  '/order/' +
+                  hash +
+                  '&text=' +
+                  'NOW ON SALE!! ' +
+                  ' / ' +
+                  asset.attributes.hero_name +
+                  ' / Lv.' +
+                  asset.attributes.lv +
+                  ' / from @bazaaario' +
+                  '&hashtags=bazaaar, バザー, ' +
+                  type.name
+              "
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+            >
+              {{$t('modal.tweet')}}
+            </a>
+          </div>
+          <div class="l-modal__close" @click="$emit('transitionOrder')">
+            <div class="l-modal__close__icon"></div>
+            <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>
+          </div>
         </div>
       </div>
     </transition>

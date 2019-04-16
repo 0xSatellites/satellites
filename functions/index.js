@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = process.env.GCLOUD_PROJECT.split('-')[2]
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -29,6 +29,10 @@ const bazaaar_v1 = new web3.eth.Contract(
 const bazaaar_v2 = new web3.eth.Contract(
   config.abi.bazaaar_v2,
   config.contract[project].bazaaar_v2
+)
+const bazaaar_v3 = new web3.eth.Contract(
+  config.abi.bazaaar_v3,
+  config.contract[project].bazaaar_v3
 )
 const ctn = new web3.eth.Contract(
   config.abi.ctn,
@@ -173,6 +177,128 @@ function disableBillingForProject(projectName) {
   });
 }
 
+async function metadata(asset, id){
+
+  var response
+  let bool = false
+  if(asset == 'mchh') {
+    console.log('START mchh')
+    console.log('START general')
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'hero/' + id,
+      responseType:'json'
+    })
+    response = general.data
+
+    console.log(general)
+    console.log('START heroType')
+    let promises = []
+    promises.push(await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+      responseType:'json'
+    }))
+
+    console.log('START active_skill_id')
+    promises.push(await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id,
+      responseType:'json'
+    }))
+
+    console.log('START passive_skill_id')
+    promises.push(await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id,
+      responseType:'json'
+    }))
+
+    console.log('START art, sell')
+    if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
+      // promises.push(await axios({
+      //   method:'get',
+      //   url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
+      //   responseType:'json'
+      // }))
+      response.sell = true
+      response.royalty_rate = 0 //current_artあるときはコメントアウト
+    } else if(general.data.extra_data.art_history.length > 0) {
+      response.sell = true
+      response.royalty_rate = 0
+    } else {
+      response.sell = false
+      response.royalty_rate = 0
+    }
+
+    let resolved = await Promise.all(promises)
+
+    console.log('START response')
+    response.hero_type = resolved[0].data
+    response.active_skill = resolved[1].data
+    response.passive_skill = resolved[2].data
+    console.log(response)
+    // if(resolved.length === 4){
+    //   response.current_art_data = resolved[3].data
+    //   const likes = response.extra_data.current_art_data.attributes.likes
+    //   if(likes >= 100) {
+    //     response.royalty_rate = 600
+    //   } else if(30 <= likes && likes < 100) {
+    //     response.royalty_rate = 300
+    //   } else {
+    //     response.royalty_rate = 0
+    //   }
+    // }
+
+  } else if (asset == 'mche'){
+    console.log('START mche')
+    console.log('START general')
+    let general = await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extension/' + id,
+      responseType:'json'
+    })
+    response = general.data
+
+    console.log(general)
+    console.log('START extensionType')
+    let promises = []
+    promises.push(await axios({
+      method:'get',
+      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+      responseType:'json'
+    }))
+
+    promises.push(axios({
+
+      method:'get',
+      url:config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id,
+      responseType:'json'
+    }))
+
+    console.log('START sell')
+    if(general.data.extra_data.nickname) {
+      response.sell = true
+    } else {
+      response.sell = false
+    }
+
+
+    let resolved = await Promise.all(promises)
+
+    console.log('START response')
+    response.extension_type = resolved[0].data
+    response.skill = resolved[1].data
+
+  }
+  console.log(response)
+  console.log('END')
+  return response
+}
+
+exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  return await metadata(data.asset, data.id)
+})
 
 exports.order = functions
   .region('asia-northeast1')
@@ -181,6 +307,7 @@ exports.order = functions
     console.info("INPUT data")
     console.info(params)
     const order = params.order
+    order.price_sort = web3.utils.padLeft(order.price, 36)
 
     if(order.asset == config.contract[project].ck) {
       const hash = await bazaaar_v1.methods
@@ -217,7 +344,7 @@ exports.order = functions
       const imagePromise = axios.get(metadata.image_url_png, {
         responseType: 'arraybuffer'
       })
-      const promises = [readFile('./assets/img/template_en.png'), imagePromise]
+      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
       const resolved = await Promise.all(promises)
       console.info("INFO order 3")
       const templateImg = new Canvas.Image()
@@ -373,7 +500,7 @@ exports.order = functions
       console.info("INFO order 1")
       const response = await axios({
         method: 'get',
-        url: config.api.ctn.metadata + order.id,
+        url: config.api.ctn.metadata + order.id + '.json',
         responseType: 'json'
       })
       console.info("INFO order 2")
@@ -388,7 +515,7 @@ exports.order = functions
       const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'
       })
-      const promises = [readFile('./assets/img/template_en.png'), imagePromise]
+      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
       const resolved = await Promise.all(promises)
       console.info("INFO order 3")
       const templateImg = new Canvas.Image()
@@ -481,9 +608,13 @@ exports.order = functions
         config.host[project] +
         'ctn/order/' +
         order.hash
-      client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-        if(error) throw error;
-      })
+      try{
+        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+          if(error) throw error;
+        })
+      } catch (err) {
+        console.info('Twitter API Down')
+      }
       await axios({
         method:'post',
         url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -510,12 +641,326 @@ exports.order = functions
       console.info(result)
       console.info("END order")
       return result
+    } else if (order.asset == config.contract[project].mchh) {
+      const hash = await bazaaar_v3.methods
+        .requireValidOrder_(
+          [
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.creatorRoyaltyRecipient,
+            order.asset
+          ],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ],
+          order.v,
+          order.r,
+          order.s
+        )
+        .call()
+
+      console.info("INFO order 1")
+      console.log(order.id)
+      const meta = await metadata('mchh', order.id)
+      console.info("INFO order 2")
+      const imagePromise = axios.get(meta.image_url, {
+        responseType: 'arraybuffer'
+      })
+      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+      const resolved = await Promise.all(promises)
+      console.info("INFO order 3")
+      const templateImg = new Canvas.Image()
+      const characterImg = new Canvas.Image()
+      templateImg.src = resolved[0]
+      characterImg.src = resolved[1].data
+      const canvas = Canvas.createCanvas(1200, 630)
+      const c = canvas.getContext('2d')
+      c.clearRect(0, 0, 1200, 630)
+      c.drawImage(templateImg, 0, 0)
+      c.drawImage(characterImg, 15, 90, 450, 450)
+      c.textBaseline = 'top'
+      c.textAlign = 'center'
+      c.fillStyle = '#ffff00'
+      c.font = "bold 60px 'Noto Sans JP Bold'"
+      if (!params.msg) {
+        c.fillText('NOW ON SALE!!', 840, 120, 720)
+      } else {
+        if(params.msg.length <= 9){
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg, 840, 120, 720)
+        } else {
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg.substr(0, 9), 840, 80, 720)
+          c.fillText(msg.substr(9, 9), 840, 160, 720)
+        }
+      }
+      c.fillStyle = '#fff'
+      c.font = "40px 'Noto Sans JP'"
+      c.fillText(
+        meta.attributes.hero_name + ' / ' + 'Lv.' + meta.attributes.lv,
+        840,
+        255,
+        720
+      )
+      c.fillText(meta.attributes.rarity, 840, 305, 720)
+      c.font = "bold 75px 'Noto Sans JP Bold'"
+      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+      const base64EncodedImageString = canvas.toDataURL().substring(22)
+      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+      const file = bucket.file(hash + '.png')
+      const ogp =
+        'https://firebasestorage.googleapis.com/v0/b/' +
+        bucket.name +
+        '/o/' +
+        encodeURIComponent(hash + '.png') +
+        '?alt=media'
+      const now = new Date().getTime()
+      order.hash = hash
+      order.metadata = meta
+      order.ogp = ogp
+      order.created = now
+      order.valid = true
+      const batch = db.batch()
+      const deactivateDocOGPPromises = []
+      const snapshots = await db
+        .collection('order')
+        .where('maker', '==', order.maker)
+        .where('asset', '==', order.asset)
+        .where('id', '==', order.id)
+        .where('valid', '==', true)
+        .get()
+      console.info("INFO order 4")
+      snapshots.forEach(function(doc) {
+        const ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {
+          result: { status: 'cancelled' },
+          valid: false,
+          modified: now
+        })
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+      })
+      const ref = db.collection('order').doc(hash)
+      batch.set(ref, order)
+      const savePromises = [
+        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+        batch.commit()
+      ]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+      console.info("INFO order 5")
+      const msssage =
+        'NOW ON SALE!!' +
+        ' / ' +
+        meta.attributes.hero_name +
+        ' / Lv.' +
+        meta.attributes.lv +
+        ' / ' +
+        meta.attributes.rarity +
+        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        config.host[project] +
+        'mchh/order/' +
+        order.hash
+      try{
+        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+          if(error) throw error;
+        })
+      } catch (err) {
+        console.info('Twitter API Down')
+      }
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / ' +
+            meta.attributes.hero_name +
+            ' / Lv.' +
+            meta.attributes.lv +
+            ' / ' +
+            meta.attributes.rarity +
+            ' / #MCH ' +
+            config.discord.endpoint[project] +
+            "mchh/order/" +
+            hash
+        }
+      })
+      const result = {
+        ogp: ogp,
+        hash: hash
+      }
+      console.info("OUTPUT data")
+      console.info(result)
+      console.info("END order")
+      return result
+    }else if (order.asset == config.contract[project].mche) {
+      const hash = await bazaaar_v3.methods
+        .requireValidOrder_(
+          [
+            order.proxy,
+            order.maker,
+            order.taker,
+            order.creatorRoyaltyRecipient,
+            order.asset
+          ],
+          [
+            order.id,
+            order.price,
+            order.nonce,
+            order.salt,
+            order.expiration,
+            order.creatorRoyaltyRatio,
+            order.referralRatio
+          ],
+          order.v,
+          order.r,
+          order.s
+        )
+        .call()
+      console.info("INFO order 1")
+      const meta = await metadata('mche', order.id)
+      console.info("INFO order 2")
+      const imagePromise = axios.get(meta.image_url, {
+        responseType: 'arraybuffer'
+      })
+      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+      const resolved = await Promise.all(promises)
+      console.info("INFO order 3")
+      const templateImg = new Canvas.Image()
+      const characterImg = new Canvas.Image()
+      templateImg.src = resolved[0]
+      characterImg.src = resolved[1].data
+      const canvas = Canvas.createCanvas(1200, 630)
+      const c = canvas.getContext('2d')
+      c.clearRect(0, 0, 1200, 630)
+      c.drawImage(templateImg, 0, 0)
+      c.drawImage(characterImg, 15, 90, 450, 450)
+      c.textBaseline = 'top'
+      c.textAlign = 'center'
+      c.fillStyle = '#ffff00'
+      c.font = "bold 60px 'Noto Sans JP Bold'"
+      if (!params.msg) {
+        c.fillText('NOW ON SALE!!', 840, 120, 720)
+      } else {
+        if(params.msg.length <= 9){
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg, 840, 120, 720)
+        } else {
+          const msg = params.msg.replace(/\r?\n/g, '')
+          c.fillText(msg.substr(0, 9), 840, 80, 720)
+          c.fillText(msg.substr(9, 9), 840, 160, 720)
+        }
+      }
+      c.fillStyle = '#fff'
+      c.font = "40px 'Noto Sans JP'"
+      c.fillText(
+        meta.attributes.extension_name + ' / ' + 'Lv.' + meta.attributes.lv,
+        840,
+        255,
+        720
+      )
+      c.fillText(meta.attributes.rarity, 840, 305, 720)
+      c.font = "bold 75px 'Noto Sans JP Bold'"
+      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+      const base64EncodedImageString = canvas.toDataURL().substring(22)
+      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+      const file = bucket.file(hash + '.png')
+      const ogp =
+        'https://firebasestorage.googleapis.com/v0/b/' +
+        bucket.name +
+        '/o/' +
+        encodeURIComponent(hash + '.png') +
+        '?alt=media'
+      const now = new Date().getTime()
+      order.hash = hash
+      order.metadata = meta
+      order.ogp = ogp
+      order.created = now
+      order.valid = true
+      const batch = db.batch()
+      const deactivateDocOGPPromises = []
+      const snapshots = await db
+        .collection('order')
+        .where('maker', '==', order.maker)
+        .where('asset', '==', order.asset)
+        .where('id', '==', order.id)
+        .where('valid', '==', true)
+        .get()
+      console.info("INFO order 4")
+      snapshots.forEach(function(doc) {
+        const ref = db.collection('order').doc(doc.id)
+        batch.update(ref, {
+          result: { status: 'cancelled' },
+          valid: false,
+          modified: now
+        })
+        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+      })
+      const ref = db.collection('order').doc(hash)
+      batch.set(ref, order)
+      const savePromises = [
+        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+        batch.commit()
+      ]
+      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+      console.info("INFO order 5")
+      const msssage =
+        'NOW ON SALE!!' +
+        ' / ' +
+        meta.attributes.extension_name +
+        ' / Lv.' +
+        meta.attributes.lv +
+        ' / ' +
+        meta.attributes.rarity +
+        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        config.host[project] +
+        'mche/order/' +
+        order.hash
+      try{
+        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+          if(error) throw error;
+        })
+      } catch (err) {
+        console.info('Twitter API Down')
+      }
+      await axios({
+        method:'post',
+        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+        data: {
+          content:
+            'NOW ON SALE!!' +
+            ' / ' +
+            meta.attributes.extension_name +
+            ' / Lv.' +
+            meta.attributes.lv +
+            ' / ' +
+            meta.attributes.rarity +
+            ' / #MCH ' +
+            config.discord.endpoint[project] +
+            "mche/order/" +
+            hash
+        }
+      })
+      const result = {
+        ogp: ogp,
+        hash: hash
+      }
+      console.info("OUTPUT data")
+      console.info(result)
+      console.info("END order")
+      return result
     } else {
       console.info("Invalid Address")
       return
     }
   })
-
+/*
 exports.orderMatchedPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderMatched')
@@ -540,7 +985,10 @@ exports.orderMatchedPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(194, 258))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
+    if (address == bazaaar_v1.options.address ||
+        address == bazaaar_v2.options.address ||
+        address == bazaaar_v3.options.address
+    ){
       console.info("INFO orderMached 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -606,7 +1054,10 @@ exports.orderCancelledPubSub = functions
       .hexToNumber(transaction.logs[0].data.substring(130, 194))
       .toString()
     const now = new Date().getTime()
-    if (address == bazaaar_v1.options.address || address == bazaaar_v2.options.address) {
+    if (address == bazaaar_v1.options.address ||
+        address == bazaaar_v2.options.address ||
+        address == bazaaar_v3.options.address
+    ){
       console.info("INFO orderCancelled 2")
       const batch = db.batch()
       const deactivateDocOGPPromises = []
@@ -632,6 +1083,7 @@ exports.orderCancelledPubSub = functions
     }
     console.info("END orderCancelled")
   })
+*/
 
 exports.orderPeriodicUpdatePubSub = functions
   .region('asia-northeast1')
@@ -654,7 +1106,15 @@ exports.orderPeriodicUpdatePubSub = functions
       bazaaar_v2.getPastEvents('OrderCancelled', {
         fromBlock: (await web3.eth.getBlockNumber()) - 25,
         toBlock: 'latest'
-      })
+      }),
+      bazaaar_v3.getPastEvents('OrderMatched', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
+      }),
+      bazaaar_v3.getPastEvents('OrderCancelled', {
+        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+        toBlock: 'latest'
+      }),
     ]
     const eventResolved = await Promise.all(eventPromises)
     console.info("INFO Sold")
@@ -728,6 +1188,36 @@ exports.orderPeriodicUpdatePubSub = functions
           .get()
       )
     }
+    for (var i = 0; i < eventResolved[4].length; i++) {
+      takers.push(eventResolved[4][i].returnValues.taker)
+      soldPromises.push(
+        db
+          .collection('order')
+          .where('hash', '==', eventResolved[4][i].raw.topics[1])
+          .where('valid', '==', true)
+          .get()
+      )
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[4][i].returnValues.asset)
+          .where('id', '==', eventResolved[4][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[4][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
+    for (var i = 0; i < eventResolved[5].length; i++) {
+      cancelledPromises.push(
+        db
+          .collection('order')
+          .where('asset', '==', eventResolved[5][i].returnValues.asset)
+          .where('id', '==', eventResolved[5][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[5][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
+      )
+    }
     const promiseArray = [soldPromises, cancelledPromises]
     const orderResolved = await Promise.all(
       promiseArray.map(function(innerPromiseArray) {
@@ -790,6 +1280,12 @@ app.get('/latestorders', async (req, res) => {
     else if(doc.data().asset == config.contract[project].ctn){
       asset = 'ctn'
     }
+    else if(doc.data().asset == config.contract[project].mchh){
+      asset = 'mchh'
+    }
+    else if(doc.data().asset == config.contract[project].mche){
+      asset = 'mche'
+    }
     const data ={
       'price': doc.data().price,
       'id' : doc.data().id,
@@ -813,3 +1309,37 @@ app.get('/latestorders', async (req, res) => {
 exports.api = functions
   .region('asia-northeast1')
   .https.onRequest(app);
+
+exports.getOinksByAddress = functions
+.region('asia-northeast1')
+.https.onRequest(async (req, res) =>{
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    var result = await axios.get("https://api.crypt-oink.io/tokens_of?"+ req.query.address)
+
+    const promises = []
+    for (var i = 0; i < result.data.length; i++) {
+        promises.push(axios.get(config.api.ctn.metadata + result.data[i] + '.json'))
+      }
+      tokens = await Promise.all(promises)
+      console.log(tokens)
+      const data =[]
+      for (var i = 0; i < tokens.length; i++) {
+          tokens[i].data.id = result.data[i]
+        data.push(tokens[i].data)
+      }
+    res.json(data)
+  });
+
+exports.getOinkById = functions
+.region('asia-northeast1')
+.https.onRequest(async (req, res) =>{
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
+    res.json(result.data)
+  });

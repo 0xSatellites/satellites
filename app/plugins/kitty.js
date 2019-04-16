@@ -46,7 +46,7 @@ const coolDownIndexToSpeed = index => {
   }
 }
 
-const getRarity = kitty => {
+const getKittyRarity = kitty => {
   var rarity = 3
   if(kitty.is_fancy) rarity++
   if(kitty.is_exclusive) rarity++
@@ -70,7 +70,7 @@ const kitty = {
   coolDownIndexToSpeed:coolDownIndexToSpeed,
   getKittiesByWalletAddress: getKittiesByWalletAddress,
   getKittyById: getKittyById,
-  getRarity:getRarity,
+  getKittyRarity:getKittyRarity,
   timeConverter: timeConverter
 }
 

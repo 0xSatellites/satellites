@@ -54,13 +54,13 @@ const getRarity = (asset, type) => {
       if(asset.metadata.attributes.rarity=='Legendary') rarity =5
       if(asset.metadata.attributes.rarity=='Epic') rarity =4
       if(asset.metadata.attributes.rarity=='Rare') rarity =3
-      if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
+      if(asset.metadata.attributes.rarity=='Uncommon') rarity =2
       if(asset.metadata.attributes.rarity=='Novice') rarity =1
     } else {
       if(asset.attributes.rarity=='Legendary') rarity =5
       if(asset.attributes.rarity=='Epic') rarity =4
       if(asset.attributes.rarity=='Rare') rarity =3
-      if(asset.attributes.rarity=='UnCommon') rarity =2
+      if(asset.attributes.rarity=='Uncommon') rarity =2
       if(asset.attributes.rarity=='Novice') rarity =1
     }
   }
@@ -69,13 +69,13 @@ const getRarity = (asset, type) => {
       if(asset.metadata.attributes.rarity=='Legendary') rarity =5
       if(asset.metadata.attributes.rarity=='Epic') rarity =4
       if(asset.metadata.attributes.rarity=='Rare') rarity =3
-      if(asset.metadata.attributes.rarity=='UnCommon') rarity =2
+      if(asset.metadata.attributes.rarity=='Uncommon') rarity =2
       if(asset.metadata.attributes.rarity=='Common') rarity =1
     } else {
       if(asset.attributes.rarity=='Legendary') rarity =5
       if(asset.attributes.rarity=='Epic') rarity =4
       if(asset.attributes.rarity=='Rare') rarity =3
-      if(asset.attributes.rarity=='UnCommon') rarity =2
+      if(asset.attributes.rarity=='Uncommon') rarity =2
       if(asset.attributes.rarity=='Common') rarity =1
     }
   }

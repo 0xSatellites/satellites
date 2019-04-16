@@ -50,7 +50,7 @@ const getExtensionRarity = extension => {
   if(extension.attributes.rarity=='Legendary') rarity =5
   if(extension.attributes.rarity=='Epic') rarity =4
   if(extension.attributes.rarity=='Rare') rarity =3
-  if(extension.attributes.rarity=='UnCommon') rarity =2
+  if(extension.attributes.rarity=='Uncommon') rarity =2
   if(extension.attributes.rarity=='Common') rarity =1
   return rarity
 }

@@ -84,47 +84,6 @@
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
-      <ul>
-        <v-progress-circular
-          class="loading "
-          v-if="this.loading === true"
-          :size="50"
-          color="blue"
-          indeterminate
-        ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
-          <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="ck.image_url" /></div>
-              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ ck.id }}</div>
-              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
-            </nuxt-link>
-          </div>
-        </li>
-
-      </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.cryptokitties.co/" target="_blank">
-                <v-card>
-                  <v-img
-                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
-                  aspect-ratio="1.75"
-                  ></v-img>
-                  <v-card-title primary-title>
-                  <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
-                  </div>
-                  </v-card-title>
-                </v-card>
-              </a>
-          </v-flex>
-    </section>
-    <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
       <ul>
         <v-progress-circular
@@ -165,7 +124,50 @@
               </a>
           </v-flex>
     </section>
-    <!-- マイクリ -->
+
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+          <div>
+            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="ck.image_url" /></div>
+              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ ck.id }}</div>
+              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
+            </nuxt-link>
+          </div>
+        </li>
+
+      </ul>
+        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+          <a href="https://www.cryptokitties.co/" target="_blank">
+                <v-card>
+                  <v-img
+                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
+                  aspect-ratio="1.75"
+                  ></v-img>
+                  <v-card-title primary-title>
+                  <div class="text-box">
+                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
+                  </div>
+                  </v-card-title>
+                </v-card>
+              </a>
+          </v-flex>
+    </section>
+
+    <!-- 履歴 -->
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">

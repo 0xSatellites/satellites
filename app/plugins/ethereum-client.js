@@ -71,14 +71,14 @@ const activate = async provider => {
 }
 
 const ownedTokens = async name => {
-  const methods = contract[name].methods
-  const balance = await methods.balanceOf(account.address).call()
+  const balance = await contract[name].methods.balanceOf(account.address).call()
+  console.log(balance)
   if (balance == 0) {
     return []
   }
   const promises = []
   for (var i = 0; i < balance; i++) {
-    promises.push(methods.tokenOfOwnerByIndex(account.address, i).call())
+    promises.push(contract[name].methods.tokenOfOwnerByIndex(account.address, i).call())
   }
   const result = await Promise.all(promises)
   return result

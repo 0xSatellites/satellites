@@ -50,22 +50,22 @@
         "staging":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"0xa965f09A38B08b6938AcBeE45f871D7A4Dc6E781",
-            "bazaaar_v3":"",
+            "bazaaar_v3":"0x2EDfeaC6A8c63A1CB4445E780C4e004b1e06466A",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
             "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
             "mchh":"0x273f7f8e6489682df756151f5525576e322d51a3",
             "mche":"0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
-            "mch_distributer":""
+            "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
         },
         "production":{
             "bazaaar_v1":"0x58ecf655cf5d8dc84fddbe9e31df962ad61f369b",
             "bazaaar_v2":"0xa965f09A38B08b6938AcBeE45f871D7A4Dc6E781",
-            "bazaaar_v3":"",
+            "bazaaar_v3":"0x2EDfeaC6A8c63A1CB4445E780C4e004b1e06466A",
             "ck":"0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
             "ctn":"0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
             "mchh":"0x273f7f8e6489682df756151f5525576e322d51a3",
             "mche":"0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
-            "mch_distributer":""
+            "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
         }
     },
     "firebase":{

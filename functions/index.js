@@ -698,7 +698,7 @@ exports.order = functions
       c.fillStyle = '#fff'
       c.font = "40px 'Noto Sans JP'"
       c.fillText(
-        'Id.' + order.id + ' / ' + 'Lv.' + meta.attributes.lv,
+        meta.attributes.hero_name + ' / ' + 'Lv.' + meta.attributes.lv,
         840,
         255,
         720
@@ -750,8 +750,8 @@ exports.order = functions
       console.info("INFO order 5")
       const msssage =
         'NOW ON SALE!!' +
-        ' / Id.' +
-        order.id +
+        ' / ' +
+        meta.attributes.hero_name +
         ' / Lv.' +
         meta.attributes.lv +
         ' / ' +
@@ -769,8 +769,8 @@ exports.order = functions
         data: {
           content:
             'NOW ON SALE!!' +
-            ' / Id.' +
-            order.id +
+            ' / ' +
+            meta.attributes.hero_name +
             ' / Lv.' +
             meta.attributes.lv +
             ' / ' +
@@ -850,7 +850,7 @@ exports.order = functions
       c.fillStyle = '#fff'
       c.font = "40px 'Noto Sans JP'"
       c.fillText(
-        'Id.' + order.id + ' / ' + 'Lv.' + meta.attributes.lv,
+        meta.attributes.extension_name + ' / ' + 'Lv.' + meta.attributes.lv,
         840,
         255,
         720
@@ -902,8 +902,8 @@ exports.order = functions
       console.info("INFO order 5")
       const msssage =
         'NOW ON SALE!!' +
-        ' / Id.' +
-        order.id +
+        ' / ' +
+        meta.attributes.extension_name +
         ' / Lv.' +
         meta.attributes.lv +
         ' / ' +
@@ -921,9 +921,9 @@ exports.order = functions
         data: {
           content:
             'NOW ON SALE!!' +
-            ' / Id.' +
-            order.id +
-            ' / Gen.' +
+            ' / ' +
+            meta.attributes.extension_name +
+            ' / Lv.' +
             meta.attributes.lv +
             ' / ' +
             meta.attributes.rarity +

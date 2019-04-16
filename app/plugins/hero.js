@@ -51,7 +51,7 @@ const getHeroRarity = hero => {
   if(hero.attributes.rarity=='Legendary') rarity =5
   if(hero.attributes.rarity=='Epic') rarity =4
   if(hero.attributes.rarity=='Rare') rarity =3
-  if(hero.attributes.rarity=='UnCommon') rarity =2
+  if(hero.attributes.rarity=='Uncommon') rarity =2
   if(hero.attributes.rarity=='Novice') rarity =1
   return rarity
 }

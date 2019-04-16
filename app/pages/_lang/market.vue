@@ -60,7 +60,7 @@
             </nuxt-link>
             <nuxt-link v-else-if="order.asset === mchh" :to="$t('index.holdLanguageMCHH') + order.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
+              <div class="c-card__img"><img class="pa-4" :src="order.metadata.image_url" /></div>
               <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ order.id }}</div>
@@ -69,8 +69,8 @@
             </nuxt-link>
             <nuxt-link v-else-if="order.asset === mche" :to="$t('index.holdLanguageMCHE') + order.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__img"><img class="pa-4" :src="order.metadata.image_url" /></div>
+              <div class="c-card__name" v-if="order.metadata.attributes.extension_name">{{ order.metadata.attributes.extension_name }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ order.id }}</div>
               <div class="c-card__txt">Lv. {{order.metadata.attributes.lv}}</div>
@@ -155,6 +155,7 @@ export default {
     const sortBy = 'created'
     const marketOrder = 'desc'
     const orders = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
+    console.log(orders)
     await store.dispatch('order/setOrders', orders)
   },
   mounted() {

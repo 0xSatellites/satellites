@@ -33,7 +33,7 @@
             <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="mchh.image_url" /></div>
+              <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
               <div class="c-card__name" v-if="mchh.name">{{ mchh.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
@@ -69,16 +69,13 @@
         ></v-progress-circular>
         <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
           <div>
-            <!-- mche.attributes.idのidないので対応する -->
-            <!-- とりあえすmche.attributes.lvにしている -->
-            <!-- idがないのでpages遷移はできない -->
-            <nuxt-link :to="'/mche/' + mche.attributes.lv" class="c-card">
+            <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="mche.image_url" /></div>
+              <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
               <div class="c-card__name" v-if="mche.name">{{ mche.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ mche.attributes.lv }}</div>
+              <div class="c-card__txt"># {{ mche.attributes.id }}</div>
             </nuxt-link>
           </div>
         </li>

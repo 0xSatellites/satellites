@@ -174,8 +174,13 @@ export default {
     fromWei(wei) {
         return client.utils.fromWei(wei)
     },
-    updateRange() {
+    async updateRange() {
       this.search_rarity_status = true
+      var splits = this.selectedSort.split('?');
+      var keys = ['rarity']
+      var values = [this.search_rarity]
+      var result = await firestore.getMarketWithConditions(this.selectedAsset, splits[0] ,splits[1], keys, values)
+      await this.$store.dispatch('order/setOrders', result)
     },
     async setAsset(){
         var splits = this.selectedSort.split('?');

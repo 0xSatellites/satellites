@@ -297,7 +297,6 @@ async function metadata(asset, id){
 }
 
 exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
   return await metadata(data.asset, data.id)
 })
 

@@ -202,9 +202,9 @@ export default {
     const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
+    var account
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
-        var account
         if(window.ethereum){
           account = await client.activate(ethereum)
         } else {

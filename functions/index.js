@@ -195,7 +195,7 @@ async function metadata(asset, id){
     let promises = []
     promises.push(await axios({
       method:'get',
-      url:config.api.mch.metadata + 'heroType/'+ general.data.extra_data.hero_type,
+      url:config.api.mch.metadataSand + 'heroType/'+ general.data.extra_data.hero_type,
       responseType:'json'
     }))
 
@@ -217,7 +217,7 @@ async function metadata(asset, id){
     if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
       promises.push(await axios({
         method:'get',
-        url:config.api.mch.metadata + 'ipfs/' + general.data.extra_data.current_art,
+        url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
         responseType:'json'
       }))
       response.sell = true
@@ -263,7 +263,7 @@ async function metadata(asset, id){
     let promises = []
     promises.push(await axios({
       method:'get',
-      url:config.api.mch.metadata + 'extensionType/'+ general.data.extra_data.extension_type,
+      url:config.api.mch.metadataSand + 'extensionType/'+ general.data.extra_data.extension_type,
       responseType:'json'
     }))
 

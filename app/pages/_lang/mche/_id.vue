@@ -23,9 +23,10 @@
             <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
           <ul class="l-item__data">
-            <li><span class="l-item__skill--type">Active</span>【{{asset.skill.name.ja}}】</li>
+            <li><span class="l-item__skill--type">Active</span>{{asset.skill.name.ja}}</li>
           </ul>
-
+          <br>
+          <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
           <v-form>
             <div class="l-item__action">
               <div class="l-item__action__price" v-if="approved && owned">
@@ -47,7 +48,6 @@
                 </textarea>
               </div>
               <div v-if="owned">
-                <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
                 <div class="l-item__action__btns" v-if="!approved">
                   <v-btn
                     class="l-item__action__btn"
@@ -159,7 +159,7 @@
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>
@@ -168,7 +168,7 @@
           </nuxt-link>
           <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
+              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
               <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ recommend.id }}</div>

@@ -57,7 +57,10 @@
             <div v-if="order.valid">
               <a
                 :href="
-                  'https://twitter.com/share?url=https://bazaaar.io/mchh/order/' +
+                  'https://twitter.com/share?url=' +
+                    host +
+                    type.symbol +
+                  '/order/' +
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +
@@ -148,6 +151,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 const project = process.env.project
 const config = require('../../../../config.json')
+const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
@@ -180,6 +184,7 @@ export default {
       ctn,
       mchh,
       mche,
+      type: { name: 'マイクリ', symbol: 'mchh'}
     }
   },
 

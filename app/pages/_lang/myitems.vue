@@ -51,6 +51,7 @@
                   <v-card-title primary-title>
                   <div class="text-box">
                       <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
+                      <h3 class="headline mb-0">{{ $t('empty.mch_maintenance') }}</h3>
                   </div>
                   </v-card-title>
                 </v-card>

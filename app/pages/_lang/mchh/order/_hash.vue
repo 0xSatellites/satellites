@@ -57,7 +57,7 @@
             <div v-if="order.valid">
               <a
                 :href="
-                  'https://twitter.com/share?url=https://bazaaar.io/ctn/order/' +
+                  'https://twitter.com/share?url=https://bazaaar.io/mchh/order/' +
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +

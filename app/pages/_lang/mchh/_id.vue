@@ -248,7 +248,6 @@ export default {
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
-      console.log(recommend)
       await store.dispatch('order/setOrders', recommend)
     } catch(err){
       error({ statusCode: 404, message: 'Post not found' })
@@ -257,7 +256,6 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
-    console.log(this.recommend)
 
     var account
     if (typeof web3 != 'undefined') {
@@ -366,7 +364,6 @@ export default {
         const approved = await client.contract.mchh.methods
           .isApprovedForAll(account.address, client.contract.bazaaar_v3.options.address)
           .call()
-        console.log(approved)
         if (approved) {
           console.log('approved')
           const nonce = await client.contract.bazaaar_v3.methods
@@ -430,14 +427,12 @@ export default {
         .setApprovalForAll(client.contract.bazaaar_v3.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
-          console.log(hash)
           this.hash = hash
           this.modalNo = 2
           this.modal = true
           this.loading = false
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(receipt)
           location.reload()
         }).catch((err) => {
           alert(this.$t('error.message'))
@@ -454,7 +449,6 @@ export default {
         this.waitDiscount = true
         const account = this.account
         const order = this.order
-        console.log(order)
 
         await client.contract.bazaaar_v3.methods
           .orderCancel_(
@@ -477,7 +471,6 @@ export default {
           )
           .send({ from: account.address })
           .on('transactionHash', hash => {
-            console.log(hash)
             this.hash = hash
             this.modalNo = 3
             this.modal = true

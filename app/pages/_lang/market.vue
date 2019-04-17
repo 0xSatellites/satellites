@@ -155,7 +155,6 @@ export default {
     const sortBy = 'created'
     const marketOrder = 'desc'
     const orders = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
-    console.log(orders)
     await store.dispatch('order/setOrders', orders)
   },
   mounted() {

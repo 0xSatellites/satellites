@@ -439,7 +439,9 @@ exports.order = functions
         order.hash
       try{
         client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) throw error;
+          if(error) {
+            console.info('Twitter API Down')
+          }
         })
       } catch (err) {
         console.info('Twitter API Down')
@@ -610,29 +612,31 @@ exports.order = functions
         order.hash
       try{
         client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) throw error;
+          if(error) {
+            console.info('Twitter API Down')
+          }
         })
       } catch (err) {
         console.info('Twitter API Down')
       }
-      await axios({
-        method:'post',
-        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-        data: {
-          content:
-            'NOW ON SALE!!' +
-            ' / Id.' +
-            order.id +
-            ' / Gen.' +
-            metadata.generation +
-            ' / ' +
-            coolDownIndexToSpeed(metadata.status.cooldown_index) +
-            ' / #くりぷ豚 ' +
-            config.discord.endpoint[project] +
-            "ctn/order/" +
-            hash
-        }
-      })
+      // await axios({
+      //   method:'post',
+      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      //   data: {
+      //     content:
+      //       'NOW ON SALE!!' +
+      //       ' / Id.' +
+      //       order.id +
+      //       ' / Gen.' +
+      //       metadata.generation +
+      //       ' / ' +
+      //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
+      //       ' / #くりぷ豚 ' +
+      //       config.discord.endpoint[project] +
+      //       "ctn/order/" +
+      //       hash
+      //   }
+      // })
       const result = {
         ogp: ogp,
         hash: hash
@@ -768,29 +772,31 @@ exports.order = functions
         order.hash
       try{
         client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) throw error;
+          if(error) {
+            console.info('Twitter API Down')
+          }
         })
       } catch (err) {
         console.info('Twitter API Down')
       }
-      await axios({
-        method:'post',
-        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-        data: {
-          content:
-            'NOW ON SALE!!' +
-            ' / ' +
-            meta.attributes.hero_name +
-            ' / Lv.' +
-            meta.attributes.lv +
-            ' / ' +
-            meta.attributes.rarity +
-            ' / #MCH ' +
-            config.discord.endpoint[project] +
-            "mchh/order/" +
-            hash
-        }
-      })
+      // await axios({
+      //   method:'post',
+      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      //   data: {
+      //     content:
+      //       'NOW ON SALE!!' +
+      //       ' / ' +
+      //       meta.attributes.hero_name +
+      //       ' / Lv.' +
+      //       meta.attributes.lv +
+      //       ' / ' +
+      //       meta.attributes.rarity +
+      //       ' / #MCH ' +
+      //       config.discord.endpoint[project] +
+      //       "mchh/order/" +
+      //       hash
+      //   }
+      // })
       const result = {
         ogp: ogp,
         hash: hash
@@ -924,29 +930,31 @@ exports.order = functions
         order.hash
       try{
         client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) throw error;
+          if(error) {
+            console.info('Twitter API Down')
+          }
         })
       } catch (err) {
         console.info('Twitter API Down')
       }
-      await axios({
-        method:'post',
-        url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-        data: {
-          content:
-            'NOW ON SALE!!' +
-            ' / ' +
-            meta.attributes.extension_name +
-            ' / Lv.' +
-            meta.attributes.lv +
-            ' / ' +
-            meta.attributes.rarity +
-            ' / #MCH ' +
-            config.discord.endpoint[project] +
-            "mche/order/" +
-            hash
-        }
-      })
+      // await axios({
+      //   method:'post',
+      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      //   data: {
+      //     content:
+      //       'NOW ON SALE!!' +
+      //       ' / ' +
+      //       meta.attributes.extension_name +
+      //       ' / Lv.' +
+      //       meta.attributes.lv +
+      //       ' / ' +
+      //       meta.attributes.rarity +
+      //       ' / #MCH ' +
+      //       config.discord.endpoint[project] +
+      //       "mche/order/" +
+      //       hash
+      //   }
+      // })
       const result = {
         ogp: ogp,
         hash: hash

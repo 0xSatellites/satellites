@@ -337,6 +337,7 @@ exports.order = functions
       const response = await axios({
         method: 'get',
         url: config.api.ck.metadata + order.id,
+        headers: {'x-api-token': config.token.kitty}
         responseType: 'json'
       })
       console.info("INFO order 2")

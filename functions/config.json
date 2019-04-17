@@ -16,7 +16,7 @@
     },
     "api":{
         "ck":{
-            "metadata":"https://api.cryptokitties.co/kitties/"
+            "metadata":"https://public.api.cryptokitties.co/v1/kitties/"
         },
         "ctn":{
             "metadata":"https://s3-ap-northeast-1.amazonaws.com/crypton-live/metadata/"

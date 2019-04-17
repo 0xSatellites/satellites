@@ -16,7 +16,7 @@
     },
     "api":{
         "ck":{
-            "metadata":"https://api.cryptokitties.co/kitties/"
+            "metadata":"https://public.api.cryptokitties.co/v1/kitties/"
         },
         "ctn":{
             "metadata":"https://api.crypt-oink.io/metadata?"

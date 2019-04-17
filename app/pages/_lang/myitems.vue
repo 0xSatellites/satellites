@@ -71,7 +71,7 @@
         <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
           <div>
             <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
               <div class="c-card__name" v-if="mche.attributes.extension_name">{{ mche.attributes.extension_name.substring(0,25) }} / Lv: {{mche.attributes.lv}}</div>

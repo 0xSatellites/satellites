@@ -69,7 +69,7 @@ const getMarketWithConditions = async (asset, by, order, conditionKeys, conditio
         if(check=='Legendary') check =5
         else if(check=='Epic') check =4
         else if(check=='Rare') check =3
-        else if(check=='UnCommon') check =2
+        else if(check=='Uncommon') check =2
         else if(check=='Novice' || check=='Common') check =1
         if(check==conditionValues[j]){
           result.push(data)

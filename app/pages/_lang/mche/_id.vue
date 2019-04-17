@@ -393,8 +393,8 @@ export default {
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: 500,
-            referralRatio: 500
+            creatorRoyaltyRatio: 0,
+            referralRatio: 1000
           }
           const signedOrder = await client.signOrder(order)
           const datas = {

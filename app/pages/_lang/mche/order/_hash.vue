@@ -60,7 +60,12 @@
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +
-                    order.metadata.name +
+                    ' / ' +
+                    order.metadata.attributes.extension_name  +
+                    ' / Lv.' +
+                    order.metadata.attributes.lv +
+                    ' / ' +
+                    order.metadata.attributes.rarity +
                     '&hashtags=bazaaar, バザール, マイクリ'
                 "
                 class="twitter-share-button"

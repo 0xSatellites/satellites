@@ -24,7 +24,7 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
     .where('maker', '==', maker)
     .where('id', '==', id)
     .where('valid', '==', true)
-    .orderBy('price').limit(1).get()
+    .orderBy('price_sort').limit(1).get()
   snapshots.forEach(doc => result = doc.data())
   return result
 }
@@ -44,6 +44,38 @@ const getMarket = async (asset, by, order) =>{
       .where('valid', '==', true)
       .orderBy(by, order).get()
     snapshots.forEach(doc => result.push(doc.data()))
+    return result
+  }
+}
+
+const getMarketWithConditions = async (asset, by, order, conditionKeys, conditionValues) =>{
+  if(asset == 'all'){
+    var result = []
+    const snapshots = await db.collection('order')
+      .where('valid', '==', true)
+      .orderBy(by, order).get()
+    snapshots.forEach(doc => result.push(doc.data()))
+    return result
+  }else{
+    var result = []
+    const snapshots = await db.collection('order')
+      .where('asset', '==', config.contract[process.env.project][asset])
+      .where('valid', '==', true)
+      .orderBy(by, order).get()
+    snapshots.forEach(doc => {
+      var data = doc.data()
+      for (var j=0; j<conditionKeys.length; j++){
+        var check = data.metadata.attributes[conditionKeys[j]]
+        if(check=='Legendary') check =5
+        else if(check=='Epic') check =4
+        else if(check=='Rare') check =3
+        else if(check=='UnCommon') check =2
+        else if(check=='Novice' || check=='Common') rarity =1
+        if(check==conditionValues[j]){
+          result.push(data)
+        }
+      }
+    })
     return result
   }
 }
@@ -121,6 +153,7 @@ const firestore = {
   getLatestValidOrders:getLatestValidOrders,
   getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
   getMarket:getMarket,
+  getMarketWithConditions:getMarketWithConditions,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

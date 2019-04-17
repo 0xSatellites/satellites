@@ -18,9 +18,8 @@
       <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/" target="_blank">TokenPocket</a> or</h2>
       <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
-
     <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
+      <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -29,37 +28,61 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
-              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="ck.image_url" /></div>
-              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
+              <div class="c-card__name" v-if="mchh.attributes.hero_name">{{ mchh.attributes.hero_name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ ck.id }}</div>
-              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
+              <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
             </nuxt-link>
           </div>
         </li>
-
-      </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
-          <a href="https://www.cryptokitties.co/" target="_blank">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
+          <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
-                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
+                  v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')"
                   aspect-ratio="1.75"
+                  contain
                   ></v-img>
                   <v-card-title primary-title>
                   <div class="text-box">
-                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
+                      <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
                   </div>
                   </v-card-title>
                 </v-card>
               </a>
           </v-flex>
+      </ul>
     </section>
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
+          <div>
+            <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
+              <div class="c-card__name" v-if="mche.attributes.extension_name">{{ mche.attributes.extension_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mche.attributes.id }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
       <ul>
@@ -74,7 +97,7 @@
           <div>
             <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn)" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
@@ -101,26 +124,72 @@
               </a>
           </v-flex>
     </section>
+
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
+      <ul>
+        <v-progress-circular
+          class="loading "
+          v-if="this.loading === true"
+          :size="50"
+          color="blue"
+          indeterminate
+        ></v-progress-circular>
+        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+          <div>
+            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
+              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
+              <div class="c-card__img"><img :src="ck.image_url" /></div>
+              <div class="c-card__name" v-if="ck.name">{{ ck.name.substring(0,25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ ck.id }}</div>
+              <div class="c-card__txt">Gen {{ck.generation}} : {{coolDownIndexToSpeed(ck.status.cooldown_index)}}</div>
+            </nuxt-link>
+          </div>
+        </li>
+
+      </ul>
+        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+          <a href="https://www.cryptokitties.co/" target="_blank">
+                <v-card>
+                  <v-img
+                  v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
+                  aspect-ratio="1.75"
+                  ></v-img>
+                  <v-card-title primary-title>
+                  <div class="text-box">
+                      <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
+                  </div>
+                  </v-card-title>
+                </v-card>
+              </a>
+          </v-flex>
+    </section>
+
+    <!-- 履歴 -->
     <section class="c-index c-index--mypage" v-if="transactions.length">
       <v-data-table :headers="headers" :items="transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
           <td>{{ timeConverter(props.item.modified) }}</td>
           <td v-if="props.item.maker == account.address">sold</td>
           <td v-else>purchased</td>
+          <td>{{ toAsset(props.item.asset) }}</td>
           <td>{{ props.item.id }}</td>
           <td>{{ fromWei(props.item.price) }} ETH</td>
         </template>
       </v-data-table>
     </section>
-
-
   </div>
 </template>
 
 <script>
 import client from '~/plugins/ethereum-client'
+import common from '~/plugins/common'
 import kitty from '~/plugins/kitty'
 import oink from '~/plugins/oink'
+import hero from '~/plugins/hero'
+import extension from '~/plugins/extension'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
@@ -128,11 +197,18 @@ export default {
   mounted: async function() {
     const myitems = this.myitems
     const myoinks = this.myoinks
+    const myheros = this.myheros
+    const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
-    if (typeof web3 != 'undefined') {
+    var account
+    if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
-        const account = await client.activate(web3.currentProvider)
+        if(window.ethereum){
+          account = await client.activate(ethereum)
+        } else {
+          account = await client.activate(web3.currentProvider)
+        }
         store.dispatch('account/setAccount', account)
       }
       this.loading = true
@@ -146,6 +222,24 @@ export default {
         store.dispatch('oink/setOinks', tokens)
       })
 
+      client.ownedTokens('mchh').then(async function(tokens) {
+          const promises = []
+          for(var token of tokens){
+            promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
+          }
+          const result = await Promise.all(promises)
+          store.dispatch('hero/setHeros', result)
+      })
+
+      client.ownedTokens('mche').then(async function(tokens) {
+          const promises = []
+          for(var token of tokens){
+            promises.push(await functions.call('metadata', {asset:'mche', id:token}))
+          }
+          const result = await Promise.all(promises)
+          store.dispatch('extension/setExtensions', result)
+      })
+
       firestore
         .getValidOrdersByMaker(client.account.address)
         .then(orders => store.dispatch('order/setOrders', orders))
@@ -153,6 +247,7 @@ export default {
       firestore
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
+
 
     }
   },
@@ -165,6 +260,12 @@ export default {
     },
     myoinks() {
       return this.$store.getters['oink/oinks']
+    },
+    myheros() {
+      return this.$store.getters['hero/heros']
+    },
+    myextensions() {
+      return this.$store.getters['extension/extensions']
     },
     orders() {
       return this.$store.getters['order/orders']
@@ -184,8 +285,8 @@ export default {
     coolDownIndexToSpeed(index) {
       return kitty.coolDownIndexToSpeed(index)
     },
-    getRarity(asset) {
-        return kitty.getRarity(asset)
+    getRarity(asset, type) {
+        return common.getRarity(asset, type)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)
@@ -193,6 +294,9 @@ export default {
     timeConverter(timestamp){
       return kitty.timeConverter(timestamp)
     },
+    toAsset(asset){
+      return client.toAsset(asset)
+    }
     // oinkCoolDownIndexToSpeed(index){
     //   oink.coolDownIndexToSpeed(index)
     //   .then(result => {
@@ -207,6 +311,7 @@ export default {
       headers: [
         { text: 'date', value: 'date' },
         { text: 'result', value: 'result' },
+        { text: 'asset', value: 'asset' },
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],

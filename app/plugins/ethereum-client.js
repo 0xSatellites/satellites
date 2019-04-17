@@ -11,6 +11,10 @@ const contract = {
     config.abi.bazaaar_v2,
     config.contract[process.env.project].bazaaar_v2
   ),
+  bazaaar_v3: new web3.eth.Contract(
+    config.abi.bazaaar_v3,
+    config.contract[process.env.project].bazaaar_v3
+  ),
   ck: new web3.eth.Contract(
     config.abi.ck,
     config.contract[process.env.project].ck
@@ -19,8 +23,22 @@ const contract = {
     config.abi.ctn,
     config.contract[process.env.project].ctn
   ),
-  ctn_distributer: config.contract[process.env.project].ctn_distributer
+  ctn_distributer: config.contract[process.env.project].ctn_distributer,
+  mchh: new web3.eth.Contract(
+    config.abi.mchh,
+    config.contract[process.env.project].mchh
+  ),
+  mche: new web3.eth.Contract(
+    config.abi.mche,
+    config.contract[process.env.project].mche
+  )
 }
+
+const project = process.env.project
+const ck = config.contract[project].ck
+const ctn = config.contract[project].ctn
+const mchh = config.contract[project].mchh
+const mche = config.contract[project].mche
 
 const account = {
   address: null,
@@ -30,6 +48,9 @@ const account = {
 const activate = async provider => {
   try{
     web3.setProvider(provider)
+    if(window.ethereum){
+      await ethereum.enable()
+    }
     const accounts = await web3.eth.getAccounts()
     if(accounts.length > 0) {
       account.address = accounts[0]
@@ -50,14 +71,13 @@ const activate = async provider => {
 }
 
 const ownedTokens = async name => {
-  const methods = contract[name].methods
-  const balance = await methods.balanceOf(account.address).call()
+  const balance = await contract[name].methods.balanceOf(account.address).call()
   if (balance == 0) {
     return []
   }
   const promises = []
   for (var i = 0; i < balance; i++) {
-    promises.push(methods.tokenOfOwnerByIndex(account.address, i).call())
+    promises.push(contract[name].methods.tokenOfOwnerByIndex(account.address, i).call())
   }
   const result = await Promise.all(promises)
   return result
@@ -86,13 +106,27 @@ const signOrder = async order => {
   return order
 }
 
+
+const toAsset = asset => {
+  switch(asset) {
+  case ck:
+  return 'CryptoKitties'
+  case ctn:
+  return 'Crypt-Oink'
+  case mchh:
+  case mche:
+  return 'MyCryptoHeros'
+  }
+}
+
 const client = {
   account: account,
   activate: activate,
   contract: contract,
   ownedTokens: ownedTokens,
   signOrder:signOrder,
-  utils: web3.utils
+  utils: web3.utils,
+  toAsset: toAsset
 }
 
 export default client

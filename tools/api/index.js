@@ -32,3 +32,12 @@ exports.getOinksByAddress = functions
     var result = await axios.get("https://api.crypt-oink.io/metadata?"+ req.query.id)
     res.json(result.data)
   });
+
+  exports.getHeroById = functions
+  .https.onRequest(async (req, res) =>{
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET');
+      res.set('Access-Control-Allow-Headers', 'Content-Type, authorization');
+      var result = await axios.get("https://www.mycryptoheroes.net/metadata/hero/"+ req.query.id)
+      res.json(result.data)
+    });

@@ -83,6 +83,8 @@ module.exports = {
           "https://rinkeby.infura.io/" + infuraKey
         );
       },
+      confirmations: 2, // # of confs to wait between deployments. (default: 0)
+      skipDryRun: true,
       gasPrice: 12000000000, //ex. 10 gwei = 10000000000
       network_id: 4
     },
@@ -95,6 +97,9 @@ module.exports = {
         );
       },
       //It is recommend to set gasPrice (in wei)
+      confirmations: 2, // # of confs to wait between deployments. (default: 0)
+      skipDryRun: true,
+      gas: 3000000,
       gasPrice: 15000000000, //ex. 10 gwei = 10000000000
       network_id: 1
     },

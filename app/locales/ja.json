@@ -23,11 +23,14 @@
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
         "holdLanguageCK": "/ja/ck/order/",
-        "holdLanguageCTN": "/ja/ctn/order/"
+        "holdLanguageCTN": "/ja/ctn/order/",
+        "holdLanguageMCHH": "/ja/mchh/order/",
+        "holdLanguageMCHE": "/ja/mche/order/"
     },
     "assets":{
         "kitty":"クリプトキティ",
-        "oink":"くりぷ豚"
+        "oink":"くりぷ豚",
+        "mch":"マイクリプトヒーローズ"
     },
     "header":{
         "mypage": "マイページ",
@@ -77,7 +80,9 @@
         "cancel": "キャンセルする",
         "agree": "利用規約に同意する",
         "terms":"利用規約",
-        "relatedAsset": "関連アセット"
+        "relatedAsset": "関連アセット",
+        "mchh_condition": "※ヒーローはLv2以上かつ「アートエディット」が行われている必要があります。",
+        "mche_condition": "※エクステンションはLv2以上かつ「二つ名」が行われている必要があります。"
     },
     "hash":{
         "purchase": "購入する",
@@ -91,7 +96,8 @@
     },
     "empty":{
         "kitty": "キティ持ってないにゃ",
-        "oink": "くりぷトン持ってないのだいん"
+        "oink": "くりぷトン持ってないブー",
+        "mch":"ヒーローがいないよ"
     },
     "error":{
         "message": "エラー"

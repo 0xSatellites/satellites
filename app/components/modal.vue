@@ -34,11 +34,11 @@
               data-size="large"
               data-show-count="false"
               target="”_blank”"
-            >{{$t('modal.tweet')}}
+            >
             <div class="l-modal__btn">
+              {{$t('modal.tweet')}}
             </div>
             </a>
-            
           <div class="l-modal__close" @click="$emit('transitionOrder')">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{$t('modal.close')}}</div>

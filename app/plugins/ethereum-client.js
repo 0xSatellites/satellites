@@ -72,7 +72,6 @@ const activate = async provider => {
 
 const ownedTokens = async name => {
   const balance = await contract[name].methods.balanceOf(account.address).call()
-  console.log(balance)
   if (balance == 0) {
     return []
   }

@@ -180,7 +180,6 @@ export default {
   async asyncData({ store, params, error }) {
     try {
       const order = await firestore.doc('order', params.hash)
-            console.log(order)
       await store.dispatch('order/setOrder', order)
       const recommend = await firestore.getRelatedValidOrders(
         params.hash,
@@ -233,7 +232,6 @@ export default {
         return client.utils.fromWei(wei)
     },
     async purchase() {
-       console.log(this.order)
       try{
         this.loading = true
         const account = this.account
@@ -247,7 +245,7 @@ export default {
               order.taker,
               order.creatorRoyaltyRecipient,
               order.asset,
-              config.recipient[project].bazaaar
+              config.recipient[project].mch_distributer
             ],
             [
               order.id,
@@ -264,7 +262,6 @@ export default {
           )
           .send({ from: account.address, value: order.price })
           .on('transactionHash', hash => {
-            // console.log(hash)
             this.hash = hash
             this.modal = true
             this.loading = false

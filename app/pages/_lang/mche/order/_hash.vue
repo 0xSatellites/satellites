@@ -56,11 +56,19 @@
             <div v-if="order.valid">
               <a
                 :href="
-                  'https://twitter.com/share?url=https://bazaaar.io/ctn/order/' +
+                  'https://twitter.com/share?url=' +
+                    host +
+                    type.symbol +
+                  '/order/' +
                     order.hash +
                     '&text=' +
                     $t('hash.sell') +
-                    order.metadata.name +
+                    ' / ' +
+                    order.metadata.attributes.extension_name  +
+                    ' / Lv.' +
+                    order.metadata.attributes.lv +
+                    ' / ' +
+                    order.metadata.attributes.rarity +
                     '&hashtags=bazaaar, バザール, マイクリ'
                 "
                 class="twitter-share-button"
@@ -142,6 +150,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 
 const project = process.env.project
 const config = require('../../../../config.json')
+const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
@@ -170,10 +179,12 @@ export default {
       modal: false,
       modalNo: 4,
       hash: '',
+      host,
       ck,
       ctn,
       mchh,
-      mche
+      mche,
+      type: { name: 'マイクリ', symbol: 'mche'}
     }
   },
 

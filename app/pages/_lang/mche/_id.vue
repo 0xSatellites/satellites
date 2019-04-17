@@ -373,7 +373,7 @@ export default {
           const nonce = await client.contract.bazaaar_v3.methods
             .nonce_(
               account.address,
-              client.contract.mchh.options.address,
+              client.contract.mche.options.address,
               params.id
             )
             .call()
@@ -393,8 +393,8 @@ export default {
             nonce: nonce,
             salt: salt,
             expiration: expiration,
-            creatorRoyaltyRatio: 500,
-            referralRatio: 500
+            creatorRoyaltyRatio: 0,
+            referralRatio: 1000
           }
           const signedOrder = await client.signOrder(order)
           const datas = {

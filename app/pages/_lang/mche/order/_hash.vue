@@ -179,6 +179,7 @@ export default {
       modal: false,
       modalNo: 4,
       hash: '',
+      host,
       ck,
       ctn,
       mchh,

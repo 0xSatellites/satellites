@@ -34,7 +34,7 @@
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
-              <div class="c-card__name" v-if="mchh.attributes.hero_name">{{ mchh.attributes.hero_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="mchh.attributes.hero_name">{{ mchh.attributes.hero_name.substring(0,25) }} / Lv: {{mchh.attributes.lv}}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mchh.attributes.id }}</div>
             </nuxt-link>
@@ -73,7 +73,7 @@
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.lv.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
-              <div class="c-card__name" v-if="mche.attributes.extension_name">{{ mche.attributes.extension_name.substring(0,25) }}</div>
+              <div class="c-card__name" v-if="mche.attributes.extension_name">{{ mche.attributes.extension_name.substring(0,25) }} / Lv: {{mche.attributes.lv}}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mche.attributes.id }}</div>
             </nuxt-link>

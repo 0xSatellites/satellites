@@ -365,7 +365,7 @@ export default {
           return
         }
 
-        const approved = await client.contract.mchh.methods
+        const approved = await client.contract.mche.methods
           .isApprovedForAll(account.address, client.contract.bazaaar_v3.options.address)
           .call()
         console.log(approved)

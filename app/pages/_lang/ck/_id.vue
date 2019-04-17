@@ -430,7 +430,6 @@ export default {
         this.waitDiscount = true
         const account = this.account
         const order = this.order
-        console.log(order)
 
         await client.contract.bazaaar_v1.methods
           .orderCancel_(
@@ -453,7 +452,6 @@ export default {
           )
           .send({ from: account.address })
           .on('transactionHash', hash => {
-            console.log(hash)
             this.hash = hash
             this.modalNo = 3
             this.modal = true

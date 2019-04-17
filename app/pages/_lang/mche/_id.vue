@@ -368,7 +368,6 @@ export default {
         const approved = await client.contract.mche.methods
           .isApprovedForAll(account.address, client.contract.bazaaar_v3.options.address)
           .call()
-        console.log(approved)
         if (approved) {
           console.log('approved')
           const nonce = await client.contract.bazaaar_v3.methods
@@ -378,7 +377,6 @@ export default {
               params.id
             )
             .call()
-          console.log(1)
           const salt = Math.floor(Math.random() * 1000000000)
           //const date = new Date()
           //date.setDate(date.getDate() + 7)
@@ -414,7 +412,7 @@ export default {
         this.loading = false
         this.waitCancel = false
       } catch (err) {
-        alert(this.$t('error.message'))
+        alert(err)
         this.loading = false
         this.modal = false
         this.waitCancel = false
@@ -429,14 +427,12 @@ export default {
         .setApprovalForAll(client.contract.bazaaar_v3.options.address, params.id)
         .send({ from: account.address })
         .on('transactionHash', hash => {
-          console.log(hash)
           this.hash = hash
           this.modalNo = 2
           this.modal = true
           this.loading = false
         })
         .on('confirmation', (confirmationNumber, receipt) => {
-          console.log(receipt)
           location.reload()
         }).catch((err) => {
           alert(this.$t('error.message'))
@@ -453,7 +449,6 @@ export default {
         this.waitDiscount = true
         const account = this.account
         const order = this.order
-        console.log(order)
 
         await client.contract.bazaaar_v3.methods
           .orderCancel_(
@@ -476,7 +471,6 @@ export default {
           )
           .send({ from: account.address })
           .on('transactionHash', hash => {
-            console.log(hash)
             this.hash = hash
             this.modalNo = 3
             this.modal = true

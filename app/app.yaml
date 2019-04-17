@@ -4,7 +4,7 @@ instance_class: F2
 env: standard
 automatic_scaling:
   min_instances: 0
-  max_instances: 5
+  # max_instances: 5
 
 handlers:
   - url: /_nuxt

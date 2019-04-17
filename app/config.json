@@ -128,12 +128,12 @@
         "staging":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-            "mch_distributer":""
+            "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
         },
         "production":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
             "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-            "mch_distributer":""
+            "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
         }
     }
 }

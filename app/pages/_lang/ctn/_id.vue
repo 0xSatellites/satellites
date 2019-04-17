@@ -410,7 +410,6 @@ export default {
             order: signedOrder,
             msg: this.msg
           }
-          console.log(datas)
           var result = await functions.call('order', datas)
           this.hash = result.hash
           this.ogp = result.ogp

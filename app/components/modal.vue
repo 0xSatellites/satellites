@@ -209,7 +209,7 @@
                   ' / ' +
                   asset.attributes.rarity +
                   ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, ' +
+                  '&hashtags=bazaaar, バザー, MCH, マイクリ' +
                   type.name
               "
               class="twitter-share-button"
@@ -236,7 +236,7 @@
                   ' / ' +
                   asset.attributes.rarity +
                   ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, ' +
+                  '&hashtags=bazaaar, バザー, MCH, マイクリ' +
                   type.name
               "
               class="twitter-share-button"

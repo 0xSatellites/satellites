@@ -767,7 +767,7 @@ exports.order = functions
         meta.attributes.lv +
         ' / ' +
         meta.attributes.rarity +
-        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
         config.host[project] +
         'mchh/order/' +
         order.hash
@@ -925,7 +925,7 @@ exports.order = functions
         meta.attributes.lv +
         ' / ' +
         meta.attributes.rarity +
-        ' / #bazaaar #バザー #NFT #MCH from @bazaaario ' +
+        ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
         config.host[project] +
         'mche/order/' +
         order.hash

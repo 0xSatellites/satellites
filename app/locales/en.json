@@ -72,7 +72,7 @@
         "termsHD": "/terms"
     },
     "id":{
-        "inputMessage": "Opitional Message",
+        "inputMessage": "Opitional Message (18 characters or less)",
         "fee":"10% fee will be charged",
         "approve": "approve",
         "sell": "sell",

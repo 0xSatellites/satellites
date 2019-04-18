@@ -70,7 +70,7 @@
                     order.metadata.attributes.lv +
                     ' / ' +
                     order.metadata.attributes.rarity +
-                    '&hashtags=bazaaar, バザール, マイクリ'
+                    '&hashtags=bazaaar, バザール, MCH, マイクリ'
 
                 "
                 class="twitter-share-button"

@@ -72,7 +72,7 @@
         "termsHD": "/ja/terms"
     },
     "id":{
-        "inputMessage": "一言メッセージを入力できます（オプション）",
+        "inputMessage": "一言メッセージを入力できます（18文字以内）",
         "fee":"手数料10%を頂戴します",
         "approve": "承認する",
         "sell": "出品する",

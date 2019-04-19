@@ -23,7 +23,7 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="loading"
+          v-if="loadingMCHH || loadingMCHE"
           :size="50"
           color="blue"
           indeterminate
@@ -40,7 +40,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !loading && !myheros.length">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !loadingMCHH && !loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -207,12 +207,12 @@ export default {
       }
       this.loadingCK = true
       this.loadingCTN = true
-      this.loading = false
+      this.loadingMCHH = true
+      this.loadingMCHE = true
 
 
       kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
         this.loadingCK = false
-        console.log(this)
         store.dispatch('asset/setAssets', tokens)
       })
 
@@ -221,22 +221,24 @@ export default {
         store.dispatch('oink/setOinks', tokens)
       })
 
-      client.ownedTokens('mchh').then(async function(tokens) {
+      client.ownedTokens('mchh').then(async tokens => {
           const promises = []
           for(var token of tokens){
             promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('hero/setHeros', result)
+          this.loadingMCHH = false
       })
 
-      client.ownedTokens('mche').then(async function(tokens) {
+      client.ownedTokens('mche').then(async tokens => {
           const promises = []
           for(var token of tokens){
             promises.push(await functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('extension/setExtensions', result)
+          this.loadingMCHE = false
       })
 
       firestore
@@ -296,13 +298,6 @@ export default {
     toAsset(asset){
       return client.toAsset(asset)
     }
-    // oinkCoolDownIndexToSpeed(index){
-    //   oink.coolDownIndexToSpeed(index)
-    //   .then(result => {
-    //     console.log(result)
-    //     return result
-    //   })
-    // }
 
   },
   data() {

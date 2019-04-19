@@ -23,7 +23,7 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="loading"
           :size="50"
           color="blue"
           indeterminate
@@ -40,7 +40,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !loading && !myheros.length">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -60,15 +60,8 @@
       </ul>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-      <ul>
-        <v-progress-circular
-          class="loading "
-          v-if="this.loading === true"
-          :size="50"
-          color="blue"
-          indeterminate
-        ></v-progress-circular>
-        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
+      <ul v-if="myextensions.length">
+        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
           <div>
             <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -89,7 +82,7 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="this.loadingCTN"
           :size="50"
           color="blue"
           indeterminate
@@ -109,7 +102,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loadingCTN">
           <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
@@ -131,7 +124,7 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="this.loadingCK"
           :size="50"
           color="blue"
           indeterminate
@@ -151,7 +144,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loadingCK">
           <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
@@ -212,14 +205,19 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-      this.loading = true
+      this.loadingCK = true
+      this.loadingCTN = true
+      this.loading = false
+
+
       kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
-        this.loading = false
+        this.loadingCK = false
+        console.log(this)
         store.dispatch('asset/setAssets', tokens)
       })
 
       oink.getOinksByWalletAddress(client.account.address).then(tokens => {
-        this.loading = false
+        this.loadingCTN = false
         store.dispatch('oink/setOinks', tokens)
       })
 

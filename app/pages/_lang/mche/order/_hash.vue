@@ -21,7 +21,7 @@
         </ul>
         <ul class="l-information__data">
             <!-- TODO 条件分岐 Active有無 -->
-          <li><span class="l-item__skill--type">Passive</span>{{order.metadata.skill.name.ja}}</li>
+          <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.skill.name.ja}}</b><br>{{order.metadata.skill.description.ja.effects[0]}}</li>
         </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>

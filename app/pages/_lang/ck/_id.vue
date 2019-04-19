@@ -30,15 +30,12 @@
                 >
               </div>
               <div class="l-item__action__textarea" v-if="approved && owned">
-                <textarea
+                <v-text-field
                   v-model="msg"
-                  name=""
-                  id=""
-                  box
-                  auto-grow
+                  :rules="msgRules"
+                  :counter="18"
                   :placeholder="$t('id.inputMessage')"
-                >
-                </textarea>
+                ></v-text-field>
               </div>
               <div v-if="approved && owned" class="small">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
               <v-checkbox
@@ -221,6 +218,9 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      msgRules: [
+        v => v.length <= 18 || 'Message must be less than 18 characters'
+      ],
       host,
       ck,
       ctn,

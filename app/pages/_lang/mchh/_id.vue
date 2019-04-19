@@ -10,7 +10,6 @@
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.attributes.hero_name }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
-          
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
@@ -37,15 +36,12 @@
               </div>
               <div v-if="approved && owned">{{$t("id.fee")}}</div>
               <div class="l-item__action__textarea" v-if="approved && owned">
-                <textarea
+                <v-text-field
                   v-model="msg"
-                  name=""
-                  id=""
-                  box
-                  auto-grow
+                  :rules="msgRules"
+                  :counter="18"
                   :placeholder="$t('id.inputMessage')"
-                >
-                </textarea>
+                ></v-text-field>
               </div>
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
@@ -234,6 +230,9 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      msgRules: [
+        v => v.length <= 18 || 'Message must be less than 18 characters'
+      ],
       host,
       ck,
       ctn,

@@ -23,7 +23,7 @@
             <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
           <ul class="l-item__data">
-            <li><span class="l-item__skill--type">Active</span>{{asset.skill.name.ja}}</li>
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.skill.name.ja}}</b><br>{{asset.skill.description.ja.effects[0]}}<br>{{asset.skill.description.ja.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mche_condition")}}</div>

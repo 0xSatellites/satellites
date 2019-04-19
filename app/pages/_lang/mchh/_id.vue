@@ -21,8 +21,8 @@
           </ul>
           <ul class="l-item__data">
             <!-- TODO 条件分岐 Active有無 -->
-          <li><span class="l-item__skill--type">Active</span>{{asset.active_skill.name.ja}}</li>
-          <li><span class="l-item__skill--type">Passive</span>{{asset.passive_skill.name.ja}}</li>
+          <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.ja}}</b><br>{{asset.active_skill.description.ja.effects[0]}}<br>{{asset.active_skill.description.ja.effects[1]}}</li>
+          <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.ja}}</b><br>{{asset.passive_skill.description.ja.effects[0]}}<br>{{asset.passive_skill.description.ja.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>

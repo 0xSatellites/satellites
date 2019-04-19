@@ -136,6 +136,7 @@
       v-on:transitionTop="transitionTop"
       :hash="hash"
       :modalNo="modalNo"
+      :url="url"
     ></modal>
   </div>
 </template>
@@ -185,7 +186,8 @@ export default {
       ctn,
       mchh,
       mche,
-      type: { name: 'マイクリ', symbol: 'mchh'}
+      type: { name: 'マイクリ', symbol: 'mchh'},
+      url: {type: 'mchh', hash: '', project: ''}
     }
   },
 
@@ -218,8 +220,8 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
-
-
+    this.url.hash = this.$nuxt.$route.params.hash
+    this.url.project = config.host[project]
   },
   computed: {
     account() {

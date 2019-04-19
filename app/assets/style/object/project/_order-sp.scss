@@ -200,7 +200,7 @@ background: rgba(0,0,0,0.5);
     #modalImg img{
       width: floor-decimal(250vw * 100 / 375, 2);
       height:floor-decimal(180vw * 100 / 375, 2);
-      object-fit: cover;
+      object-fit: contain;
     }
   }
 

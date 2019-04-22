@@ -1,8 +1,10 @@
 const axios = require('axios')
+const https = require('https');
 
 
 async function main(){
-  const result = await axios.get('http://api.etherscan.io/api?module=account&action=txlist&address=0x2EDfeaC6A8c63A1CB4445E780C4e004b1e06466A&startblock=0&endblock=99999999&sort=asc&apikey=PFAVA4Q7J85X178D6GNAAH6XKU4Q3DNHF2')
+  const result = await doRequest('https://api.etherscan.io/api?module=account&action=txlist&address=0x2EDfeaC6A8c63A1CB4445E780C4e004b1e06466A&startblock=0&endblock=99999999&sort=asc&apikey=PFAVA4Q7J85X178D6GNAAH6XKU4Q3DNHF2')
+  console.log(result.data)
   var match = 0
   var match_24h = 0
   var match_error_24 = 0

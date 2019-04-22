@@ -20,10 +20,15 @@
           <li><strong>INT：</strong> {{order.metadata.attributes.int }}</li>
           <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
         </ul>
-        <ul class="l-information__data">
+        <ul class="l-information__data" v-if="lang === 'ja'">
             <!-- TODO 条件分岐 Active有無 -->
           <li><span class="l-item__skill--type">Active</span><b>{{order.metadata.active_skill.name.ja}}</b><br>{{order.metadata.active_skill.description.ja.effects[0]}}<br>{{order.metadata.active_skill.description.ja.effects[1]}}</li>
           <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.ja}}</b><br>{{order.metadata.passive_skill.description.ja.effects[0]}}<br>{{order.metadata.passive_skill.description.ja.effects[1]}}</li>
+        </ul>
+        <ul class="l-information__data" v-else-if="lang === 'en'">
+            <!-- TODO 条件分岐 Active有無 -->
+          <li><span class="l-item__skill--type">Active</span><b>{{order.metadata.active_skill.name.en}}</b><br>{{order.metadata.active_skill.description.en.effects[0]}}<br>{{order.metadata.active_skill.description.en.effects[1]}}</li>
+          <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.en}}</b><br>{{order.metadata.passive_skill.description.en.effects[0]}}<br>{{order.metadata.passive_skill.description.en.effects[1]}}</li>
         </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
@@ -188,7 +193,8 @@ export default {
       mchh,
       mche,
       type: { name: 'マイクリ', symbol: 'mchh'},
-      url: {type: 'mchh', hash: '', project: ''}
+      url: {type: 'mchh', hash: '', project: ''},
+      lang: ''
     }
   },
 
@@ -223,6 +229,7 @@ export default {
     }
     this.url.hash = this.$nuxt.$route.params.hash
     this.url.project = config.host[project]
+    this.lang = store.state.i18n.locale
   },
   computed: {
     account() {

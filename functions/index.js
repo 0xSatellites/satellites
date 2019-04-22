@@ -297,6 +297,8 @@ async function metadata(asset, id){
 }
 
 exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
+  console.log('asset:'+data.asset)
+  console.log('id:'+data.id)
   return await metadata(data.asset, data.id)
 })
 

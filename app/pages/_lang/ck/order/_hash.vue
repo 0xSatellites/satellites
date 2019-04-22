@@ -10,6 +10,7 @@
         </div>
         <div class="l-information__txt">#{{ order.metadata.id }}</div>
         <div class="l-information__txt">CryptoKitties</div>
+        <div class="l-information__txt">{{$t('hash.seller')}} : {{ order.maker }}</div>
         <ul class="l-information__data">
           <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></li>
         </ul>

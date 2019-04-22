@@ -35,6 +35,7 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
   line-height: 1.4;
   font-weight: normal;
   text-align: center;
+  word-break: break-all;
   }
 
   &__data{//

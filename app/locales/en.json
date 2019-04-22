@@ -85,6 +85,7 @@
         "mche_condition": "*Extension should be Lv.2 or higher and Adding Nickname is done."
     },
     "hash":{
+        "seller":"Seller address",
         "purchase": "Purchase",
         "relatedAsset": "Related Assets",
         "sell": "NOW ON SALE!!",

@@ -1,5 +1,8 @@
 {
   "name": "fire-test",
+  "engines": {
+    "node": "8"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "firebase-admin": "^7.0.0",
-    "firebase-functions": "^2.2.0"
+    "firebase-functions": "^2.2.0",
+    "https": "^1.0.0"
   }
 }

@@ -19,10 +19,15 @@
           <li><strong>INT：</strong> {{asset.attributes.int }}</li>
           <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
-          <ul class="l-item__data">
+          <ul class="l-item__data" v-if="lang === 'ja'">
             <!-- TODO 条件分岐 Active有無 -->
-          <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.ja}}</b><br>{{asset.active_skill.description.ja.effects[0]}}<br>{{asset.active_skill.description.ja.effects[1]}}</li>
-          <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.ja}}</b><br>{{asset.passive_skill.description.ja.effects[0]}}<br>{{asset.passive_skill.description.ja.effects[1]}}</li>
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.ja}}</b><br>{{asset.active_skill.description.ja.effects[0]}}<br>{{asset.active_skill.description.ja.effects[1]}}</li>
+            <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.ja}}</b><br>{{asset.passive_skill.description.ja.effects[0]}}<br>{{asset.passive_skill.description.ja.effects[1]}}</li>
+          </ul>
+          <ul class="l-item__data" v-else-if="lang === 'en'">
+            <!-- TODO 条件分岐 Active有無 -->
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.en}}</b><br>{{asset.active_skill.description.en.effects[0]}}<br>{{asset.active_skill.description.en.effects[1]}}</li>
+            <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.en}}</b><br>{{asset.passive_skill.description.en.effects[0]}}<br>{{asset.passive_skill.description.en.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>
@@ -238,7 +243,8 @@ export default {
       ctn,
       mchh,
       mche,
-      type: { name: 'マイクリ', symbol: 'mchh'}
+      type: { name: 'マイクリ', symbol: 'mchh'},
+      lang: ''
     }
   },
   async asyncData({ store, params, error }) {
@@ -255,6 +261,7 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
+    this.lang = store.state.i18n.locale
 
     var account
     if (typeof web3 != 'undefined') {

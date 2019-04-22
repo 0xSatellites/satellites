@@ -22,8 +22,11 @@
             <li><strong>INT：</strong> {{asset.attributes.int }}</li>
             <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
-          <ul class="l-item__data">
+          <ul class="l-item__data" v-if="lang === 'ja'">
             <li><span class="l-item__skill--type">Active</span><b>{{asset.skill.name.ja}}</b><br>{{asset.skill.description.ja.effects[0]}}<br>{{asset.skill.description.ja.effects[1]}}</li>
+          </ul>
+          <ul class="l-item__data" v-else-if="lang === 'en'">
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.skill.name.en}}</b><br>{{asset.skill.description.en.effects[0]}}<br>{{asset.skill.description.en.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
@@ -242,7 +245,8 @@ export default {
       ctn,
       mchh,
       mche,
-      type: { name: 'マイクリ', symbol: 'mche'}
+      type: { name: 'マイクリ', symbol: 'mche'},
+      lang: ''
     }
   },
   async asyncData({ store, params, error }) {
@@ -260,6 +264,7 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
+    this.lang = store.state.i18n.locale
     var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {

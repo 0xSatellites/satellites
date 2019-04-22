@@ -20,9 +20,11 @@
           <li><strong>INT：</strong> {{order.metadata.attributes.int }}</li>
           <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
         </ul>
-        <ul class="l-information__data">
-            <!-- TODO 条件分岐 Active有無 -->
+        <ul class="l-information__data" v-if="lang === 'ja'">
           <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.skill.name.ja}}</b><br>{{order.metadata.skill.description.ja.effects[0]}}</li>
+        </ul>
+        <ul class="l-information__data" v-else-if="lang === 'en'">
+          <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.skill.name.en}}</b><br>{{order.metadata.skill.description.en.effects[0]}}</li>
         </ul>
         <ul class="l-information__data">
           <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
@@ -187,7 +189,8 @@ export default {
       mchh,
       mche,
       type: { name: 'マイクリ', symbol: 'mche'},
-      url: {type: 'mche', hash: '', project: ''}
+      url: {type: 'mche', hash: '', project: ''},
+      lang: ''
     }
   },
 
@@ -222,6 +225,7 @@ export default {
     }
     this.url.hash = this.$nuxt.$route.params.hash
     this.url.project = config.host[project]
+    this.lang = store.state.i18n.locale
   },
   computed: {
     account() {

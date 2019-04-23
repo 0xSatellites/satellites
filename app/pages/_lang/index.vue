@@ -123,6 +123,9 @@
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.info') }}</h2>
         <info></info>
+        <v-layout justify-center>
+         <nuxt-link :to="$t('footer.infoHD')">{{ $t('index.readmore') }}</nuxt-link>
+        </v-layout>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>

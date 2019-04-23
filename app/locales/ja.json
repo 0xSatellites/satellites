@@ -19,6 +19,7 @@
         "market":"マーケット",
         "tweet":"Tweets",
         "info":"新着情報",
+        "readmore":"もっと見る",
         "partners":"パートナー",
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
@@ -114,7 +115,7 @@
         "title":"新着情報"
     },
     "market":{
-        "title":"Market"
+        "title":"マーケット"
     }
 
 }

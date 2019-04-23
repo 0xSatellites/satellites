@@ -440,15 +440,15 @@ exports.order = functions
         config.host[project] +
         'ck/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
       //   if(error) throw error;
       // });
@@ -613,15 +613,15 @@ exports.order = functions
         config.host[project] +
         'ctn/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -773,15 +773,15 @@ exports.order = functions
         config.host[project] +
         'mchh/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -931,15 +931,15 @@ exports.order = functions
         config.host[project] +
         'mche/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,

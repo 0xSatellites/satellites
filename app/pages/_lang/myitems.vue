@@ -304,16 +304,20 @@ export default {
       return client.toAsset(asset)
     },
     async permitArtedit(){
-      const sig = await client.signUser()
-      const switch1 = this.switch1
-      const datas = {
-            sig: sig,
-            address: client.account.address,
-            status: switch1
+      try{
+        const sig = await client.signUser()
+        const switch1 = this.switch1
+        const datas = {
+              sig: sig,
+              address: client.account.address,
+              status: switch1
+        }
+        await functions.call('userSign', datas)
+      } catch(err) {
+        alert(this.$t('error.message'))
+        this.switch1 = false
       }
-      await functions.call('userSign', datas)
     }
-
   },
   data() {
     return {

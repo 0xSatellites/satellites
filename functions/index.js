@@ -225,9 +225,11 @@ async function metadata(asset, id){
       // response.royalty_rate = 0 //current_artあるときはコメントアウト
     } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true
+      response.mch_artedit = false
       response.royalty_rate = 0
     } else {
       response.sell = false
+      response.mch_artedit = false
       response.royalty_rate = 0
     }
 
@@ -244,9 +246,11 @@ async function metadata(asset, id){
       const getDoc = art_approve.get()
       .then(doc => {
       if (!doc.exists) {
+        response.mch_artedit = false
         response.royalty_rate = 0
       } else if(doc.data().mch_artedit === true) {
-        console.log('Document data:', doc.data());
+        console.log('Document data:', doc.data())
+        response.mch_artedit = true
         const likes = response.extra_data.current_art_data.attributes.likes
         if(likes >= 100) {
           response.royalty_rate = 600
@@ -257,6 +261,7 @@ async function metadata(asset, id){
         }
       } else {
         console.log('Document data:', false);
+        response.mch_artedit = false
         response.royalty_rate = 0
       }
     })

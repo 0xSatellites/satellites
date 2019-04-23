@@ -34,6 +34,9 @@
                   <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange" v-model="search_rarity" @change="updateRange()">
                 </div>
               </v-flex>
+              <v-flex xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
+                <input type="text" v-model="searchName" @change="search()">
+              </v-flex>
             </v-layout>
             </v-container>
         <ul>
@@ -155,7 +158,8 @@ export default {
             name: 'Oldest Order',
             sortBy: 'created?asc'
         }
-        ]
+        ],
+        searchName: ''
       }
   },
   async asyncData({ store, params, query }) {
@@ -194,11 +198,35 @@ export default {
     }
   },
   methods: {
-    load(){
-      console.log('test')
-      this.$router.push({
-          path: '/auth/login'
-      })
+    async search () {
+      const marketAsset = 'all'
+      const sortBy = 'created'
+      const marketOrder = 'desc'
+      const result = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
+      await this.$store.dispatch('order/setOrders', result)
+      let searchs = []
+      let i = 0
+      console.log(this.orders)
+      console.log(this.selectedAsset)
+      const name = this.searchName.toLowerCase().replace(/\s+/g, "")
+      while(i < this.orders.length) {
+        var order = this.orders[i];
+        if(!order.metadata.attributes) {
+          i++
+          continue
+        }
+        if(this.selectedAsset === 'mchh' && !order.metadata.attributes.extension_name) {
+          if(order.metadata.attributes.hero_name.replace(/\s+/g, "").toLowerCase().indexOf(name) !== -1) {
+            searchs.push(order)
+          }
+        } else if(this.selectedAsset === 'mche' && !order.metadata.attributes.hero_name){
+          if(order.metadata.attributes.extension_name.replace(/\s+/g, "").toLowerCase().indexOf(name) !== -1) {
+            searchs.push(order)
+          }
+        }
+        i++
+      }
+      await this.$store.dispatch('order/setOrders', searchs)
     },
     coolDownIndexToSpeed(index) {
       return kitty.coolDownIndexToSpeed(index)
@@ -210,6 +238,7 @@ export default {
         return client.utils.fromWei(wei)
     },
     async updateRange() {
+      this.searchName = ''
       this.search_rarity_status = true
       var splits = this.selectedSort.split('?');
       var keys = ['rarity']

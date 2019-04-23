@@ -708,6 +708,12 @@ exports.order = functions
       c.clearRect(0, 0, 1200, 630)
       c.drawImage(templateImg, 0, 0)
       c.drawImage(characterImg, 15, 90, 450, 450)
+      if(meta.mch_artedit){
+        const arteditImg = await axios.get(config.api.mch.metadata + 'ipfs/' + meta.extra_data.current_art, {
+          responseType: 'arraybuffer'
+        })
+        c.drawImage(arteditImg, 5, 10, 200, 200)
+      }
       c.textBaseline = 'top'
       c.textAlign = 'center'
       c.fillStyle = '#ffff00'

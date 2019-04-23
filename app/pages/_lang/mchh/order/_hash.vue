@@ -3,7 +3,6 @@
     <section class="l-information"  v-if="order.asset === mchh">
       <div class="l-information__img">
         <img class="ogpimg" :src="order.ogp" />
-        <img :src="'https://ipfs.io/ipfs/'+order.metadata.extra_data.art_history[0]" >
       </div>
       <div class="l-information__frame" v-if="order.valid">
         <div class="l-information__name">

@@ -61,6 +61,8 @@
         "mypage": "Mypage",
         "address": "address",
         "balance": "balance",
+        "experiment": "experimental feture",
+        "mch_artedit": "When MyCryptoHeros asset edited by you has traded, you can recieve royalty",
         "sell": "ON SALE",
         "holdCK": "/en/ck/",
         "holdCTN": "/en/ctn/",

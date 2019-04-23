@@ -5,9 +5,7 @@
         <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
-            <div v-if="asset.extra_data.current_art && owner">
-              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.art_history[0]" >
-            </div>
+              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.art_history[0]" v-if="art_approved" >
           </div>
         </div>
         <div>
@@ -247,7 +245,8 @@ export default {
       mchh,
       mche,
       type: { name: 'マイクリ', symbol: 'mchh'},
-      lang: ''
+      lang: '',
+      art_approved: false
     }
   },
   async asyncData({ store, params, error }) {
@@ -265,6 +264,8 @@ export default {
     const store = this.$store
     const params = this.$route.params
     this.lang = store.state.i18n.locale
+    console.log(this.asset.mch_artedit)
+    this.art_approved = this.asset.mch_artedit
 
     var account
     if (typeof web3 != 'undefined') {
@@ -282,8 +283,6 @@ export default {
         .ownerOf(params.id)
         .call()
         .then(owner => {
-          // var artedit_permit =  await firestore.doc('user', owner)
-          console.log(artedit_permit)
           if(this.asset.sell){
             this.owned = owner == this.account.address
           }

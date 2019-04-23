@@ -13,10 +13,10 @@
               <nuxt-link :to="$t('header.marketHD')" class="py-3 px-2">{{$t('header.market')}}</nuxt-link>
 
               <!-- <nuxt-link :to="'/myitems'" class="pa-1">{{$t('header.howto')}}</nuxt-link> -->
-              <NuxtLink v-if="$i18n.locale === 'en' && $route.fullPath === '/ja/'" :to="`/ja`" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
-              <NuxtLink v-else-if="$i18n.locale === 'en' && $route.fullPath.match(/ja/)" :to="$route.fullPath" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
-              <NuxtLink v-else-if="$i18n.locale === 'en'" :to="`/ja` + $route.fullPath" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
-              <NuxtLink v-else :to="$route.fullPath.replace('/ja', '')" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>
+              <NuxtLink v-if="$i18n.locale === 'ja' && $route.fullPath === '/en/'" :to="`/en`" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
+              <NuxtLink v-else-if="$i18n.locale === 'ja' && $route.fullPath.match(/en/)" :to="$route.fullPath" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
+              <NuxtLink v-else-if="$i18n.locale === 'ja'" :to="`/en` + $route.fullPath" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
+              <NuxtLink v-else :to="$route.fullPath.replace('/en', '')" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>
             </li>
           </ul>
 

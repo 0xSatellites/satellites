@@ -13,10 +13,15 @@
         </dl>
       </div>
       <div class="l-personal__frame">
-        <dl class="l-personal__balance">
-          <dt>アートエディット（実験中）：</dt>
-          <dd><v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()"></v-switch></dd>
-        </dl>
+               <v-flex xs12 px-3>
+               <h4>{{ $t('myitems.experiment') }}</h4>
+               {{ $t('myitems.mch_artedit') }}
+              <v-switch
+              v-model="switch1"
+              :label="`${switch1.toString()}`"
+              @change="permitArtedit()"
+              color="primary"></v-switch>
+               </v-flex>
       </div>
     </section>
     <section class="l-personal" v-else>
@@ -36,7 +41,7 @@
         ></v-progress-circular>
         <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
           <div>
-            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+            <nuxt-link :to="$t('index.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
@@ -69,7 +74,7 @@
       <ul v-if="myextensions.length">
         <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
           <div>
-            <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
+            <nuxt-link :to="$t('index.holdMCHE')  + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
@@ -94,7 +99,7 @@
         ></v-progress-circular>
         <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
           <div>
-            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+            <nuxt-link :to="$t('index.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
@@ -136,7 +141,7 @@
         ></v-progress-circular>
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+            <nuxt-link :to="$t('index.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
@@ -254,7 +259,8 @@ export default {
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
 
-
+      const result = await firestore.doc('user', client.account.address)
+      this.switch1 = result.mch_artedit
     }
   },
   computed: {
@@ -328,7 +334,10 @@ export default {
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],
-      loading: false,
+      loadingCK: false,
+      loadingCTN: false,
+      loadingMCHH: false,
+      loadingMCHE: false,
       switch1: false,
     }
   }

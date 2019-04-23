@@ -19,13 +19,14 @@
         "market":"マーケット",
         "tweet":"Tweets",
         "info":"新着情報",
+        "readmore":"もっと見る",
         "partners":"パートナー",
         "contact":"お問い合わせ",
         "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
-        "holdLanguageCK": "/ja/ck/order/",
-        "holdLanguageCTN": "/ja/ctn/order/",
-        "holdLanguageMCHH": "/ja/mchh/order/",
-        "holdLanguageMCHE": "/ja/mche/order/"
+        "holdLanguageCK": "/ck/order/",
+        "holdLanguageCTN": "/ctn/order/",
+        "holdLanguageMCHH": "/mchh/order/",
+        "holdLanguageMCHE": "/mche/order/"
     },
     "assets":{
         "kitty":"クリプトキティ",
@@ -38,9 +39,9 @@
         "howto": "使い方",
         "english": "英語",
         "japanese": "日本語",
-        "topHD": "/ja/",
-        "mypageHD": "/ja/myitems",
-        "marketHD": "/ja/market"
+        "topHD": "/",
+        "mypageHD": "/myitems",
+        "marketHD": "/market"
     },
     "modal":{
         "sell": "出品されました!",
@@ -61,15 +62,21 @@
         "mypage": "マイページ",
         "address": "アドレス",
         "balance": "残高",
-        "sell": "出品中"
+        "experiment": "実験中の機能",
+        "mch_artedit": "Trueに設定しておくと、ご自身が作ったアートエディットが設定されたマイクリアセットが売買されたときに、印税を受け取ることができます。",
+        "sell": "出品中",
+        "holdCK": "/ck/",
+        "holdCTN": "/ctn/",
+        "holdMCHH": "/mchh/",
+        "holdMCHE": "/mche/"
     },
     "footer":{
         "company": "運営会社",
         "terms": "利用規約",
         "info": "新着情報",
         "contact": "お問い合わせ",
-        "infoHD": "/ja/info",
-        "termsHD": "/ja/terms"
+        "infoHD": "/info",
+        "termsHD": "/terms"
     },
     "id":{
         "inputMessage": "一言メッセージを入力できます（18文字以内）",
@@ -108,7 +115,7 @@
         "title":"新着情報"
     },
     "market":{
-        "title":"Market"
+        "title":"マーケット"
     }
 
 }

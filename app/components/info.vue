@@ -45,7 +45,7 @@
                         <div>{{item.title}}</div>
                     </div>
                     </v-card>
-                    <v-divider></v-divider>
+                    <v-divider　v-if = "index < 3"></v-divider>
                 </template>
             </v-card>
             </v-flex>
@@ -61,6 +61,30 @@ export default {
       count: [0,1,2],
       bool: true,
       items: [
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/1061999767092248576/ixq60QaF_400x400.jpg',
+            date: '2019.04.22',
+            title: "キヨスイさんにbazaaar.ioの使い方をYouTube動画にしていただきました！",
+            url: 'https://www.youtube.com/watch?v=3yXrjUkjuRM'
+          },
+          {
+            avatar: 'https://dappsmarket.net/wp-content/themes/dappsmarket2/images/prof.png',
+            date: '2019.04.20',
+            title: "はるかさんのマイクリ出品情報サイトに、bazaaarの出品情報対応をしていただきました！",
+            url: 'https://twitter.com/harukatarotaro/status/1119518736866627584'
+          },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/1113612866236477440/j_QyVBiS_400x400.png',
+            date: '2019.04.20',
+            title: "マイクリハッカソンに出場しました！コミュニティ投票よろしくお願いします",
+            url: 'https://docs.google.com/presentation/d/1GZ5CyU-zBBnGMPZBqxHm4bzEE-C1HzP5K9I-g4Fl24Y/edit?usp=sharing'
+          },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/1113612866236477440/j_QyVBiS_400x400.png',
+            date: '2019.04.19',
+            title: "bazaaar.ioのロードマップを公開しました",
+            url: 'https://medium.com/blockbase/bazaaar-initial-loadmap-ecebfa8b43d5'
+          },
           {
             avatar: 'https://cdn.profile-image.st-hatena.com/users/sencho0927/profile.png?1520144457',
             date: '2019.04.16',

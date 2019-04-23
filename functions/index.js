@@ -1268,6 +1268,123 @@ exports.orderPeriodicUpdatePubSub = functions
     console.info("END orderPeriodicUpdate")
   })
 
+exports.orderCleaningPubSub = functions
+  .region('asia-northeast1')
+  .pubsub.topic('orderCleaning')
+  .onPublish(async message => {
+    const snapshots = await db.collection('order').where('valid', '==', true).get()
+    snapshots.forEach(async doc => {
+        const record = await db.collection('order').doc(doc.id).get()
+        const order = record.data()
+        if(order.proxy == config.contract[project].bazaaar_v1) {
+            const hash = await bazaaar_v1.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        } else if (order.proxy == config.contract[project].bazaaar_v2) {
+            const hash = await bazaaar_v2.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        } else if (order.proxy == config.contract[project].bazaaar_v3) {
+            const hash = await bazaaar_v3.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        }
+    })
+  })
+
 
 const express = require('express');
 const app = express();

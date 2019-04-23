@@ -13,10 +13,15 @@
         </dl>
       </div>
       <div class="l-personal__frame">
-        <dl class="l-personal__balance">
-          <dt>アートエディット（実験中）：</dt>
-          <dd><v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()"></v-switch></dd>
-        </dl>
+               <v-flex xs12 px-3>
+               <h4>{{ $t('myitems.experiment') }}</h4>
+               {{ $t('myitems.mch_artedit') }}
+              <v-switch
+              v-model="switch1"
+              :label="`${switch1.toString()}`"
+              @change="permitArtedit()"
+              color="primary"></v-switch>
+               </v-flex>
       </div>
     </section>
     <section class="l-personal" v-else>

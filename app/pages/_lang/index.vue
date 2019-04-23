@@ -102,7 +102,7 @@
                 <a href="https://www.mycryptoheroes.net/" target="_blank">
                     <v-card>
                         <v-img
-                        v-bind:src="require('~/assets/img/asset/MyCryptoHeros.jpg')"
+                        v-bind:src="require('~/assets/img/asset/mch_logo.png')"
                         aspect-ratio="1.2"
                         contain
                         ></v-img>

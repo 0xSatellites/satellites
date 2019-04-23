@@ -1354,3 +1354,19 @@ exports.getOinkById = functions
     var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
     res.json(result.data)
   });
+
+
+exports.userSign = functions
+  .region('asia-northeast1')
+  .https.onCall(async (params, context) => {
+    const msg = "hello world"
+    var address = web3.eth.accounts.recover(msg, params.sig)
+      if(address==params.address){
+        await db.collection("user").doc(address).set({
+          mch_artedit: params.status
+      })
+      return true
+      }else{
+        return false
+      }
+  })

@@ -29,13 +29,37 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
   return result
 }
 
-const getMarket = async (asset, by, order) =>{
+const getMaketLength = async (asset, by, order) => {
+  var result = []
+  const snapshots = await db.collection('order')
+    .where('valid', '==', true)
+    .get()
+  return snapshots.size
+}
+
+const getMarket = async (asset, by, order, offset) =>{
   if(asset == 'all'){
     var result = []
-    const snapshots = await db.collection('order')
-      .where('valid', '==', true)
-      .orderBy(by, order).get()
-    snapshots.forEach(doc => result.push(doc.data()))
+    if(offset > 1){
+      var pre = (offset - 1) * 20
+
+      const preSnapshots = await db.collection('order')
+        .where('valid', '==', true)
+        .orderBy(by, order).limit(pre).get()
+
+      var lastVisible = preSnapshots.docs[preSnapshots.docs.length-1];
+
+      const snapshots = await db.collection('order')
+        .where('valid', '==', true)
+        .orderBy(by, order).startAfter(lastVisible).limit(20).get()
+      snapshots.forEach(doc => result.push(doc.data()))
+
+    } else {
+      const snapshots = await db.collection('order')
+        .where('valid', '==', true)
+        .orderBy(by, order).limit(20).get()
+      snapshots.forEach(doc => result.push(doc.data()))
+    }
     return result
   }else{
     var result = []
@@ -154,6 +178,7 @@ const firestore = {
   getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
   getMarket:getMarket,
   getMarketWithConditions:getMarketWithConditions,
+  getMaketLength:getMaketLength,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

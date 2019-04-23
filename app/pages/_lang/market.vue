@@ -36,8 +36,6 @@
               </v-flex>
             </v-layout>
             </v-container>
-
-
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
             <nuxt-link v-if="order.asset === ck" :to="$t('index.holdLanguageCK') + order.hash" class="c-card">
@@ -77,7 +75,17 @@
         </li>
         </ul>
         </section>
+        <br>
+        <br>
+        <div class="text-xs-center" v-if="pagenation">
+          <v-pagination
+            v-model="offset"
+            :length="limit"
+          ></v-pagination>
+    </div>
     </section>
+
+
 </div>
 </template>
 <script>
@@ -94,10 +102,12 @@ const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
-
 export default {
   data() {
     return {
+        pagenation:true,
+        limit:0,
+        offset:0,
         ck,
         ctn,
         mchh,
@@ -148,21 +158,48 @@ export default {
         ]
       }
   },
-  async asyncData({ store, params }) {
+  async asyncData({ store, params, query }) {
+    const limit = Math.ceil(await firestore.getMaketLength() / 20)
     const marketAsset = 'all'
     const sortBy = 'created'
     const marketOrder = 'desc'
-    const orders = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
+    const orders = await firestore.getMarket(marketAsset, sortBy, marketOrder, query.page)
     await store.dispatch('order/setOrders', orders)
+    var pagenation = true;
+    if(limit<=1){
+      pagenation = false
+    }
+    return {limit:limit , pagenation:pagenation}
   },
-  mounted() {
+  async mounted() {
   },
   computed: {
     orders() {
       return this.$store.getters['order/orders']
     },
   },
+  watch: {
+    offset: async function(newNumber) {
+      this.$router.push(
+        {
+          path: 'market',
+          query: {page: newNumber}
+        }
+      )
+      const marketAsset = 'all'
+      const sortBy = 'created'
+      const marketOrder = 'desc'
+      const orders = await firestore.getMarket(marketAsset, sortBy, marketOrder, newNumber)
+      await this.$store.dispatch('order/setOrders', orders)
+    }
+  },
   methods: {
+    load(){
+      console.log('test')
+      this.$router.push({
+          path: '/auth/login'
+      })
+    },
     coolDownIndexToSpeed(index) {
       return kitty.coolDownIndexToSpeed(index)
     },
@@ -181,11 +218,13 @@ export default {
       await this.$store.dispatch('order/setOrders', result)
     },
     async setAsset(){
+        this.pagenation = false
         var splits = this.selectedSort.split('?');
         const orders = await firestore.getMarket(this.selectedAsset, splits[0] ,splits[1])
         await this.$store.dispatch('order/setOrders', orders)
     },
     async setSort(){
+        this.pagenation = false
         var splits = this.selectedSort.split('?');
         const orders = await firestore.getMarket(this.selectedAsset, splits[0] ,splits[1])
         await this.$store.dispatch('order/setOrders', orders)

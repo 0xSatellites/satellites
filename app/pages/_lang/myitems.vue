@@ -259,7 +259,8 @@ export default {
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
 
-
+      const result = await firestore.doc('user', client.account.address)
+      this.switch1 = result.mch_artedit
     }
   },
   computed: {

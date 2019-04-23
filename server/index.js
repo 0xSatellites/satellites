@@ -1,4 +1,6 @@
 const config = require('./config.json')
+const project = 'sand'
+
 const admin = require('firebase-admin')
 const { PubSub } = require('@google-cloud/pubsub')
 
@@ -14,6 +16,7 @@ const pubsub = new PubSub({
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 })
+
 
 const Web3 = require('web3')
 const web3 = new Web3(new Web3.providers.WebsocketProvider(config.node[project].wss))

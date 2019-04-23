@@ -106,6 +106,11 @@ const signOrder = async order => {
   return order
 }
 
+const signUser = async() =>{
+  const data = "hello world"
+  const signedUser = await web3.eth.personal.sign(data, account.address)
+  return signedUser
+}
 
 const toAsset = asset => {
   switch(asset) {
@@ -126,7 +131,9 @@ const client = {
   ownedTokens: ownedTokens,
   signOrder:signOrder,
   utils: web3.utils,
-  toAsset: toAsset
+  web3: web3,
+  toAsset: toAsset,
+  signUser: signUser
 }
 
 export default client

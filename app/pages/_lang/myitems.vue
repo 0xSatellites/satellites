@@ -12,6 +12,12 @@
           <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000 ) / 10000 }} ETH</dd>
         </dl>
       </div>
+      <div class="l-personal__frame">
+        <dl class="l-personal__balance">
+          <dt>アートエディット（実験中）：</dt>
+          <dd><v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()"></v-switch></dd>
+        </dl>
+      </div>
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
@@ -23,14 +29,14 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="loadingMCHH || loadingMCHE"
+          v-if="this.loadingMCHH || this.loadingMCHE"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
         <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
           <div>
-            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+            <nuxt-link :to="$t('index.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
@@ -40,7 +46,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !loadingMCHH && !loadingMCHE">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -63,7 +69,7 @@
       <ul v-if="myextensions.length">
         <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
           <div>
-            <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
+            <nuxt-link :to="$t('index.holdMCHE')  + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
@@ -73,7 +79,6 @@
             </nuxt-link>
           </div>
         </li>
-
       </ul>
     </section>
 
@@ -89,7 +94,7 @@
         ></v-progress-circular>
         <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
           <div>
-            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+            <nuxt-link :to="$t('index.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
@@ -131,7 +136,7 @@
         ></v-progress-circular>
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+            <nuxt-link :to="$t('index.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
@@ -297,8 +302,22 @@ export default {
     },
     toAsset(asset){
       return client.toAsset(asset)
+    },
+    async permitArtedit(){
+      try{
+        const sig = await client.signUser()
+        const switch1 = this.switch1
+        const datas = {
+              sig: sig,
+              address: client.account.address,
+              status: switch1
+        }
+        await functions.call('userSign', datas)
+      } catch(err) {
+        alert(this.$t('error.message'))
+        this.switch1 = false
+      }
     }
-
   },
   data() {
     return {
@@ -309,7 +328,11 @@ export default {
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],
-      loading: false
+      loadingCK: false,
+      loadingCTN: false,
+      loadingMCHH: false,
+      loadingMCHE: false,
+      switch1: false,
     }
   }
 }

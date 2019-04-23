@@ -4,7 +4,7 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img :src="asset.image" alt="" />
+            <iframe src="https://www.crypt-oink.io/viewer/?45020"></iframe>
           </div>
         </div>
         <div>

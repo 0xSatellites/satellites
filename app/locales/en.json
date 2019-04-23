@@ -22,10 +22,10 @@
         "partners":"Partners",
         "contact":"Contact",
         "contactText":"Please contact us via Twitter or email.",
-        "holdLanguageCK": "/ck/order/",
-        "holdLanguageCTN": "/ctn/order/",
-        "holdLanguageMCHH": "/mchh/order/",
-        "holdLanguageMCHE": "/mche/order/"
+        "holdLanguageCK": "/en/ck/order/",
+        "holdLanguageCTN": "/en/ctn/order/",
+        "holdLanguageMCHH": "/en/mchh/order/",
+        "holdLanguageMCHE": "/en/mche/order/"
     },
     "assets":{
         "kitty":"CryptoKitties",
@@ -38,9 +38,9 @@
         "howto": "HowTo",
         "english": "EnglishVer",
         "japanese": "JapaneseVer",
-        "topHD": "/",
-        "mypageHD": "/myitems",
-        "marketHD": "/market"
+        "topHD": "/en/",
+        "mypageHD": "/en/myitems",
+        "marketHD": "/en/market"
     },
     "modal":{
         "sell": "NOW ON SALE!!",
@@ -61,15 +61,19 @@
         "mypage": "Mypage",
         "address": "address",
         "balance": "balance",
-        "sell": "ON SALE"
+        "sell": "ON SALE",
+        "holdCK": "/en/ck/",
+        "holdCTN": "/en/ctn/",
+        "holdMCHH": "/en/mchh/",
+        "holdMCHE": "/en/mche/"
     },
     "footer":{
         "company": "company",
         "terms": "terms",
         "info": "info",
         "contact": "contact",
-        "infoHD": "/info",
-        "termsHD": "/terms"
+        "infoHD": "/en/info",
+        "termsHD": "/en/terms"
     },
     "id":{
         "inputMessage": "Opitional Message (18 characters or less)",

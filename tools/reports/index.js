@@ -2,6 +2,8 @@ const admin = require('firebase-admin')
 admin.initializeApp()
 const functions = require('firebase-functions');
 
+const axios = require('axios')
+
 var db = admin.firestore();
 var day = new Date();
 var yesterday = day.setDate(day.getDate() - 1) ;

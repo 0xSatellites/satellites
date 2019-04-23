@@ -5,6 +5,7 @@
         <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
+              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.art_history[0]" v-if="art_approved" >
           </div>
         </div>
         <div>
@@ -244,7 +245,8 @@ export default {
       mchh,
       mche,
       type: { name: 'マイクリ', symbol: 'mchh'},
-      lang: ''
+      lang: '',
+      art_approved: false
     }
   },
   async asyncData({ store, params, error }) {
@@ -262,6 +264,8 @@ export default {
     const store = this.$store
     const params = this.$route.params
     this.lang = store.state.i18n.locale
+    console.log(this.asset.mch_artedit)
+    this.art_approved = this.asset.mch_artedit
 
     var account
     if (typeof web3 != 'undefined') {

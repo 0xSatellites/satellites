@@ -216,18 +216,20 @@ async function metadata(asset, id){
 
     console.log('START art, sell')
     if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
-      // promises.push(await axios({
-      //   method:'get',
-      //   url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
-      //   responseType:'json'
-      // }))
+      promises.push(await axios({
+        method:'get',
+        url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
+        responseType:'json'
+      }))
       response.sell = true
-      response.royalty_rate = 0 //current_artあるときはコメントアウト
+      // response.royalty_rate = 0 //current_artあるときはコメントアウト
     } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true
+      response.mch_artedit = false
       response.royalty_rate = 0
     } else {
       response.sell = false
+      response.mch_artedit = false
       response.royalty_rate = 0
     }
 
@@ -238,17 +240,36 @@ async function metadata(asset, id){
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
     console.log(response)
-    // if(resolved.length === 4){
-    //   response.current_art_data = resolved[3].data
-    //   const likes = response.extra_data.current_art_data.attributes.likes
-    //   if(likes >= 100) {
-    //     response.royalty_rate = 600
-    //   } else if(30 <= likes && likes < 100) {
-    //     response.royalty_rate = 300
-    //   } else {
-    //     response.royalty_rate = 0
-    //   }
-    // }
+    if(resolved.length === 4){
+      response.current_art_data = resolved[3].data
+      const art_approve = db.collection('user').doc(response.current_art_data.attributes.editor_address);
+      const getDoc = art_approve.get()
+      .then(doc => {
+      if (!doc.exists) {
+        response.mch_artedit = false
+        response.royalty_rate = 0
+      } else if(doc.data().mch_artedit === true) {
+        console.log('Document data:', doc.data())
+        response.mch_artedit = true
+        const likes = response.extra_data.current_art_data.attributes.likes
+        if(likes >= 100) {
+          response.royalty_rate = 600
+        } else if(30 <= likes && likes < 100) {
+          response.royalty_rate = 300
+        } else {
+          response.royalty_rate = 0
+        }
+      } else {
+        console.log('Document data:', false);
+        response.mch_artedit = false
+        response.royalty_rate = 0
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+    console.log(getDoc)
+    }
 
   } else if (asset == 'mche'){
     console.log('START mche')
@@ -440,15 +461,15 @@ exports.order = functions
         config.host[project] +
         'ck/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
       //   if(error) throw error;
       // });
@@ -613,15 +634,15 @@ exports.order = functions
         config.host[project] +
         'ctn/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -692,6 +713,12 @@ exports.order = functions
       c.clearRect(0, 0, 1200, 630)
       c.drawImage(templateImg, 0, 0)
       c.drawImage(characterImg, 15, 90, 450, 450)
+      if(meta.mch_artedit){
+        const arteditImg = await axios.get(config.api.mch.metadata + 'ipfs/' + meta.extra_data.current_art, {
+          responseType: 'arraybuffer'
+        })
+        c.drawImage(arteditImg, 5, 10, 200, 200)
+      }
       c.textBaseline = 'top'
       c.textAlign = 'center'
       c.fillStyle = '#ffff00'
@@ -773,15 +800,15 @@ exports.order = functions
         config.host[project] +
         'mchh/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -931,15 +958,15 @@ exports.order = functions
         config.host[project] +
         'mche/order/' +
         order.hash
-      try{
-        client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-          if(error) {
-            console.info('Twitter API Down')
-          }
-        })
-      } catch (err) {
-        console.info('Twitter API Down')
-      }
+      // try{
+      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+      //     if(error) {
+      //       console.info('Twitter API Down')
+      //     }
+      //   })
+      // } catch (err) {
+      //   console.info('Twitter API Down')
+      // }
       // await axios({
       //   method:'post',
       //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
@@ -1268,6 +1295,126 @@ exports.orderPeriodicUpdatePubSub = functions
     console.info("END orderPeriodicUpdate")
   })
 
+exports.orderCleaningPubSub = functions
+  .region('asia-northeast1')
+  .pubsub.topic('orderCleaning')
+  .onPublish(async message => {
+    console.log(config.contract[project].bazaaar_v1)
+    const snapshots = await db.collection('order').where('valid', '==', true).get()
+    snapshots.forEach(async doc => {
+        const record = await db.collection('order').doc(doc.id).get()
+        const order = record.data()
+        console.log(doc.id)
+        console.log(order)
+        if(order.proxy == config.contract[project].bazaaar_v1) {
+            const hash = await bazaaar_v1.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        } else if (order.proxy == config.contract[project].bazaaar_v2) {
+            const hash = await bazaaar_v2.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        } else if (order.proxy == config.contract[project].bazaaar_v3) {
+            const hash = await bazaaar_v3.methods
+            .requireValidOrder_(
+              [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset
+              ],
+              [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+              ],
+              order.v,
+              order.r,
+              order.s
+            )
+            .call()
+            if(hash != order.hash) {
+              console.info('deactivate: ' + doc.id)
+              db.collection('order').doc(doc.id).update({
+                result: { status: 'cancelled' },
+                valid: false,
+                modified: now
+              })
+              .catch(function(error) {
+                  console.error("Error writing document: ", error);
+              });
+            }
+        }
+    })
+  })
+
 
 const express = require('express');
 const app = express();
@@ -1354,3 +1501,19 @@ exports.getOinkById = functions
     var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
     res.json(result.data)
   });
+
+
+exports.userSign = functions
+  .region('asia-northeast1')
+  .https.onCall(async (params, context) => {
+    const msg = "hello world"
+    var address = web3.eth.accounts.recover(msg, params.sig)
+      if(address==params.address){
+        await db.collection("user").doc(address).set({
+          mch_artedit: params.status
+      })
+      return true
+      }else{
+        return false
+      }
+  })

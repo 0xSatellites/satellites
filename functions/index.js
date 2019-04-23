@@ -1299,10 +1299,13 @@ exports.orderCleaningPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderCleaning')
   .onPublish(async message => {
+    console.log(config.contract[project].bazaaar_v1)
     const snapshots = await db.collection('order').where('valid', '==', true).get()
     snapshots.forEach(async doc => {
         const record = await db.collection('order').doc(doc.id).get()
         const order = record.data()
+        console.log(doc.id)
+        console.log(order)
         if(order.proxy == config.contract[project].bazaaar_v1) {
             const hash = await bazaaar_v1.methods
             .requireValidOrder_(

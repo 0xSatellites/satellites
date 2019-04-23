@@ -31,8 +31,8 @@ async function exportFirestore() {
     return err;
   }
 }
-exports.FirestoreBackup = functions.pubsub
-  .topic('FirestoreBackup')
+exports.firestoreBackup = functions.pubsub
+  .topic('firestoreBackup')
   .onPublish(async (msg) => {
     try {
       const res = await exportFirestore();

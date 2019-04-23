@@ -216,13 +216,13 @@ async function metadata(asset, id){
 
     console.log('START art, sell')
     if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
-      // promises.push(await axios({
-      //   method:'get',
-      //   url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
-      //   responseType:'json'
-      // }))
+      promises.push(await axios({
+        method:'get',
+        url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
+        responseType:'json'
+      }))
       response.sell = true
-      response.royalty_rate = 0 //current_artあるときはコメントアウト
+      // response.royalty_rate = 0 //current_artあるときはコメントアウト
     } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true
       response.royalty_rate = 0
@@ -238,17 +238,33 @@ async function metadata(asset, id){
     response.active_skill = resolved[1].data
     response.passive_skill = resolved[2].data
     console.log(response)
-    // if(resolved.length === 4){
-    //   response.current_art_data = resolved[3].data
-    //   const likes = response.extra_data.current_art_data.attributes.likes
-    //   if(likes >= 100) {
-    //     response.royalty_rate = 600
-    //   } else if(30 <= likes && likes < 100) {
-    //     response.royalty_rate = 300
-    //   } else {
-    //     response.royalty_rate = 0
-    //   }
-    // }
+    if(resolved.length === 4){
+      response.current_art_data = resolved[3].data
+      const art_approve = db.collection('user').doc(response.current_art_data.attributes.editor_address);
+      const getDoc = art_approve.get()
+      .then(doc => {
+      if (!doc.exists) {
+        response.royalty_rate = 0
+      } else if(doc.data().mch_artedit === true) {
+        console.log('Document data:', doc.data());
+        const likes = response.extra_data.current_art_data.attributes.likes
+        if(likes >= 100) {
+          response.royalty_rate = 600
+        } else if(30 <= likes && likes < 100) {
+          response.royalty_rate = 300
+        } else {
+          response.royalty_rate = 0
+        }
+      } else {
+        console.log('Document data:', false);
+        response.royalty_rate = 0
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+    console.log(getDoc)
+    }
 
   } else if (asset == 'mche'){
     console.log('START mche')
@@ -1471,3 +1487,19 @@ exports.getOinkById = functions
     var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
     res.json(result.data)
   });
+
+
+exports.userSign = functions
+  .region('asia-northeast1')
+  .https.onCall(async (params, context) => {
+    const msg = "hello world"
+    var address = web3.eth.accounts.recover(msg, params.sig)
+      if(address==params.address){
+        await db.collection("user").doc(address).set({
+          mch_artedit: params.status
+      })
+      return true
+      }else{
+        return false
+      }
+  })

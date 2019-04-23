@@ -5,6 +5,9 @@
         <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
+            <div v-if="asset.extra_data.current_art && owner">
+              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.art_history[0]" >
+            </div>
           </div>
         </div>
         <div>
@@ -279,6 +282,8 @@ export default {
         .ownerOf(params.id)
         .call()
         .then(owner => {
+          // var artedit_permit =  await firestore.doc('user', owner)
+          console.log(artedit_permit)
           if(this.asset.sell){
             this.owned = owner == this.account.address
           }

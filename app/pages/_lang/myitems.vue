@@ -12,6 +12,12 @@
           <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000 ) / 10000 }} ETH</dd>
         </dl>
       </div>
+      <div class="l-personal__frame">
+        <dl class="l-personal__balance">
+          <dt>アートエディット（実験中）：</dt>
+          <dd><v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()"></v-switch></dd>
+        </dl>
+      </div>
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
@@ -23,7 +29,7 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="loadingMCHH || loadingMCHE"
+          v-if="this.loadingMCHH || this.loadingMCHE"
           :size="50"
           color="blue"
           indeterminate
@@ -40,7 +46,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !loadingMCHH && !loadingMCHE">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -73,7 +79,6 @@
             </nuxt-link>
           </div>
         </li>
-
       </ul>
     </section>
 
@@ -297,6 +302,16 @@ export default {
     },
     toAsset(asset){
       return client.toAsset(asset)
+    },
+    async permitArtedit(){
+      const sig = await client.signUser()
+      const switch1 = this.switch1
+      const datas = {
+            sig: sig,
+            address: client.account.address,
+            status: switch1
+      }
+      await functions.call('userSign', datas)
     }
 
   },
@@ -309,7 +324,8 @@ export default {
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],
-      loading: false
+      loading: false,
+      switch1: false,
     }
   }
 }

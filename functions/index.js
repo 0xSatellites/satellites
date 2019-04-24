@@ -1496,7 +1496,7 @@ exports.getOinkById = functions
 exports.userSign = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
-    const msg = "hello world"
+    const msg = "この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。"
     var address = web3.eth.accounts.recover(msg, params.sig)
       if(address==params.address){
         await db.collection("user").doc(address).set({

@@ -5,7 +5,7 @@
         <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
-              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.art_history[0]" v-if="art_approved" >
+              <img :src="'https://ipfs.io/ipfs/'+asset.extra_data.current_art" v-if="art_approved" >
           </div>
         </div>
         <div>

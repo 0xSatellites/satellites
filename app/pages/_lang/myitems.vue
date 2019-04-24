@@ -310,20 +310,25 @@ export default {
       return client.toAsset(asset)
     },
     async permitArtedit(){
-      try{
-        const sig = await client.signUser()
-        const switch1 = this.switch1
-        const datas = {
-              sig: sig,
-              address: client.account.address,
-              status: switch1
+        try{
+          const sig = await client.signUser()
+          const switch1 = this.switch1
+          const datas = {
+                sig: sig,
+                address: client.account.address,
+                status: switch1
+          }
+          await functions.call('userSign', datas)
+        } catch(err) {
+          alert(this.$t('error.message'))
+          const result = await firestore.doc('user', client.account.address)
+          if(!result.mch_artedit){
+            this.switch1 = false
+          } else {
+            this.switch1 = true
+          }
         }
-        await functions.call('userSign', datas)
-      } catch(err) {
-        alert(this.$t('error.message'))
-        this.switch1 = false
       }
-    }
   },
   data() {
     return {

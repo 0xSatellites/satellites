@@ -120,13 +120,10 @@
       </div>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
-      <div>
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
       <related
-        :asset="asset"
         :recommend="recommend"
       ></related>
-      </div>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
     <modal

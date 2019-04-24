@@ -55,7 +55,7 @@ const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
 export default {
-    props: ['asset', 'recommend'],
+    props: ['recommend'],
     methods: {
     getRarity(asset) {
       return common.getRarity(asset)

@@ -4,7 +4,7 @@
       <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <iframe src="https://www.crypt-oink.io/viewer/?45020"></iframe>
+            <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id"></iframe>
           </div>
         </div>
         <div>
@@ -210,6 +210,7 @@ export default {
   },
   data() {
     return {
+      iframe: "",
       modal: false,
       modalNo: '',
       tokenOwner: false,

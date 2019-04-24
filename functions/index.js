@@ -1303,6 +1303,8 @@ exports.orderCleaningPubSub = functions
     snapshots.forEach(async doc => {
         const record = await db.collection('order').doc(doc.id).get()
         const order = record.data()
+        console.log(doc.id)
+        console.log(order)
         if(order.proxy == config.contract[project].bazaaar_v1) {
             const hash = await bazaaar_v1.methods
             .requireValidOrder_(
@@ -1329,14 +1331,11 @@ exports.orderCleaningPubSub = functions
             .call()
             if(hash != order.hash) {
               console.info('deactivate: ' + doc.id)
-              db.collection('order').doc(doc.id).update({
+              await db.collection('order').doc(doc.id).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
-              .catch(function(error) {
-                  console.error("Error writing document: ", error);
-              });
             }
         } else if (order.proxy == config.contract[project].bazaaar_v2) {
             const hash = await bazaaar_v2.methods
@@ -1364,14 +1363,11 @@ exports.orderCleaningPubSub = functions
             .call()
             if(hash != order.hash) {
               console.info('deactivate: ' + doc.id)
-              db.collection('order').doc(doc.id).update({
+              await db.collection('order').doc(doc.id).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
-              .catch(function(error) {
-                  console.error("Error writing document: ", error);
-              });
             }
         } else if (order.proxy == config.contract[project].bazaaar_v3) {
             const hash = await bazaaar_v3.methods
@@ -1399,14 +1395,11 @@ exports.orderCleaningPubSub = functions
             .call()
             if(hash != order.hash) {
               console.info('deactivate: ' + doc.id)
-              db.collection('order').doc(doc.id).update({
+              await db.collection('order').doc(doc.id).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
-              .catch(function(error) {
-                  console.error("Error writing document: ", error);
-              });
             }
         }
     })

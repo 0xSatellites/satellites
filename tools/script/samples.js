@@ -157,7 +157,7 @@ async function cleaning(){
     })
 }
 
-//cleaning()
+cleaning()
 //deactivate()
 //report()
 

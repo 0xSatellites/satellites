@@ -135,49 +135,10 @@
       </div>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
-      <div>
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
-      <ul>
-        <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.extension_name">{{ recommend.metadata.attributes.extension_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-        </li>
-      </ul>
-            </div>
+      <related
+        :recommend="recommend"
+      ></related>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
     <modal
@@ -201,21 +162,19 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import extension from '~/plugins/extension'
-import common from '~/plugins/common'
 import Modal from '~/components/modal'
+import Related from '~/components/related'
 
 
 
 const config = require('../../../config.json')
 const project = process.env.project
 const host = config.host[project]
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
+
 export default {
   components: {
-    Modal
+    Modal,
+    Related
   },
   data() {
     return {
@@ -241,10 +200,6 @@ export default {
       host,
       oinkCooldownIndex: 0,
       generation: 0,
-      ck,
-      ctn,
-      mchh,
-      mche,
       type: { name: 'マイクリ', symbol: 'mche'},
       lang: ''
     }
@@ -320,17 +275,8 @@ export default {
     }
   },
   methods: {
-    coolDownIndexToSpeed(index) {
-      return extension.coolDownIndexToSpeed(index)
-    },
-    getRarity(asset) {
-      return common.getRarity(asset)
-    },
     getExtensionRarity(asset) {
       return extension.getExtensionRarity(asset)
-    },
-    fromWei(wei) {
-      return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false

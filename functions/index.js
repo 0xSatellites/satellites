@@ -218,7 +218,7 @@ async function metadata(asset, id){
     if(general.data.extra_data.art_history.length > 0 && general.data.extra_data.current_art){
       promises.push(await axios({
         method:'get',
-        url:config.api.mch.metadataSand + 'ipfs/' + general.data.extra_data.current_art,
+        url:config.api.mch.metadata + 'ipfs/' + general.data.extra_data.current_art,
         responseType:'json'
       }))
       response.sell = true
@@ -714,7 +714,7 @@ exports.order = functions
       c.drawImage(templateImg, 0, 0)
       c.drawImage(characterImg, 15, 90, 450, 450)
       if(meta.mch_artedit){
-        const arteditImg = await axios.get(config.api.mch.metadata + 'ipfs/' + meta.extra_data.current_art, {
+        const arteditImg = await axios.get('https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art, {
           responseType: 'arraybuffer'
         })
         c.drawImage(arteditImg, 5, 10, 200, 200)

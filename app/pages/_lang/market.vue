@@ -28,18 +28,24 @@
                     attach
                     ></v-select>
                 </v-flex>
-              <v-flex xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
-                <div class="slidecontainer">
-                  Rarity: {{search_rarity}}
-                  <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange" v-model="search_rarity" @change="updateRange()">
-                </div>
-              </v-flex>
-              <v-flex xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
-                <input type="text" v-model="searchName" @change="search()">
-              </v-flex>
+                <v-flex v-model="valid" xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
+                  <v-text-field
+                    v-model="searchName"
+                    :rules="nameRules"
+                    :counter="20"
+                    :label= "$t('market.search')"
+                    required
+                    @keyup="search()"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12 d-flex v-if="selectedAsset=='mchh' || selectedAsset=='mche'">
+                  <div class="slidecontainer">
+                    Rarity: {{search_rarity}}
+                    <input type="range" min="1" max="5" value="3" class="slider" id="rarityRange" v-model="search_rarity" @change="updateRange()">
+                  </div>
+                </v-flex>
             </v-layout>
             </v-container>
-
         <ul>
         <li v-for="(order, i) in orders" :key="i + '-ck'">
             <nuxt-link v-if="order.asset === ck" :to="$t('index.holdLanguageCK') + order.hash" class="c-card">
@@ -148,7 +154,11 @@ export default {
             sortBy: 'created?asc'
         }
         ],
-        searchName: ''
+        searchName: '',
+        valid: false,
+        nameRules: [
+          v => v.length <= 20 || 'Name must be less than 20 characters'
+        ]
       }
   },
   async asyncData({ store, params }) {
@@ -172,25 +182,38 @@ export default {
       const marketOrder = 'desc'
       const result = await firestore.getMarket(marketAsset, sortBy ,marketOrder)
       await this.$store.dispatch('order/setOrders', result)
-      let searchs = []
-      let i = 0
-      console.log(this.orders)
-      console.log(this.selectedAsset)
+      var searchs = []
+      var i = 0
       const name = this.searchName.toLowerCase().replace(/\s+/g, "")
       while(i < this.orders.length) {
-        var order = this.orders[i];
+        var order = this.orders[i]
+        var words = []
+        var x = 0
+        var count = 0
         if(!order.metadata.attributes) {
           i++
           continue
         }
         if(this.selectedAsset === 'mchh' && !order.metadata.attributes.extension_name) {
-          if(order.metadata.attributes.hero_name.replace(/\s+/g, "").toLowerCase().indexOf(name) !== -1) {
-            searchs.push(order)
-          }
+          words = order.metadata.attributes.hero_name.split(' ')
         } else if(this.selectedAsset === 'mche' && !order.metadata.attributes.hero_name){
-          if(order.metadata.attributes.extension_name.replace(/\s+/g, "").toLowerCase().indexOf(name) !== -1) {
-            searchs.push(order)
+          words = order.metadata.attributes.extension_name.split(' ')
+        }
+        while(x < words.length) {
+          if(~words[x].toLowerCase().indexOf(name) && words[x] !== "") {
+            if(count === 0) {
+              searchs.push(order)
+              count++
+            }
+            x++
+          } else if (~name.indexOf(words[x].toLowerCase().replace(/\s+/g, "")) && words[x] !== "") {
+            if(count === 0) {
+              searchs.push(order)
+              count++
+            }
+            x++
           }
+          x++
         }
         i++
       }

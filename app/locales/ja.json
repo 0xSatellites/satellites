@@ -108,7 +108,8 @@
         "title":"新着情報"
     },
     "market":{
-        "title":"Market"
+        "title":"マーケット",
+        "search":"アセット名で検索(英語名のみ対応)"
     }
 
 }

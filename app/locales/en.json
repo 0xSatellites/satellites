@@ -117,6 +117,7 @@
         "title":"Information"
     },
     "market":{
-        "title":"Market"
+        "title":"Market",
+        "search":"Search by Asset Name (English Only)"
     }
 }

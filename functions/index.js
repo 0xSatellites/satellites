@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = 'sand'
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -1299,13 +1299,18 @@ exports.orderCleaningPubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderCleaning')
   .onPublish(async message => {
+    const now = new Date().getTime()
     const snapshots = await db.collection('order').where('valid', '==', true).get()
+    const docs = []
     snapshots.forEach(async doc => {
-        const record = await db.collection('order').doc(doc.id).get()
+      docs.push(doc.id)
+    })
+
+    for (var i=0; i<docs.length; i++) {
+        const record = await db.collection('order').doc(docs[i]).get()
         const order = record.data()
-        console.log(doc.id)
-        console.log(order)
         if(order.proxy == config.contract[project].bazaaar_v1) {
+          try {
             const hash = await bazaaar_v1.methods
             .requireValidOrder_(
               [
@@ -1330,14 +1335,25 @@ exports.orderCleaningPubSub = functions
             )
             .call()
             if(hash != order.hash) {
-              console.info('deactivate: ' + doc.id)
-              await db.collection('order').doc(doc.id).update({
+              console.info('deactivate: ' + docs[i])
+              await db.collection('order').doc(docs[i]).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
+              await deactivateDocOGP(order)
             }
+          } catch(err){
+            console.info('deactivate: ' + docs[i])
+            await db.collection('order').doc(docs[i]).update({
+              result: { status: 'cancelled' },
+              valid: false,
+              modified: now
+            })
+            await deactivateDocOGP(order)
+          }
         } else if (order.proxy == config.contract[project].bazaaar_v2) {
+          try {
             const hash = await bazaaar_v2.methods
             .requireValidOrder_(
               [
@@ -1362,14 +1378,25 @@ exports.orderCleaningPubSub = functions
             )
             .call()
             if(hash != order.hash) {
-              console.info('deactivate: ' + doc.id)
-              await db.collection('order').doc(doc.id).update({
+              console.info('deactivate: ' + docs[i])
+              await db.collection('order').doc(docs[i]).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
+              await deactivateDocOGP(order)
             }
+          } catch(err){
+            console.info('deactivate: ' + docs[i])
+            await db.collection('order').doc(docs[i]).update({
+              result: { status: 'cancelled' },
+              valid: false,
+              modified: now
+            })
+            await deactivateDocOGP(order)
+          }
         } else if (order.proxy == config.contract[project].bazaaar_v3) {
+          try {
             const hash = await bazaaar_v3.methods
             .requireValidOrder_(
               [
@@ -1394,15 +1421,25 @@ exports.orderCleaningPubSub = functions
             )
             .call()
             if(hash != order.hash) {
-              console.info('deactivate: ' + doc.id)
-              await db.collection('order').doc(doc.id).update({
+              console.info('deactivate: ' + docs[i])
+              await db.collection('order').doc(docs[i]).update({
                 result: { status: 'cancelled' },
                 valid: false,
                 modified: now
               })
+              await deactivateDocOGP(order)
             }
+          } catch(err){
+            console.info('deactivate: ' + docs[i])
+            await db.collection('order').doc(docs[i]).update({
+              result: { status: 'cancelled' },
+              valid: false,
+              modified: now
+            })
+            await deactivateDocOGP(order)
+          }
         }
-    })
+    }
   })
 
 

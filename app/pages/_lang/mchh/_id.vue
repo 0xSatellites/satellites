@@ -334,7 +334,7 @@ export default {
           const expiration = Math.round(9999999999999 / 1000) - 1
           var creatorRoyaltyRecipientAddress = account.address
           if(this.asset.extra_data.current_art) {
-            creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address
+            creatorRoyaltyRecipientAddress = this.asset.current_art_data.attributes.editor_address
           }
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,

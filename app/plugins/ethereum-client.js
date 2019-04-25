@@ -107,7 +107,7 @@ const signOrder = async order => {
 }
 
 const signUser = async() =>{
-  const data = "この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。"
+  const data = "By signing this, your Art_Edit will be displayed on bazaaar.io, and you will be able to receive creator fees."
   const signedUser = await web3.eth.personal.sign(data, account.address)
   return signedUser
 }

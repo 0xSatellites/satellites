@@ -260,7 +260,11 @@ export default {
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
 
       const result = await firestore.doc('user', client.account.address)
-      this.switch1 = result.mch_artedit
+      if(result){
+        this.switch1 = result.mch_artedit
+      } else {
+        this.switch1 = false
+      }
     }
   },
   computed: {
@@ -322,10 +326,10 @@ export default {
         } catch(err) {
           alert(this.$t('error.message'))
           const result = await firestore.doc('user', client.account.address)
-          if(!result.mch_artedit){
-            this.switch1 = false
+          if(result){
+            this.switch1 = result.mch_artedit
           } else {
-            this.switch1 = true
+            this.switch1 = result.mch_artedit
           }
         }
       }

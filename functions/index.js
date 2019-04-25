@@ -1472,8 +1472,8 @@ app.get('/latestorders', async (req, res) => {
       'id' : doc.data().id,
       'name': doc.data().metadata.name,
       'image': doc.data().metadata.image_url,
-      'generation': doc.data().metadata.generation,
-      'cooldown_index': doc.data().metadata.status.cooldown_index,
+      // 'generation': doc.data().metadata.generation,
+      // 'cooldown_index': doc.data().metadata.status.cooldown_index,
       'ogp': doc.data().ogp,
       'url': config.host[project] + name +'/order/' + doc.data().hash
     }
@@ -1529,7 +1529,7 @@ exports.getOinkById = functions
 exports.userSign = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
-    const msg = "By signing this, your Art_Edit will be displayed on bazaaar.io, and you will be able to receive creator fees."
+    const msg = web3.utils.utf8ToHex("この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。")
     var address = web3.eth.accounts.recover(msg, params.sig)
       if(address==params.address){
         await db.collection("user").doc(address).set({

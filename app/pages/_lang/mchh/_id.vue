@@ -2,12 +2,18 @@
   <div>
     <section class="l-item">
       <div class="l-item__frame">
-        <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
-              <img :src="'https://www.mycryptoheroes.net/arts/'+asset.extra_data.current_art" v-if="art_approved" >
+            <img :src="'https://www.mycryptoheroes.net/arts/'+asset.extra_data.current_art" v-if="art_approved" >
+            <div class="favorite">
+              <v-layout
+                align-center
+              >
+                <v-icon color="red">favorite</v-icon>
+                <span class="subheading">{{asset.current_art_data.attributes.likes}}</span>
+              </v-layout>
+            </div>
           </div>
-        </div>
         <div>
           <div class="l-item__name"  v-if="asset.name">{{ asset.attributes.hero_name }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>

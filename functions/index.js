@@ -706,11 +706,12 @@ exports.order = functions
       c.clearRect(0, 0, 1200, 630)
       c.drawImage(templateImg, 0, 0)
       c.drawImage(characterImg, 15, 90, 450, 450)
+      console.log(meta.mch_artedit)
       if(meta.mch_artedit){
         const arteditImg = await axios.get('https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art, {
           responseType: 'arraybuffer'
         })
-        c.drawImage(arteditImg, 5, 10, 200, 200)
+        c.drawImage(arteditImg, 15, 90, 450, 450)
       }
       c.textBaseline = 'top'
       c.textAlign = 'center'
@@ -1526,7 +1527,7 @@ exports.getOinkById = functions
 exports.userSign = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
-    const msg = "この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。"
+    const msg = "By signing this, your Art_Edit will be displayed on bazaaar.io, and you will be able to receive creator fees."
     var address = web3.eth.accounts.recover(msg, params.sig)
       if(address==params.address){
         await db.collection("user").doc(address).set({

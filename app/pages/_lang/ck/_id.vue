@@ -417,11 +417,6 @@ export default {
 }
 </script>
 <style scoped>
-.twitter-share-button {
-  text-decoration: none;
-  color: white;
-}
-
 .white_text {
   color: white;
 }

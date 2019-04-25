@@ -222,6 +222,7 @@ async function metadata(asset, id){
         responseType:'json'
       }))
       response.sell = true
+      response.mch_artedit = true
       // response.royalty_rate = 0 //current_artあるときはコメントアウト
     } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true

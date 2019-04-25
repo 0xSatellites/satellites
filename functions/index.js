@@ -222,7 +222,6 @@ async function metadata(asset, id){
         responseType:'json'
       }))
       response.sell = true
-      response.mch_artedit = true
       // response.royalty_rate = 0 //current_artあるときはコメントアウト
     } else if(general.data.extra_data.art_history.length > 0) {
       response.sell = true
@@ -243,16 +242,14 @@ async function metadata(asset, id){
     console.log(response)
     if(resolved.length === 4){
       response.current_art_data = resolved[3].data
-      const art_approve = db.collection('user').doc(response.current_art_data.attributes.editor_address);
-      const getDoc = art_approve.get()
-      .then(doc => {
+      const doc = await db.collection('user').doc(response.current_art_data.attributes.editor_address).get();
       if (!doc.exists) {
         response.mch_artedit = false
         response.royalty_rate = 0
       } else if(doc.data().mch_artedit === true) {
         console.log('Document data:', doc.data())
         response.mch_artedit = true
-        const likes = response.extra_data.current_art_data.attributes.likes
+        const likes = response.current_art_data.attributes.likes
         if(likes >= 100) {
           response.royalty_rate = 600
         } else if(30 <= likes && likes < 100) {
@@ -265,11 +262,6 @@ async function metadata(asset, id){
         response.mch_artedit = false
         response.royalty_rate = 0
       }
-    })
-    .catch(err => {
-      console.log('Error getting document', err);
-    });
-    console.log(getDoc)
     }
 
   } else if (asset == 'mche'){

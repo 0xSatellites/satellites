@@ -706,12 +706,14 @@ exports.order = functions
       c.clearRect(0, 0, 1200, 630)
       c.drawImage(templateImg, 0, 0)
       c.drawImage(characterImg, 15, 90, 450, 450)
-      console.log(meta.mch_artedit)
       if(meta.mch_artedit){
-        const arteditImg = await axios.get('https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art, {
+        const arteditImg = new Canvas.Image()
+        const art_url ='https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art
+        const load_art = await axios.get(art_url, {
           responseType: 'arraybuffer'
         })
-        c.drawImage(arteditImg, 15, 90, 450, 450)
+        arteditImg.src = load_art.data
+        c.drawImage(arteditImg, 15, 400, 150, 150)
       }
       c.textBaseline = 'top'
       c.textAlign = 'center'

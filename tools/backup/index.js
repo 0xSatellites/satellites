@@ -1,14 +1,15 @@
-const functions = require('firebase-functions');
-const {
-  google
-} = require('googleapis');
-const rp = require('request-promise');
+const functions = require("firebase-functions");
+const { google } = require("googleapis");
+const rp = require("request-promise");
 const projectId = process.env.GCLOUD_PROJECT; // 関数が属しているGCPプロジェクトIDが環境変数に登録されている
 
 async function exportFirestore() {
   try {
     const auth = await google.auth.getClient({
-      scopes: ['https://www.googleapis.com/auth/datastore']
+      scopes: [
+        "https://www.googleapis.com/auth/datastore",
+        "https://www.googleapis.com/auth/cloud-platform"
+      ]
     });
 
     const accessTokenResponse = await auth.getAccessToken();
@@ -21,7 +22,7 @@ async function exportFirestore() {
       },
       json: true,
       body: {
-        outputUriPrefix: `gs://${projectId}-firestore-backup`,
+        outputUriPrefix: `gs://${projectId}-firestore-backup`
       }
     };
     const res = await rp.post(endpoint, option);
@@ -32,8 +33,8 @@ async function exportFirestore() {
   }
 }
 exports.firestoreBackup = functions.pubsub
-  .topic('firestoreBackup')
-  .onPublish(async (msg) => {
+  .topic("firestoreBackup")
+  .onPublish(async msg => {
     try {
       const res = await exportFirestore();
       console.log(`firestore backup job is successfully registered: ${res}`);

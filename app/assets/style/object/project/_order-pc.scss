@@ -181,7 +181,7 @@ background: rgba(0,0,0,0.5);
     }
     #modalImg img{
       width: 300px; height: 250px;
-      object-fit: cover;
+      object-fit: contain;
     }
   }
 

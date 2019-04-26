@@ -27,7 +27,7 @@ padding-top: 60px;
       &:nth-child(2){
       position: absolute;
       left: -50px;
-      bottom: 0;
+      top: 220px;
       width: 100px;
       border: solid #fafafa 1px;
       border-radius: 4px;
@@ -130,6 +130,7 @@ padding-top: 60px;
 
     &__textarea{
       margin: 20px 0;
+      padding-right: 100px;
       textarea{
         border: solid #e5e5e5 1px;
         border-radius: 4px;
@@ -187,3 +188,7 @@ padding-top: 60px;
 
 }
 
+.favorite{
+  padding-left: 25%;
+  padding-top: 35px;
+}

@@ -15,6 +15,7 @@ async function exportFirestore() {
 
     const accessTokenResponse = await auth.getAccessToken();
     const accessToken = accessTokenResponse.token;
+    console.log(accessTokenResponse);
 
     const endpoint = `https://firestore.googleapis.com/v1beta1/projects/${projectId}/databases/(default):exportDocuments`;
     const option = {
@@ -27,6 +28,8 @@ async function exportFirestore() {
       }
     };
     const res = await rp.post(endpoint, option);
+    console.log(res);
+
     return res;
   } catch (err) {
     console.log(`error occurred when doing backup: ${err}`);

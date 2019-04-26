@@ -40,24 +40,30 @@ const getMaketLength = async (asset, by, order) => {
 const getMarket = async (asset, by, order, offset) =>{
   if(asset == 'all'){
     var result = []
-    if(offset > 1){
-      var pre = (offset - 1) * 20
+    if(offset){
+      if(offset > 1){
+        var pre = (offset - 1) * 20
 
-      const preSnapshots = await db.collection('order')
-        .where('valid', '==', true)
-        .orderBy(by, order).limit(pre).get()
+        const preSnapshots = await db.collection('order')
+          .where('valid', '==', true)
+          .orderBy(by, order).limit(pre).get()
 
-      var lastVisible = preSnapshots.docs[preSnapshots.docs.length-1];
+        var lastVisible = preSnapshots.docs[preSnapshots.docs.length-1];
 
-      const snapshots = await db.collection('order')
-        .where('valid', '==', true)
-        .orderBy(by, order).startAfter(lastVisible).limit(20).get()
-      snapshots.forEach(doc => result.push(doc.data()))
-
+        const snapshots = await db.collection('order')
+          .where('valid', '==', true)
+          .orderBy(by, order).startAfter(lastVisible).limit(20).get()
+        snapshots.forEach(doc => result.push(doc.data()))
+      }else{
+        const snapshots = await db.collection('order')
+          .where('valid', '==', true)
+          .orderBy(by, order).limit(20).get()
+        snapshots.forEach(doc => result.push(doc.data()))
+      }
     } else {
       const snapshots = await db.collection('order')
         .where('valid', '==', true)
-        .orderBy(by, order).limit(20).get()
+        .orderBy(by, order).get()
       snapshots.forEach(doc => result.push(doc.data()))
     }
     return result

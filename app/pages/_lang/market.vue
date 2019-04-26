@@ -178,7 +178,13 @@ export default {
     const marketAsset = 'all'
     const sortBy = 'created'
     const marketOrder = 'desc'
-    const orders = await firestore.getMarket(marketAsset, sortBy, marketOrder, query.page)
+    var offset
+    if(query.page){
+      offset = query.page
+    }else{
+      offset = 1
+    }
+    const orders = await firestore.getMarket(marketAsset, sortBy, marketOrder, offset)
     await store.dispatch('order/setOrders', orders)
     var pagenation = true;
     if(limit<=1){

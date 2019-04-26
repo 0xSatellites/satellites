@@ -317,10 +317,12 @@ export default {
         try{
           const sig = await client.signUser()
           const switch1 = this.switch1
+          var date = new Date()
           const datas = {
                 sig: sig,
                 address: client.account.address,
-                status: switch1
+                status: switch1,
+                modified: await date.getTime()
           }
           await functions.call('userSign', datas)
         } catch(err) {

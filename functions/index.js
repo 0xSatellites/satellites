@@ -242,7 +242,8 @@ async function metadata(asset, id){
     console.log(response)
     if(resolved.length === 4){
       response.current_art_data = resolved[3].data
-      const doc = await db.collection('user').doc(response.current_art_data.attributes.editor_address).get();
+      var editor_address = web3.utils.toChecksumAddress(response.current_art_data.attributes.editor_address)
+      const doc = await db.collection('user').doc(editor_address).get();
       if (!doc.exists) {
         response.mch_artedit = false
         response.royalty_rate = 0

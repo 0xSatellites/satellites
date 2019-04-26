@@ -5,7 +5,7 @@
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
             <img :src="'https://www.mycryptoheroes.net/arts/'+asset.extra_data.current_art" v-if="art_approved" >
-            <div class="favorite">
+            <div class="favorite" v-if="art_approved">
               <v-layout
                 align-center
               >

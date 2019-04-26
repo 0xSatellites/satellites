@@ -20,6 +20,6 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'getOinksByAddress', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
-  - name: 'gcr.io/cloud-builders/gcloud'
+- name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'userSign', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'

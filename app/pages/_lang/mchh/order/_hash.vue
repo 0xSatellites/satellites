@@ -11,6 +11,7 @@
         <div class="l-information__txt">#{{ order.id }}</div>
         <div class="l-information__txt">{{$t('assets.mch')}}</div>
         <div class="l-information__txt">{{$t('hash.seller')}} : {{ order.maker }}</div>
+        <div class="l-information__txt" v-if="order.creatorRoyaltyRatio>=300">{{$t('hash.creator')}} : {{ order.creatorRoyaltyRecipient }}</div>
         <ul class="l-information__data">
           <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></li>
         </ul>

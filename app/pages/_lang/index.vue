@@ -102,7 +102,7 @@
                 <a href="https://www.mycryptoheroes.net/" target="_blank">
                     <v-card>
                         <v-img
-                        v-bind:src="require('~/assets/img/asset/MyCryptoHeros.jpg')"
+                        v-bind:src="require('~/assets/img/asset/mch_logo.png')"
                         aspect-ratio="1.2"
                         contain
                         ></v-img>
@@ -123,6 +123,9 @@
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.info') }}</h2>
         <info></info>
+        <v-layout justify-center>
+         <nuxt-link :to="$t('footer.infoHD')">{{ $t('index.readmore') }}</nuxt-link>
+        </v-layout>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.partners') }}</h2>

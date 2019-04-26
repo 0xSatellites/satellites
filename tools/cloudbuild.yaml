@@ -1,10 +1,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'getOinksByAddress', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
-  dir: 'tools/api/'
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'getOinkById', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
-  dir: 'tools/api/'
-- name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'dailyReportPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=dailyReport']
   dir: 'tools/reports/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'firestoreBackup', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=firestoreBackup']
+  dir: 'tools/backup/'

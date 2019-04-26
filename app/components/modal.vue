@@ -12,7 +12,7 @@
               <img :src="ogp" alt="" width="85%" />
           </div>
           <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
-          <a 
+          <a
               :href="
                 'https://twitter.com/share?url=' +
                   host + type.symbol +
@@ -194,7 +194,7 @@
           </div>
           <div class="l-modal__txt">{{$t('modal.postOnSocialMedia')}}</div>
           <div class="l-modal__btn" v-if="type.symbol === 'mchh'">
-            <a 
+            <a
               :href="
                 'https://twitter.com/share?url=' +
                   host + type.symbol +
@@ -221,7 +221,7 @@
             </a>
             </div>
             <div class="l-modal__btn" v-else>
-            <a 
+            <a
               :href="
                 'https://twitter.com/share?url=' +
                   host + type.symbol +

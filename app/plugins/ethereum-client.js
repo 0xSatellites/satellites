@@ -106,6 +106,11 @@ const signOrder = async order => {
   return order
 }
 
+const signUser = async() =>{
+  const data = web3.utils.utf8ToHex("この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。")
+  const signedUser = await web3.eth.personal.sign(data, account.address)
+  return signedUser
+}
 
 const toAsset = asset => {
   switch(asset) {
@@ -126,7 +131,9 @@ const client = {
   ownedTokens: ownedTokens,
   signOrder:signOrder,
   utils: web3.utils,
-  toAsset: toAsset
+  web3: web3,
+  toAsset: toAsset,
+  signUser: signUser
 }
 
 export default client

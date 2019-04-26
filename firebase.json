@@ -5,5 +5,11 @@
   },
   "storage": {
     "rules": "storage.rules"
-  }
+  },
+    "hosting": {
+      "public": "tools/public",
+      "rewrites": [ {
+        "source": "/api", "function": "api"
+      } ]
+    }
 }

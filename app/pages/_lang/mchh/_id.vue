@@ -2,15 +2,22 @@
   <div>
     <section class="l-item">
       <div class="l-item__frame">
-        <div>
           <div class="l-item__img">
             <img :src="asset.image_url" alt="" />
+            <img :src="'https://www.mycryptoheroes.net/arts/'+asset.extra_data.current_art" v-if="art_approved" >
+            <div class="favorite" v-if="art_approved">
+              <v-layout
+                align-center
+              >
+                <v-icon color="red">favorite</v-icon>
+                <span class="subheading">{{asset.current_art_data.attributes.likes}}</span>
+              </v-layout>
+            </div>
           </div>
-        </div>
         <div>
-          <div class="l-item__name"  v-if="asset.name">{{ asset.attributes.hero_name }}</div>
+          <div class="l-item__name"  v-if="asset.name && lang === 'ja'">{{ asset.hero_type.name.ja }}</div>
+          <div class="l-item__name"  v-if="asset.name && lang === 'en'">{{ asset.hero_type.name.en }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
-          
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
@@ -20,10 +27,15 @@
           <li><strong>INT：</strong> {{asset.attributes.int }}</li>
           <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
-          <ul class="l-item__data">
+          <ul class="l-item__data" v-if="lang === 'ja'">
             <!-- TODO 条件分岐 Active有無 -->
-          <li><span class="l-item__skill--type">Active</span>{{asset.active_skill.name.ja}}</li>
-          <li><span class="l-item__skill--type">Passive</span>{{asset.passive_skill.name.ja}}</li>
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.ja}}</b><br>{{asset.active_skill.description.ja.effects[0]}}<br>{{asset.active_skill.description.ja.effects[1]}}</li>
+            <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.ja}}</b><br>{{asset.passive_skill.description.ja.effects[0]}}<br>{{asset.passive_skill.description.ja.effects[1]}}</li>
+          </ul>
+          <ul class="l-item__data" v-else-if="lang === 'en'">
+            <!-- TODO 条件分岐 Active有無 -->
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.active_skill.name.en}}</b><br>{{asset.active_skill.description.en.effects[0]}}<br>{{asset.active_skill.description.en.effects[1]}}</li>
+            <li><span class="l-item__skill--type">Passive</span><b>{{asset.passive_skill.name.en}}</b><br>{{asset.passive_skill.description.en.effects[0]}}<br>{{asset.passive_skill.description.en.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>
@@ -37,15 +49,12 @@
               </div>
               <div v-if="approved && owned">{{$t("id.fee")}}</div>
               <div class="l-item__action__textarea" v-if="approved && owned">
-                <textarea
+                <v-text-field
                   v-model="msg"
-                  name=""
-                  id=""
-                  box
-                  auto-grow
+                  :rules="msgRules"
+                  :counter="18"
                   :placeholder="$t('id.inputMessage')"
-                >
-                </textarea>
+                ></v-text-field>
               </div>
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
@@ -135,49 +144,10 @@
       </div>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
-      <div>
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
-      <ul>
-        <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.extension_name">{{ recommend.metadata.attributes.extension_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-        </li>
-      </ul>
-            </div>
+      <related
+        :recommend="recommend"
+      ></related>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
     <modal
@@ -200,21 +170,18 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import hero from '~/plugins/hero'
-import common from '~/plugins/common'
 import Modal from '~/components/modal'
+import Related from '~/components/related'
 
 
 const config = require('../../../config.json')
 const project = process.env.project
 const host = config.host[project]
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
 
 export default {
   components: {
-    Modal
+    Modal,
+    Related
   },
   data() {
     return {
@@ -234,12 +201,13 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      msgRules: [
+        v => v.length <= 18 || 'Message must be less than 18 characters'
+      ],
       host,
-      ck,
-      ctn,
-      mchh,
-      mche,
-      type: { name: 'マイクリ', symbol: 'mchh'}
+      type: { name: 'マイクリ', symbol: 'mchh'},
+      lang: '',
+      art_approved: false
     }
   },
   async asyncData({ store, params, error }) {
@@ -256,6 +224,8 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
+    this.lang = store.state.i18n.locale
+    this.art_approved = this.asset.mch_artedit
 
     var account
     if (typeof web3 != 'undefined') {
@@ -312,17 +282,8 @@ export default {
     }
   },
   methods: {
-    coolDownIndexToSpeed(index) {
-      return hero.coolDownIndexToSpeed(index)
-    },
-    getRarity(asset) {
-      return common.getRarity(asset)
-    },
     getHeroRarity(asset) {
       return hero.getHeroRarity(asset)
-    },
-    fromWei(wei) {
-      return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false
@@ -379,9 +340,9 @@ export default {
           //const expiration = Math.round(date.getTime() / 1000)
           const expiration = Math.round(9999999999999 / 1000) - 1
           var creatorRoyaltyRecipientAddress = account.address
-          // if(this.asset.extra_data.current_art) {
-          //   creatorRoyaltyRecipientAddress = asset.current_art_data.attributes.editor_address
-          // }
+          if(this.asset.extra_data.current_art) {
+            creatorRoyaltyRecipientAddress = this.asset.current_art_data.attributes.editor_address
+          }
           const order = {
             proxy: client.contract.bazaaar_v3.options.address,
             maker: account.address,

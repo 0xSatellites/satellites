@@ -22,8 +22,11 @@
             <li><strong>INT：</strong> {{asset.attributes.int }}</li>
             <li><strong>AGI：</strong> {{asset.attributes.agi }}</li>
           </ul>
-          <ul class="l-item__data">
-            <li><span class="l-item__skill--type">Active</span>{{asset.skill.name.ja}}</li>
+          <ul class="l-item__data" v-if="lang === 'ja'">
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.skill.name.ja}}</b><br>{{asset.skill.description.ja.effects[0]}}<br>{{asset.skill.description.ja.effects[1]}}</li>
+          </ul>
+          <ul class="l-item__data" v-else-if="lang === 'en'">
+            <li><span class="l-item__skill--type">Active</span><b>{{asset.skill.name.en}}</b><br>{{asset.skill.description.en.effects[0]}}<br>{{asset.skill.description.en.effects[1]}}</li>
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mche_condition")}}</div>
@@ -37,15 +40,12 @@
               </div>
               <div v-if="approved && owned">{{$t("id.fee")}}</div>
               <div class="l-item__action__textarea" v-if="approved && owned">
-                <textarea
+                <v-text-field
                   v-model="msg"
-                  name=""
-                  id=""
-                  box
-                  auto-grow
+                  :rules="msgRules"
+                  :counter="18"
                   :placeholder="$t('id.inputMessage')"
-                >
-                </textarea>
+                ></v-text-field>
               </div>
               <div v-if="owned">
                 <div class="l-item__action__btns" v-if="!approved">
@@ -135,49 +135,10 @@
       </div>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
-      <div>
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
-      <ul>
-        <li v-for="(recommend, i) in recommend" :key="i">
-          <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(recommend.metadata.status.cooldown_index)}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === ctn" :to="$t('index.holdLanguageCTN') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Gen {{recommend.metadata.generation}} : {{coolDownIndexToSpeed(Number(recommend.metadata.status.cooldown_index))}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mchh" :to="$t('index.holdLanguageMCHH') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.hero_name">{{ recommend.metadata.attributes.hero_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-          <nuxt-link v-else-if="recommend.asset === mche" :to="$t('index.holdLanguageMCHE') + recommend.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="recommend.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="recommend.metadata.attributes.extension_name">{{ recommend.metadata.attributes.extension_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ recommend.id }}</div>
-              <div class="c-card__txt">Lv. {{recommend.metadata.attributes.lv}} </div>
-              <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
-          </nuxt-link>
-        </li>
-      </ul>
-            </div>
+      <related
+        :recommend="recommend"
+      ></related>
     </section>
     <canvas id="ogp" width="1200" height="630" hidden></canvas>
     <modal
@@ -201,21 +162,19 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import extension from '~/plugins/extension'
-import common from '~/plugins/common'
 import Modal from '~/components/modal'
+import Related from '~/components/related'
 
 
 
 const config = require('../../../config.json')
 const project = process.env.project
 const host = config.host[project]
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
+
 export default {
   components: {
-    Modal
+    Modal,
+    Related
   },
   data() {
     return {
@@ -235,14 +194,14 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      msgRules: [
+        v => v.length <= 18 || 'Message must be less than 18 characters'
+      ],
       host,
       oinkCooldownIndex: 0,
       generation: 0,
-      ck,
-      ctn,
-      mchh,
-      mche,
-      type: { name: 'マイクリ', symbol: 'mche'}
+      type: { name: 'マイクリ', symbol: 'mche'},
+      lang: ''
     }
   },
   async asyncData({ store, params, error }) {
@@ -260,6 +219,7 @@ export default {
   mounted: async function() {
     const store = this.$store
     const params = this.$route.params
+    this.lang = store.state.i18n.locale
     var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
@@ -315,17 +275,8 @@ export default {
     }
   },
   methods: {
-    coolDownIndexToSpeed(index) {
-      return extension.coolDownIndexToSpeed(index)
-    },
-    getRarity(asset) {
-      return common.getRarity(asset)
-    },
     getExtensionRarity(asset) {
       return extension.getExtensionRarity(asset)
-    },
-    fromWei(wei) {
-      return client.utils.fromWei(wei)
     },
     closeModal() {
       this.modal = false

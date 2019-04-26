@@ -12,6 +12,17 @@
           <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000 ) / 10000 }} ETH</dd>
         </dl>
       </div>
+      <div class="l-personal__frame">
+               <v-flex xs12 px-3>
+               <h4>{{ $t('myitems.experiment') }}</h4>
+               {{ $t('myitems.mch_artedit') }}
+              <v-switch
+              v-model="switch1"
+              :label="`${switch1.toString()}`"
+              @change="permitArtedit()"
+              color="primary"></v-switch>
+               </v-flex>
+      </div>
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
@@ -23,14 +34,14 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="this.loadingMCHH || this.loadingMCHE"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
         <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
           <div>
-            <nuxt-link :to="'/mchh/' + mchh.attributes.id" class="c-card">
+            <nuxt-link :to="$t('myitems.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
@@ -40,7 +51,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !this.loading && !myheros.length">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -60,17 +71,10 @@
       </ul>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-      <ul>
-        <v-progress-circular
-          class="loading "
-          v-if="this.loading === true"
-          :size="50"
-          color="blue"
-          indeterminate
-        ></v-progress-circular>
-        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" v-else-if="myextensions.length">
+      <ul v-if="myextensions.length">
+        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
           <div>
-            <nuxt-link :to="'/mche/' + mche.attributes.id" class="c-card">
+            <nuxt-link :to="$t('myitems.holdMCHE')  + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
@@ -80,7 +84,6 @@
             </nuxt-link>
           </div>
         </li>
-
       </ul>
     </section>
 
@@ -89,14 +92,14 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="this.loadingCTN"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
         <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
           <div>
-            <nuxt-link :to="'/ctn/' + ctn.id" class="c-card">
+            <nuxt-link :to="$t('myitems.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
@@ -109,7 +112,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loadingCTN">
           <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
@@ -131,14 +134,14 @@
       <ul>
         <v-progress-circular
           class="loading "
-          v-if="this.loading === true"
+          v-if="this.loadingCK"
           :size="50"
           color="blue"
           indeterminate
         ></v-progress-circular>
         <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
           <div>
-            <nuxt-link :to="'/ck/' + ck.id" class="c-card">
+            <nuxt-link :to="$t('myitems.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
@@ -151,7 +154,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loading">
+        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loadingCK">
           <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
@@ -212,33 +215,40 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-      this.loading = true
+      this.loadingCK = true
+      this.loadingCTN = true
+      this.loadingMCHH = true
+      this.loadingMCHE = true
+
+
       kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
-        this.loading = false
+        this.loadingCK = false
         store.dispatch('asset/setAssets', tokens)
       })
 
       oink.getOinksByWalletAddress(client.account.address).then(tokens => {
-        this.loading = false
+        this.loadingCTN = false
         store.dispatch('oink/setOinks', tokens)
       })
 
-      client.ownedTokens('mchh').then(async function(tokens) {
+      client.ownedTokens('mchh').then(async tokens => {
           const promises = []
           for(var token of tokens){
             promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('hero/setHeros', result)
+          this.loadingMCHH = false
       })
 
-      client.ownedTokens('mche').then(async function(tokens) {
+      client.ownedTokens('mche').then(async tokens => {
           const promises = []
           for(var token of tokens){
             promises.push(await functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
           store.dispatch('extension/setExtensions', result)
+          this.loadingMCHE = false
       })
 
       firestore
@@ -249,7 +259,12 @@ export default {
         .getHistoryByAddress(client.account.address)
         .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
 
-
+      const result = await firestore.doc('user', client.account.address)
+      if(result){
+        this.switch1 = result.mch_artedit
+      } else {
+        this.switch1 = false
+      }
     }
   },
   computed: {
@@ -297,15 +312,29 @@ export default {
     },
     toAsset(asset){
       return client.toAsset(asset)
-    }
-    // oinkCoolDownIndexToSpeed(index){
-    //   oink.coolDownIndexToSpeed(index)
-    //   .then(result => {
-    //     console.log(result)
-    //     return result
-    //   })
-    // }
-
+    },
+    async permitArtedit(){
+        try{
+          const sig = await client.signUser()
+          const switch1 = this.switch1
+          var date = new Date()
+          const datas = {
+                sig: sig,
+                address: client.account.address,
+                status: switch1,
+                modified: await date.getTime()
+          }
+          await functions.call('userSign', datas)
+        } catch(err) {
+          alert(this.$t('error.message'))
+          const result = await firestore.doc('user', client.account.address)
+          if(result){
+            this.switch1 = result.mch_artedit
+          } else {
+            this.switch1 = result.mch_artedit
+          }
+        }
+      }
   },
   data() {
     return {
@@ -316,7 +345,11 @@ export default {
         { text: 'id', value: 'id' },
         { text: 'price', value: 'price' }
       ],
-      loading: false
+      loadingCK: false,
+      loadingCTN: false,
+      loadingMCHH: false,
+      loadingMCHE: false,
+      switch1: false,
     }
   }
 }

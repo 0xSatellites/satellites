@@ -6,6 +6,9 @@ steps:
   args: ['beta', 'functions', 'deploy', 'orderPeriodicUpdatePubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderPeriodicUpdate']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'orderCleaningPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderCleaning']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'api', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -16,4 +19,7 @@ steps:
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'getOinksByAddress', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'userSign', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'

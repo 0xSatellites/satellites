@@ -92,7 +92,8 @@
         "mche_condition": "※エクステンションはLv2以上かつ「二つ名」が行われている必要があります。"
     },
     "hash":{
-        "seller":"出品者アドレス",
+        "seller":"出品者",
+        "creator":"クリエイター",
         "purchase": "購入する",
         "relatedAsset": "関連アセット",
         "sell": "出品されました!",

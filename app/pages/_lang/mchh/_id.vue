@@ -15,7 +15,8 @@
             </div>
           </div>
         <div>
-          <div class="l-item__name"  v-if="asset.name">{{ asset.attributes.hero_name }}</div>
+          <div class="l-item__name"  v-if="asset.name && lang === 'ja'">{{ asset.hero_type.name.ja }}</div>
+          <div class="l-item__name"  v-if="asset.name && lang === 'en'">{{ asset.hero_type.name.en }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
           <ul class="l-item__data">
           <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>

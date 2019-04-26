@@ -4,6 +4,7 @@ const rp = require("request-promise");
 const projectId = process.env.GCLOUD_PROJECT; // 関数が属しているGCPプロジェクトIDが環境変数に登録されている
 
 async function exportFirestore() {
+  console.log(`gs://${projectId}-firestore-backup`);
   try {
     const auth = await google.auth.getClient({
       scopes: [

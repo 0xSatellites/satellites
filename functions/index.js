@@ -326,14 +326,19 @@ exports.metadata = functions.region('asia-northeast1').https.onCall(async (data,
 exports.order = functions
   .region('asia-northeast1')
   .https.onCall(async (params, context) => {
-    console.info("START order")
-    console.info("INPUT data")
-    console.info(params)
     const order = params.order
+    const now = new Date().getTime()
+    const orderPricefromWei = web3.utils.fromWei(order.price)
     order.price_sort = web3.utils.padLeft(order.price, 36)
 
-    if(order.asset == config.contract[project].ck) {
-      const hash = await bazaaar_v1.methods
+    
+    //検証ブロック
+    /*[TODO]
+    * referral付近に変更あり
+    * assetステータスの検証
+    * 
+    */
+    const hash = await bazaaar.methods
         .requireValidOrder_(
           [
             order.proxy,
@@ -356,650 +361,829 @@ exports.order = functions
           order.s
         )
         .call()
-      console.info("INFO order 1")
-      const response = await axios({
-        method: 'get',
-        url: config.api.ck.metadata + order.id,
-        headers: {'x-api-token': config.token.kitty},
-        responseType: 'json'
-      })
+
+
+    //取得ブロック(API)
+    /*[TODO]
+    * contractAddressを入れればアセットの名が帰ってくるfunctionの作成
+    * symbolからassetNameを取れるかも
+    * OGP,msgのpramsの作成(symbolで分岐処理をする)
+    */
+    //
+    const assetName = await getAssetNameByAddress(order.asset) //
+    const metadata = await metadata(assetName, order.id)
       console.info("INFO order 2")
-      const metadata = response.data
-      const imagePromise = axios.get(metadata.image_url_png, {
-        responseType: 'arraybuffer'
-      })
-      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
-      const resolved = await Promise.all(promises)
-      console.info("INFO order 3")
-      const templateImg = new Canvas.Image()
-      const characterImg = new Canvas.Image()
-      templateImg.src = resolved[0]
-      characterImg.src = resolved[1].data
-      const canvas = Canvas.createCanvas(1200, 630)
-      const c = canvas.getContext('2d')
-      c.clearRect(0, 0, 1200, 630)
-      c.drawImage(templateImg, 0, 0)
-      c.drawImage(characterImg, 15, 90, 450, 450)
-      c.textBaseline = 'top'
-      c.textAlign = 'center'
-      c.fillStyle = '#ffff00'
-      c.font = "bold 60px 'Noto Sans JP Bold'"
-      if (!params.msg) {
-        c.fillText('NOW ON SALE!!', 840, 120, 720)
-      } else {
-        if(params.msg.length <= 9){
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg, 840, 120, 720)
-        } else {
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg.substr(0, 9), 840, 80, 720)
-          c.fillText(msg.substr(9, 9), 840, 160, 720)
-        }
-      }
-      c.fillStyle = '#fff'
-      c.font = "40px 'Noto Sans JP'"
-      c.fillText(
-        'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
-        840,
-        255,
-        720
-      )
-      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
-      c.font = "bold 75px 'Noto Sans JP Bold'"
-      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
-      const base64EncodedImageString = canvas.toDataURL().substring(22)
-      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
-      const file = bucket.file(hash + '.png')
-      const ogp =
-        'https://firebasestorage.googleapis.com/v0/b/' +
-        bucket.name +
-        '/o/' +
-        encodeURIComponent(hash + '.png') +
-        '?alt=media'
-      const now = new Date().getTime()
-      order.hash = hash
-      order.metadata = metadata
-      order.ogp = ogp
-      order.created = now
-      order.valid = true
-      const batch = db.batch()
-      const deactivateDocOGPPromises = []
-      const snapshots = await db
-        .collection('order')
-        .where('maker', '==', order.maker)
-        .where('asset', '==', order.asset)
-        .where('id', '==', order.id)
-        .where('valid', '==', true)
-        .get()
-      console.info("INFO order 4")
-      snapshots.forEach(function(doc) {
-        const ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {
-          result: { status: 'cancelled' },
-          valid: false,
-          modified: now
-        })
-        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
-      })
-      const ref = db.collection('order').doc(hash)
-      batch.set(ref, order)
-      const savePromises = [
-        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
-        batch.commit()
-      ]
-      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
-      console.info("INFO order 5")
-      const msssage =
-        'NOW ON SALE!!' +
-        ' / Id.' +
-        order.id +
-        ' / Gen.' +
-        metadata.generation +
-        ' / ' +
-        coolDownIndexToSpeed(metadata.status.cooldown_index) +
-        ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
-        config.host[project] +
-        'ck/order/' +
-        order.hash
-      // try{
-      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-      //     if(error) {
-      //       console.info('Twitter API Down')
-      //     }
-      //   })
-      // } catch (err) {
-      //   console.info('Twitter API Down')
-      // }
-      // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-      //   if(error) throw error;
-      // });
-      // await axios({
-      //   method:'post',
-      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-      //   data: {
-      //     content:
-      //       'NOW ON SALE!!' +
-      //       ' / Id.' +
-      //       order.id +
-      //       ' / Gen.' +
-      //       metadata.generation +
-      //       ' / ' +
-      //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
-      //       ' / #CryptoKitties ' +
-      //       config.discord.endpoint[project] +
-      //       "ck/order/" +
-      //       hash
-      //   }
-      // })
-      const result = {
-        ogp: ogp,
-        hash: hash
-      }
-      console.info("OUTPUT data")
-      console.info(result)
-      console.info("END order")
-      return result
-    } else if (order.asset == config.contract[project].ctn) {
-      const hash = await bazaaar_v2.methods
-        .requireValidOrder_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ],
-          order.v,
-          order.r,
-          order.s
-        )
-        .call()
-      console.info("INFO order 1")
-      const response = await axios({
-        method: 'get',
-        url: config.api.ctn.metadata + order.id + '.json',
-        responseType: 'json'
-      })
-      console.info("INFO order 2")
-      let metadata = response.data
-      const entities = await ctn.methods.getEntity(order.id).call()
-      console.log(entities)
-      metadata.image_url = metadata.image
-      metadata.generation = await entities.generation
-      metadata.status = {}
-      metadata.status.cooldown_index = await Number(entities.cooldownIndex)
-      console.log(metadata.status.cooldown_index)
       const imagePromise = axios.get(metadata.image_url, {
         responseType: 'arraybuffer'
       })
-      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
-      const resolved = await Promise.all(promises)
-      console.info("INFO order 3")
-      const templateImg = new Canvas.Image()
-      const characterImg = new Canvas.Image()
-      templateImg.src = resolved[0]
-      characterImg.src = resolved[1].data
-      const canvas = Canvas.createCanvas(1200, 630)
-      const c = canvas.getContext('2d')
-      c.clearRect(0, 0, 1200, 630)
-      c.drawImage(templateImg, 0, 0)
-      c.drawImage(characterImg, 15, 50, 450, 515)
-      c.textBaseline = 'top'
-      c.textAlign = 'center'
-      c.fillStyle = '#ffff00'
-      c.font = "bold 60px 'Noto Sans JP Bold'"
-      if (!params.msg) {
-        c.fillText('NOW ON SALE!!', 840, 120, 720)
-      } else {
-        if(params.msg.length <= 9){
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg, 840, 120, 720)
-        } else {
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg.substr(0, 9), 840, 80, 720)
-          c.fillText(msg.substr(9, 9), 840, 160, 720)
-        }
-      }
-      c.fillStyle = '#fff'
-      c.font = "40px 'Noto Sans JP'"
-      c.fillText(
-        'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
-        840,
-        255,
-        720
-      )
-      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
-      c.font = "bold 75px 'Noto Sans JP Bold'"
-      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
-      const base64EncodedImageString = canvas.toDataURL().substring(22)
-      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
-      const file = bucket.file(hash + '.png')
-      const ogp =
-        'https://firebasestorage.googleapis.com/v0/b/' +
-        bucket.name +
-        '/o/' +
-        encodeURIComponent(hash + '.png') +
-        '?alt=media'
-      const now = new Date().getTime()
-      order.hash = hash
-      order.metadata = metadata
-      order.ogp = ogp
-      order.created = now
-      order.valid = true
-      const batch = db.batch()
-      const deactivateDocOGPPromises = []
-      const snapshots = await db
-        .collection('order')
-        .where('maker', '==', order.maker)
-        .where('asset', '==', order.asset)
-        .where('id', '==', order.id)
-        .where('valid', '==', true)
-        .get()
-      console.info("INFO order 4")
-      snapshots.forEach(function(doc) {
-        const ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {
-          result: { status: 'cancelled' },
-          valid: false,
-          modified: now
-        })
-        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
-      })
-      const ref = db.collection('order').doc(hash)
-      batch.set(ref, order)
-      const savePromises = [
-        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
-        batch.commit()
-      ]
-      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
-      console.info("INFO order 5")
-      const msssage =
-        'NOW ON SALE!!' +
-        ' / Id.' +
-        order.id +
-        ' / Gen.' +
-        metadata.generation +
-        ' / ' +
-        coolDownIndexToSpeed(metadata.status.cooldown_index) +
-        ' / #bazaaar #バザー #NFT #くりぷ豚 from @bazaaario ' +
-        config.host[project] +
-        'ctn/order/' +
-        order.hash
-      // try{
-      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-      //     if(error) {
-      //       console.info('Twitter API Down')
-      //     }
-      //   })
-      // } catch (err) {
-      //   console.info('Twitter API Down')
-      // }
-      // await axios({
-      //   method:'post',
-      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-      //   data: {
-      //     content:
-      //       'NOW ON SALE!!' +
-      //       ' / Id.' +
-      //       order.id +
-      //       ' / Gen.' +
-      //       metadata.generation +
-      //       ' / ' +
-      //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
-      //       ' / #くりぷ豚 ' +
-      //       config.discord.endpoint[project] +
-      //       "ctn/order/" +
-      //       hash
-      //   }
-      // })
-      const result = {
-        ogp: ogp,
-        hash: hash
-      }
-      console.info("OUTPUT data")
-      console.info(result)
-      console.info("END order")
-      return result
-    } else if (order.asset == config.contract[project].mchh) {
-      const hash = await bazaaar_v3.methods
-        .requireValidOrder_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ],
-          order.v,
-          order.r,
-          order.s
-        )
-        .call()
+    const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+    const resolved = await Promise.all(promises)
+    console.info("INFO order 3")
 
-      console.info("INFO order 1")
-      console.log(order.id)
-      const meta = await metadata('mchh', order.id)
-      console.info("INFO order 2")
-      const imagePromise = axios.get(meta.image_url, {
-        responseType: 'arraybuffer'
-      })
-      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
-      const resolved = await Promise.all(promises)
-      console.info("INFO order 3")
-      const templateImg = new Canvas.Image()
-      const characterImg = new Canvas.Image()
-      templateImg.src = resolved[0]
-      characterImg.src = resolved[1].data
-      const canvas = Canvas.createCanvas(1200, 630)
-      const c = canvas.getContext('2d')
-      c.clearRect(0, 0, 1200, 630)
-      c.drawImage(templateImg, 0, 0)
-      c.drawImage(characterImg, 15, 90, 450, 450)
-      if(meta.mch_artedit){
-        const arteditImg = new Canvas.Image()
-        const art_url ='https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art
-        const load_art = await axios.get(art_url, {
-          responseType: 'arraybuffer'
-        })
-        arteditImg.src = load_art.data
-        c.drawImage(arteditImg, 15, 400, 150, 150)
-      }
-      c.textBaseline = 'top'
-      c.textAlign = 'center'
-      c.fillStyle = '#ffff00'
-      c.font = "bold 60px 'Noto Sans JP Bold'"
-      if (!params.msg) {
-        c.fillText('NOW ON SALE!!', 840, 120, 720)
-      } else {
-        if(params.msg.length <= 9){
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg, 840, 120, 720)
-        } else {
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg.substr(0, 9), 840, 80, 720)
-          c.fillText(msg.substr(9, 9), 840, 160, 720)
-        }
-      }
-      c.fillStyle = '#fff'
-      c.font = "40px 'Noto Sans JP'"
-      c.fillText(
-        meta.attributes.hero_name + ' / ' + 'Lv.' + meta.attributes.lv,
-        840,
-        255,
-        720
-      )
-      c.fillText(meta.attributes.rarity, 840, 305, 720)
-      c.font = "bold 75px 'Noto Sans JP Bold'"
-      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
-      const base64EncodedImageString = canvas.toDataURL().substring(22)
-      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
-      const file = bucket.file(hash + '.png')
-      const ogp =
-        'https://firebasestorage.googleapis.com/v0/b/' +
-        bucket.name +
-        '/o/' +
-        encodeURIComponent(hash + '.png') +
-        '?alt=media'
-      const now = new Date().getTime()
-      order.hash = hash
-      order.metadata = meta
-      order.ogp = ogp
-      order.created = now
-      order.valid = true
-      const batch = db.batch()
-      const deactivateDocOGPPromises = []
-      const snapshots = await db
-        .collection('order')
-        .where('maker', '==', order.maker)
-        .where('asset', '==', order.asset)
-        .where('id', '==', order.id)
-        .where('valid', '==', true)
-        .get()
-      console.info("INFO order 4")
-      snapshots.forEach(function(doc) {
-        const ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {
-          result: { status: 'cancelled' },
-          valid: false,
-          modified: now
-        })
-        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
-      })
-      const ref = db.collection('order').doc(hash)
-      batch.set(ref, order)
-      const savePromises = [
-        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
-        batch.commit()
-      ]
-      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
-      console.info("INFO order 5")
-      const msssage =
-        'NOW ON SALE!!' +
-        ' / ' +
-        meta.attributes.hero_name +
-        ' / Lv.' +
-        meta.attributes.lv +
-        ' / ' +
-        meta.attributes.rarity +
-        ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
-        config.host[project] +
-        'mchh/order/' +
-        order.hash
-      // try{
-      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-      //     if(error) {
-      //       console.info('Twitter API Down')
-      //     }
-      //   })
-      // } catch (err) {
-      //   console.info('Twitter API Down')
-      // }
-      // await axios({
-      //   method:'post',
-      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-      //   data: {
-      //     content:
-      //       'NOW ON SALE!!' +
-      //       ' / ' +
-      //       meta.attributes.hero_name +
-      //       ' / Lv.' +
-      //       meta.attributes.lv +
-      //       ' / ' +
-      //       meta.attributes.rarity +
-      //       ' / #MCH ' +
-      //       config.discord.endpoint[project] +
-      //       "mchh/order/" +
-      //       hash
-      //   }
-      // })
-      const result = {
-        ogp: ogp,
-        hash: hash
-      }
-      console.info("OUTPUT data")
-      console.info(result)
-      console.info("END order")
-      return result
-    }else if (order.asset == config.contract[project].mche) {
-      const hash = await bazaaar_v3.methods
-        .requireValidOrder_(
-          [
-            order.proxy,
-            order.maker,
-            order.taker,
-            order.creatorRoyaltyRecipient,
-            order.asset
-          ],
-          [
-            order.id,
-            order.price,
-            order.nonce,
-            order.salt,
-            order.expiration,
-            order.creatorRoyaltyRatio,
-            order.referralRatio
-          ],
-          order.v,
-          order.r,
-          order.s
-        )
-        .call()
-      console.info("INFO order 1")
-      const meta = await metadata('mche', order.id)
-      console.info("INFO order 2")
-      const imagePromise = axios.get(meta.image_url, {
-        responseType: 'arraybuffer'
-      })
-      const promises = [readFile('./assets/img/bg1.png'), imagePromise]
-      const resolved = await Promise.all(promises)
-      console.info("INFO order 3")
-      const templateImg = new Canvas.Image()
-      const characterImg = new Canvas.Image()
-      templateImg.src = resolved[0]
-      characterImg.src = resolved[1].data
-      const canvas = Canvas.createCanvas(1200, 630)
-      const c = canvas.getContext('2d')
-      c.clearRect(0, 0, 1200, 630)
-      c.drawImage(templateImg, 0, 0)
-      c.drawImage(characterImg, 15, 90, 450, 450)
-      c.textBaseline = 'top'
-      c.textAlign = 'center'
-      c.fillStyle = '#ffff00'
-      c.font = "bold 60px 'Noto Sans JP Bold'"
-      if (!params.msg) {
-        c.fillText('NOW ON SALE!!', 840, 120, 720)
-      } else {
-        if(params.msg.length <= 9){
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg, 840, 120, 720)
-        } else {
-          const msg = params.msg.replace(/\r?\n/g, '')
-          c.fillText(msg.substr(0, 9), 840, 80, 720)
-          c.fillText(msg.substr(9, 9), 840, 160, 720)
-        }
-      }
-      c.fillStyle = '#fff'
-      c.font = "40px 'Noto Sans JP'"
-      c.fillText(
-        meta.attributes.extension_name + ' / ' + 'Lv.' + meta.attributes.lv,
-        840,
-        255,
-        720
-      )
-      c.fillText(meta.attributes.rarity, 840, 305, 720)
-      c.font = "bold 75px 'Noto Sans JP Bold'"
-      c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
-      const base64EncodedImageString = canvas.toDataURL().substring(22)
-      const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
-      const file = bucket.file(hash + '.png')
-      const ogp =
-        'https://firebasestorage.googleapis.com/v0/b/' +
-        bucket.name +
-        '/o/' +
-        encodeURIComponent(hash + '.png') +
-        '?alt=media'
-      const now = new Date().getTime()
-      order.hash = hash
-      order.metadata = meta
-      order.ogp = ogp
-      order.created = now
-      order.valid = true
-      const batch = db.batch()
-      const deactivateDocOGPPromises = []
-      const snapshots = await db
-        .collection('order')
-        .where('maker', '==', order.maker)
-        .where('asset', '==', order.asset)
-        .where('id', '==', order.id)
-        .where('valid', '==', true)
-        .get()
-      console.info("INFO order 4")
-      snapshots.forEach(function(doc) {
-        const ref = db.collection('order').doc(doc.id)
-        batch.update(ref, {
-          result: { status: 'cancelled' },
-          valid: false,
-          modified: now
-        })
-        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
-      })
-      const ref = db.collection('order').doc(hash)
-      batch.set(ref, order)
-      const savePromises = [
-        file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
-        batch.commit()
-      ]
-      await Promise.all(savePromises.concat(deactivateDocOGPPromises))
-      console.info("INFO order 5")
-      const msssage =
-        'NOW ON SALE!!' +
-        ' / ' +
-        meta.attributes.extension_name +
-        ' / Lv.' +
-        meta.attributes.lv +
-        ' / ' +
-        meta.attributes.rarity +
-        ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
-        config.host[project] +
-        'mche/order/' +
-        order.hash
-      // try{
-      //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
-      //     if(error) {
-      //       console.info('Twitter API Down')
-      //     }
-      //   })
-      // } catch (err) {
-      //   console.info('Twitter API Down')
-      // }
-      // await axios({
-      //   method:'post',
-      //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
-      //   data: {
-      //     content:
-      //       'NOW ON SALE!!' +
-      //       ' / ' +
-      //       meta.attributes.extension_name +
-      //       ' / Lv.' +
-      //       meta.attributes.lv +
-      //       ' / ' +
-      //       meta.attributes.rarity +
-      //       ' / #MCH ' +
-      //       config.discord.endpoint[project] +
-      //       "mche/order/" +
-      //       hash
-      //   }
-      // })
-      const result = {
-        ogp: ogp,
-        hash: hash
-      }
-      console.info("OUTPUT data")
-      console.info(result)
-      console.info("END order")
-      return result
+
+    //取得ブロック(OGP)
+    /*[TODO]
+    * asset、文字の大きさをconfigで制御する
+    * 
+    * 
+    */
+    const templateImg = new Canvas.Image()
+    const characterImg = new Canvas.Image()
+    templateImg.src = resolved[0]
+    characterImg.src = resolved[1].data
+    const canvas = Canvas.createCanvas(1200, 630)
+    const c = canvas.getContext('2d')
+    c.clearRect(0, 0, 1200, 630)
+    c.drawImage(templateImg, 0, 0)
+    c.drawImage(characterImg, 15, 90, 450, 450)
+    c.textBaseline = 'top'
+    c.textAlign = 'center'
+    c.fillStyle = '#ffff00'
+    c.font = "bold 60px 'Noto Sans JP Bold'"
+    if (!params.msg) {
+      c.fillText('NOW ON SALE!!', 840, 120, 720)
     } else {
-      console.info("Invalid Address")
-      return
+      if(params.msg.length <= 9){
+        const msg = params.msg.replace(/\r?\n/g, '')
+        c.fillText(msg, 840, 120, 720)
+      } else {
+        const msg = params.msg.replace(/\r?\n/g, '')
+        c.fillText(msg.substr(0, 9), 840, 80, 720)
+        c.fillText(msg.substr(9, 9), 840, 160, 720)
+      }
     }
+    c.fillStyle = '#fff'
+    c.font = "40px 'Noto Sans JP'"
+    c.fillText(
+      'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
+      840,
+      255,
+      720
+    )
+    c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+    c.font = "bold 75px 'Noto Sans JP Bold'"
+    c.fillText(orderPricefromWei + ' ETH', 840, 375, 720)
+    const base64EncodedImageString = canvas.toDataURL().substring(22)
+    const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    const file = bucket.file(hash + '.png')
+    const ogp =
+      'https://firebasestorage.googleapis.com/v0/b/' +
+      bucket.name +
+      '/o/' +
+      encodeURIComponent(hash + '.png') +
+      '?alt=media'
+    order.hash = hash
+    order.metadata = metadata
+    order.ogp = ogp
+    order.created = now
+    order.valid = true
+
+
+    //更新ブロック
+    /*[TODO]
+    * deactivateDocOGPをDB Update triggerで起動するように変更
+    * 
+    */
+    const batch = db.batch()
+    const deactivateDocOGPPromises = []
+    const snapshots = await db
+      .collection('order')
+      .where('maker', '==', order.maker)
+      .where('asset', '==', order.asset)
+      .where('id', '==', order.id)
+      .where('valid', '==', true)
+      .get()
+    console.info("INFO order 4")
+    snapshots.forEach(function(doc) {
+      const ref = db.collection('order').doc(doc.id)
+      batch.update(ref, {
+        result: { status: 'cancelled' },
+        valid: false,
+        modified: now
+      })
+      deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+    })
+    const ref = db.collection('order').doc(hash)
+    batch.set(ref, order)
+    const savePromises = [
+      file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+      batch.commit()
+    ]
+    await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+
+
+    //書込ブロック
+    /*[TODO]
+    * 取得ブロック(API)で作成したmsgをdataに入れる仕様にする
+    */
+    await axios({
+      method:'post',
+      url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+      data: {
+        content:
+          'NOW ON SALE!!' +
+          ' / Id.' +
+          order.id +
+          ' / Gen.' +
+          metadata.generation +
+          ' / ' +
+          coolDownIndexToSpeed(metadata.status.cooldown_index) +
+          ' / #CryptoKitties ' +
+          config.discord.endpoint[project] +
+          "ck/order/" +
+          hash
+      }
+    })
+    const result = {
+      ogp: ogp,
+      hash: hash
+    }
+    console.info("OUTPUT data")
+    console.info(result)
+    console.info("END order")
+    return result
+
+
+
+
+
+
+
+
+    // console.info("START order")
+    // console.info("INPUT data")
+    // console.info(params)
+    // const order = params.order
+    // order.price_sort = web3.utils.padLeft(order.price, 36)
+
+    // if(order.asset == config.contract[project].ck) {
+    //   const hash = await bazaaar_v1.methods
+    //     .requireValidOrder_(
+    //       [
+    //         order.proxy,
+    //         order.maker,
+    //         order.taker,
+    //         order.creatorRoyaltyRecipient,
+    //         order.asset
+    //       ],
+    //       [
+    //         order.id,
+    //         order.price,
+    //         order.nonce,
+    //         order.salt,
+    //         order.expiration,
+    //         order.creatorRoyaltyRatio,
+    //         order.referralRatio
+    //       ],
+    //       order.v,
+    //       order.r,
+    //       order.s
+    //     )
+    //     .call()
+    //   console.info("INFO order 1")
+    //   const response = await axios({
+    //     method: 'get',
+    //     url: config.api.ck.metadata + order.id,
+    //     headers: {'x-api-token': config.token.kitty},
+    //     responseType: 'json'
+    //   })
+    //   console.info("INFO order 2")
+    //   const metadata = response.data
+    //   const imagePromise = axios.get(metadata.image_url_png, {
+    //     responseType: 'arraybuffer'
+    //   })
+    //   const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+    //   const resolved = await Promise.all(promises)
+    //   console.info("INFO order 3")
+    //   const templateImg = new Canvas.Image()
+    //   const characterImg = new Canvas.Image()
+    //   templateImg.src = resolved[0]
+    //   characterImg.src = resolved[1].data
+    //   const canvas = Canvas.createCanvas(1200, 630)
+    //   const c = canvas.getContext('2d')
+    //   c.clearRect(0, 0, 1200, 630)
+    //   c.drawImage(templateImg, 0, 0)
+    //   c.drawImage(characterImg, 15, 90, 450, 450)
+    //   c.textBaseline = 'top'
+    //   c.textAlign = 'center'
+    //   c.fillStyle = '#ffff00'
+    //   c.font = "bold 60px 'Noto Sans JP Bold'"
+    //   if (!params.msg) {
+    //     c.fillText('NOW ON SALE!!', 840, 120, 720)
+    //   } else {
+    //     if(params.msg.length <= 9){
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg, 840, 120, 720)
+    //     } else {
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg.substr(0, 9), 840, 80, 720)
+    //       c.fillText(msg.substr(9, 9), 840, 160, 720)
+    //     }
+    //   }
+    //   c.fillStyle = '#fff'
+    //   c.font = "40px 'Noto Sans JP'"
+    //   c.fillText(
+    //     'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
+    //     840,
+    //     255,
+    //     720
+    //   )
+    //   c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+    //   c.font = "bold 75px 'Noto Sans JP Bold'"
+    //   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+    //   const base64EncodedImageString = canvas.toDataURL().substring(22)
+    //   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    //   const file = bucket.file(hash + '.png')
+    //   const ogp =
+    //     'https://firebasestorage.googleapis.com/v0/b/' +
+    //     bucket.name +
+    //     '/o/' +
+    //     encodeURIComponent(hash + '.png') +
+    //     '?alt=media'
+    //   const now = new Date().getTime()
+    //   order.hash = hash
+    //   order.metadata = metadata
+    //   order.ogp = ogp
+    //   order.created = now
+    //   order.valid = true
+    //   const batch = db.batch()
+    //   const deactivateDocOGPPromises = []
+    //   const snapshots = await db
+    //     .collection('order')
+    //     .where('maker', '==', order.maker)
+    //     .where('asset', '==', order.asset)
+    //     .where('id', '==', order.id)
+    //     .where('valid', '==', true)
+    //     .get()
+    //   console.info("INFO order 4")
+    //   snapshots.forEach(function(doc) {
+    //     const ref = db.collection('order').doc(doc.id)
+    //     batch.update(ref, {
+    //       result: { status: 'cancelled' },
+    //       valid: false,
+    //       modified: now
+    //     })
+    //     deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+    //   })
+    //   const ref = db.collection('order').doc(hash)
+    //   batch.set(ref, order)
+    //   const savePromises = [
+    //     file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+    //     batch.commit()
+    //   ]
+    //   await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    //   console.info("INFO order 5")
+    //   const msssage =
+    //     'NOW ON SALE!!' +
+    //     ' / Id.' +
+    //     order.id +
+    //     ' / Gen.' +
+    //     metadata.generation +
+    //     ' / ' +
+    //     coolDownIndexToSpeed(metadata.status.cooldown_index) +
+    //     ' / #bazaaar #バザー #NFT #CryptoKitties from @bazaaario ' +
+    //     config.host[project] +
+    //     'ck/order/' +
+    //     order.hash
+    //   // try{
+    //   //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+    //   //     if(error) {
+    //   //       console.info('Twitter API Down')
+    //   //     }
+    //   //   })
+    //   // } catch (err) {
+    //   //   console.info('Twitter API Down')
+    //   // }
+    //   // client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+    //   //   if(error) throw error;
+    //   // });
+    //   // await axios({
+    //   //   method:'post',
+    //   //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+    //   //   data: {
+    //   //     content:
+    //   //       'NOW ON SALE!!' +
+    //   //       ' / Id.' +
+    //   //       order.id +
+    //   //       ' / Gen.' +
+    //   //       metadata.generation +
+    //   //       ' / ' +
+    //   //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
+    //   //       ' / #CryptoKitties ' +
+    //   //       config.discord.endpoint[project] +
+    //   //       "ck/order/" +
+    //   //       hash
+    //   //   }
+    //   // })
+    //   const result = {
+    //     ogp: ogp,
+    //     hash: hash
+    //   }
+    //   console.info("OUTPUT data")
+    //   console.info(result)
+    //   console.info("END order")
+    //   return result
+    // } else if (order.asset == config.contract[project].ctn) {
+    //   const hash = await bazaaar_v2.methods
+    //     .requireValidOrder_(
+    //       [
+    //         order.proxy,
+    //         order.maker,
+    //         order.taker,
+    //         order.creatorRoyaltyRecipient,
+    //         order.asset
+    //       ],
+    //       [
+    //         order.id,
+    //         order.price,
+    //         order.nonce,
+    //         order.salt,
+    //         order.expiration,
+    //         order.creatorRoyaltyRatio,
+    //         order.referralRatio
+    //       ],
+    //       order.v,
+    //       order.r,
+    //       order.s
+    //     )
+    //     .call()
+    //   console.info("INFO order 1")
+    //   const response = await axios({
+    //     method: 'get',
+    //     url: config.api.ctn.metadata + order.id + '.json',
+    //     responseType: 'json'
+    //   })
+    //   console.info("INFO order 2")
+    //   let metadata = response.data
+    //   const entities = await ctn.methods.getEntity(order.id).call()
+    //   console.log(entities)
+    //   metadata.image_url = metadata.image
+    //   metadata.generation = await entities.generation
+    //   metadata.status = {}
+    //   metadata.status.cooldown_index = await Number(entities.cooldownIndex)
+    //   console.log(metadata.status.cooldown_index)
+    //   const imagePromise = axios.get(metadata.image_url, {
+    //     responseType: 'arraybuffer'
+    //   })
+    //   const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+    //   const resolved = await Promise.all(promises)
+    //   console.info("INFO order 3")
+    //   const templateImg = new Canvas.Image()
+    //   const characterImg = new Canvas.Image()
+    //   templateImg.src = resolved[0]
+    //   characterImg.src = resolved[1].data
+    //   const canvas = Canvas.createCanvas(1200, 630)
+    //   const c = canvas.getContext('2d')
+    //   c.clearRect(0, 0, 1200, 630)
+    //   c.drawImage(templateImg, 0, 0)
+    //   c.drawImage(characterImg, 15, 50, 450, 515)
+    //   c.textBaseline = 'top'
+    //   c.textAlign = 'center'
+    //   c.fillStyle = '#ffff00'
+    //   c.font = "bold 60px 'Noto Sans JP Bold'"
+    //   if (!params.msg) {
+    //     c.fillText('NOW ON SALE!!', 840, 120, 720)
+    //   } else {
+    //     if(params.msg.length <= 9){
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg, 840, 120, 720)
+    //     } else {
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg.substr(0, 9), 840, 80, 720)
+    //       c.fillText(msg.substr(9, 9), 840, 160, 720)
+    //     }
+    //   }
+    //   c.fillStyle = '#fff'
+    //   c.font = "40px 'Noto Sans JP'"
+    //   c.fillText(
+    //     'Id.' + order.id + ' / ' + 'Gen.' + metadata.generation,
+    //     840,
+    //     255,
+    //     720
+    //   )
+    //   c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+    //   c.font = "bold 75px 'Noto Sans JP Bold'"
+    //   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+    //   const base64EncodedImageString = canvas.toDataURL().substring(22)
+    //   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    //   const file = bucket.file(hash + '.png')
+    //   const ogp =
+    //     'https://firebasestorage.googleapis.com/v0/b/' +
+    //     bucket.name +
+    //     '/o/' +
+    //     encodeURIComponent(hash + '.png') +
+    //     '?alt=media'
+    //   const now = new Date().getTime()
+    //   order.hash = hash
+    //   order.metadata = metadata
+    //   order.ogp = ogp
+    //   order.created = now
+    //   order.valid = true
+    //   const batch = db.batch()
+    //   const deactivateDocOGPPromises = []
+    //   const snapshots = await db
+    //     .collection('order')
+    //     .where('maker', '==', order.maker)
+    //     .where('asset', '==', order.asset)
+    //     .where('id', '==', order.id)
+    //     .where('valid', '==', true)
+    //     .get()
+    //   console.info("INFO order 4")
+    //   snapshots.forEach(function(doc) {
+    //     const ref = db.collection('order').doc(doc.id)
+    //     batch.update(ref, {
+    //       result: { status: 'cancelled' },
+    //       valid: false,
+    //       modified: now
+    //     })
+    //     deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+    //   })
+    //   const ref = db.collection('order').doc(hash)
+    //   batch.set(ref, order)
+    //   const savePromises = [
+    //     file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+    //     batch.commit()
+    //   ]
+    //   await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    //   console.info("INFO order 5")
+    //   const msssage =
+    //     'NOW ON SALE!!' +
+    //     ' / Id.' +
+    //     order.id +
+    //     ' / Gen.' +
+    //     metadata.generation +
+    //     ' / ' +
+    //     coolDownIndexToSpeed(metadata.status.cooldown_index) +
+    //     ' / #bazaaar #バザー #NFT #くりぷ豚 from @bazaaario ' +
+    //     config.host[project] +
+    //     'ctn/order/' +
+    //     order.hash
+    //   // try{
+    //   //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+    //   //     if(error) {
+    //   //       console.info('Twitter API Down')
+    //   //     }
+    //   //   })
+    //   // } catch (err) {
+    //   //   console.info('Twitter API Down')
+    //   // }
+    //   // await axios({
+    //   //   method:'post',
+    //   //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+    //   //   data: {
+    //   //     content:
+    //   //       'NOW ON SALE!!' +
+    //   //       ' / Id.' +
+    //   //       order.id +
+    //   //       ' / Gen.' +
+    //   //       metadata.generation +
+    //   //       ' / ' +
+    //   //       coolDownIndexToSpeed(metadata.status.cooldown_index) +
+    //   //       ' / #くりぷ豚 ' +
+    //   //       config.discord.endpoint[project] +
+    //   //       "ctn/order/" +
+    //   //       hash
+    //   //   }
+    //   // })
+    //   const result = {
+    //     ogp: ogp,
+    //     hash: hash
+    //   }
+    //   console.info("OUTPUT data")
+    //   console.info(result)
+    //   console.info("END order")
+    //   return result
+    // } else if (order.asset == config.contract[project].mchh) {
+    //   const hash = await bazaaar_v3.methods
+    //     .requireValidOrder_(
+    //       [
+    //         order.proxy,
+    //         order.maker,
+    //         order.taker,
+    //         order.creatorRoyaltyRecipient,
+    //         order.asset
+    //       ],
+    //       [
+    //         order.id,
+    //         order.price,
+    //         order.nonce,
+    //         order.salt,
+    //         order.expiration,
+    //         order.creatorRoyaltyRatio,
+    //         order.referralRatio
+    //       ],
+    //       order.v,
+    //       order.r,
+    //       order.s
+    //     )
+    //     .call()
+
+    //   console.info("INFO order 1")
+    //   console.log(order.id)
+    //   const meta = await metadata('mchh', order.id)
+    //   console.info("INFO order 2")
+    //   const imagePromise = axios.get(meta.image_url, {
+    //     responseType: 'arraybuffer'
+    //   })
+    //   const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+    //   const resolved = await Promise.all(promises)
+    //   console.info("INFO order 3")
+    //   const templateImg = new Canvas.Image()
+    //   const characterImg = new Canvas.Image()
+    //   templateImg.src = resolved[0]
+    //   characterImg.src = resolved[1].data
+    //   const canvas = Canvas.createCanvas(1200, 630)
+    //   const c = canvas.getContext('2d')
+    //   c.clearRect(0, 0, 1200, 630)
+    //   c.drawImage(templateImg, 0, 0)
+    //   c.drawImage(characterImg, 15, 90, 450, 450)
+    //   if(meta.mch_artedit){
+    //     const arteditImg = new Canvas.Image()
+    //     const art_url ='https://www.mycryptoheroes.net/arts/' + meta.extra_data.current_art
+    //     const load_art = await axios.get(art_url, {
+    //       responseType: 'arraybuffer'
+    //     })
+    //     arteditImg.src = load_art.data
+    //     c.drawImage(arteditImg, 15, 400, 150, 150)
+    //   }
+    //   c.textBaseline = 'top'
+    //   c.textAlign = 'center'
+    //   c.fillStyle = '#ffff00'
+    //   c.font = "bold 60px 'Noto Sans JP Bold'"
+    //   if (!params.msg) {
+    //     c.fillText('NOW ON SALE!!', 840, 120, 720)
+    //   } else {
+    //     if(params.msg.length <= 9){
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg, 840, 120, 720)
+    //     } else {
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg.substr(0, 9), 840, 80, 720)
+    //       c.fillText(msg.substr(9, 9), 840, 160, 720)
+    //     }
+    //   }
+    //   c.fillStyle = '#fff'
+    //   c.font = "40px 'Noto Sans JP'"
+    //   c.fillText(
+    //     meta.attributes.hero_name + ' / ' + 'Lv.' + meta.attributes.lv,
+    //     840,
+    //     255,
+    //     720
+    //   )
+    //   c.fillText(meta.attributes.rarity, 840, 305, 720)
+    //   c.font = "bold 75px 'Noto Sans JP Bold'"
+    //   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+    //   const base64EncodedImageString = canvas.toDataURL().substring(22)
+    //   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    //   const file = bucket.file(hash + '.png')
+    //   const ogp =
+    //     'https://firebasestorage.googleapis.com/v0/b/' +
+    //     bucket.name +
+    //     '/o/' +
+    //     encodeURIComponent(hash + '.png') +
+    //     '?alt=media'
+    //   const now = new Date().getTime()
+    //   order.hash = hash
+    //   order.metadata = meta
+    //   order.ogp = ogp
+    //   order.created = now
+    //   order.valid = true
+    //   const batch = db.batch()
+    //   const deactivateDocOGPPromises = []
+    //   const snapshots = await db
+    //     .collection('order')
+    //     .where('maker', '==', order.maker)
+    //     .where('asset', '==', order.asset)
+    //     .where('id', '==', order.id)
+    //     .where('valid', '==', true)
+    //     .get()
+    //   console.info("INFO order 4")
+    //   snapshots.forEach(function(doc) {
+    //     const ref = db.collection('order').doc(doc.id)
+    //     batch.update(ref, {
+    //       result: { status: 'cancelled' },
+    //       valid: false,
+    //       modified: now
+    //     })
+    //     deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+    //   })
+    //   const ref = db.collection('order').doc(hash)
+    //   batch.set(ref, order)
+    //   const savePromises = [
+    //     file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+    //     batch.commit()
+    //   ]
+    //   await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    //   console.info("INFO order 5")
+    //   const msssage =
+    //     'NOW ON SALE!!' +
+    //     ' / ' +
+    //     meta.attributes.hero_name +
+    //     ' / Lv.' +
+    //     meta.attributes.lv +
+    //     ' / ' +
+    //     meta.attributes.rarity +
+    //     ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
+    //     config.host[project] +
+    //     'mchh/order/' +
+    //     order.hash
+    //   // try{
+    //   //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+    //   //     if(error) {
+    //   //       console.info('Twitter API Down')
+    //   //     }
+    //   //   })
+    //   // } catch (err) {
+    //   //   console.info('Twitter API Down')
+    //   // }
+    //   // await axios({
+    //   //   method:'post',
+    //   //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+    //   //   data: {
+    //   //     content:
+    //   //       'NOW ON SALE!!' +
+    //   //       ' / ' +
+    //   //       meta.attributes.hero_name +
+    //   //       ' / Lv.' +
+    //   //       meta.attributes.lv +
+    //   //       ' / ' +
+    //   //       meta.attributes.rarity +
+    //   //       ' / #MCH ' +
+    //   //       config.discord.endpoint[project] +
+    //   //       "mchh/order/" +
+    //   //       hash
+    //   //   }
+    //   // })
+    //   const result = {
+    //     ogp: ogp,
+    //     hash: hash
+    //   }
+    //   console.info("OUTPUT data")
+    //   console.info(result)
+    //   console.info("END order")
+    //   return result
+    // }else if (order.asset == config.contract[project].mche) {
+    //   const hash = await bazaaar_v3.methods
+    //     .requireValidOrder_(
+    //       [
+    //         order.proxy,
+    //         order.maker,
+    //         order.taker,
+    //         order.creatorRoyaltyRecipient,
+    //         order.asset
+    //       ],
+    //       [
+    //         order.id,
+    //         order.price,
+    //         order.nonce,
+    //         order.salt,
+    //         order.expiration,
+    //         order.creatorRoyaltyRatio,
+    //         order.referralRatio
+    //       ],
+    //       order.v,
+    //       order.r,
+    //       order.s
+    //     )
+    //     .call()
+    //   console.info("INFO order 1")
+    //   const meta = await metadata('mche', order.id)
+    //   console.info("INFO order 2")
+    //   const imagePromise = axios.get(meta.image_url, {
+    //     responseType: 'arraybuffer'
+    //   })
+    //   const promises = [readFile('./assets/img/bg1.png'), imagePromise]
+    //   const resolved = await Promise.all(promises)
+    //   console.info("INFO order 3")
+    //   const templateImg = new Canvas.Image()
+    //   const characterImg = new Canvas.Image()
+    //   templateImg.src = resolved[0]
+    //   characterImg.src = resolved[1].data
+    //   const canvas = Canvas.createCanvas(1200, 630)
+    //   const c = canvas.getContext('2d')
+    //   c.clearRect(0, 0, 1200, 630)
+    //   c.drawImage(templateImg, 0, 0)
+    //   c.drawImage(characterImg, 15, 90, 450, 450)
+    //   c.textBaseline = 'top'
+    //   c.textAlign = 'center'
+    //   c.fillStyle = '#ffff00'
+    //   c.font = "bold 60px 'Noto Sans JP Bold'"
+    //   if (!params.msg) {
+    //     c.fillText('NOW ON SALE!!', 840, 120, 720)
+    //   } else {
+    //     if(params.msg.length <= 9){
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg, 840, 120, 720)
+    //     } else {
+    //       const msg = params.msg.replace(/\r?\n/g, '')
+    //       c.fillText(msg.substr(0, 9), 840, 80, 720)
+    //       c.fillText(msg.substr(9, 9), 840, 160, 720)
+    //     }
+    //   }
+    //   c.fillStyle = '#fff'
+    //   c.font = "40px 'Noto Sans JP'"
+    //   c.fillText(
+    //     meta.attributes.extension_name + ' / ' + 'Lv.' + meta.attributes.lv,
+    //     840,
+    //     255,
+    //     720
+    //   )
+    //   c.fillText(meta.attributes.rarity, 840, 305, 720)
+    //   c.font = "bold 75px 'Noto Sans JP Bold'"
+    //   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
+    //   const base64EncodedImageString = canvas.toDataURL().substring(22)
+    //   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
+    //   const file = bucket.file(hash + '.png')
+    //   const ogp =
+    //     'https://firebasestorage.googleapis.com/v0/b/' +
+    //     bucket.name +
+    //     '/o/' +
+    //     encodeURIComponent(hash + '.png') +
+    //     '?alt=media'
+    //   const now = new Date().getTime()
+    //   order.hash = hash
+    //   order.metadata = meta
+    //   order.ogp = ogp
+    //   order.created = now
+    //   order.valid = true
+    //   const batch = db.batch()
+    //   const deactivateDocOGPPromises = []
+    //   const snapshots = await db
+    //     .collection('order')
+    //     .where('maker', '==', order.maker)
+    //     .where('asset', '==', order.asset)
+    //     .where('id', '==', order.id)
+    //     .where('valid', '==', true)
+    //     .get()
+    //   console.info("INFO order 4")
+    //   snapshots.forEach(function(doc) {
+    //     const ref = db.collection('order').doc(doc.id)
+    //     batch.update(ref, {
+    //       result: { status: 'cancelled' },
+    //       valid: false,
+    //       modified: now
+    //     })
+    //     deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
+    //   })
+    //   const ref = db.collection('order').doc(hash)
+    //   batch.set(ref, order)
+    //   const savePromises = [
+    //     file.save(imageBuffer, { metadata: { contentType: 'image/png' } }),
+    //     batch.commit()
+    //   ]
+    //   await Promise.all(savePromises.concat(deactivateDocOGPPromises))
+    //   console.info("INFO order 5")
+    //   const msssage =
+    //     'NOW ON SALE!!' +
+    //     ' / ' +
+    //     meta.attributes.extension_name +
+    //     ' / Lv.' +
+    //     meta.attributes.lv +
+    //     ' / ' +
+    //     meta.attributes.rarity +
+    //     ' / #bazaaar #バザー #NFT #MCH #マイクリ from @bazaaario ' +
+    //     config.host[project] +
+    //     'mche/order/' +
+    //     order.hash
+    //   // try{
+    //   //   client.post('statuses/update', { status: msssage }, (error, tweet, response) => {
+    //   //     if(error) {
+    //   //       console.info('Twitter API Down')
+    //   //     }
+    //   //   })
+    //   // } catch (err) {
+    //   //   console.info('Twitter API Down')
+    //   // }
+    //   // await axios({
+    //   //   method:'post',
+    //   //   url: "https://discordapp.com/api/webhooks/" + process.env.DISCORD_WEBHOOK,
+    //   //   data: {
+    //   //     content:
+    //   //       'NOW ON SALE!!' +
+    //   //       ' / ' +
+    //   //       meta.attributes.extension_name +
+    //   //       ' / Lv.' +
+    //   //       meta.attributes.lv +
+    //   //       ' / ' +
+    //   //       meta.attributes.rarity +
+    //   //       ' / #MCH ' +
+    //   //       config.discord.endpoint[project] +
+    //   //       "mche/order/" +
+    //   //       hash
+    //   //   }
+    //   // })
+    //   const result = {
+    //     ogp: ogp,
+    //     hash: hash
+    //   }
+    //   console.info("OUTPUT data")
+    //   console.info(result)
+    //   console.info("END order")
+    //   return result
+    // } else {
+    //   console.info("Invalid Address")
+    //   return
+    // }
   })
 /*
 exports.orderMatchedPubSub = functions

@@ -28,6 +28,10 @@ const web3 = new Web3(config.node[project].https)
 const bazaaar_v1 = new web3.eth.Contract(config.abi.bazaaar_v1, config.contract[project].bazaaar_v1)
 const bazaaar_v2 = new web3.eth.Contract(config.abi.bazaaar_v2, config.contract[project].bazaaar_v2)
 const bazaaar_v3 = new web3.eth.Contract(config.abi.bazaaar_v3, config.contract[project].bazaaar_v3)
+const ck = new web3.eth.Contract(config.abi.ck, config.contract[project].ck)
+const ctn = new web3.eth.Contract(config.abi.ctn, config.contract[project].ctn)
+const mchh = new web3.eth.Contract(config.abi.mchh, config.contract[project].mchh)
+const mche = new web3.eth.Contract(config.abi.mche, config.contract[project].mche)
 
 const {
   google
@@ -212,7 +216,7 @@ function disableBillingForProject(projectName) {
 }
 
 //Done!
-exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) =>{
+exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')
   res.set('Access-Control-Allow-Methods', 'GET')
   res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
@@ -226,13 +230,50 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const now = new Date().getTime()
   const orderPricefromWei = web3.utils.fromWei(order.price)
   order.price_sort = web3.utils.padLeft(order.price, 36)
+  const assetName = await Object.keys(config.contract[project]).filter((key) => {
+    return config.contract[project][key] === order.asset
+  });
+  const asset = assetName[0]
 
   //検証ブロック
   /*[TODO]
    * referral付近に変更あり()
    * assetステータスの検証()
-   *
+   * - makerが自身が保持しているか
+   * - approveが済んでいるか
+   * - できていなかったらreturn
    */
+
+  let owner
+  let approve
+
+  switch (asset) {
+    case 'ck':
+      owner = await ck.methods.kittyIndexToOwner(order.id).call()
+      if (order.maker != owner) return
+      approve = await ck.methods.kittyIndexToApproved(order.id).call()
+      if (order.maker != approve) return
+      break
+    case 'ctn':
+      owner = await ctn.methods.entityIndexToOwner(order.id).call()
+      if (order.maker != owner) return
+      approve = await ctn.methods.entityIndexToApproved(order.id).call()
+      if (order.maker != approve) return
+      break
+    case 'mchh':
+      owner = await mchh.methods.ownerOf(order.id).call()
+      if (order.maker != owner) return
+      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      if (!approve) return
+      break
+    case 'mche':
+      owner = await mche.methods.ownerOf(order.id).call()
+      if (order.maker != owner) return
+      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      if (!approve) return
+      break
+  }
+
   const hash = await bazaaar.methods
     .requireValidOrder_(
       [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
@@ -259,12 +300,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    * sellの条件分岐（ アートエディットがない場合売れない） をする(OK)
    */
   //
-
-  const assetName = await Object.keys(config.contract[project]).filter((key) => {
-    return config.contract[project][key] === order.asset
-  });
-  const asset = assetName[0]
-
   const metadata = await getAssetMetadataByAssetId(asset, order.id)
   if ((asset == "mch" || asset == "mche") && !metadata.sell) return
 
@@ -715,12 +750,14 @@ exports.deactivateOrderImageOnOrderChange = functions.region('asia-northeast1').
   const previous = change.before.data()
   const doc = change.after.data()
 
-  if(!previous.valid || doc.valid) return
+  if (!previous.valid || doc.valid) return
 
-  const canvas = Canvas.createCanvas(1200,630)
+  const canvas = Canvas.createCanvas(1200, 630)
   const c = canvas.getContext('2d')
 
-  const imagePromise = axios.get(doc.ogp, { responseType: 'arraybuffer' })
+  const imagePromise = axios.get(doc.ogp, {
+    responseType: 'arraybuffer'
+  })
   promises = [imagePromise, readFile('./assets/img/out_en.png')]
 
   const resolved = await Promise.all(promises)
@@ -732,13 +769,17 @@ exports.deactivateOrderImageOnOrderChange = functions.region('asia-northeast1').
   c.clearRect(0, 0, 1200, 630)
   c.drawImage(bgImg, 0, 0)
   c.fillStyle = 'rgba(0,0,0,0.7)'
-  c.fillRect(0,0,1200,630)
+  c.fillRect(0, 0, 1200, 630)
   c.drawImage(outImg, 76, 145)
 
   const base64EncodedImageString = canvas.toDataURL().substring(22)
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
   const file = bucket.file(change.after.id + '.png')
-  file.save(imageBuffer, { metadata: {contentType: 'image/png'}})
+  file.save(imageBuffer, {
+    metadata: {
+      contentType: 'image/png'
+    }
+  })
 })
 
 //------------------------------- special ------------------------------- //

@@ -9,7 +9,9 @@ const settings = {
 }
 db.settings(settings)
 const bucket = admin.storage().bucket(config.bucket[project])
-const { promisify } = require('util')
+const {
+  promisify
+} = require('util')
 const fs = require('fs')
 const readFile = promisify(fs.readFile)
 const axios = require('axios')
@@ -95,9 +97,13 @@ const deactivateDocOGP = async doc => {
   console.info('END deactivateDocOGP')
 }
 
-const { google } = require('googleapis')
+const {
+  google
+} = require('googleapis')
 const cloudbilling = google.cloudbilling('v1')
-const { auth } = require('google-auth-library')
+const {
+  auth
+} = require('google-auth-library')
 const PROJECT_NAME = `projects/${config.billion[project]}`
 
 exports.subscribe = event => {
@@ -296,25 +302,30 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
 
   //取得ブロック(API)
   /*[TODO]
-   * contractAddressを入れればアセットの名が帰ってくるfunctionの作成
-   * symbolからassetNameを取れるかも
-   * OGP,msgのpramsの作成(symbolで分岐処理をする)
-   * sellの条件分岐（アートエディットがない場合売れない）をする
+   * contractAddressを入れればアセットの名が帰ってくるfunctionの作成(OK)
+   * symbolからassetNameを取れるかも(OK)
+   * OGP, msgのpramsの作成(symbolで分岐処理をする)(ok)
+   * sellの条件分岐（ アートエディットがない場合売れない） をする(OK)
    */
   //
-  const assetName = await getAssetNameByAddress(order.asset) //
-  const metadata = await metadata(assetName, order.id)
-  console.info('INFO order 2')
+
+  const assetName = await Object.keys(config.contract[project]).filter((key) => {
+    return config.contract[project][key] === order.asset
+  });
+  const asset = assetName[0]
+
+  const metadata = await getAssetMetadataByAssetId(asset, order.id)
+  if ((asset == "mch" || asset == "mche") && !metadata.sell) return
+
   const imagePromise = axios.get(metadata.image_url, {
     responseType: 'arraybuffer'
   })
   const promises = [readFile('./assets/img/bg1.png'), imagePromise]
   const resolved = await Promise.all(promises)
-  console.info('INFO order 3')
 
   //取得ブロック(OGP)
   /*[TODO]
-   * asset、文字の大きさをconfigで制御する
+   * asset、文字の大きさをconfigで制御する(ok)
    *
    *
    */
@@ -326,7 +337,18 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const c = canvas.getContext('2d')
   c.clearRect(0, 0, 1200, 630)
   c.drawImage(templateImg, 0, 0)
-  c.drawImage(characterImg, 15, 90, 450, 450)
+  c.drawImage(characterImg, config.ogp[asset].dx, config.ogp[asset].dy, config.ogp[asset].dw, config.ogp[asset].dh)
+
+  if (asset == "mch" && metadata.mch_artedit) {
+    const arteditImg = new Canvas.Image()
+    const art_url = 'https://www.mycryptoheroes.net/arts/' + metadata.extra_data.current_art
+    const load_art = await axios.get(art_url, {
+      responseType: 'arraybuffer'
+    })
+    arteditImg.src = load_art.data
+    c.drawImage(arteditImg, 15, 400, 150, 150)
+  }
+
   c.textBaseline = 'top'
   c.textAlign = 'center'
   c.fillStyle = '#ffff00'
@@ -345,8 +367,25 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   }
   c.fillStyle = '#fff'
   c.font = "40px 'Noto Sans JP'"
-  c.fillText('Id.' + order.id + ' / ' + 'Gen.' + metadata.generation, 840, 255, 720)
-  c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+  switch (asset) {
+    case 'ck':
+      c.fillText('Id.' + order.id + ' / ' + 'Gen.' + metadata.generation, 840, 255, 720)
+      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+      break
+    case 'ctn':
+      c.fillText('Id.' + order.id + ' / ' + 'Gen.' + metadata.generation, 840, 255, 720)
+      c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
+      break
+    case 'mch':
+      c.fillText(metadata.attributes.hero_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
+      c.fillText(metadata.attributes.rarity, 840, 305, 720)
+      break
+    case 'mche':
+      c.fillText(metadata.attributes.extension_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
+      c.fillText(metadata.attributes.rarity, 840, 305, 720)
+      break
+  }
+
   c.font = "bold 75px 'Noto Sans JP Bold'"
   c.fillText(orderPricefromWei + ' ETH', 840, 375, 720)
   const base64EncodedImageString = canvas.toDataURL().substring(22)
@@ -379,7 +418,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     .where('valid', '==', true)
     .get()
   console.info('INFO order 4')
-  snapshots.forEach(function(doc) {
+  snapshots.forEach(function (doc) {
     const ref = db.collection('order').doc(doc.id)
     batch.update(ref, {
       result: {
@@ -410,8 +449,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     method: 'post',
     url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK,
     data: {
-      content:
-        'NOW ON SALE!!' +
+      content: 'NOW ON SALE!!' +
         ' / Id.' +
         order.id +
         ' / Gen.' +
@@ -1258,33 +1296,33 @@ exports.orderPeriodicUpdatePubSub = functions
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
         db
-          .collection('order')
-          .where('hash', '==', eventResolved[0][i].raw.topics[1])
-          .where('valid', '==', true)
-          .get()
+        .collection('order')
+        .where('hash', '==', eventResolved[0][i].raw.topics[1])
+        .where('valid', '==', true)
+        .get()
       )
     }
     for (let i = 0; i < eventResolved[1].length; i++) {
       cancelledPromises.push(
         db
-          .collection('order')
-          .where('asset', '==', eventResolved[1][i].returnValues.asset)
-          .where('id', '==', eventResolved[1][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[1][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
+        .collection('order')
+        .where('asset', '==', eventResolved[1][i].returnValues.asset)
+        .where('id', '==', eventResolved[1][i].returnValues.id.toString())
+        .where('maker', '==', eventResolved[1][i].returnValues.maker)
+        .where('valid', '==', true)
+        .get()
       )
     }
     const promiseArray = [soldPromises, cancelledPromises]
     const orderResolved = await Promise.all(
-      promiseArray.map(function(innerPromiseArray) {
+      promiseArray.map(function (innerPromiseArray) {
         return Promise.all(innerPromiseArray)
       })
     )
 
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
-      orderResolved[0][i].forEach(function(doc) {
+      orderResolved[0][i].forEach(function (doc) {
         processed.push(doc.id)
         let ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
@@ -1298,7 +1336,7 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
-      orderResolved[1][i].forEach(function(doc) {
+      orderResolved[1][i].forEach(function (doc) {
         if (!processed.includes(doc.id)) {
           let ref = db.collection('order').doc(doc.id)
           batch.update(ref, {
@@ -1491,7 +1529,7 @@ exports.api = functions.region('asia-northeast1').https.onCall(async (params, co
    */
   const result = []
   const limit = Number(params.limit)
-  if(limit > 300){
+  if (limit > 300) {
     limit = 300
   }
   const snapshots = await db
@@ -1501,7 +1539,7 @@ exports.api = functions.region('asia-northeast1').https.onCall(async (params, co
     .limit(limit)
     .get()
 
-  snapshots.forEach(function(doc) {
+  snapshots.forEach(function (doc) {
     const order = doc.data()
     const data = {
       price: order.price,

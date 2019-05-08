@@ -85,7 +85,6 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import hero from '~/plugins/hero'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 import OrderForm from '~/components/orderForm'

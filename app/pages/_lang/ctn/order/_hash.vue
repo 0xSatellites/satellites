@@ -92,8 +92,7 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import oink from '~/plugins/oink'
-import common from '~/plugins/common'
+import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 
@@ -182,7 +181,7 @@ export default {
       return oink.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return common.getRarity(asset)
+        return lib.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

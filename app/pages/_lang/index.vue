@@ -191,9 +191,7 @@
 
 import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
-import kitty from '~/plugins/kitty'
-import oink from '~/plugins/oink'
-import common from '~/plugins/common'
+import lib from '~/plugins/lib'
 import info from '~/components/info'
 
 
@@ -232,13 +230,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-      return common.getRarity(asset)
-    },
-    coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
+      return lib.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

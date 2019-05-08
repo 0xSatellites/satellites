@@ -124,6 +124,10 @@ const toAsset = asset => {
   }
 }
 
+const test =  async() =>{
+  return 'aaa'
+}
+
 const client = {
   account: account,
   activate: activate,
@@ -133,7 +137,8 @@ const client = {
   utils: web3.utils,
   web3: web3,
   toAsset: toAsset,
-  signUser: signUser
+  signUser: signUser,
+  test: test
 }
 
 export default client

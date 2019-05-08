@@ -92,7 +92,7 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
-import common from '~/plugins/common'
+import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 import '@fortawesome/fontawesome-free/css/all.css'
@@ -176,13 +176,13 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return common.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return common.getRarity(asset)
+      return lib.getRarity(asset)
     },
     fromWei(wei) {
-        return client.utils.fromWei(wei)
+      return client.utils.fromWei(wei)
     },
     async purchase() {
       try{

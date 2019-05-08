@@ -40,7 +40,6 @@ const {
 } = require('google-auth-library')
 const PROJECT_NAME = `projects/${config.billion[project]}`
 
-<<<<<<< HEAD
 function setAuthCredential() {
   return auth.getApplicationDefault().then(res => {
     let client2 = res.credential
@@ -105,12 +104,7 @@ async function get () {
   }
 }
 
-
-
-
-=======
 //Done
->>>>>>> d104b386eb432afe4e79ac16daf2695ac6ab72d0
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
@@ -235,61 +229,6 @@ exports.subscribe = event => {
     })
 }
 
-<<<<<<< HEAD
-//Done!
-
-
-=======
-/**
- * @return {Promise} Credentials set globally
- */
-function setAuthCredential() {
-  return auth.getApplicationDefault().then(res => {
-    let client2 = res.credential
-    if (client2.createScopedRequired && client2.createScopedRequired()) {
-      client2 = client2.createScoped(['https://www.googleapis.com/auth/cloud-billing'])
-    }
-    // Set credential globally for all requests
-    google.options({
-      auth: client2
-    })
-  })
-}
-
-/**
- * @param {string} projectName Name of project to check if billing is enabled
- * @return {Promise} Whether project has billing enabled or not
- */
-function isBillingEnabled(projectName) {
-  console.log('INFO 9')
-  return cloudbilling.projects
-    .getBillingInfo({
-      name: projectName
-    })
-    .then(res => res.data.billingEnabled)
-}
-
-/**
- * @param {string} projectName Name of project disable billing on
- * @return {Promise} Text containing response from disabling billing
- */
-function disableBillingForProject(projectName) {
-  console.log('INFO 10')
-  return cloudbilling.projects
-    .updateBillingInfo({
-      name: projectName,
-      // Setting this to empty is equivalent to disabling billing.
-      resource: {
-        billingAccountName: ''
-      }
-    })
-    .then(res => {
-      return 'Billing disabled successfully: ' + JSON.stringify(res.data)
-    })
-}
-
-//Done!
->>>>>>> d104b386eb432afe4e79ac16daf2695ac6ab72d0
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')
   res.set('Access-Control-Allow-Methods', 'GET')
@@ -368,7 +307,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    */
   //
   const metadata = await getAssetMetadataByAssetId(asset, order.id)
-  if ((asset == "mch" || asset == "mche") && !metadata.sell) return
+  if ((asset == "mchh" || asset == "mche") && !metadata.sell) return
 
   const imagePromise = axios.get(metadata.image_url, {
     responseType: 'arraybuffer'
@@ -392,7 +331,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   c.drawImage(templateImg, 0, 0)
   c.drawImage(characterImg, config.ogp[asset].dx, config.ogp[asset].dy, config.ogp[asset].dw, config.ogp[asset].dh)
 
-  if (asset == "mch" && metadata.mch_artedit) {
+  if (asset == "mchh" && metadata.mch_artedit) {
     const arteditImg = new Canvas.Image()
     const art_url = 'https://www.mycryptoheroes.net/arts/' + metadata.extra_data.current_art
     const load_art = await axios.get(art_url, {
@@ -430,7 +369,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
       c.fillText('Id.' + order.id + ' / ' + 'Gen.' + metadata.generation, 840, 255, 720)
       c.fillText(coolDownIndexToSpeed(metadata.status.cooldown_index), 840, 305, 720)
       break
-    case 'mch':
+    case 'mchh':
       c.fillText(metadata.attributes.hero_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
       c.fillText(metadata.attributes.rarity, 840, 305, 720)
       break
@@ -508,7 +447,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     case 'ctn':
       content = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
       break
-    case 'mch':
+    case 'mchh':
       content = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
       break
     case 'mche':

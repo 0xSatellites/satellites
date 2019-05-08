@@ -29,7 +29,7 @@
       <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/" target="_blank">TokenPocket</a> or</h2>
       <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
-    <section class="c-index c-index--mypage" v-if="account.address">
+    <!-- <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
       <ul>
         <v-progress-circular
@@ -69,8 +69,8 @@
               </a>
           </v-flex>
       </ul>
-    </section>
-    <section class="c-index c-index--mypage" v-if="account.address">
+    </section> -->
+    <!-- <section class="c-index c-index--mypage" v-if="account.address">
       <ul v-if="myextensions.length">
         <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
           <div>
@@ -85,9 +85,9 @@
           </div>
         </li>
       </ul>
-    </section>
+    </section> -->
 
-    <section class="c-index c-index--mypage" v-if="account.address">
+    <!-- <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
       <ul>
         <v-progress-circular
@@ -106,7 +106,7 @@
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ ctn.id }}</div>
-              <!-- <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div> -->
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div>
             </nuxt-link>
           </div>
         </li>
@@ -127,9 +127,9 @@
                 </v-card>
               </a>
           </v-flex>
-    </section>
+    </section> -->
 
-    <section class="c-index c-index--mypage" v-if="account.address">
+    <!-- <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
       <ul>
         <v-progress-circular
@@ -169,7 +169,7 @@
                 </v-card>
               </a>
           </v-flex>
-    </section>
+    </section> -->
 
     <!-- 履歴 -->
     <section class="c-index c-index--mypage" v-if="transactions.length">
@@ -190,19 +190,13 @@
 <script>
 import client from '~/plugins/ethereum-client'
 import common from '~/plugins/common'
-import kitty from '~/plugins/kitty'
-import oink from '~/plugins/oink'
-import hero from '~/plugins/hero'
-import extension from '~/plugins/extension'
+import api from '~/plugins/api'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
 export default {
   mounted: async function() {
     const myitems = this.myitems
-    const myoinks = this.myoinks
-    const myheros = this.myheros
-    const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
     var account
@@ -220,36 +214,29 @@ export default {
       this.loadingMCHH = true
       this.loadingMCHE = true
 
+      const kitty = await api.getKittiesByWalletAddress(client.account.address)
+      const oink = await api.getOinksByWalletAddress(client.account.address)
 
-      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
-        this.loadingCK = false
-        store.dispatch('asset/setAssets', tokens)
-      })
+      //todo mchh,mcheの挙動確認
+      // const mchh = await client.ownedTokens('mchh').then(async tokens => {
+      //     const promises = []
+      //     for(var token of tokens){
+      //       promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
+      //     }
+      //     return await Promise.all(promises)
+      // })
 
-      oink.getOinksByWalletAddress(client.account.address).then(tokens => {
-        this.loadingCTN = false
-        store.dispatch('oink/setOinks', tokens)
-      })
+      // const mche = await client.ownedTokens('mche').then(async tokens => {
+      //     const promises = []
+      //     for(var token of tokens){
+      //       promises.push(await functions.call('metadata', {asset:'mche', id:token}))
+      //     }
+      //     return await Promise.all(promises)
+      // })
 
-      client.ownedTokens('mchh').then(async tokens => {
-          const promises = []
-          for(var token of tokens){
-            promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
-          }
-          const result = await Promise.all(promises)
-          store.dispatch('hero/setHeros', result)
-          this.loadingMCHH = false
-      })
+      const array = kitty.concat(oink, mchh, mche);
+      store.dispatch('asset/setAssets', array)
 
-      client.ownedTokens('mche').then(async tokens => {
-          const promises = []
-          for(var token of tokens){
-            promises.push(await functions.call('metadata', {asset:'mche', id:token}))
-          }
-          const result = await Promise.all(promises)
-          store.dispatch('extension/setExtensions', result)
-          this.loadingMCHE = false
-      })
 
       firestore
         .getValidOrdersByMaker(client.account.address)
@@ -273,15 +260,6 @@ export default {
     },
     myitems() {
       return this.$store.getters['asset/assets']
-    },
-    myoinks() {
-      return this.$store.getters['oink/oinks']
-    },
-    myheros() {
-      return this.$store.getters['hero/heros']
-    },
-    myextensions() {
-      return this.$store.getters['extension/extensions']
     },
     orders() {
       return this.$store.getters['order/orders']

@@ -29,7 +29,7 @@
       <h2 class="l-personal__title">Get <a href="https://tokenpocket.github.io/applink?dappUrl=https://bazaaar.io/" target="_blank">TokenPocket</a> or</h2>
       <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
-    <!-- <section class="c-index c-index--mypage" v-if="account.address">
+    <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
       <ul>
         <v-progress-circular
@@ -39,7 +39,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
+        <li v-for="(mchh, i) in this.heros" :key="i + '-mchh'" v-else-if="this.heros.length">
           <div>
             <nuxt-link :to="$t('myitems.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -51,7 +51,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !this.loadingMCHH && !this.loadingMCHE">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.extensions.length && !this.heros.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -69,10 +69,10 @@
               </a>
           </v-flex>
       </ul>
-    </section> -->
-    <!-- <section class="c-index c-index--mypage" v-if="account.address">
-      <ul v-if="myextensions.length">
-        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
+    </section>
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <ul v-if="this.extensions.length">
+        <li v-for="(mche, i) in this.extensions" :key="i + '-mche'" >
           <div>
             <nuxt-link :to="$t('myitems.holdMCHE')  + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -85,7 +85,7 @@
           </div>
         </li>
       </ul>
-    </section> -->
+    </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
@@ -97,7 +97,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ctn, i) in this.oink" :key="i + '-ctn'" v-else-if="this.oink.length">
+        <li v-for="(ctn, i) in this.oinks" :key="i + '-ctn'" v-else-if="this.oinks.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -112,7 +112,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!this.oink.length && !this.loadingCTN">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.oinks.length && !this.loadingCTN">
           <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
@@ -139,7 +139,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in this.kitty" :key="i + '-ck'" v-else-if="this.kitty.length">
+        <li v-for="(ck, i) in this.kitties" :key="i + '-ck'" v-else-if="this.kitties.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -154,7 +154,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!this.kitty.length && !this.loadingCK">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.kitties.length && !this.loadingCK">
           <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
@@ -209,10 +209,10 @@ export default {
       loadingMCHH: true,
       loadingMCHE: true,
       switch1: false,
-      kitty: [],
-      oink: [],
-      mchh: [],
-      mche: [],
+      kitties: [],
+      oinks: [],
+      heros: [],
+      extensions: [],
       transactions: [],
       order: []
     }
@@ -220,7 +220,6 @@ export default {
   mounted: async function() {
     const order = this.order
     const store = this.$store
-    const kitty = this.kitty
     var account
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
@@ -233,24 +232,22 @@ export default {
       }
 
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
-        this.kitty = tokens
+        this.kitties = tokens
         this.loadingCK = false
       })
 
       api.getOinksByWalletAddress(client.account.address).then(async tokens => {
-        this.oink = tokens
+        this.oinks = tokens
         this.loadingCTN   = false
       })
 
-
-      //todo mchh,mcheの挙動確認
       client.ownedTokens('mchh').then(async tokens => {
           const promises = []
           for(var token of tokens){
             promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
-          this.mchh = tokens
+          this.heros = result
           this.loadingMCHH   = false
 
       })
@@ -261,7 +258,7 @@ export default {
             promises.push(await functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
-          this.mche = tokens
+          this.extensions = result
           this.loadingMCHE   = false
       })
 

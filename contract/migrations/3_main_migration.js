@@ -1,5 +1,5 @@
-var BazaaarProtocol_v2 = artifacts.require("./BazaaarProtocol_v2.sol");
+var EtherDistributer = artifacts.require("./EtherDistributer.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(BazaaarProtocol_v2)
+  deployer.deploy(EtherDistributer)
 };

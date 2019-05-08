@@ -3,7 +3,7 @@ pragma solidity 0.4.24;
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
-contract EtherDistributer_v1 is Pausable {
+contract EtherDistributer is Pausable {
     using SafeMath for uint;
 
     address blockbaseAddress;

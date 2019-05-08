@@ -278,8 +278,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
 
   //検証ブロック
   /*[TODO]
-   * referral付近に変更あり
-   * assetステータスの検証
+   * referral付近に変更あり()
+   * assetステータスの検証()
    *
    */
   const hash = await bazaaar.methods
@@ -331,6 +331,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    */
   const templateImg = new Canvas.Image()
   const characterImg = new Canvas.Image()
+  const content
   templateImg.src = resolved[0]
   characterImg.src = resolved[1].data
   const canvas = Canvas.createCanvas(1200, 630)
@@ -367,6 +368,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   }
   c.fillStyle = '#fff'
   c.font = "40px 'Noto Sans JP'"
+
   switch (asset) {
     case 'ck':
       c.fillText('Id.' + order.id + ' / ' + 'Gen.' + metadata.generation, 840, 255, 720)
@@ -405,7 +407,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
 
   //更新ブロック
   /*[TODO]
-   * deactivateDocOGPをDB Update triggerで起動するように変更
+   * deactivateDocOGPをDB Update triggerで起動するように変更()
    *
    */
   const batch = db.batch()
@@ -443,25 +445,33 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
 
   //書込ブロック
   /*[TODO]
-   * 取得ブロック(API)で作成したmsgをdataに入れる仕様にする
+   * 取得ブロック(API)で作成したmsgをdataに入れる仕様にする(ok)
    */
+  let content
+
+  switch (asset) {
+    case 'ck':
+      content = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '
+      break
+    case 'ctn':
+      content = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
+      break
+    case 'mch':
+      content = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+      break
+    case 'mche':
+      content = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+      break
+  }
+
   await axios({
     method: 'post',
     url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK,
     data: {
-      content: 'NOW ON SALE!!' +
-        ' / Id.' +
-        order.id +
-        ' / Gen.' +
-        metadata.generation +
-        ' / ' +
-        coolDownIndexToSpeed(metadata.status.cooldown_index) +
-        ' / #CryptoKitties ' +
-        config.discord.endpoint[project] +
-        'ck/order/' +
-        hash
+      content: content + config.discord.endpoint[project] + `${asset}/order/` + hash
     }
   })
+
   const result = {
     ogp: ogp,
     hash: hash
@@ -1516,10 +1526,6 @@ exports.orderCleaningPubSub = functions
       }
     }
   })
-
-
-
-exports.api = functions.region('asia-northeast1').https.onRequest(app)
 
 exports.api = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   /*[TODO]

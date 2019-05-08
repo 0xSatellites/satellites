@@ -1479,53 +1479,46 @@ exports.orderCleaningPubSub = functions
     }
   })
 
-const express = require('express')
-const app = express()
 
-app.get('/', (req, res) => res.send('This is bazaaar API'))
 
-app.get('/latestorders', async (req, res) => {
+exports.api = functions.region('asia-northeast1').https.onRequest(app)
+
+exports.api = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  /*[TODO]
+   * db内にアセットのシンボル追加する
+   * アセット毎に取得出来るようにする
+   *
+   */
   const result = []
-  const param = req.query.limit
-  const limit = Number(param)
+  const limit = Number(params.limit)
+  if(limit > 300){
+    limit = 300
+  }
   const snapshots = await db
     .collection('order')
     .where('valid', '==', true)
     .orderBy('created', 'desc')
     .limit(limit)
     .get()
-  let name = ''
+
   snapshots.forEach(function(doc) {
-    if (doc.data().asset == config.contract[project].ck) {
-      name = 'ck'
-    } else if (doc.data().asset == config.contract[project].ctn) {
-      asset = 'ctn'
-    } else if (doc.data().asset == config.contract[project].mchh) {
-      asset = 'mchh'
-    } else if (doc.data().asset == config.contract[project].mche) {
-      asset = 'mche'
-    }
+    const order = doc.data()
     const data = {
-      price: doc.data().price,
-      id: doc.data().id,
-      name: doc.data().metadata.name,
-      image: doc.data().metadata.image_url,
-      // 'generation': doc.data().metadata.generation,
-      // 'cooldown_index': doc.data().metadata.status.cooldown_index,
-      ogp: doc.data().ogp,
-      url: config.host[project] + name + '/order/' + doc.data().hash
+      price: order.price,
+      id: order.id,
+      name: order.metadata.name,
+      image: order.metadata.image_url,
+      ogp: order.ogp,
+      url: config.host[project] + order.symbol + '/order/' + order.hash
     }
     result.push(data)
   })
-  res.json(result)
+  return result
 })
 
-// app.get('/order', async(req, res) => {
-//   const param = req.query.hash
-//   //on going
-// });
 
-exports.api = functions.region('asia-northeast1').https.onRequest(app)
+
+
 
 // exports.getOinksByAddress = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
 //   res.set('Access-Control-Allow-Origin', '*')
@@ -1557,12 +1550,15 @@ exports.api = functions.region('asia-northeast1').https.onRequest(app)
 //   res.json(result.data)
 // })
 
-exports.userSign = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+
+
+//------------------------------- special ------------------------------- //
+
+
+exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const msg = web3.utils.utf8ToHex(
     'この署名を行うと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。'
   )
-  console.log(params)
-  console.log(params.modified)
   const address = web3.eth.accounts.recover(msg, params.sig)
   if (address == params.address) {
     await db
@@ -1572,8 +1568,6 @@ exports.userSign = functions.region('asia-northeast1').https.onCall(async (param
         mch_artedit: params.status,
         modified: params.modified
       })
-    return true
-  } else {
-    return false
   }
+  return address == params.address
 })

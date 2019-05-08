@@ -4,7 +4,9 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
 const db = admin.firestore()
-const settings = { timestampsInSnapshots: true }
+const settings = {
+  timestampsInSnapshots: true
+}
 db.settings(settings)
 const bucket = admin.storage().bucket(config.bucket[project])
 const { promisify } = require('util')
@@ -68,7 +70,9 @@ const deactivateDocOGP = async doc => {
   console.info('START deactivateDocOGP')
   const canvas = Canvas.createCanvas(1200, 630)
   const c = canvas.getContext('2d')
-  const imagePromise = axios.get(doc.ogp, { responseType: 'arraybuffer' })
+  const imagePromise = axios.get(doc.ogp, {
+    responseType: 'arraybuffer'
+  })
   const promises = [imagePromise, readFile('./assets/img/out_en.png')]
   const resolved = await Promise.all(promises)
   const bgImg = new Canvas.Image()
@@ -83,7 +87,11 @@ const deactivateDocOGP = async doc => {
   const base64EncodedImageString = canvas.toDataURL().substring(22)
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
   const file = bucket.file(doc.hash + '.png')
-  await file.save(imageBuffer, { metadata: { contentType: 'image/png' } })
+  await file.save(imageBuffer, {
+    metadata: {
+      contentType: 'image/png'
+    }
+  })
   console.info('END deactivateDocOGP')
 }
 
@@ -167,13 +175,15 @@ function disableBillingForProject(projectName) {
 
 //処理が被っているところは関数化、それ以外は関数化しない方針
 async function getAssetMetadataByAssetId(asset, id) {
-  var result
-  var response
+  let result
+  let response
 
   switch (asset) {
     case 'ck':
       response = await axios.get(config.api.ck.metadata + id, {
-        headers: { 'x-api-token': config.token.kitty }
+        headers: {
+          'x-api-token': config.token.kitty
+        }
       })
       result = response.data
       break
@@ -372,7 +382,9 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   snapshots.forEach(function(doc) {
     const ref = db.collection('order').doc(doc.id)
     batch.update(ref, {
-      result: { status: 'cancelled' },
+      result: {
+        status: 'cancelled'
+      },
       valid: false,
       modified: now
     })
@@ -380,7 +392,14 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   })
   const ref = db.collection('order').doc(hash)
   batch.set(ref, order)
-  const savePromises = [file.save(imageBuffer, { metadata: { contentType: 'image/png' } }), batch.commit()]
+  const savePromises = [
+    file.save(imageBuffer, {
+      metadata: {
+        contentType: 'image/png'
+      }
+    }),
+    batch.commit()
+  ]
   await Promise.all(savePromises.concat(deactivateDocOGPPromises))
 
   //書込ブロック
@@ -1148,7 +1167,7 @@ exports.orderMatchedPubSub = functions
       })
       resolved[1].forEach(function(doc) {
         if (doc.id != hash) {
-          var ref = db.collection('order').doc(doc.id)
+          let ref = db.collection('order').doc(doc.id)
           batch.update(ref, {
             result: { status: 'cancelled' },
             valid: false,
@@ -1218,46 +1237,24 @@ exports.orderPeriodicUpdatePubSub = functions
   .region('asia-northeast1')
   .pubsub.topic('orderPeriodicUpdate')
   .onPublish(async message => {
-    console.info('START orderPeriodicUpdate')
+    const blockNum = (await web3.eth.getBlockNumber()) - 25
     const eventPromises = [
-      bazaaar_v1.getPastEvents('OrderMatched', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+      bazaaar.getPastEvents('OrderMatched', {
+        fromBlock: blockNum,
         toBlock: 'latest'
       }),
-      bazaaar_v1.getPastEvents('OrderCancelled', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
-        toBlock: 'latest'
-      }),
-      bazaaar_v2.getPastEvents('OrderMatched', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
-        toBlock: 'latest'
-      }),
-      bazaaar_v2.getPastEvents('OrderCancelled', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
-        toBlock: 'latest'
-      }),
-      bazaaar_v3.getPastEvents('OrderMatched', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
-        toBlock: 'latest'
-      }),
-      bazaaar_v3.getPastEvents('OrderCancelled', {
-        fromBlock: (await web3.eth.getBlockNumber()) - 25,
+      bazaaar.getPastEvents('OrderCancelled', {
+        fromBlock: blockNum,
         toBlock: 'latest'
       })
     ]
     const eventResolved = await Promise.all(eventPromises)
-    console.info('INFO Sold')
-    console.info(eventResolved[2][0])
-    console.info('INFO Cancel')
-    console.info(eventResolved[3][0])
-    console.info('INFO orderPeriodicUpdate 1')
     const batch = db.batch()
     const takers = []
     const soldPromises = []
     const cancelledPromises = []
-    const deactivateDocOGPPromises = []
     const now = new Date().getTime()
-    for (var i = 0; i < eventResolved[0].length; i++) {
+    for (let i = 0; i < eventResolved[0].length; i++) {
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
         db
@@ -1266,83 +1263,14 @@ exports.orderPeriodicUpdatePubSub = functions
           .where('valid', '==', true)
           .get()
       )
-      cancelledPromises.push(
-        db
-          .collection('order')
-          .where('asset', '==', eventResolved[0][i].returnValues.asset)
-          .where('id', '==', eventResolved[0][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[0][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
-      )
     }
-    for (var i = 0; i < eventResolved[1].length; i++) {
+    for (let i = 0; i < eventResolved[1].length; i++) {
       cancelledPromises.push(
         db
           .collection('order')
           .where('asset', '==', eventResolved[1][i].returnValues.asset)
           .where('id', '==', eventResolved[1][i].returnValues.id.toString())
           .where('maker', '==', eventResolved[1][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
-      )
-    }
-    for (var i = 0; i < eventResolved[2].length; i++) {
-      takers.push(eventResolved[2][i].returnValues.taker)
-      soldPromises.push(
-        db
-          .collection('order')
-          .where('hash', '==', eventResolved[2][i].raw.topics[1])
-          .where('valid', '==', true)
-          .get()
-      )
-      cancelledPromises.push(
-        db
-          .collection('order')
-          .where('asset', '==', eventResolved[2][i].returnValues.asset)
-          .where('id', '==', eventResolved[2][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[2][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
-      )
-    }
-    for (var i = 0; i < eventResolved[3].length; i++) {
-      cancelledPromises.push(
-        db
-          .collection('order')
-          .where('asset', '==', eventResolved[3][i].returnValues.asset)
-          .where('id', '==', eventResolved[3][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[3][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
-      )
-    }
-    for (var i = 0; i < eventResolved[4].length; i++) {
-      takers.push(eventResolved[4][i].returnValues.taker)
-      soldPromises.push(
-        db
-          .collection('order')
-          .where('hash', '==', eventResolved[4][i].raw.topics[1])
-          .where('valid', '==', true)
-          .get()
-      )
-      cancelledPromises.push(
-        db
-          .collection('order')
-          .where('asset', '==', eventResolved[4][i].returnValues.asset)
-          .where('id', '==', eventResolved[4][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[4][i].returnValues.maker)
-          .where('valid', '==', true)
-          .get()
-      )
-    }
-    for (var i = 0; i < eventResolved[5].length; i++) {
-      cancelledPromises.push(
-        db
-          .collection('order')
-          .where('asset', '==', eventResolved[5][i].returnValues.asset)
-          .where('id', '==', eventResolved[5][i].returnValues.id.toString())
-          .where('maker', '==', eventResolved[5][i].returnValues.maker)
           .where('valid', '==', true)
           .get()
       )
@@ -1354,18 +1282,19 @@ exports.orderPeriodicUpdatePubSub = functions
       })
     )
 
-    console.info('INFO orderPeriodicUpdate 2')
     const processed = []
     for (let i = 0; i < orderResolved[0].length; i++) {
       orderResolved[0][i].forEach(function(doc) {
         processed.push(doc.id)
         let ref = db.collection('order').doc(doc.id)
         batch.update(ref, {
-          result: { status: 'sold', taker: takers[i] },
+          result: {
+            status: 'sold',
+            taker: takers[i]
+          },
           valid: false,
           modified: now
         })
-        deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
       })
     }
     for (let i = 0; i < orderResolved[1].length; i++) {
@@ -1373,17 +1302,16 @@ exports.orderPeriodicUpdatePubSub = functions
         if (!processed.includes(doc.id)) {
           let ref = db.collection('order').doc(doc.id)
           batch.update(ref, {
-            result: { status: 'cancelled' },
+            result: {
+              status: 'cancelled'
+            },
             valid: false,
             modified: now
           })
-          deactivateDocOGPPromises.push(deactivateDocOGP(doc.data()))
         }
       })
     }
-    const savePromises = [batch.commit()]
-    await Promise.all(savePromises.concat(deactivateDocOGPPromises))
-    console.info('END orderPeriodicUpdate')
+    await batch.commit()
   })
 
 exports.orderCleaningPubSub = functions
@@ -1400,7 +1328,7 @@ exports.orderCleaningPubSub = functions
       docs.push(doc.id)
     })
 
-    for (var i = 0; i < docs.length; i++) {
+    for (let i = 0; i < docs.length; i++) {
       const record = await db
         .collection('order')
         .doc(docs[i])
@@ -1431,7 +1359,9 @@ exports.orderCleaningPubSub = functions
               .collection('order')
               .doc(docs[i])
               .update({
-                result: { status: 'cancelled' },
+                result: {
+                  status: 'cancelled'
+                },
                 valid: false,
                 modified: now
               })
@@ -1443,7 +1373,9 @@ exports.orderCleaningPubSub = functions
             .collection('order')
             .doc(docs[i])
             .update({
-              result: { status: 'cancelled' },
+              result: {
+                status: 'cancelled'
+              },
               valid: false,
               modified: now
             })
@@ -1474,7 +1406,9 @@ exports.orderCleaningPubSub = functions
               .collection('order')
               .doc(docs[i])
               .update({
-                result: { status: 'cancelled' },
+                result: {
+                  status: 'cancelled'
+                },
                 valid: false,
                 modified: now
               })
@@ -1486,7 +1420,9 @@ exports.orderCleaningPubSub = functions
             .collection('order')
             .doc(docs[i])
             .update({
-              result: { status: 'cancelled' },
+              result: {
+                status: 'cancelled'
+              },
               valid: false,
               modified: now
             })
@@ -1517,7 +1453,9 @@ exports.orderCleaningPubSub = functions
               .collection('order')
               .doc(docs[i])
               .update({
-                result: { status: 'cancelled' },
+                result: {
+                  status: 'cancelled'
+                },
                 valid: false,
                 modified: now
               })
@@ -1529,7 +1467,9 @@ exports.orderCleaningPubSub = functions
             .collection('order')
             .doc(docs[i])
             .update({
-              result: { status: 'cancelled' },
+              result: {
+                status: 'cancelled'
+              },
               valid: false,
               modified: now
             })
@@ -1587,35 +1527,35 @@ app.get('/latestorders', async (req, res) => {
 
 exports.api = functions.region('asia-northeast1').https.onRequest(app)
 
-exports.getOinksByAddress = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*')
-  res.set('Access-Control-Allow-Methods', 'GET')
-  res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
-  var result = await axios.get('https://api.crypt-oink.io/tokens_of?' + req.query.address)
+// exports.getOinksByAddress = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+//   res.set('Access-Control-Allow-Origin', '*')
+//   res.set('Access-Control-Allow-Methods', 'GET')
+//   res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
+//   res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+//   const result = await axios.get('https://api.crypt-oink.io/tokens_of?' + req.query.address)
 
-  const promises = []
-  for (var i = 0; i < result.data.length; i++) {
-    promises.push(axios.get(config.api.ctn.metadata + result.data[i] + '.json'))
-  }
-  tokens = await Promise.all(promises)
-  console.log(tokens)
-  const data = []
-  for (var i = 0; i < tokens.length; i++) {
-    tokens[i].data.id = result.data[i]
-    data.push(tokens[i].data)
-  }
-  res.json(data)
-})
+//   const promises = []
+//   for (var i = 0; i < result.data.length; i++) {
+//     promises.push(axios.get(config.api.ctn.metadata + result.data[i] + '.json'))
+//   }
+//   tokens = await Promise.all(promises)
+//   console.log(tokens)
+//   const data = []
+//   for (var i = 0; i < tokens.length; i++) {
+//     tokens[i].data.id = result.data[i]
+//     data.push(tokens[i].data)
+//   }
+//   res.json(data)
+// })
 
-exports.getOinkById = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*')
-  res.set('Access-Control-Allow-Methods', 'GET')
-  res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
-  var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
-  res.json(result.data)
-})
+// exports.getOinkById = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+//   res.set('Access-Control-Allow-Origin', '*')
+//   res.set('Access-Control-Allow-Methods', 'GET')
+//   res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
+//   res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+//   var result = await axios.get(config.api.ctn.metadata + req.query.id + '.json')
+//   res.json(result.data)
+// })
 
 exports.userSign = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const msg = web3.utils.utf8ToHex(
@@ -1623,7 +1563,7 @@ exports.userSign = functions.region('asia-northeast1').https.onCall(async (param
   )
   console.log(params)
   console.log(params.modified)
-  var address = web3.eth.accounts.recover(msg, params.sig)
+  const address = web3.eth.accounts.recover(msg, params.sig)
   if (address == params.address) {
     await db
       .collection('user')

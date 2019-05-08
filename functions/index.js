@@ -42,7 +42,6 @@ const {
 } = require('google-auth-library')
 const PROJECT_NAME = `projects/${config.billion[project]}`
 
-//Done
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
@@ -151,7 +150,6 @@ function coolDownIndexToSpeed(index) {
 }
 
 //Done(あとでなおす)
-
 exports.subscribe = event => {
   const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString())
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
@@ -214,6 +212,8 @@ function disableBillingForProject(projectName) {
       return 'Billing disabled successfully: ' + JSON.stringify(res.data)
     })
 }
+
+
 
 //Done!
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
@@ -599,7 +599,6 @@ exports.orderCleaningPubSub = functions
                 valid: false,
                 modified: now
               })
-            await deactivateDocOGP(order)
           }
         } catch (err) {
           console.info('deactivate: ' + docs[i])
@@ -613,7 +612,6 @@ exports.orderCleaningPubSub = functions
               valid: false,
               modified: now
             })
-          await deactivateDocOGP(order)
         }
       } else if (order.proxy == config.contract[project].bazaaar_v2) {
         try {
@@ -635,7 +633,6 @@ exports.orderCleaningPubSub = functions
             )
             .call()
           if (hash != order.hash) {
-            console.info('deactivate: ' + docs[i])
             await db
               .collection('order')
               .doc(docs[i])
@@ -646,7 +643,6 @@ exports.orderCleaningPubSub = functions
                 valid: false,
                 modified: now
               })
-            await deactivateDocOGP(order)
           }
         } catch (err) {
           console.info('deactivate: ' + docs[i])
@@ -660,7 +656,6 @@ exports.orderCleaningPubSub = functions
               valid: false,
               modified: now
             })
-          await deactivateDocOGP(order)
         }
       } else if (order.proxy == config.contract[project].bazaaar_v3) {
         try {
@@ -682,7 +677,6 @@ exports.orderCleaningPubSub = functions
             )
             .call()
           if (hash != order.hash) {
-            console.info('deactivate: ' + docs[i])
             await db
               .collection('order')
               .doc(docs[i])
@@ -693,7 +687,6 @@ exports.orderCleaningPubSub = functions
                 valid: false,
                 modified: now
               })
-            await deactivateDocOGP(order)
           }
         } catch (err) {
           console.info('deactivate: ' + docs[i])
@@ -707,7 +700,6 @@ exports.orderCleaningPubSub = functions
               valid: false,
               modified: now
             })
-          await deactivateDocOGP(order)
         }
       }
     }
@@ -746,6 +738,7 @@ exports.api = functions.region('asia-northeast1').https.onCall(async (params, co
   return result
 })
 
+//Done
 exports.deactivateOrderImageOnOrderChange = functions.region('asia-northeast1').firestore.document('order/{hash}').onUpdate(async (change, context) => {
   const previous = change.before.data()
   const doc = change.after.data()

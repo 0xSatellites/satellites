@@ -87,7 +87,7 @@
       </ul>
     </section> -->
 
-    <!-- <section class="c-index c-index--mypage" v-if="account.address">
+    <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
       <ul>
         <v-progress-circular
@@ -97,7 +97,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
+        <li v-for="(ctn, i) in this.oink" :key="i + '-ctn'" v-else-if="this.oink.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -112,7 +112,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loadingCTN">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.oink.length && !this.loadingCTN">
           <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
@@ -127,9 +127,9 @@
                 </v-card>
               </a>
           </v-flex>
-    </section> -->
+    </section>
 
-    <!-- <section class="c-index c-index--mypage" v-if="account.address">
+    <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
       <ul>
         <v-progress-circular
@@ -139,7 +139,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+        <li v-for="(ck, i) in this.kitty" :key="i + '-ck'" v-else-if="this.kitty.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -154,7 +154,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loadingCK">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.kitty.length && !this.loadingCK">
           <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
@@ -169,11 +169,11 @@
                 </v-card>
               </a>
           </v-flex>
-    </section> -->
+    </section>
 
     <!-- 履歴 -->
-    <section class="c-index c-index--mypage" v-if="transactions.length">
-      <v-data-table :headers="headers" :items="transactions" class="elevation-1">
+    <section class="c-index c-index--mypage" v-if="this.transactions.length">
+      <v-data-table :headers="headers" :items="this.transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
           <td>{{ timeConverter(props.item.modified) }}</td>
           <td v-if="props.item.maker == account.address">sold</td>
@@ -195,10 +195,32 @@ import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
 export default {
+  data() {
+    return {
+      headers: [
+        { text: 'date', value: 'date' },
+        { text: 'result', value: 'result' },
+        { text: 'asset', value: 'asset' },
+        { text: 'id', value: 'id' },
+        { text: 'price', value: 'price' }
+      ],
+      loadingCK: true,
+      loadingCTN: true,
+      loadingMCHH: true,
+      loadingMCHE: true,
+      switch1: false,
+      kitty: [],
+      oink: [],
+      mchh: [],
+      mche: [],
+      transactions: [],
+      order: []
+    }
+  },
   mounted: async function() {
-    const myitems = this.myitems
     const order = this.order
     const store = this.$store
+    const kitty = this.kitty
     var account
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
@@ -209,42 +231,42 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-      this.loadingCK = true
-      this.loadingCTN = true
-      this.loadingMCHH = true
-      this.loadingMCHE = true
 
-      const kitty = await api.getKittiesByWalletAddress(client.account.address)
-      const oink = await api.getOinksByWalletAddress(client.account.address)
+      api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
+        this.kitty = tokens
+        this.loadingCK = false
+      })
+
+      api.getOinksByWalletAddress(client.account.address).then(async tokens => {
+        this.oink = tokens
+        this.loadingCTN   = false
+      })
+
 
       //todo mchh,mcheの挙動確認
-      // const mchh = await client.ownedTokens('mchh').then(async tokens => {
-      //     const promises = []
-      //     for(var token of tokens){
-      //       promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
-      //     }
-      //     return await Promise.all(promises)
-      // })
+      client.ownedTokens('mchh').then(async tokens => {
+          const promises = []
+          for(var token of tokens){
+            promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
+          }
+          const result = await Promise.all(promises)
+          this.mchh = tokens
+          this.loadingMCHH   = false
 
-      // const mche = await client.ownedTokens('mche').then(async tokens => {
-      //     const promises = []
-      //     for(var token of tokens){
-      //       promises.push(await functions.call('metadata', {asset:'mche', id:token}))
-      //     }
-      //     return await Promise.all(promises)
-      // })
+      })
 
-      const array = kitty.concat(oink, mchh, mche);
-      store.dispatch('asset/setAssets', array)
+      client.ownedTokens('mche').then(async tokens => {
+          const promises = []
+          for(var token of tokens){
+            promises.push(await functions.call('metadata', {asset:'mche', id:token}))
+          }
+          const result = await Promise.all(promises)
+          this.mche = tokens
+          this.loadingMCHE   = false
+      })
 
-
-      firestore
-        .getValidOrdersByMaker(client.account.address)
-        .then(orders => store.dispatch('order/setOrders', orders))
-
-      firestore
-        .getHistoryByAddress(client.account.address)
-        .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
+      this.transactions =  await firestore.getHistoryByAddress(client.account.address)
+      this.order = await firestore.getValidOrdersByMaker(client.account.address)
 
       const result = await firestore.doc('user', client.account.address)
       if(result){
@@ -258,18 +280,9 @@ export default {
     account() {
       return this.$store.getters['account/account']
     },
-    myitems() {
-      return this.$store.getters['asset/assets']
-    },
-    orders() {
-      return this.$store.getters['order/orders']
-    },
-    transactions() {
-      return this.$store.getters['transaction/transactions']
-    },
     selling() {
       const result = []
-      for (const order of this.$store.getters['order/orders']) {
+      for (const order of this.order) {
         result.push(order.id)
       }
       return result
@@ -277,7 +290,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return common.coolDownIndexToSpeed(index)
+    },
+    oinkCoolDownIndexToSpeed(index){
+      return common.coolDownIndexToSpeed(index)
     },
     getRarity(asset, type) {
         return common.getRarity(asset, type)
@@ -286,7 +302,7 @@ export default {
         return client.utils.fromWei(wei)
     },
     timeConverter(timestamp){
-      return kitty.timeConverter(timestamp)
+      return common.timeConverter(timestamp)
     },
     toAsset(asset){
       return client.toAsset(asset)
@@ -314,22 +330,6 @@ export default {
         }
       }
   },
-  data() {
-    return {
-      headers: [
-        { text: 'date', value: 'date' },
-        { text: 'result', value: 'result' },
-        { text: 'asset', value: 'asset' },
-        { text: 'id', value: 'id' },
-        { text: 'price', value: 'price' }
-      ],
-      loadingCK: false,
-      loadingCTN: false,
-      loadingMCHH: false,
-      loadingMCHE: false,
-      switch1: false,
-    }
-  }
 }
 </script>
 

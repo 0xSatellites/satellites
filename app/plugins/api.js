@@ -1,6 +1,5 @@
 const axios = require("axios")
 const config = require('../config.json')
-const client = require ('./ethereum-client.js')
 
 const instance = axios.create({
     baseURL: 'https://public.api.cryptokitties.co/v1/',

@@ -43,8 +43,8 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
-import common from '~/plugins/common'
-import kitty from '~/plugins/kitty'
+import lib from '~/plugins/lib'
+
 
 const config = require('../config.json')
 const project = process.env.project
@@ -58,13 +58,13 @@ export default {
     props: ['recommend'],
     methods: {
     getRarity(asset) {
-      return common.getRarity(asset)
+      return lib.getRarity(asset)
     },
     fromWei(wei) {
       return client.utils.fromWei(wei)
     },
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     },
     data() {

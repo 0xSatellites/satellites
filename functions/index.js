@@ -194,6 +194,7 @@ async function getAssetMetadataByAssetId(asset, id) {
   return result
 }
 
+
 //Done
 function coolDownIndexToSpeed(index) {
   switch (index) {
@@ -248,6 +249,7 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
   res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
   const result = await getAssetMetadataByAssetId(req.query.asset, req.query.id)
   res.json(result)
+
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {

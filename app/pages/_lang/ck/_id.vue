@@ -14,7 +14,7 @@
             CryptoKitties
           </div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getKittyRarity(asset)" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'ck')" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
           <li><strong>Gen：</strong> {{asset.generation}} </li>
@@ -145,7 +145,8 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import kitty from '~/plugins/kitty'
+import api from '~/plugins/api'
+import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 
@@ -186,8 +187,12 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      const asset = await kitty.getKittyById(params.id)
-      asset.status.cooldown_index_to_speed = await kitty.coolDownIndexToSpeed(Number(asset.status.cooldown_index))
+      // const data = {
+      //   asset: 'ck',
+      //   id: params.id
+      // }
+      // const asset = await functions.call('metadata', data)
+      const asset = await api.getKittyById(params.id)
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
@@ -250,10 +255,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
-    getKittyRarity(asset) {
-        return kitty.getKittyRarity(asset)
+    getRarity(asset, type) {
+      return lib.getRarity(asset, type)
     },
     closeModal() {
       this.modal = false

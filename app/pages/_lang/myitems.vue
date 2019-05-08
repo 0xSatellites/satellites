@@ -39,7 +39,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(mchh, i) in myheros" :key="i + '-mchh'" v-else-if="myheros.length">
+        <li v-for="(mchh, i) in this.heros" :key="i + '-mchh'" v-else-if="this.heros.length">
           <div>
             <nuxt-link :to="$t('myitems.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -51,7 +51,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myextensions.length && !myheros.length && !this.loadingMCHH && !this.loadingMCHE">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.extensions.length && !this.heros.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -71,8 +71,8 @@
       </ul>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-      <ul v-if="myextensions.length">
-        <li v-for="(mche, i) in myextensions" :key="i + '-mche'" >
+      <ul v-if="this.extensions.length">
+        <li v-for="(mche, i) in this.extensions" :key="i + '-mche'" >
           <div>
             <nuxt-link :to="$t('myitems.holdMCHE')  + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mche.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -97,7 +97,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ctn, i) in myoinks" :key="i + '-ctn'" v-else-if="myoinks.length">
+        <li v-for="(ctn, i) in this.oinks" :key="i + '-ctn'" v-else-if="this.oinks.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCTN') + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ctn.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -106,13 +106,13 @@
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ ctn.id }}</div>
-              <!-- <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div> -->
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div>
             </nuxt-link>
           </div>
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myoinks.length && !this.loadingCTN">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.oinks.length && !this.loadingCTN">
           <a href="https://www.crypt-oink.io" target="_blank">
                 <v-card>
                   <v-img
@@ -139,7 +139,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(ck, i) in myitems" :key="i + '-ck'" v-else-if="myitems.length">
+        <li v-for="(ck, i) in this.kitties" :key="i + '-ck'" v-else-if="this.kitties.length">
           <div>
             <nuxt-link :to="$t('myitems.holdCK') + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(ck.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -154,7 +154,7 @@
         </li>
 
       </ul>
-        <v-flex xs12 sm6 offset-sm3 v-if="!myitems.length && !this.loadingCK">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.kitties.length && !this.loadingCK">
           <a href="https://www.cryptokitties.co/" target="_blank">
                 <v-card>
                   <v-img
@@ -172,8 +172,8 @@
     </section>
 
     <!-- 履歴 -->
-    <section class="c-index c-index--mypage" v-if="transactions.length">
-      <v-data-table :headers="headers" :items="transactions" class="elevation-1">
+    <section class="c-index c-index--mypage" v-if="this.transactions.length">
+      <v-data-table :headers="headers" :items="this.transactions" class="elevation-1">
         <template slot="items" slot-scope="props">
           <td>{{ timeConverter(props.item.modified) }}</td>
           <td v-if="props.item.maker == account.address">sold</td>
@@ -189,20 +189,35 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
-import common from '~/plugins/common'
-import kitty from '~/plugins/kitty'
-import oink from '~/plugins/oink'
-import hero from '~/plugins/hero'
-import extension from '~/plugins/extension'
+import lib from '~/plugins/lib'
+import api from '~/plugins/api'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
 export default {
+  data() {
+    return {
+      headers: [
+        { text: 'date', value: 'date' },
+        { text: 'result', value: 'result' },
+        { text: 'asset', value: 'asset' },
+        { text: 'id', value: 'id' },
+        { text: 'price', value: 'price' }
+      ],
+      loadingCK: true,
+      loadingCTN: true,
+      loadingMCHH: true,
+      loadingMCHE: true,
+      switch1: false,
+      kitties: [],
+      oinks: [],
+      heros: [],
+      extensions: [],
+      transactions: [],
+      order: []
+    }
+  },
   mounted: async function() {
-    const myitems = this.myitems
-    const myoinks = this.myoinks
-    const myheros = this.myheros
-    const myextensions = this.myextensions
     const order = this.order
     const store = this.$store
     var account
@@ -215,20 +230,15 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-      this.loadingCK = true
-      this.loadingCTN = true
-      this.loadingMCHH = true
-      this.loadingMCHE = true
 
-
-      kitty.getKittiesByWalletAddress(client.account.address).then(tokens => {
+      api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
+        this.kitties = tokens
         this.loadingCK = false
-        store.dispatch('asset/setAssets', tokens)
       })
 
-      oink.getOinksByWalletAddress(client.account.address).then(tokens => {
-        this.loadingCTN = false
-        store.dispatch('oink/setOinks', tokens)
+      api.getOinksByWalletAddress(client.account.address).then(async tokens => {
+        this.oinks = tokens
+        this.loadingCTN   = false
       })
 
       client.ownedTokens('mchh').then(async tokens => {
@@ -237,8 +247,9 @@ export default {
             promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
           }
           const result = await Promise.all(promises)
-          store.dispatch('hero/setHeros', result)
-          this.loadingMCHH = false
+          this.heros = result
+          this.loadingMCHH   = false
+
       })
 
       client.ownedTokens('mche').then(async tokens => {
@@ -247,17 +258,12 @@ export default {
             promises.push(await functions.call('metadata', {asset:'mche', id:token}))
           }
           const result = await Promise.all(promises)
-          store.dispatch('extension/setExtensions', result)
-          this.loadingMCHE = false
+          this.extensions = result
+          this.loadingMCHE   = false
       })
 
-      firestore
-        .getValidOrdersByMaker(client.account.address)
-        .then(orders => store.dispatch('order/setOrders', orders))
-
-      firestore
-        .getHistoryByAddress(client.account.address)
-        .then(transactions => { store.dispatch('transaction/setTransactions', transactions)})
+      this.transactions =  await firestore.getHistoryByAddress(client.account.address)
+      this.order = await firestore.getValidOrdersByMaker(client.account.address)
 
       const result = await firestore.doc('user', client.account.address)
       if(result){
@@ -271,27 +277,9 @@ export default {
     account() {
       return this.$store.getters['account/account']
     },
-    myitems() {
-      return this.$store.getters['asset/assets']
-    },
-    myoinks() {
-      return this.$store.getters['oink/oinks']
-    },
-    myheros() {
-      return this.$store.getters['hero/heros']
-    },
-    myextensions() {
-      return this.$store.getters['extension/extensions']
-    },
-    orders() {
-      return this.$store.getters['order/orders']
-    },
-    transactions() {
-      return this.$store.getters['transaction/transactions']
-    },
     selling() {
       const result = []
-      for (const order of this.$store.getters['order/orders']) {
+      for (const order of this.order) {
         result.push(order.id)
       }
       return result
@@ -299,16 +287,19 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
+    },
+    oinkCoolDownIndexToSpeed(index){
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset, type) {
-        return common.getRarity(asset, type)
+      return lib.getRarity(asset, type)
     },
     fromWei(wei) {
-        return client.utils.fromWei(wei)
+      return client.utils.fromWei(wei)
     },
     timeConverter(timestamp){
-      return kitty.timeConverter(timestamp)
+      return lib.timeConverter(timestamp)
     },
     toAsset(asset){
       return client.toAsset(asset)
@@ -336,22 +327,6 @@ export default {
         }
       }
   },
-  data() {
-    return {
-      headers: [
-        { text: 'date', value: 'date' },
-        { text: 'result', value: 'result' },
-        { text: 'asset', value: 'asset' },
-        { text: 'id', value: 'id' },
-        { text: 'price', value: 'price' }
-      ],
-      loadingCK: false,
-      loadingCTN: false,
-      loadingMCHH: false,
-      loadingMCHE: false,
-      switch1: false,
-    }
-  }
 }
 </script>
 

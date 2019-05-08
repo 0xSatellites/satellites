@@ -114,8 +114,7 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import Modal from '~/components/modal'
-import common from '~/plugins/common'
-import hero from '~/plugins/hero'
+import lib from '~/plugins/lib'
 import Related from '~/components/related'
 
 import '@fortawesome/fontawesome-free/css/all.css'
@@ -203,13 +202,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return common.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-        return common.getRarity(asset)
-    },
-    getHeroRarity(asset) {
-      return hero.getHeroRarity(asset)
+        return lib.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

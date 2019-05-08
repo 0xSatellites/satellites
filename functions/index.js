@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = 'sand'
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -41,6 +41,73 @@ const {
   auth
 } = require('google-auth-library')
 const PROJECT_NAME = `projects/${config.billion[project]}`
+
+function setAuthCredential() {
+  return auth.getApplicationDefault().then(res => {
+    let client2 = res.credential
+    if (client2.createScopedRequired && client2.createScopedRequired()) {
+      client2 = client2.createScoped(['https://www.googleapis.com/auth/cloud-billing'])
+    }
+    // Set credential globally for all requests
+    google.options({
+      auth: client2
+    })
+  })
+}
+
+function isBillingEnabled(projectName) {
+  return cloudbilling.projects
+    .getBillingInfo({
+      name: projectName
+    })
+    .then(res => res.data.billingEnabled)
+}
+
+function disableBillingForProject(projectName) {
+  return cloudbilling.projects
+    .updateBillingInfo({
+      name: projectName,
+      // Setting this to empty is equivalent to disabling billing.
+      resource: {
+        billingAccountName: ''
+      }
+    })
+    .then(res => {
+      return 'Billing disabled successfully: ' + JSON.stringify(res.data)
+    })
+}
+
+async function get () {
+  switch (assetName) {
+    case 'ck':
+      let owner = await ck.methods.kittyIndexToOwner(order.id).call()
+      approve = await ck.methods.kittyIndexToApproved(order.id).call()
+      if (order.maker != owner) return
+      if (order.maker != approve) return
+      break
+    case 'ctn':
+      owner = await ctn.methods.entityIndexToOwner(order.id).call()
+      if (order.maker != owner) return
+      approve = await ctn.methods.entityIndexToApproved(order.id).call()
+      if (order.maker != approve) return
+      break
+    case 'mchh':
+      owner = await mchh.methods.ownerOf(order.id).call()
+      if (order.maker != owner) return
+      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      if (!approve) return
+      break
+    case 'mche':
+      owner = await mche.methods.ownerOf(order.id).call()
+      if (order.maker != owner) return
+      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      if (!approve) return
+      break
+  }
+}
+
+
+
 
 async function getAssetMetadataByAssetId(asset, id) {
   let result
@@ -165,57 +232,9 @@ exports.subscribe = event => {
     })
 }
 
-/**
- * @return {Promise} Credentials set globally
- */
-function setAuthCredential() {
-  return auth.getApplicationDefault().then(res => {
-    let client2 = res.credential
-    if (client2.createScopedRequired && client2.createScopedRequired()) {
-      client2 = client2.createScoped(['https://www.googleapis.com/auth/cloud-billing'])
-    }
-    // Set credential globally for all requests
-    google.options({
-      auth: client2
-    })
-  })
-}
-
-/**
- * @param {string} projectName Name of project to check if billing is enabled
- * @return {Promise} Whether project has billing enabled or not
- */
-function isBillingEnabled(projectName) {
-  console.log('INFO 9')
-  return cloudbilling.projects
-    .getBillingInfo({
-      name: projectName
-    })
-    .then(res => res.data.billingEnabled)
-}
-
-/**
- * @param {string} projectName Name of project disable billing on
- * @return {Promise} Text containing response from disabling billing
- */
-function disableBillingForProject(projectName) {
-  console.log('INFO 10')
-  return cloudbilling.projects
-    .updateBillingInfo({
-      name: projectName,
-      // Setting this to empty is equivalent to disabling billing.
-      resource: {
-        billingAccountName: ''
-      }
-    })
-    .then(res => {
-      return 'Billing disabled successfully: ' + JSON.stringify(res.data)
-    })
-}
-
-
-
 //Done!
+
+
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')
   res.set('Access-Control-Allow-Methods', 'GET')
@@ -230,28 +249,18 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const now = new Date().getTime()
   const orderPricefromWei = web3.utils.fromWei(order.price)
   order.price_sort = web3.utils.padLeft(order.price, 36)
-  const assetName = await Object.keys(config.contract[project]).filter((key) => {
+  const assetNameArray = Object.keys(config.contract[project]).filter((key) => {
     return config.contract[project][key] === order.asset
   });
-  const asset = assetName[0]
+  const assetName= assetNameArray[0]
 
-  //検証ブロック
-  /*[TODO]
-   * referral付近に変更あり()
-   * assetステータスの検証()
-   * - makerが自身が保持しているか
-   * - approveが済んでいるか
-   * - できていなかったらreturn
-   */
+  let pass = false
 
-  let owner
-  let approve
-
-  switch (asset) {
+  switch (assetName) {
     case 'ck':
-      owner = await ck.methods.kittyIndexToOwner(order.id).call()
-      if (order.maker != owner) return
+      let owner = await ck.methods.kittyIndexToOwner(order.id).call()
       approve = await ck.methods.kittyIndexToApproved(order.id).call()
+      if (order.maker != owner) return
       if (order.maker != approve) return
       break
     case 'ctn':
@@ -273,6 +282,9 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
       if (!approve) return
       break
   }
+
+
+
 
   const hash = await bazaaar.methods
     .requireValidOrder_(

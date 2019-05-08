@@ -20,12 +20,24 @@ const getOinksByWalletAddress = async address => {
     return result.data
 }
 
+//ToDo metadaのcloud functionができたら、これらは削除
+const getKittyById = async id => {
+  const result = await instance.get('kitties/'+ id)
+  return result.data
+}
+
+const getOinkById = async id => {
+  const result = await instance2.get('getOinkById?id='+ id)
+    return result.data
+}
 
 
 
 const api = {
   getKittiesByWalletAddress: getKittiesByWalletAddress,
   getOinksByWalletAddress: getOinksByWalletAddress,
+  getKittyById: getKittyById,
+  getOinkById: getOinkById
 
 }
 

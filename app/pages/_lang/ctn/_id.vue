@@ -14,7 +14,7 @@
             Crypt-Oink
           </div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getOinkRarity(asset)" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'ctn')" :key="i + '-rarity'">★</span></li>
           </ul>
           <ul class="l-item__data">
           <li><strong>Gen：</strong> {{generation}} </li>
@@ -153,7 +153,8 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import oink from '~/plugins/oink'
+import lib from '~/plugins/lib'
+import api from '~/plugins/api'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 
@@ -189,7 +190,6 @@ export default {
         v => v.length <= 18 || 'Message must be less than 18 characters'
       ],
       host,
-      oinkCooldownIndex: 0,
       generation: 0,
       type: { name: 'くりぷ豚', symbol: 'ctn'}
     }
@@ -201,7 +201,7 @@ export default {
            .call()
       const generation = await entities.generation
       const cooldown_index = await entities.cooldownIndex
-      let result = await oink.getOinkById(params.id)
+      let result = await api.getOinkById(params.id)
       result.id = params.id
       result.image_url = result.image
       result.generation = generation
@@ -279,10 +279,10 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return oink.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
-    getOinkRarity(asset) {
-      return oink.getOinkRarity(asset)
+    getRarity(asset, type) {
+      return lib.getRarity(asset, type)
     },
     closeModal() {
       this.modal = false

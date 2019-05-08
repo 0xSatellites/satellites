@@ -25,9 +25,7 @@ Canvas.registerFont(__dirname + '/assets/fonts/NotoSansJP-Bold.otf', {
 })
 const Web3 = require('web3')
 const web3 = new Web3(config.node[project].https)
-const bazaaar_v1 = new web3.eth.Contract(config.abi.bazaaar_v1, config.contract[project].bazaaar_v1)
-const bazaaar_v2 = new web3.eth.Contract(config.abi.bazaaar_v2, config.contract[project].bazaaar_v2)
-const bazaaar_v3 = new web3.eth.Contract(config.abi.bazaaar_v3, config.contract[project].bazaaar_v3)
+const bazaaar = new web3.eth.Contract(config.abi.bazaaar, config.contract[project].bazaaar)
 const ck = new web3.eth.Contract(config.abi.ck, config.contract[project].ck)
 const ctn = new web3.eth.Contract(config.abi.ctn, config.contract[project].ctn)
 const mchh = new web3.eth.Contract(config.abi.mchh, config.contract[project].mchh)
@@ -42,6 +40,7 @@ const {
 } = require('google-auth-library')
 const PROJECT_NAME = `projects/${config.billion[project]}`
 
+//Done
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
@@ -150,6 +149,7 @@ function coolDownIndexToSpeed(index) {
 }
 
 //Done(あとでなおす)
+
 exports.subscribe = event => {
   const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString())
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
@@ -213,8 +213,6 @@ function disableBillingForProject(projectName) {
     })
 }
 
-
-
 //Done!
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')
@@ -263,13 +261,13 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     case 'mchh':
       owner = await mchh.methods.ownerOf(order.id).call()
       if (order.maker != owner) return
-      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
       if (!approve) return
       break
     case 'mche':
       owner = await mche.methods.ownerOf(order.id).call()
       if (order.maker != owner) return
-      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
       if (!approve) return
       break
   }
@@ -492,21 +490,21 @@ exports.orderPeriodicUpdatePubSub = functions
       takers.push(eventResolved[0][i].returnValues.taker)
       soldPromises.push(
         db
-        .collection('order')
-        .where('hash', '==', eventResolved[0][i].raw.topics[1])
-        .where('valid', '==', true)
-        .get()
+          .collection('order')
+          .where('hash', '==', eventResolved[0][i].raw.topics[1])
+          .where('valid', '==', true)
+          .get()
       )
     }
     for (let i = 0; i < eventResolved[1].length; i++) {
       cancelledPromises.push(
         db
-        .collection('order')
-        .where('asset', '==', eventResolved[1][i].returnValues.asset)
-        .where('id', '==', eventResolved[1][i].returnValues.id.toString())
-        .where('maker', '==', eventResolved[1][i].returnValues.maker)
-        .where('valid', '==', true)
-        .get()
+          .collection('order')
+          .where('asset', '==', eventResolved[1][i].returnValues.asset)
+          .where('id', '==', eventResolved[1][i].returnValues.id.toString())
+          .where('maker', '==', eventResolved[1][i].returnValues.maker)
+          .where('valid', '==', true)
+          .get()
       )
     }
     const promiseArray = [soldPromises, cancelledPromises]
@@ -568,39 +566,25 @@ exports.orderCleaningPubSub = functions
         .doc(docs[i])
         .get()
       const order = record.data()
-      if (order.proxy == config.contract[project].bazaaar_v1) {
-        try {
-          const hash = await bazaaar_v1.methods
-            .requireValidOrder_(
-              [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
-              [
-                order.id,
-                order.price,
-                order.nonce,
-                order.salt,
-                order.expiration,
-                order.creatorRoyaltyRatio,
-                order.referralRatio
-              ],
-              order.v,
-              order.r,
-              order.s
-            )
-            .call()
-          if (hash != order.hash) {
-            console.info('deactivate: ' + docs[i])
-            await db
-              .collection('order')
-              .doc(docs[i])
-              .update({
-                result: {
-                  status: 'cancelled'
-                },
-                valid: false,
-                modified: now
-              })
-          }
-        } catch (err) {
+      try {
+        const hash = await bazaaar.methods
+          .requireValidOrder_(
+            [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
+            [
+              order.id,
+              order.price,
+              order.nonce,
+              order.salt,
+              order.expiration,
+              order.creatorRoyaltyRatio,
+              order.referralRatio
+            ],
+            order.v,
+            order.r,
+            order.s
+          )
+          .call()
+        if (hash != order.hash) {
           console.info('deactivate: ' + docs[i])
           await db
             .collection('order')
@@ -612,95 +596,21 @@ exports.orderCleaningPubSub = functions
               valid: false,
               modified: now
             })
+          await deactivateDocOGP(order)
         }
-      } else if (order.proxy == config.contract[project].bazaaar_v2) {
-        try {
-          const hash = await bazaaar_v2.methods
-            .requireValidOrder_(
-              [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
-              [
-                order.id,
-                order.price,
-                order.nonce,
-                order.salt,
-                order.expiration,
-                order.creatorRoyaltyRatio,
-                order.referralRatio
-              ],
-              order.v,
-              order.r,
-              order.s
-            )
-            .call()
-          if (hash != order.hash) {
-            await db
-              .collection('order')
-              .doc(docs[i])
-              .update({
-                result: {
-                  status: 'cancelled'
-                },
-                valid: false,
-                modified: now
-              })
-          }
-        } catch (err) {
-          console.info('deactivate: ' + docs[i])
-          await db
-            .collection('order')
-            .doc(docs[i])
-            .update({
-              result: {
-                status: 'cancelled'
-              },
-              valid: false,
-              modified: now
-            })
-        }
-      } else if (order.proxy == config.contract[project].bazaaar_v3) {
-        try {
-          const hash = await bazaaar_v3.methods
-            .requireValidOrder_(
-              [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
-              [
-                order.id,
-                order.price,
-                order.nonce,
-                order.salt,
-                order.expiration,
-                order.creatorRoyaltyRatio,
-                order.referralRatio
-              ],
-              order.v,
-              order.r,
-              order.s
-            )
-            .call()
-          if (hash != order.hash) {
-            await db
-              .collection('order')
-              .doc(docs[i])
-              .update({
-                result: {
-                  status: 'cancelled'
-                },
-                valid: false,
-                modified: now
-              })
-          }
-        } catch (err) {
-          console.info('deactivate: ' + docs[i])
-          await db
-            .collection('order')
-            .doc(docs[i])
-            .update({
-              result: {
-                status: 'cancelled'
-              },
-              valid: false,
-              modified: now
-            })
-        }
+      } catch (err) {
+        console.info('deactivate: ' + docs[i])
+        await db
+          .collection('order')
+          .doc(docs[i])
+          .update({
+            result: {
+              status: 'cancelled'
+            },
+            valid: false,
+            modified: now
+          })
+        await deactivateDocOGP(order)
       }
     }
   })
@@ -738,7 +648,6 @@ exports.api = functions.region('asia-northeast1').https.onCall(async (params, co
   return result
 })
 
-//Done
 exports.deactivateOrderImageOnOrderChange = functions.region('asia-northeast1').firestore.document('order/{hash}').onUpdate(async (change, context) => {
   const previous = change.before.data()
   const doc = change.after.data()

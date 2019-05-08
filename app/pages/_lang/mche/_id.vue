@@ -14,7 +14,7 @@
           <div class="l-item__txt">
           </div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getExtensionRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'mche')" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
           <ul class="l-item__data">
             <li><strong>HP：</strong> {{asset.attributes.hp }}</li>
@@ -161,7 +161,7 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import extension from '~/plugins/extension'
+import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 
@@ -275,8 +275,8 @@ export default {
     }
   },
   methods: {
-    getExtensionRarity(asset) {
-      return extension.getExtensionRarity(asset)
+    getRarity(asset, type) {
+      return lib.getRarity(asset, type)
     },
     closeModal() {
       this.modal = false

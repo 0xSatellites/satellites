@@ -19,7 +19,7 @@
           <div class="l-item__name"  v-if="asset.name && lang === 'en'">{{ asset.hero_type.name.en }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'mchh')" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
           <ul class="l-item__data">
           <li><strong>HP：</strong> {{asset.attributes.hp }}</li>
@@ -169,7 +169,7 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import hero from '~/plugins/hero'
+import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 
@@ -282,8 +282,8 @@ export default {
     }
   },
   methods: {
-    getHeroRarity(asset) {
-      return hero.getHeroRarity(asset)
+    getRarity(asset, type) {
+      return lib.getRarity(asset, type)
     },
     closeModal() {
       this.modal = false

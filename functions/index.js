@@ -261,7 +261,7 @@ async function getAssetMetadataByAssetId(asset, id) {
 exports.metadata = functions.region('asia-northeast1').https.onCall(async (data, context) => {
   console.log('asset:' + data.asset)
   console.log('id:' + data.id)
-  return await metadata(data.asset, data.id)
+  return await getAssetMetadataByAssetId(data.asset, data.id)
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {

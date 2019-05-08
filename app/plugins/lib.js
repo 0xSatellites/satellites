@@ -94,10 +94,24 @@ const toAsset = asset => {
   }
 }
 
+const timeConverter = timestamp =>{
+  var _d = new Date(timestamp);
+
+  var Y = _d.getFullYear();
+  var m = ("0" + (_d.getMonth() + 1)).slice(-2);
+  var d = ("0" + _d.getDate()).slice(-2);
+  var H = ("0" + _d.getHours()).slice(-2);
+  var i = ("0" + _d.getMinutes()).slice(-2);
+  var s = ("0" + _d.getSeconds()).slice(-2);
+
+  return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+}
+
 const common = {
   coolDownIndexToSpeed: coolDownIndexToSpeed,
   getRarity: getRarity,
-  toAsset: toAsset
+  toAsset: toAsset,
+  timeConverter: timeConverter
 }
 
 export default common

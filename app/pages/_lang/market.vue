@@ -101,9 +101,7 @@
 <script>
 import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
-import kitty from '~/plugins/kitty'
-import oink from '~/plugins/oink'
-import common from '~/plugins/common'
+import lib from '~/plugins/lib'
 
 const config = require('../../config.json')
 const project = process.env.project
@@ -259,10 +257,10 @@ export default {
       await this.$store.dispatch('order/setOrders', searchs)
     },
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset) {
-      return common.getRarity(asset)
+      return lib.getRarity(asset)
     },
     fromWei(wei) {
         return client.utils.fromWei(wei)

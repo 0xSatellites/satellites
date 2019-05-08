@@ -189,7 +189,7 @@
 
 <script>
 import client from '~/plugins/ethereum-client'
-import common from '~/plugins/common'
+import lib from '~/plugins/lib'
 import api from '~/plugins/api'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
@@ -277,16 +277,16 @@ export default {
   },
   methods: {
     coolDownIndexToSpeed(index) {
-      return kitty.coolDownIndexToSpeed(index)
+      return lib.coolDownIndexToSpeed(index)
     },
     getRarity(asset, type) {
-        return common.getRarity(asset, type)
+      return lib.getRarity(asset, type)
     },
     fromWei(wei) {
-        return client.utils.fromWei(wei)
+      return client.utils.fromWei(wei)
     },
     timeConverter(timestamp){
-      return kitty.timeConverter(timestamp)
+      return lib.timeConverter(timestamp)
     },
     toAsset(asset){
       return client.toAsset(asset)

@@ -38,7 +38,7 @@ const cloudbilling = google.cloudbilling('v1')
 const {
   auth
 } = require('google-auth-library')
-const PROJECT_NAME = `projects/${config.billion[project]}`
+const PROJECT_NAME = `projects/ ${config.billion[project]}`
 
 function setAuthCredential() {
   return auth.getApplicationDefault().then(res => {
@@ -75,32 +75,43 @@ function disableBillingForProject(projectName) {
     })
 }
 
-async function get () {
-  switch (assetName) {
+async function validateAssetStatus (order) {
+  const bazaaarAddress = config.contract[project].bazaaar
+  let passed = false
+  let owner
+  let approvedAddress
+  let isApprovedForAll
+  switch (order.assetName) {
     case 'ck':
-      let owner = await ck.methods.kittyIndexToOwner(order.id).call()
-      approve = await ck.methods.kittyIndexToApproved(order.id).call()
-      if (order.maker != owner) return
-      if (order.maker != approve) return
+      owner = await ck.methods.kittyIndexToOwner(order.id).call()
+      approvedAddress = await ck.methods.kittyIndexToApproved(order.id).call()
+      if(order.maker == owner && bazaaarAddress == approvedAddress) {
+        passed = true
+      }
       break
     case 'ctn':
       owner = await ctn.methods.entityIndexToOwner(order.id).call()
-      if (order.maker != owner) return
-      approve = await ctn.methods.entityIndexToApproved(order.id).call()
-      if (order.maker != approve) return
+      approvedAddress = await ctn.methods.entityIndexToApproved(order.id).call()
+      if(order.maker == owner && bazaaarAddress == approvedAddress) {
+        passed = true
+      }
       break
     case 'mchh':
       owner = await mchh.methods.ownerOf(order.id).call()
-      if (order.maker != owner) return
-      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
-      if (!approve) return
+      isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
+      if (isApprovedForAll && order.maker != owner) {
+        passed = true
+      }
       break
     case 'mche':
       owner = await mche.methods.ownerOf(order.id).call()
-      if (order.maker != owner) return
-      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
-      if (!approve) return
+      isApprovedForAll = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
+      if (isApprovedForAll && order.maker != owner) {
+        passed = true
+      }
       break
+    default:
+      return passed
   }
 }
 
@@ -108,6 +119,7 @@ async function get () {
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
+  let general
   switch (asset) {
     case 'ck':
       response = await axios.get(config.api.ck.metadata + id, {
@@ -122,7 +134,7 @@ async function getAssetMetadataByAssetId(asset, id) {
       result = response.data
       break
     case 'mchh':
-      let general = await axios.get(config.api.mch.metadata + 'hero/' + id)
+      general = await axios.get(config.api.mch.metadata + 'hero/' + id)
       response = general.data
       let promises = []
       promises.push(axios.get(config.api.mch.metadata + 'heroType/' + general.data.extra_data.hero_type))
@@ -241,17 +253,21 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const order = params.order
   const now = new Date().getTime()
-  const orderPricefromWei = web3.utils.fromWei(order.price)
-  order.price_sort = web3.utils.padLeft(order.price, 36)
   const assetNameArray = Object.keys(config.contract[project]).filter((key) => {
     return config.contract[project][key] === order.asset
   });
-  const assetName= assetNameArray[0]
+  order.assetName= assetNameArray[0]
+  const orderPricefromWei = web3.utils.fromWei(order.price)
+  order.price_sort = web3.utils.padLeft(order.price, 36)
 
   let pass = false
 
+  if(!validateAssetStatus(order)){
+    return
+  }
+
   switch (assetName) {
-    case 'ck':
+    case 'ck': 
       let owner = await ck.methods.kittyIndexToOwner(order.id).call()
       approve = await ck.methods.kittyIndexToApproved(order.id).call()
       if (order.maker != owner) return

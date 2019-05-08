@@ -19,7 +19,7 @@
           <div class="l-item__name"  v-if="asset.name && lang === 'en'">{{ asset.hero_type.name.en }}</div>
           <div class="l-item__txt">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'mchh')" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getHeroRarity(asset)" :key="i + '-rarity'">★</span>{{asset.attributes.rarity}}</li>
           </ul>
           <ul class="l-item__data">
           <li><strong>HP：</strong> {{asset.attributes.hp }}</li>
@@ -39,107 +39,23 @@
           </ul>
           <br>
           <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>
-          <v-form>
-            <div class="l-item__action">
-              <div class="l-item__action__price" v-if="approved && owned">
-                <label
-                  ><input type="text" v-model="price" id="amount"/> ETH
-                  <input type="text" style="display:none"></label
-                >
-              </div>
-              <div v-if="approved && owned">{{$t("id.fee")}}</div>
-              <div class="l-item__action__textarea" v-if="approved && owned">
-                <v-text-field
-                  v-model="msg"
-                  :rules="msgRules"
-                  :counter="18"
-                  :placeholder="$t('id.inputMessage')"
-                ></v-text-field>
-              </div>
-              <div v-if="owned">
-                <div class="l-item__action__btns" v-if="!approved">
-                  <v-btn
-                    class="l-item__action__btn"
-                    :disabled="!valid || loading"
-                    large
-                    @click="approve"
-                  >
-                    {{ $t('id.approve') }}
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && !order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox ||!account.address"
-                    color="#3498db"
-                    large
-                    @click="order_v1"
-                  >
-                    {{ $t('id.sell') }}
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
-                    color="#3498db"
-                    large
-                    @click="order_v1('change')"
-                  >
-                    DISCOUNT
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
-                    color="#3498db"
-                    large
-                    @click="cancel"
-                  >
-                    cancel
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loadingCancel"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-                <v-checkbox
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  :label="$t('id.agree')"
-                  required
-                  v-if="approved && owned"
-                ></v-checkbox>
-              </div>
-            </div>
-          </v-form>
+          <orderForm
+            :order="order"
+            :owned="owned"
+            :valid="valid"
+            :loadingCancel="loadingCancel"
+            :approved="approved"
+            :waitDiscount="waitDiscount"
+            :waitCancel="waitCancel"
+            :loading="loading"
+            :checkbox="checkbox"
+            v-on:approve="approve"
+            v-on:order_v1="order_v1"
+            v-on:cancel="cancel"
+            :ogp="ogp"
+            :msgRules="msgRules"
+            :account="account"
+          ></orderForm>
         </div>
       </div>
     </section>
@@ -169,9 +85,10 @@
 import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
-import lib from '~/plugins/lib'
+import hero from '~/plugins/hero'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
+import OrderForm from '~/components/orderForm'
 
 
 const config = require('../../../config.json')
@@ -181,7 +98,8 @@ const host = config.host[project]
 export default {
   components: {
     Modal,
-    Related
+    Related,
+    OrderForm
   },
   data() {
     return {
@@ -190,7 +108,7 @@ export default {
       tokenOwner: false,
       hash: '',
       ogp: '',
-      price: '',
+      // price: '',
       loading: false,
       loadingCancel: false,
       waitDiscount: false,
@@ -200,7 +118,7 @@ export default {
       approved: false,
       owned: false,
       owner: '',
-      msg: '',
+      // msg: '',
       msgRules: [
         v => v.length <= 18 || 'Message must be less than 18 characters'
       ],
@@ -282,8 +200,8 @@ export default {
     }
   },
   methods: {
-    getRarity(asset, type) {
-      return lib.getRarity(asset, type)
+    getHeroRarity(asset) {
+      return hero.getHeroRarity(asset)
     },
     closeModal() {
       this.modal = false
@@ -298,7 +216,9 @@ export default {
       this.modal = false
       router.push({ path: '/mchh/order/' + this.hash })
     },
-    async order_v1(type) {
+    async order_v1(type, price, message) {
+      console.log(price)
+      console.log(message)
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
       try {
         console.log('order_v3')
@@ -310,7 +230,7 @@ export default {
         const asset = this.asset.mchh
         const params = this.$route.params
         const router = this.$router
-        const amount = this.price
+        const amount = price
         const wei = client.utils.toWei(amount)
         if (
           type == 'change' &&
@@ -360,7 +280,7 @@ export default {
           const signedOrder = await client.signOrder(order)
           const datas = {
             order: signedOrder,
-            msg: this.msg
+            msg: message
           }
           var result = await functions.call('order', datas)
           this.hash = result.hash
@@ -447,13 +367,5 @@ export default {
   }
 }
 </script>
-<style scoped>
-.twitter-share-button {
-  text-decoration: none;
-  color: white;
-}
 
-.white_text {
-  color: white;
-}
-</style>
+

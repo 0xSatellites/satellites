@@ -138,7 +138,6 @@ async function getAssetMetadataByAssetId(asset, id) {
       promises.push(axios.get(config.api.mch.metadata + 'heroType/' + general.data.extra_data.hero_type))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id))
-      console.log("mchh1")
       if (general.data.extra_data.current_art) {
         promises.push(axios.get(config.api.mch.metadata + 'ipfs/' + general.data.extra_data.current_art))
       }
@@ -164,7 +163,6 @@ async function getAssetMetadataByAssetId(asset, id) {
         .collection('user')
         .doc(editor_address)
         .get()
-      console.log(doc.exists)
       if (!doc.exists){
         result = response
         break
@@ -177,6 +175,7 @@ async function getAssetMetadataByAssetId(asset, id) {
       } else if (30 <= likes && likes < 100) {
         response.royalty_rate = 300
       }
+      console.log("mchh8")
       result = response
       break
     case 'mche':

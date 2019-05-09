@@ -48,7 +48,6 @@ import lib from '~/plugins/lib'
 
 const config = require('../config.json')
 const project = process.env.project
-const host = config.host[project]
 const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh

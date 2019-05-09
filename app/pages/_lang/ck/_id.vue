@@ -18,6 +18,7 @@
             :msgRules="msgRules"
             :account="account"
             :asset="asset"
+            :type="type"
           ></id>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
@@ -54,6 +55,7 @@ import id from '~/components/id'
 
 
 const config = require('../../../config.json')
+const axios = require('axios')
 const project = process.env.project
 const host = config.host[project]
 
@@ -81,26 +83,24 @@ export default {
       owned: false,
       owner: '',
       msg: '',
-      msgRules: [
-        v => v.length <= 18 || 'Message must be less than 18 characters'
-      ],
+      // msgRules: [
+      //   v => v.length <= 18 || 'Message must be less than 18 characters'
+      // ],
       host,
       type: { name: 'CryptoKitties', symbol: 'ck'}
     }
   },
   async asyncData({ store, params, error }) {
     try {
-      console.log(config.functions[project] + 'metadata?asset=ck&id=' +params.id)
       let result = await axios.get(
         config.functions[project] + 'metadata?asset=ck&id=' +params.id
       )
-      console.log(result)// 空
       const asset = result.data
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
+      console.log(recommend)
       await store.dispatch('order/setOrders', recommend)
     } catch(err){
-      console.log(err)
       error({ statusCode: 404, message: 'Post not found' })
     }
   },
@@ -178,85 +178,85 @@ export default {
       router.push({ path: '/ck/order/' + this.hash })
     },
     async order_v1(type) {
-      const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-      try {
-        console.log('order_v1')
-        this.loading = true
-        this.waitCancel = true
-        this.modalNo = 5
-        this.modal = true
-        const account = this.account
-        const asset = this.asset.ck
-        const params = this.$route.params
-        const router = this.$router
-        const amount = this.price
-        const wei = client.utils.toWei(amount)
-        if (
-          type == 'change' &&
-          this.order.price / 1000000000000000000 <= amount
-        ) {
-          alert('make it cheeper')
-          this.loading = false
-          this.modal = false
-          this.waitCancel = false
-          return
-        }
+            const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+            try {
+                console.log('order_v1')
+                this.loading = true
+                this.waitCancel = true
+                this.modalNo = 5
+                this.modal = true
+                const account = this.account
+                const asset = this.asset.ck
+                const params = this.$route.params
+                const router = this.$router
+                const amount = this.price
+                const wei = client.utils.toWei(amount)
+                if (
+                type == 'change' &&
+                this.order.price / 1000000000000000000 <= amount
+                ) {
+                alert('make it cheeper')
+                this.loading = false
+                this.modal = false
+                this.waitCancel = false
+                return
+                }
 
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
-          .call()
+                const approved = await client.contract.ck.methods
+                .kittyIndexToApproved(params.id)
+                .call()
 
-        if (approved == client.contract.bazaaar_v1.options.address) {
-          console.log('approved')
-          const nonce = await client.contract.bazaaar_v1.methods
-            .nonce_(
-              account.address,
-              client.contract.ck.options.address,
-              params.id
-            )
-            .call()
+                if (approved == client.contract.bazaaar_v1.options.address) {
+                console.log('approved')
+                const nonce = await client.contract.bazaaar_v1.methods
+                    .nonce_(
+                    account.address,
+                    client.contract.ck.options.address,
+                    params.id
+                    )
+                    .call()
 
-          const salt = Math.floor(Math.random() * 1000000000)
-          //const date = new Date()
-          //date.setDate(date.getDate() + 7)
-          //const expiration = Math.round(date.getTime() / 1000)
-          const expiration = Math.round(9999999999999 / 1000) - 1
-          const order = {
-            proxy: client.contract.bazaaar_v1.options.address,
-            maker: account.address,
-            taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: account.address,
-            asset: client.contract.ck.options.address,
-            id: params.id,
-            price: wei,
-            nonce: nonce,
-            salt: salt,
-            expiration: expiration,
-            creatorRoyaltyRatio: 0,
-            referralRatio: 0
-          }
-          const signedOrder = await client.signOrder(order)
-          const datas = {
-            order: signedOrder,
-            msg: this.msg
-          }
-          var result = await functions.call('order', datas)
-          this.hash = result.hash
-          this.ogp = result.ogp
-          this.modal = false
-          await sleep(1)
-          this.modalNo = 1
-          this.modal = true
-        }
-        this.loading = false
-        this.waitCancel = false
-      } catch (err) {
-        alert(this.$t('error.message'))
-        this.loading = false
-        this.modal = false
-        this.waitCancel = false
-      }
-    },
+                const salt = Math.floor(Math.random() * 1000000000)
+                //const date = new Date()
+                //date.setDate(date.getDate() + 7)
+                //const expiration = Math.round(date.getTime() / 1000)
+                const expiration = Math.round(9999999999999 / 1000) - 1
+                const order = {
+                    proxy: client.contract.bazaaar_v1.options.address,
+                    maker: account.address,
+                    taker: config.constant.nulladdress,
+                    creatorRoyaltyRecipient: account.address,
+                    asset: client.contract.ck.options.address,
+                    id: params.id,
+                    price: wei,
+                    nonce: nonce,
+                    salt: salt,
+                    expiration: expiration,
+                    creatorRoyaltyRatio: 0,
+                    referralRatio: 0
+                }
+                const signedOrder = await client.signOrder(order)
+                const datas = {
+                    order: signedOrder,
+                    msg: this.msg
+                }
+                var result = await functions.call('order', datas)
+                this.hash = result.hash
+                this.ogp = result.ogp
+                this.modal = false
+                await sleep(1)
+                this.modalNo = 1
+                this.modal = true
+                }
+                this.loading = false
+                this.waitCancel = false
+            } catch (err) {
+                alert(this.$t('error.message'))
+                this.loading = false
+                this.modal = false
+                this.waitCancel = false
+            }
+        },
     async approve() {
       try{
       this.loading = true

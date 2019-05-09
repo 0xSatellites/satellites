@@ -31,7 +31,9 @@
     "assets":{
         "kitty":"CryptoKitties",
         "oink":"Crypt-Oink",
-        "mch":"MyCryptoHeros"
+        "mch":"MyCryptoHeros",
+        "mchh":"MyCryptoHeros",
+        "mche":"MyCryptoHeros"
     },
     "header":{
         "mypage": "MyPage",

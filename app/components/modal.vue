@@ -258,7 +258,7 @@
 
 <script>
 export default {
-    props: ['ogp','asset','hash','modalNo', 'host', 'url', 'type'],
+    props: ['ogp','asset','hash','modalNo', 'host', 'url', 'type'], //orderのimgが取れていないので購入時に描画されない
     computed: {
     order() {
       return this.$store.getters['order/order']

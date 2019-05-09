@@ -90,16 +90,17 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      // const data = {
-      //   asset: 'ck',
-      //   id: params.id
-      // }
-      // const asset = await functions.call('metadata', data)
-      const asset = await api.getKittyById(params.id)
+      console.log(config.functions[project] + 'metadata?asset=ck&id=' +params.id)
+      let result = await axios.get(
+        config.functions[project] + 'metadata?asset=ck&id=' +params.id
+      )
+      console.log(result)// 空
+      const asset = result.data
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
     } catch(err){
+      console.log(err)
       error({ statusCode: 404, message: 'Post not found' })
     }
   },

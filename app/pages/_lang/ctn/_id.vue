@@ -18,7 +18,7 @@
           </ul>
           <ul class="l-item__data">
           <li><strong>Gen：</strong> {{generation}} </li>
-          <li><strong>Cooldown：</strong> {{oinkCooldownIndex}}</li>
+          <li><strong>Cooldown：</strong> {{cooldownIndex}}</li>
           </ul>
 
           <v-form>
@@ -159,6 +159,7 @@ import Modal from '~/components/modal'
 import Related from '~/components/related'
 
 const config = require('../../../config.json')
+const axios = require('axios')
 const project = process.env.project
 const host = config.host[project]
 
@@ -191,23 +192,16 @@ export default {
       ],
       host,
       generation: 0,
+      cooldownIndex: 0,
       type: { name: 'くりぷ豚', symbol: 'ctn'}
     }
   },
   async asyncData({ store, params, error }) {
     try {
-      const entities = await client.contract.ctn.methods
-           .getEntity(params.id)
-           .call()
-      const generation = await entities.generation
-      const cooldown_index = await entities.cooldownIndex
-      let result = await api.getOinkById(params.id)
-      result.id = params.id
-      result.image_url = result.image
-      result.generation = generation
-      result.status = {}
-      result.status.cooldown_index_to_speed = await oink.coolDownIndexToSpeed(Number(cooldown_index))
-      const asset = result
+      let result = await axios.get(
+        config.functions[project] + 'metadata?asset=ctn&id=' +params.id
+      )
+      const asset = result.data
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
       await store.dispatch('order/setOrders', recommend)
@@ -260,7 +254,6 @@ export default {
            .call()
           this.generation = await entities.generation
           this.cooldown_index = await entities.cooldownIndex
-          this.oinkCooldownIndex = this.coolDownIndexToSpeed(Number(await entities.cooldownIndex))
     }
   },
   computed: {

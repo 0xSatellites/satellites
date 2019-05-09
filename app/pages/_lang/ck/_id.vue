@@ -1,123 +1,25 @@
 <template>
   <div>
     <section class="l-item">
-      <div class="l-item__frame">
-        <div>
-          <div class="l-item__img">
-            <img :src="asset.image_url" alt="" />
-          </div>
-        </div>
-        <div>
-          <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
-          <div class="l-item__txt"># {{ asset.id }}</div>
-          <div class="l-item__txt">
-            CryptoKitties
-          </div>
-          <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'ck')" :key="i + '-rarity'">★</span></li>
-          </ul>
-          <ul class="l-item__data">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
-          </ul>
-
-          <v-form>
-            <div class="l-item__action">
-              <div class="l-item__action__price" v-if="approved && owned">
-                <label
-                  ><input type="text" v-model="price" id="amount"/> ETH
-                  <input type="text" style="display:none"></label
-                >
-              </div>
-              <div class="l-item__action__textarea" v-if="approved && owned">
-                <v-text-field
-                  v-model="msg"
-                  :rules="msgRules"
-                  :counter="18"
-                  :placeholder="$t('id.inputMessage')"
-                ></v-text-field>
-              </div>
-              <div v-if="approved && owned" class="small">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
-              <v-checkbox
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  :label="$t('id.agree')"
-                  required
-                  v-if="approved && owned"
-                  height ="20"
-                ></v-checkbox>
-              <div v-if="owned">
-                <div class="l-item__action__btns" v-if="!approved">
-                  <v-btn
-                    class="l-item__action__btn"
-                    :disabled="!valid || loading"
-                    large
-                    @click="approve"
-                  >
-                    {{ $t('id.approve') }}
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && !order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox ||!account.address"
-                    color="#3498db"
-                    large
-                    @click="order_v1"
-                  >
-                    {{ $t('id.sell') }}
-                  </v-btn>
-                </div>
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
-                    color="#3498db"
-                    large
-                    @click="order_v1('change')"
-                  >
-                    DISCOUNT
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
-                    color="#3498db"
-                    large
-                    @click="cancel"
-                  >
-                    cancel
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loadingCancel"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-              </div>
-            </div>
-          </v-form>
-        </div>
-      </div>
+      <id
+            v-on:approve="approve"
+            v-on:order_v1="order_v1"
+            v-on:cancel="cancel"
+            :order="order"
+            :owned="owned"
+            :valid="valid"
+            :loadingCancel="loadingCancel"
+            :approved="approved"
+            :waitDiscount="waitDiscount"
+            :waitCancel="waitCancel"
+            :loading="loading"
+            :checkbox="checkbox"
+            :ogp="ogp"
+            :msgRules="msgRules"
+            :account="account"
+            :asset="asset"
+            :type="type"
+          ></id>
     </section>
     <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
       <h2 class="c-index__title">{{$t('id.relatedAsset')}}</h2>
@@ -149,16 +51,19 @@ import api from '~/plugins/api'
 import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
+import id from '~/components/id'
 
 
 const config = require('../../../config.json')
+const axios = require('axios')
 const project = process.env.project
 const host = config.host[project]
 
 export default {
   components: {
     Modal,
-    Related
+    Related,
+    id
   },
   data() {
     return {
@@ -178,23 +83,22 @@ export default {
       owned: false,
       owner: '',
       msg: '',
-      msgRules: [
-        v => v.length <= 18 || 'Message must be less than 18 characters'
-      ],
+      // msgRules: [
+      //   v => v.length <= 18 || 'Message must be less than 18 characters'
+      // ],
       host,
       type: { name: 'CryptoKitties', symbol: 'ck'}
     }
   },
   async asyncData({ store, params, error }) {
     try {
-      // const data = {
-      //   asset: 'ck',
-      //   id: params.id
-      // }
-      // const asset = await functions.call('metadata', data)
-      const asset = await api.getKittyById(params.id)
+      let result = await axios.get(
+        config.functions[project] + 'metadata?asset=ck&id=' +params.id
+      )
+      const asset = result.data
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
+      console.log(recommend)
       await store.dispatch('order/setOrders', recommend)
     } catch(err){
       error({ statusCode: 404, message: 'Post not found' })
@@ -274,85 +178,85 @@ export default {
       router.push({ path: '/ck/order/' + this.hash })
     },
     async order_v1(type) {
-      const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-      try {
-        console.log('order_v1')
-        this.loading = true
-        this.waitCancel = true
-        this.modalNo = 5
-        this.modal = true
-        const account = this.account
-        const asset = this.asset.ck
-        const params = this.$route.params
-        const router = this.$router
-        const amount = this.price
-        const wei = client.utils.toWei(amount)
-        if (
-          type == 'change' &&
-          this.order.price / 1000000000000000000 <= amount
-        ) {
-          alert('make it cheeper')
-          this.loading = false
-          this.modal = false
-          this.waitCancel = false
-          return
-        }
+            const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+            try {
+                console.log('order_v1')
+                this.loading = true
+                this.waitCancel = true
+                this.modalNo = 5
+                this.modal = true
+                const account = this.account
+                const asset = this.asset.ck
+                const params = this.$route.params
+                const router = this.$router
+                const amount = this.price
+                const wei = client.utils.toWei(amount)
+                if (
+                type == 'change' &&
+                this.order.price / 1000000000000000000 <= amount
+                ) {
+                alert('make it cheeper')
+                this.loading = false
+                this.modal = false
+                this.waitCancel = false
+                return
+                }
 
-        const approved = await client.contract.ck.methods
-          .kittyIndexToApproved(params.id)
-          .call()
+                const approved = await client.contract.ck.methods
+                .kittyIndexToApproved(params.id)
+                .call()
 
-        if (approved == client.contract.bazaaar_v1.options.address) {
-          console.log('approved')
-          const nonce = await client.contract.bazaaar_v1.methods
-            .nonce_(
-              account.address,
-              client.contract.ck.options.address,
-              params.id
-            )
-            .call()
+                if (approved == client.contract.bazaaar_v1.options.address) {
+                console.log('approved')
+                const nonce = await client.contract.bazaaar_v1.methods
+                    .nonce_(
+                    account.address,
+                    client.contract.ck.options.address,
+                    params.id
+                    )
+                    .call()
 
-          const salt = Math.floor(Math.random() * 1000000000)
-          //const date = new Date()
-          //date.setDate(date.getDate() + 7)
-          //const expiration = Math.round(date.getTime() / 1000)
-          const expiration = Math.round(9999999999999 / 1000) - 1
-          const order = {
-            proxy: client.contract.bazaaar_v1.options.address,
-            maker: account.address,
-            taker: config.constant.nulladdress,
-            creatorRoyaltyRecipient: account.address,
-            asset: client.contract.ck.options.address,
-            id: params.id,
-            price: wei,
-            nonce: nonce,
-            salt: salt,
-            expiration: expiration,
-            creatorRoyaltyRatio: 0,
-            referralRatio: 0
-          }
-          const signedOrder = await client.signOrder(order)
-          const datas = {
-            order: signedOrder,
-            msg: this.msg
-          }
-          var result = await functions.call('order', datas)
-          this.hash = result.hash
-          this.ogp = result.ogp
-          this.modal = false
-          await sleep(1)
-          this.modalNo = 1
-          this.modal = true
-        }
-        this.loading = false
-        this.waitCancel = false
-      } catch (err) {
-        alert(this.$t('error.message'))
-        this.loading = false
-        this.modal = false
-        this.waitCancel = false
-      }
-    },
+                const salt = Math.floor(Math.random() * 1000000000)
+                //const date = new Date()
+                //date.setDate(date.getDate() + 7)
+                //const expiration = Math.round(date.getTime() / 1000)
+                const expiration = Math.round(9999999999999 / 1000) - 1
+                const order = {
+                    proxy: client.contract.bazaaar_v1.options.address,
+                    maker: account.address,
+                    taker: config.constant.nulladdress,
+                    creatorRoyaltyRecipient: account.address,
+                    asset: client.contract.ck.options.address,
+                    id: params.id,
+                    price: wei,
+                    nonce: nonce,
+                    salt: salt,
+                    expiration: expiration,
+                    creatorRoyaltyRatio: 0,
+                    referralRatio: 0
+                }
+                const signedOrder = await client.signOrder(order)
+                const datas = {
+                    order: signedOrder,
+                    msg: this.msg
+                }
+                var result = await functions.call('order', datas)
+                this.hash = result.hash
+                this.ogp = result.ogp
+                this.modal = false
+                await sleep(1)
+                this.modalNo = 1
+                this.modal = true
+                }
+                this.loading = false
+                this.waitCancel = false
+            } catch (err) {
+                alert(this.$t('error.message'))
+                this.loading = false
+                this.modal = false
+                this.waitCancel = false
+            }
+        },
     async approve() {
       try{
       this.loading = true

@@ -119,6 +119,11 @@
         "staging":"https://alien-outlet-233005.appspot.com/",
         "production":"https://bazaaar.io/"
     },
+    "functions":{
+        "sand":"https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/",
+        "staging":"https://asia-northeast1-alien-outlet-233005.cloudfunctions.net/",
+        "production":"https://asia-northeast1-bold-vial-233010.cloudfunctions.net/"
+    },
     "recipient":{
         "sand":{
             "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",

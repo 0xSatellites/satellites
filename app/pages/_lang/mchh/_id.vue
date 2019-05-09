@@ -40,6 +40,9 @@
           <br>
           <div class="l-item__txt">{{$t("id.mchh_condition")}}</div>
           <orderForm
+            v-on:approve="approve"
+            v-on:order_v1="order_v1"
+            v-on:cancel="cancel"
             :order="order"
             :owned="owned"
             :valid="valid"
@@ -49,9 +52,6 @@
             :waitCancel="waitCancel"
             :loading="loading"
             :checkbox="checkbox"
-            v-on:approve="approve"
-            v-on:order_v1="order_v1"
-            v-on:cancel="cancel"
             :ogp="ogp"
             :msgRules="msgRules"
             :account="account"
@@ -129,7 +129,10 @@ export default {
   },
   async asyncData({ store, params, error }) {
     try {
-      let result = await functions.call("metadata", {asset:"mchh", id:params.id})
+      let result = await axios.get(
+        config.functions[project] + "metadata",
+        {asset:"mchh", id:params.id}
+      )
       const asset = result
       store.dispatch('asset/setAsset', asset)
       const recommend = await firestore.getLatestValidOrders(4)
@@ -143,7 +146,7 @@ export default {
     const params = this.$route.params
     this.lang = store.state.i18n.locale
     this.art_approved = this.asset.mch_artedit
-
+    console.log(asset)
     var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {

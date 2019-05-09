@@ -1,0 +1,307 @@
+<template>
+    <div>
+        <div class="l-information__img">
+            <img class="ogpimg" :src="order.ogp" />
+        </div>
+        <div class="l-information__frame" v-if="order.valid">
+            <div class="l-information__name">
+                {{ name }}
+            </div>
+            <div class="l-information__txt">#{{ order.id }}</div>
+            <div class="l-information__txt">{{$t("assets." + type.symbol)}}</div>
+            <div class="l-information__txt">{{$t('hash.seller')}} : {{ order.maker }}</div>
+            <div class="l-information__txt" v-if="order.creatorRoyaltyRatio>=300">{{$t('hash.creator')}} : {{ order.creatorRoyaltyRecipient }}</div>
+            <ul class="l-information__data">
+                <li><span class="l-information__rarity l-item__rarity--5" v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></li>
+            </ul>
+            
+            <!------------------------ マイクリ ------------------------->
+            <div v-if="type.symbol == 'mchh' || 'mche'">
+                <ul class="l-information__data">
+                <li><strong>HP：</strong> {{order.metadata.attributes.hp }}</li>
+                <li><strong>PHY：</strong> {{order.metadata.attributes.phy }}</li>
+                <li><strong>INT：</strong> {{order.metadata.attributes.int }}</li>
+                <li><strong>AGI：</strong> {{order.metadata.attributes.agi }}</li>
+                </ul>
+                <div v-if="type.symbol == 'mchh'">
+                    <ul class="l-information__data" v-if="lang === 'ja'">
+                        <li><span class="l-item__skill--type">Active</span><b>{{order.metadata.active_skill.name.ja}}</b><br>{{order.metadata.active_skill.description.ja.effects[0]}}</li>
+                        <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.ja}}</b><br>{{order.metadata.passive_skill.description.ja.effects[0]}}</li>
+                    </ul>
+                    <ul class="l-information__data" v-else-if="lang === 'en'">
+                        <li><span class="l-item__skill--type">Active</span><b>{{order.metadata.active_skill.name.ja}}</b><br>{{order.metadata.active_skill.description.ja.effects[0]}}</li>
+                        <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.en}}</b><br>{{order.metadata.passive_skill.description.en.effects[0]}}</li>
+                    </ul>
+                </div>
+                <div v-if="type.symbol == 'mche'">
+                    <ul class="l-information__data" v-if="lang === 'ja'">
+                        <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.ja}}</b><br>{{order.metadata.passive_skill.description.ja.effects[0]}}</li>
+                    </ul>
+                    <ul class="l-information__data" v-else-if="lang === 'en'">
+                        <li><span class="l-item__skill--type">Passive</span><b>{{order.metadata.passive_skill.name.en}}</b><br>{{order.metadata.passive_skill.description.en.effects[0]}}</li>
+                    </ul>
+                </div>
+            </div>
+            <!-------------------------------------------------------->
+
+            <!------------------------ その他 ------------------------->
+            <ul v-else class="l-information__data" v-for="param in params">
+                <li><strong>{{ param.title }}：</strong> {{ param.data }}</li>
+            </ul>
+            <!-------------------------------------------------------->
+
+            <ul class="l-information__data">
+                <li><span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span></li>
+            </ul>
+            <v-form v-model="valid" class="center">
+                <div class="checkbox_center">
+                <v-checkbox
+                class="center"
+                v-model="checkbox"
+                :rules="[v => !!v || '']"
+                :label="$t('hash.agree')"
+                required
+                v-if="!owner(order.maker)"
+                ></v-checkbox>
+                </div>
+                <div class="l-information__action">
+                <v-btn
+                    class="l-item__action__btn l-item__action__btn--type1 white_text"
+                    color="#3498db"
+                    large
+                    @click="purchase"
+                    :disabled="!checkbox || loading"
+                    value="purchase"
+                    >{{$t('hash.purchase')}}
+                    <v-progress-circular
+                    size="16"
+                    class="ma-2"
+                    v-if="loading"
+                    indeterminate
+                    ></v-progress-circular>
+                </v-btn>
+                <div v-if="order.valid">
+                    <a
+                    :href="twitterUrl"
+                    class="twitter-share-button"
+                    data-size="large"
+                    data-show-count="false"
+                    target="”_blank”"
+                    >
+                    <v-icon class="mt-4" color="#3498db">fab fa-twitter</v-icon>
+                    </a>
+                </div>
+            </div>
+        </v-form>
+        </div>
+    <section class="c-index c-index--recommend mt-5" v-if="recommend.length">
+        <h2 class="c-index__title">{{$t('hash.relatedAsset')}}</h2>
+        <related
+        :recommend="recommend"
+        ></related>
+        </section>
+    <modal
+      v-if="modal"
+      v-on:closeModal="closeModal"
+      v-on:transitionTop="transitionTop"
+      :hash="hash"
+      :modalNo="modalNo"
+      :url="url"
+    ></modal>
+</div>
+</template>
+<script>
+import client from '~/plugins/ethereum-client'
+import firestore from '~/plugins/firestore'
+import lib from '~/plugins/lib'
+import Modal from '~/components/modal'
+import Related from '~/components/related'
+
+const project = process.env.project
+const config = require('../config.json')
+const host = config.host[project]
+
+export default {
+    props: ['type'],
+    head() {
+        var order = this.order
+        return {
+        meta: [
+            { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
+            { hid: 'og:description', property: 'og:description', content: this.$t('meta.description')  },
+            { hid: 'og:image', property: 'og:image', content: order.ogp }
+            ]
+        }
+    },
+    components: {
+        Modal,
+        Related,
+    },
+    async asyncData({ store, params, error }) {
+    try {
+      const recommend = await firestore.getRelatedValidOrders(
+        params.hash,
+        order.maker,
+        order.id
+      )
+      await store.dispatch('order/setOrders', recommend)
+    } catch(err){
+      error({ statusCode: 404, message: 'Post not found' })
+    }
+  },
+    data() {
+      return {
+          loading: false,
+          valid:true,
+          checkbox: false,
+          modal: false,
+          modalNo: 4,
+          hash: '',
+          lang: '',
+          url: { type: '', hash: '', project: '' },
+          twitterUrl: '',
+          name: ''
+      };
+    },
+    mounted: async function() {
+      const store = this.$store
+      this.url.type = this.type.symbol
+      this.url.hash = this.$nuxt.$route.params.hash
+      this.url.project = config.host[project]
+      this.lang = store.state.i18n.locale
+      var account
+      if (typeof web3 != 'undefined') {
+        if (!client.account.address) {
+            //initialize web3 client
+          if(window.ethereum){
+           account = await client.activate(ethereum)
+          } else {
+           account = await client.activate(web3.currentProvider)
+        }
+        store.dispatch('account/setAccount', account)
+        }
+      }
+      const baseURL = 'https://twitter.com/share?url=' + host + this.type.symbol +
+                    '/order/' + this.order.hash + '&text=' + this.$t('hash.sell') +' / ' 
+
+      switch (this.type.symbol) {
+        case 'mchh':
+          this.twitterUrl = baseURL +
+          this.order.metadata.attributes.hero_name  + ' / Lv.' +
+          this.order.metadata.attributes.lv + ' / ' +
+          this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
+          this.name = this.order.metadata.attributes.hero_name
+          break
+        case 'mche':
+        //   this.twitterUrl = baseURL +
+        //   this.name =
+          break
+        case 'ck':
+        //   this.twitterUrl = baseURL +
+        //   this.name = 
+          break
+        case 'ctn':
+        //   this.twitterUrl = baseURL +
+        //   this.name =
+          break 
+      }
+    },
+    computed: {
+        account() {
+            return this.$store.getters['account/account']
+        },
+        order() {
+            return this.$store.getters['order/order']
+        },
+        recommend() {
+            return this.$store.getters['order/orders']
+        }
+    },
+    methods: {
+        coolDownIndexToSpeed(index) {
+            return lib.coolDownIndexToSpeed(index)
+        },
+        getRarity(asset, type) {
+            return lib.getRarity(asset, type)
+        },
+        fromWei(wei) {
+            return client.utils.fromWei(wei)
+        },
+        async purchase() {
+        try{
+            this.loading = true
+            const account = this.account
+            const order = this.order
+
+            await client.contract.bazaaar_v3.methods
+            .orderMatch_(
+                [
+                order.proxy,
+                order.maker,
+                order.taker,
+                order.creatorRoyaltyRecipient,
+                order.asset,
+                config.recipient[project].mch_distributer
+                ],
+                [
+                order.id,
+                order.price,
+                order.nonce,
+                order.salt,
+                order.expiration,
+                order.creatorRoyaltyRatio,
+                order.referralRatio
+                ],
+                order.v,
+                order.r,
+                order.s
+            )
+            .send({ from: account.address, value: order.price })
+            .on('transactionHash', hash => {
+                this.hash = hash
+                this.modal = true
+                this.loading = false
+            })
+            } catch (err) {
+            this.loading = false;
+            this.modalNo = 6
+            this.modal = true
+            }
+        },
+        closeModal() {
+            this.modal = false
+        },
+        transitionTop() {
+            const router = this.$router
+            this.modal = false
+            router.push({ path: '/'})
+        },
+        owner(maker) {
+            return maker == this.account.address
+        }
+    }
+}
+</script>
+<style scoped>
+.twitter-share-button {
+  text-decoration: none;
+  color: white;
+}
+
+.share {
+  max-width: 100px;
+  text-align: center;
+  padding: 10px 0;
+  margin: auto;
+}
+
+.white_text {
+  color: white;
+}
+
+.v-input__control {
+  margin: 0 auto;
+}
+</style>
+
+

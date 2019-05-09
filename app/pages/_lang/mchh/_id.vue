@@ -130,8 +130,8 @@ export default {
   async asyncData({ store, params, error }) {
     try {
       let result = await axios.get(
-        config.functions[project] + "metadata",
-        {asset:"mchh", id:params.id}
+        config.functions[project] + 'metadata',
+        { asset: 'mchh', id: params.id }
       )
       const asset = result
       store.dispatch('asset/setAsset', asset)

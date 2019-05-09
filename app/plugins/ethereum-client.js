@@ -112,22 +112,6 @@ const signUser = async() =>{
   return signedUser
 }
 
-const toAsset = asset => {
-  switch(asset) {
-  case ck:
-  return 'CryptoKitties'
-  case ctn:
-  return 'Crypt-Oink'
-  case mchh:
-  case mche:
-  return 'MyCryptoHeros'
-  }
-}
-
-const test =  async() =>{
-  return 'aaa'
-}
-
 const client = {
   account: account,
   activate: activate,
@@ -136,9 +120,7 @@ const client = {
   signOrder:signOrder,
   utils: web3.utils,
   web3: web3,
-  toAsset: toAsset,
   signUser: signUser,
-  test: test
 }
 
 export default client

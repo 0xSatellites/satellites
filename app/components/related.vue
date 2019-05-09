@@ -1,5 +1,5 @@
 <template>
-<ul>
+    <ul>
         <li v-for="(recommend, i) in recommend" :key="i">
           <nuxt-link v-if="recommend.asset === ck" :to="$t('index.holdLanguageCK') + recommend.hash" class="c-card">
               <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
@@ -38,7 +38,7 @@
               <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
           </nuxt-link>
         </li>
-      </ul>
+    </ul>
 </template>
 
 <script>

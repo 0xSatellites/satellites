@@ -32,7 +32,6 @@ const getOinkById = async id => {
 }
 
 
-
 const api = {
   getKittiesByWalletAddress: getKittiesByWalletAddress,
   getOinksByWalletAddress: getOinksByWalletAddress,

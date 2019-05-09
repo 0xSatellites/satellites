@@ -8,7 +8,6 @@ const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
 
-
 const coolDownIndexToSpeed = index => {
   switch(index) {
     case 0:
@@ -107,11 +106,11 @@ const timeConverter = timestamp =>{
   return `${Y}/${m}/${d} ${H}:${i}:${s}`;
 }
 
-const common = {
+const lib = {
   coolDownIndexToSpeed: coolDownIndexToSpeed,
   getRarity: getRarity,
   toAsset: toAsset,
   timeConverter:timeConverter
 }
 
-export default common
+export default lib

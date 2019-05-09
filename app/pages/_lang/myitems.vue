@@ -106,7 +106,7 @@
               <div class="c-card__name" v-if="ctn.name">{{ ctn.name.substring(0,25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ ctn.id }}</div>
-              <div class="c-card__txt">Gen {{ctn.generation}} : {{oinkCoolDownIndexToSpeed(3)}}</div>
+              <div class="c-card__txt">Gen {{ctn.generation}} : {{coolDownIndexToSpeed(3)}}</div>
             </nuxt-link>
           </div>
         </li>
@@ -289,9 +289,6 @@ export default {
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
     },
-    oinkCoolDownIndexToSpeed(index){
-      return lib.coolDownIndexToSpeed(index)
-    },
     getRarity(asset, type) {
       return lib.getRarity(asset, type)
     },
@@ -302,7 +299,7 @@ export default {
       return lib.timeConverter(timestamp)
     },
     toAsset(asset){
-      return client.toAsset(asset)
+      return lib.toAsset(asset)
     },
     async permitArtedit(){
         try{

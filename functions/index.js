@@ -111,9 +111,13 @@ async function validateAssetStatus (order) {
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
-  // let general
+  let general
+  let promises
+  let resolved
+  console.log("start")
   switch (asset) {
     case 'ck':
+      console.log("ck")
       response = await axios.get(config.api.ck.metadata + id, {
         headers: {
           'x-api-token': config.token.kitty
@@ -122,20 +126,23 @@ async function getAssetMetadataByAssetId(asset, id) {
       result = response.data
       break
     case 'ctn':
+      console.log("ctn")
       response = await axios.get(config.api.ctn.metadata + id + '.json')
       result = response.data
       break
     case 'mchh':
-      let general = await axios.get(config.api.mch.metadata + 'hero/' + id)
+      console.log("mchh")
+      general = await axios.get(config.api.mch.metadata + 'hero/' + id)
       response = general.data
-      let promises = []
+      promises = []
       promises.push(axios.get(config.api.mch.metadata + 'heroType/' + general.data.extra_data.hero_type))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id))
       if (general.data.extra_data.current_art) {
         promises.push(axios.get(config.api.mch.metadata + 'ipfs/' + general.data.extra_data.current_art))
       }
-      let resolved = await Promise.all(promises)
+
+      resolved = await Promise.all(promises)
       response.hero_type = resolved[0].data
       response.active_skill = resolved[1].data
       response.passive_skill = resolved[2].data
@@ -145,8 +152,9 @@ async function getAssetMetadataByAssetId(asset, id) {
       } else {
         response.sellable = false
       }
+
       response.mch_artedit = false
-      response.royalty_rate = 0
+      // response.royalty_rate = 0
       if (resolved.length < 4) break
       response.current_art_data = resolved[3].data
       if (!response.current_art_data.attributes.editor_address) break
@@ -155,7 +163,10 @@ async function getAssetMetadataByAssetId(asset, id) {
         .collection('user')
         .doc(editor_address)
         .get()
-      if (!doc.exists) break
+      if (!doc.exists){
+        result = response
+        break
+      }
       response.mch_artedit = doc.data().mch_artedit
       if (!response.mch_artedit) break
       const likes = response.current_art_data.attributes.likes
@@ -164,15 +175,17 @@ async function getAssetMetadataByAssetId(asset, id) {
       } else if (30 <= likes && likes < 100) {
         response.royalty_rate = 300
       }
+      console.log("mchh8")
       result = response
       break
     case 'mche':
-      let general = await axios.get(config.api.mch.metadata + 'extension/' + id)
+      console.log("mche")
+      general = await axios.get(config.api.mch.metadata + 'extension/' + id)
       response = general.data
-      let promises = []
+      promises = []
       promises.push(axios(config.api.mch.metadata + 'extensionType/' + general.data.extra_data.extension_type))
       promises.push(axios(config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id))
-      let resolved = await Promise.all(promises)
+      resolved = await Promise.all(promises)
       response.extension_type = resolved[0].data
       response.skill = resolved[1].data
       if (general.data.extra_data.nickname) {
@@ -234,6 +247,7 @@ exports.stopProject = event => {
 }
 
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+  console.log("metadata start")
   res.set('Access-Control-Allow-Origin', '*')
   res.set('Access-Control-Allow-Methods', 'GET')
   res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
@@ -244,6 +258,7 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 })
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  console.log("order start ")
   const order = params.order
   const now = new Date().getTime()
   const assetNameArray = Object.keys(config.contract[project]).filter((key) => {
@@ -262,6 +277,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   * - approveが済んでいるか
   * - できていなかったらreturn
   */
+ console.log("検証ブロック")
  if(order.referralRatio > 100) return
 
   if(!validateAssetStatus(order)){
@@ -294,6 +310,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    * sellの条件分岐（ アートエディットがない場合売れない） をする(OK)
    */
   //
+  console.log("取得ブロック API")
   const metadata = await getAssetMetadataByAssetId(asset, order.id)
   if ((asset == "mchh" || asset == "mche") && !metadata.sell) return
 
@@ -309,6 +326,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    *
    *
    */
+  console.log("取得ブロック OGP")
   const templateImg = new Canvas.Image()
   const characterImg = new Canvas.Image()
   templateImg.src = resolved[0]
@@ -389,6 +407,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
    * deactivateDocOGPをDB Update triggerで起動するように変更()
    *
    */
+  console.log("更新ブロック")
   const batch = db.batch()
   const deactivateDocOGPPromises = []
   const snapshots = await db
@@ -398,7 +417,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     .where('id', '==', order.id)
     .where('valid', '==', true)
     .get()
-  console.info('INFO order 4')
   snapshots.forEach(function (doc) {
     const ref = db.collection('order').doc(doc.id)
     batch.update(ref, {
@@ -426,8 +444,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   /*[TODO]
    * 取得ブロック(API)で作成したmsgをdataに入れる仕様にする(ok)
    */
+  console.log("書込ブロック")
   let msg
-
   switch (asset) {
     case 'ck':
       msg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '

@@ -262,6 +262,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   * - approveが済んでいるか
   * - できていなかったらreturn
   */
+ if(order.referralRatio > 100) return
 
   if(!validateAssetStatus(order)){
     return
@@ -609,8 +610,8 @@ exports.orderCleaningPubSub = functions
 
 exports.api = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   /*[TODO]
-   * db内にアセットのシンボル追加する
-   * アセット毎に取得出来るようにする
+   * db内にアセットのシンボル追加する(OK)
+   * アセット毎に取得出来るようにする(後日行う)
    *
    */
   const result = []

@@ -111,7 +111,7 @@ async function validateAssetStatus (order) {
 async function getAssetMetadataByAssetId(asset, id) {
   let result
   let response
-  let general
+  // let general
   switch (asset) {
     case 'ck':
       response = await axios.get(config.api.ck.metadata + id, {
@@ -126,7 +126,7 @@ async function getAssetMetadataByAssetId(asset, id) {
       result = response.data
       break
     case 'mchh':
-      general = await axios.get(config.api.mch.metadata + 'hero/' + id)
+      let general = await axios.get(config.api.mch.metadata + 'hero/' + id)
       response = general.data
       let promises = []
       promises.push(axios.get(config.api.mch.metadata + 'heroType/' + general.data.extra_data.hero_type))

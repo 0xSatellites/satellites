@@ -85,30 +85,22 @@ async function validateAssetStatus (order) {
     case 'ck':
       owner = await ck.methods.kittyIndexToOwner(order.id).call()
       approvedAddress = await ck.methods.kittyIndexToApproved(order.id).call()
-      if(order.maker == owner && bazaaarAddress == approvedAddress) {
-        passed = true
-      }
+      if(order.maker == owner && bazaaarAddress == approvedAddress) passed = true
       break
     case 'ctn':
       owner = await ctn.methods.entityIndexToOwner(order.id).call()
       approvedAddress = await ctn.methods.entityIndexToApproved(order.id).call()
-      if(order.maker == owner && bazaaarAddress == approvedAddress) {
-        passed = true
-      }
+      if(order.maker == owner && bazaaarAddress == approvedAddress) passed = true
       break
     case 'mchh':
       owner = await mchh.methods.ownerOf(order.id).call()
       isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
-      if (isApprovedForAll && order.maker != owner) {
-        passed = true
-      }
+      if (isApprovedForAll && order.maker != owner) passed = true
       break
     case 'mche':
       owner = await mche.methods.ownerOf(order.id).call()
       isApprovedForAll = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar_v3)
-      if (isApprovedForAll && order.maker != owner) {
-        passed = true
-      }
+      if (isApprovedForAll && order.maker != owner) passed = true
       break
     default:
       return passed
@@ -226,8 +218,7 @@ function coolDownIndexToSpeed(index) {
 }
 
 //Done(あとでなおす)
-
-exports.subscribe = event => {
+exports.stopProject = event => {
   const pubsubData = JSON.parse(Buffer.from(event.data, 'base64').toString())
   if (pubsubData.costAmount <= pubsubData.budgetAmount) {
     return Promise.resolve('No action shall be taken on current cost ' + pubsubData.costAmount)
@@ -262,41 +253,19 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const orderPricefromWei = web3.utils.fromWei(order.price)
   order.price_sort = web3.utils.padLeft(order.price, 36)
 
-  let pass = false
+
+  //検証ブロック
+  /*[TODO]
+  * referral付近に変更あり()
+  * assetステータスの検証()
+  * - makerが自身が保持しているか
+  * - approveが済んでいるか
+  * - できていなかったらreturn
+  */
 
   if(!validateAssetStatus(order)){
     return
   }
-
-  switch (assetName) {
-    case 'ck': 
-      let owner = await ck.methods.kittyIndexToOwner(order.id).call()
-      approve = await ck.methods.kittyIndexToApproved(order.id).call()
-      if (order.maker != owner) return
-      if (order.maker != approve) return
-      break
-    case 'ctn':
-      owner = await ctn.methods.entityIndexToOwner(order.id).call()
-      if (order.maker != owner) return
-      approve = await ctn.methods.entityIndexToApproved(order.id).call()
-      if (order.maker != approve) return
-      break
-    case 'mchh':
-      owner = await mchh.methods.ownerOf(order.id).call()
-      if (order.maker != owner) return
-      approve = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
-      if (!approve) return
-      break
-    case 'mche':
-      owner = await mche.methods.ownerOf(order.id).call()
-      if (order.maker != owner) return
-      approve = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
-      if (!approve) return
-      break
-  }
-
-
-
 
   const hash = await bazaaar.methods
     .requireValidOrder_(
@@ -456,20 +425,20 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   /*[TODO]
    * 取得ブロック(API)で作成したmsgをdataに入れる仕様にする(ok)
    */
-  let content
+  let msg
 
   switch (asset) {
     case 'ck':
-      content = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '
+      msg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '
       break
     case 'ctn':
-      content = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
+      msg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
       break
     case 'mchh':
-      content = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+      msg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
       break
     case 'mche':
-      content = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+      msg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
       break
   }
 
@@ -477,7 +446,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     method: 'post',
     url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK,
     data: {
-      content: content + config.discord.endpoint[project] + `${asset}/order/` + hash
+      content: msg + config.discord.endpoint[project] + `${asset}/order/` + hash
     }
   })
 
@@ -485,9 +454,6 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     ogp: ogp,
     hash: hash
   }
-  console.info('OUTPUT data')
-  console.info(result)
-  console.info('END order')
   return result
 })
 

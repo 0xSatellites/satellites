@@ -251,12 +251,11 @@ export default {
           .then(result => {
             this.approved = result
           })
-
         client.contract[this.assetType].methods
           .ownerOf(params.id)
           .call()
           .then(owner => {
-            if(this.asset.sell){
+            if(this.asset.sellable){
               this.owned = owner == this.account.address
             }
             //本番はartないアセットは売れないので下記は消す
@@ -311,13 +310,13 @@ export default {
         async order_v1(type) {
             const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
             try {
-                console.log('order_v2')
+                console.log('order')
                 this.loading = true
                 this.waitCancel = true
                 this.modalNo = 5
                 this.modal = true
                 const account = this.account
-                const asset = this.asset.ctn
+                const asset = this.asset[this.assetType]
                 const params = this.$route.params
                 const router = this.$router
                 const amount = this.price
@@ -333,15 +332,10 @@ export default {
                 return
                 }
 
-                const approved = await client.contract.ctn.methods
-                .entityIndexToApproved(params.id)
-                .call()
-                if (approved == client.contract.bazaaar.options.address) {
-                console.log('approved')
                 const nonce = await client.contract.bazaaar.methods
                     .nonce_(
                     account.address,
-                    client.contract.ctn.options.address,
+                    client.contract[this.assetType].options.address,
                     params.id
                     )
                     .call()
@@ -350,22 +344,42 @@ export default {
                 //const date = new Date()
                 //date.setDate(date.getDate() + 7)
                 //const expiration = Math.round(date.getTime() / 1000)
+
+                let creatorRoyaltyRecipient = ''
+                let relayerRoyaltyRatio = 500
+                let creatorRoyaltyRatio = 500
+
+                if(this.assetType =="ck"){
+                  relayerRoyaltyRatio = 0
+                  creatorRoyaltyRatio = 0
+                } else if(this.assetType =="ctn"){
+                  creatorRoyaltyRecipient = config.recipient[project].ctn
+                }else if (this.assetType =="mchh"){
+                  if(this.asset.extra_data.current_art) {
+                    creatorRoyaltyRecipient = this.asset.current_art_data.attributes.editor_address
+                    relayerRoyaltyRatio = 1000 - this.asset.royalty_rate
+                    creatorRoyaltyRatio = this.asset.royalty_rate
+                  }else{
+                    creatorRoyaltyRecipient = config.recipient[project].mch_distributer
+                  }
+                }
+
                 const expiration = Math.round(9999999999999 / 1000) - 1
                 const order = {
-                     proxy: client.contract.bazaaar.options.address,
-                        maker: account.address,
-                        taker: config.constant.nulladdress,
-                        relayerRoyaltyRecipient: account.address,
-                        creatorRoyaltyRecipient: config.constant.nulladdress,
-                        asset: client.contract.mche.options.address,
-                        id: params.id,
-                        price: wei,
-                        nonce: nonce,
-                        salt: salt,
-                        expiration: expiration,
-                        relayerRoyaltyRatio:0,
-                        creatorRoyaltyRatio: 0,
-                        referralRatio: 0
+                      proxy: client.contract.bazaaar.options.address,
+                      maker: account.address,
+                      taker: config.constant.nulladdress,
+                      relayerRoyaltyRecipient: account.address,
+                      creatorRoyaltyRecipient: creatorRoyaltyRecipient,
+                      asset: client.contract.mche.options.address,
+                      id: params.id,
+                      price: wei,
+                      nonce: nonce,
+                      salt: salt,
+                      expiration: expiration,
+                      relayerRoyaltyRatio: relayerRoyaltyRatio,
+                      creatorRoyaltyRatio: creatorRoyaltyRatio,
+                      referralRatio: 0
                     // proxy: client.contract.bazaaar_v2.options.address,
                     // maker: account.address,
                     // taker: config.constant.nulladdress,
@@ -379,23 +393,24 @@ export default {
                     // creatorRoyaltyRatio: 500,
                     // referralRatio: 500
                 }
+                console.log(order)
                 const signedOrder = await client.signOrder(order)
                 const datas = {
                     order: signedOrder,
                     msg: this.msg
                 }
-                console.log(order)
                 var result = await functions.call('order', datas)
+                console.log(result)
                 this.hash = result.hash
                 this.ogp = result.ogp
                 this.modal = false
                 await sleep(1)
                 this.modalNo = 1
                 this.modal = true
-                }
                 this.loading = false
                 this.waitCancel = false
             } catch (err) {
+              console.log(err)
                 alert(this.$t('error.message'))
                 this.loading = false
                 this.modal = false
@@ -403,6 +418,31 @@ export default {
             }
         },
         async approve() {
+          if(this.assetType == 'ck'){
+            try{
+            this.loading = true
+            const account = this.account
+            const params = this.$route.params
+            client.contract.ck.methods
+              .approve(client.contract.bazaaar.options.address, params.id)
+              .send({ from: account.address })
+              .on('transactionHash', hash => {
+                this.hash = hash
+                this.modalNo = 2
+                this.modal = true
+                this.loading = false
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                location.reload()
+              }).catch((err) => {
+                alert(this.$t('error.message'))
+                this.loading = false;
+              })
+            } catch (err) {
+              alert(this.$t('error.message'))
+              this.loading = false;
+            }
+          }else if(this.assetType == 'ctn'){
             try{
             this.loading = true
             const account = this.account
@@ -426,6 +466,31 @@ export default {
                 alert(this.$t('error.message'))
                 this.loading = false;
             }
+          }else {
+            try{
+            this.loading = true
+            const account = this.account
+            const params = this.$route.params
+            client.contract[this.assetType].methods
+              .setApprovalForAll(client.contract.bazaaar.options.address, params.id)
+              .send({ from: account.address })
+              .on('transactionHash', hash => {
+                this.hash = hash
+                this.modalNo = 2
+                this.modal = true
+                this.loading = false
+              })
+              .on('confirmation', (confirmationNumber, receipt) => {
+                location.reload()
+              }).catch((err) => {
+                alert(this.$t('error.message'))
+                this.loading = false;
+              })
+            } catch (err) {
+              alert(this.$t('error.message'))
+              this.loading = false;
+            }
+          }
         },
         async cancel() {
             try{

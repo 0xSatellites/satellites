@@ -39,7 +39,7 @@
           color="blue"
           indeterminate
         ></v-progress-circular>
-        <li v-for="(mchh, i) in this.heros" :key="i + '-mchh'" v-else-if="this.heros.length">
+        <li v-for="(mchh, i) in this.heroes" :key="i + '-mchh'" v-else-if="this.heroes.length">
           <div>
             <nuxt-link :to="$t('myitems.holdMCHH')  + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if='selling.includes(mchh.attributes.id.toString())'>{{ $t('myitems.sell') }}</div>
@@ -51,7 +51,7 @@
             </nuxt-link>
           </div>
         </li>
-        <v-flex xs12 sm6 offset-sm3 v-if="!this.extensions.length && !this.heros.length && !this.loadingMCHH && !this.loadingMCHE">
+        <v-flex xs12 sm6 offset-sm3 v-if="!this.extensions.length && !this.heroes.length && !this.loadingMCHH && !this.loadingMCHE">
           <a href="https://www.mycryptoheroes.net">
                 <v-card>
                   <v-img
@@ -191,8 +191,12 @@
 import client from '~/plugins/ethereum-client'
 import lib from '~/plugins/lib'
 import api from '~/plugins/api'
+import axios from 'axios'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+
+const config = require('../../config.json')
+const project = process.env.project
 
 export default {
   data() {
@@ -211,7 +215,7 @@ export default {
       switch1: false,
       kitties: [],
       oinks: [],
-      heros: [],
+      heroes: [],
       extensions: [],
       transactions: [],
       order: []
@@ -236,29 +240,42 @@ export default {
         this.loadingCK = false
       })
 
-      api.getOinksByWalletAddress(client.account.address).then(async tokens => {
-        this.oinks = tokens
-        this.loadingCTN   = false
+      api.getOinkIdsByWalletAddress(client.account.address).then(async tokenIds => {
+          const promises = [], oinks = []
+          for(var tokenId of tokenIds){
+            promises.push(axios.get(config.functions[project] + 'metadata?asset=ctn' + '&id=' + tokenId))
+          }
+          const results = await Promise.all(promises)
+          for(var result of results){
+            oinks.push(result.data)
+          }
+          this.oinks = oinks
+        this.loadingCTN = false
       })
 
-      client.ownedTokens('mchh').then(async tokens => {
-          const promises = []
-          for(var token of tokens){
-            promises.push(await functions.call('metadata', {asset:'mchh', id:token}))
+      client.ownedTokens('mchh').then(async tokenIds => {
+          const promises = [], heroes = []
+          for(var tokenId of tokenIds){
+            promises.push(axios.get(config.functions[project] + 'metadata?asset=mchh' + '&id=' + tokenId))
           }
-          const result = await Promise.all(promises)
-          this.heros = result
+          const results = await Promise.all(promises)
+          for(var result of results){
+            heroes.push(result.data)
+          }
+          this.heroes = heroes
           this.loadingMCHH   = false
-
       })
 
-      client.ownedTokens('mche').then(async tokens => {
-          const promises = []
-          for(var token of tokens){
-            promises.push(await functions.call('metadata', {asset:'mche', id:token}))
+      client.ownedTokens('mche').then(async tokenIds => {
+          const promises = [], extensions = []
+          for(var tokenId of tokenIds){
+            promises.push(axios.get(config.functions[project] + 'metadata?asset=mche' + '&id=' + tokenId))
           }
-          const result = await Promise.all(promises)
-          this.extensions = result
+          const results = await Promise.all(promises)
+          for(var result of results){
+            extensions.push(result.data)
+          }
+          this.extensions = extensions
           this.loadingMCHE   = false
       })
 

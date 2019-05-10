@@ -78,9 +78,13 @@ async function getAssetMetadataByAssetId(asset, id) {
       break
     case 'ctn':
       response = await axios.get(config.api.ctn.metadata + id + '.json')
+      const entities = await ctn.methods.getEntity(id).call()
+      result = response.data
+      result.id = id
+      result.generation = entities.generation
+      result.status = {cooldown_index: parseInt(entities.cooldownIndex)}
       result.iframe = true
       result.iframe_url = result.viewer
-      result = response.data
       break
     case 'mchh':
       general = await axios.get(config.api.mch.metadata + 'hero/' + id)

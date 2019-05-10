@@ -28,10 +28,9 @@
         "holdLanguageMCHH": "/mchh/order/",
         "holdLanguageMCHE": "/mche/order/"
     },
-    "assets":{
-        "kitty":"クリプトキティ",
-        "oink":"くりぷ豚",
-        "mch":"マイクリプトヒーローズ",
+    "asset":{
+        "ck":"クリプトキティ",
+        "ctn":"くりぷ豚",
         "mchh":"マイクリプトヒーローズ",
         "mche":"マイクリプトヒーローズ"
     },

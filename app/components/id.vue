@@ -1,144 +1,104 @@
 <template>
-    <div class="l-item__frame">
-        <div>
-          <div class="l-item__img">
-            <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="asset.iframe"></iframe>
-            <img :src="asset.image" alt="" v-else/>
+  <div class="l-item__frame">
+    <div class="l-item__img">
+      <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="asset.iframe"></iframe>
+      <img :src="asset.image" alt="" v-else />
+    </div>
+
+    <div>
+      <div class="l-item__name">{{ asset.name }}</div>
+      <div class="l-item__txt"># {{ asset.id }}</div>
+      <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
+      <ul class="l-item__data">
+        <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
+      </ul>
+      <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
+        <li><strong>Gen：</strong> {{ asset.generation }}</li>
+        <li><strong>Cooldown：</strong> {{ coolDownIndexToSpeed(asset.status.cooldown_index) }}</li>
+      </ul>
+
+      <ul class="l-information__data" v-if="assetType == 'mchh' || assetType == 'mche'">
+        <li><strong>HP：</strong> {{ asset.attributes.hp }}</li>
+        <li><strong>PHY：</strong> {{ asset.attributes.phy }}</li>
+        <li><strong>INT：</strong> {{ asset.attributes.int }}</li>
+        <li><strong>AGI：</strong> {{ asset.attributes.agi }}</li>
+      </ul>
+      <ul class="l-information__data" v-if="lang && assetType == 'mchh'">
+        <li>
+          <span class="l-item__skill--type">Active</span><b>{{ asset.active_skill.name[lang] }}</b
+          ><br />{{ asset.active_skill.description[lang].effects[0] }}
+        </li>
+        <li>
+          <span class="l-item__skill--type">Passive</span><b>{{ asset.passive_skill.name[lang] }}</b
+          ><br />{{ asset.passive_skill.description[lang].effects[0] }}
+        </li>
+      </ul>
+      <ul class="l-information__data" v-if="lang && assetType == 'mche'">
+        <li>
+          <span class="l-item__skill--type">Passive</span><b>{{ asset.skill.name[lang] }}</b
+          ><br />{{ asset.skill.description[lang].effects[0] }}
+        </li>
+      </ul>
+
+      <v-form>
+        <div class="l-item__action">
+          <div class="l-item__action__price" v-if="approved && owned">
+            <label><input type="text" v-model="price" id="amount"/> ETH <input type="text" style="display:none"/></label>
+          </div>
+          <div class="l-item__action__textarea" v-if="approved && owned">
+            <v-text-field v-model="msg" :rules="msgRules" :counter="18" :placeholder="$t('id.inputMessage')"></v-text-field>
+          </div>
+          <div v-if="approved && owned" class="small">
+            (<a href="/terms">{{ $t('id.terms') }}</a
+            >)
+          </div>
+          <v-checkbox v-model="checkbox" :rules="[v => !!v || '']" :label="$t('id.agree')" required v-if="approved && owned" height="20"></v-checkbox>
+          <div v-if="owned">
+            <div class="l-item__action__btns" v-if="!approved">
+              <v-btn class="l-item__action__btn" :disabled="!valid || loading" large @click="approve">
+                {{ $t('id.approve') }}
+                <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
+              </v-btn>
+            </div>
+
+            <div class="l-item__action__btns" v-else-if="approved && !order.id">
+              <v-btn
+                class="l-item__action__btn l-item__action__btn--type1 white_text"
+                :disabled="!valid || loading || !approved || !checkbox || !account.address"
+                color="#3498db"
+                large
+                @click="order_v1"
+              >
+                {{ $t('id.sell') }}
+              </v-btn>
+            </div>
+            <div class="l-item__action__btns" v-else-if="approved && order.id">
+              <v-btn
+                class="l-item__action__btn l-item__action__btn--type1 white_text"
+                :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
+                color="#3498db"
+                large
+                @click="order_v1('change')"
+              >
+                DISCOUNT
+                <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
+              </v-btn>
+              <v-btn
+                class="l-item__action__btn l-item__action__btn--type1 white_text"
+                :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
+                color="#3498db"
+                large
+                @click="cancel"
+              >
+                cancel
+                <v-progress-circular size="16" class="ma-2" v-if="loadingCancel" indeterminate></v-progress-circular>
+              </v-btn>
+            </div>
           </div>
         </div>
-        <div>
-          <div class="l-item__name">{{ asset.name }}</div>
-          <div class="l-item__txt"># {{ asset.id }}</div>
-          <div class="l-item__txt">{{$t('asset.'+assetType)}}</div>
-          <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
-          </ul>
-          <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
-          </ul>
-
-          <ul class="l-information__data" v-if="assetType == 'mchh' || assetType == 'mche'">
-            <li><strong>HP：</strong> {{ asset.attributes.hp }}</li>
-            <li><strong>PHY：</strong> {{ asset.attributes.phy }}</li>
-            <li><strong>INT：</strong> {{ asset.attributes.int }}</li>
-            <li><strong>AGI：</strong> {{ asset.attributes.agi }}</li>
-          </ul>
-          <ul class="l-information__data" v-if="lang && assetType == 'mchh'">
-            <li>
-              <span class="l-item__skill--type">Active</span><b>{{ asset.active_skill.name[lang] }}</b
-              ><br />{{ asset.active_skill.description[lang].effects[0] }}
-            </li>
-            <li>
-              <span class="l-item__skill--type">Passive</span><b>{{ asset.passive_skill.name[lang] }}</b
-              ><br />{{ asset.passive_skill.description[lang].effects[0] }}
-            </li>
-          </ul>
-          <ul class="l-information__data" v-if="lang && assetType == 'mche'">
-            <li>
-              <span class="l-item__skill--type">Passive</span><b>{{ asset.skill.name[lang] }}</b
-              ><br />{{ asset.skill.description[lang].effects[0] }}
-            </li>
-          </ul>
-
-          <v-form>
-            <div class="l-item__action">
-              <div class="l-item__action__price" v-if="approved && owned">
-                <label
-                  ><input type="text" v-model="price" id="amount"/> ETH
-                  <input type="text" style="display:none"></label
-                >
-              </div>
-              <div class="l-item__action__textarea" v-if="approved && owned">
-                <v-text-field
-                  v-model="msg"
-                  :rules="msgRules"
-                  :counter="18"
-                  :placeholder="$t('id.inputMessage')"
-                ></v-text-field>
-              </div>
-              <div v-if="approved && owned" class="small">(<a href="/terms">{{$t('id.terms')}}</a>)</div>
-              <v-checkbox
-                  v-model="checkbox"
-                  :rules="[v => !!v || '']"
-                  :label="$t('id.agree')"
-                  required
-                  v-if="approved && owned"
-                  height ="20"
-                ></v-checkbox>
-              <div v-if="owned">
-                <div class="l-item__action__btns" v-if="!approved">
-                  <v-btn
-                    class="l-item__action__btn"
-                    :disabled="!valid || loading"
-                    large
-                    @click="approve"
-                  >
-                    {{ $t('id.approve') }}
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && !order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox ||!account.address"
-                    color="#3498db"
-                    large
-                    @click="order_v1"
-                  >
-                    {{ $t('id.sell') }}
-                  </v-btn>
-                </div>
-                <div
-                  class="l-item__action__btns"
-                  v-else-if="approved && order.id"
-                >
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loading || !approved || !checkbox || waitDiscount"
-                    color="#3498db"
-                    large
-                    @click="order_v1('change')"
-                  >
-                    DISCOUNT
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loading"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                  <v-btn
-                    class="l-item__action__btn l-item__action__btn--type1 white_text"
-                    :disabled="!valid || loadingCancel || !approved || !checkbox || waitCancel"
-                    color="#3498db"
-                    large
-                    @click="cancel"
-                  >
-                    cancel
-                    <v-progress-circular
-                      size="16"
-                      class="ma-2"
-                      v-if="loadingCancel"
-                      indeterminate
-                    ></v-progress-circular>
-                  </v-btn>
-                </div>
-              </div>
-            </div>
-          </v-form>
-        </div>
-      </div>
-
+      </v-form>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -149,7 +109,6 @@ import functions from '~/plugins/functions'
 import Modal from '~/components/modal'
 import api from '~/plugins/api'
 
-
 const config = require('../config.json')
 const project = process.env.project
 const ck = config.contract[project].ck
@@ -157,55 +116,41 @@ const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
-
 export default {
-    components: {
-        Modal
-    },
-    props: ['type'],
-    data() {
-      return {
-        modal: false,
-        modalNo: '',
-        hash: '',
-        ogp: '',
-        loading: false,
-        loadingCancel: false,
-        waitDiscount: false,
-        waitCancel: false,
-        valid: true,
-        checkbox: false,
-        approved: false,
-        owned: false,
-        owner: '',
-        msg: '',
-        ck,
-        ctn,
-        mchh,
-        mche,
-      };
-    },
-    // async asyncData({ store, params, error }) {
-    // try {
-    //   let result = await axios.get(
-    //     config.functions[project] + 'metadata?asset=ck&id=' +params.id
-    //   )
-    //   const asset = result.data
-    //   store.dispatch('asset/setAsset', asset)
-    //   const recommend = await firestore.getLatestValidOrders(4)
-    //   await store.dispatch('order/setOrders', recommend)
-    // } catch(err){
-    //   error({ statusCode: 404, message: 'Post not found' })
-    // }
-    // },
-    mounted: async function() {
+  components: {
+    Modal
+  },
+  props: ['type'],
+  data() {
+    return {
+      modal: false,
+      modalNo: '',
+      hash: '',
+      ogp: '',
+      loading: false,
+      loadingCancel: false,
+      waitDiscount: false,
+      waitCancel: false,
+      valid: true,
+      checkbox: false,
+      approved: false,
+      owned: false,
+      owner: '',
+      msg: '',
+      ck,
+      ctn,
+      mchh,
+      mche
+    }
+  },
+  mounted: async function() {
     const store = this.$store
     const params = this.$route.params
     var account
     if (typeof web3 != 'undefined') {
       if (!client.account.address) {
         //initialize web3 client
-        if(window.ethereum){
+        if (window.ethereum) {
           account = await client.activate(ethereum)
         } else {
           account = await client.activate(web3.currentProvider)
@@ -213,14 +158,12 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
-
-    if (this.assetType == 'ck'){
+      if (this.assetType == 'ck') {
         client.contract.ck.methods
           .kittyIndexToApproved(params.id)
           .call()
           .then(approvedAddress => {
-            this.approved =
-              approvedAddress == client.contract.bazaaar.options.address
+            this.approved = approvedAddress == client.contract.bazaaar.options.address
           })
 
         client.contract.ck.methods
@@ -229,13 +172,12 @@ export default {
           .then(owner => {
             this.owned = owner == this.account.address
           })
-    } else if(this.assetType == 'ctn'){
+      } else if (this.assetType == 'ctn') {
         client.contract.ctn.methods
           .entityIndexToApproved(params.id)
           .call()
           .then(approvedAddress => {
-            this.approved =
-              approvedAddress == client.contract.bazaaar.options.address
+            this.approved = approvedAddress == client.contract.bazaaar.options.address
           })
 
         client.contract.ctn.methods
@@ -244,7 +186,7 @@ export default {
           .then(owner => {
             this.owned = owner == this.account.address
           })
-    }else {
+      } else {
         client.contract[this.assetType].methods
           .isApprovedForAll(this.account.address, client.contract.bazaaar.options.address)
           .call()
@@ -255,33 +197,27 @@ export default {
           .ownerOf(params.id)
           .call()
           .then(owner => {
-            if(this.asset.sellable){
+            //if (this.asset.sellable) {
               this.owned = owner == this.account.address
-            }
-            //本番はartないアセットは売れないので下記は消す
-            // this.owned = owner == this.account.address
+            //}
           })
-    }
+      }
 
-
-      firestore
-        .getLowestCostOrderByMakerId(client.account.address, params.id)
-        .then(order => {
-          store.dispatch('order/setOrder', order)
-          if(order.price){
-            this.price = client.utils.fromWei(order.price)
-          }
-        })
-
+      firestore.getLowestCostOrderByMakerId(client.account.address, params.id).then(order => {
+        store.dispatch('order/setOrder', order)
+        if (order.price) {
+          this.price = client.utils.fromWei(order.price)
+        }
+      })
     }
   },
   computed: {
     assetType() {
-     const routeNames = this.$route.name.split('-')
-     if (routeNames[0] == 'lang') return routeNames[1]
-     else return routeNames[0]
+      const routeNames = this.$route.name.split('-')
+      if (routeNames[0] == 'lang') return routeNames[1]
+      else return routeNames[0]
     },
-    lang(){
+    lang() {
       return this.$store.state.i18n.locale
     },
     account() {
@@ -297,244 +233,223 @@ export default {
       return this.$store.getters['order/orders']
     }
   },
-    methods: {
-        getRarity(asset, type) {
-            return lib.getRarity(asset, type)
-        },
-        fromWei(wei) {
-            return client.utils.fromWei(wei)
-        },
-        coolDownIndexToSpeed(index) {
-            return lib.coolDownIndexToSpeed(index)
-        },
-        async order_v1(type) {
-            const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
-            try {
-                console.log('order')
-                this.loading = true
-                this.waitCancel = true
-                this.modalNo = 5
-                this.modal = true
-                const account = this.account
-                const asset = this.asset[this.assetType]
-                const params = this.$route.params
-                const router = this.$router
-                const amount = this.price
-                const wei = client.utils.toWei(amount)
-                if (
-                type == 'change' &&
-                this.order.price / 1000000000000000000 <= amount
-                ) {
-                alert('make it cheeper')
-                this.loading = false
-                this.modal = false
-                this.waitCancel = false
-                return
-                }
-
-                const nonce = await client.contract.bazaaar.methods
-                    .nonce_(
-                    account.address,
-                    client.contract[this.assetType].options.address,
-                    params.id
-                    )
-                    .call()
-
-                const salt = Math.floor(Math.random() * 1000000000)
-                //const date = new Date()
-                //date.setDate(date.getDate() + 7)
-                //const expiration = Math.round(date.getTime() / 1000)
-
-                let creatorRoyaltyRecipient = ''
-                let relayerRoyaltyRatio = 500
-                let creatorRoyaltyRatio = 500
-
-                if(this.assetType =="ck"){
-                  relayerRoyaltyRatio = 0
-                  creatorRoyaltyRatio = 0
-                } else if(this.assetType =="ctn"){
-                  creatorRoyaltyRecipient = config.recipient[project].ctn
-                }else if (this.assetType =="mchh"){
-                  if(this.asset.extra_data.current_art) {
-                    creatorRoyaltyRecipient = this.asset.current_art_data.attributes.editor_address
-                    relayerRoyaltyRatio = 1000 - this.asset.royalty_rate
-                    creatorRoyaltyRatio = this.asset.royalty_rate
-                  }else{
-                    creatorRoyaltyRecipient = config.recipient[project].mch_distributer
-                  }
-                }
-
-                const expiration = Math.round(9999999999999 / 1000) - 1
-                const order = {
-                      proxy: client.contract.bazaaar.options.address,
-                      maker: account.address,
-                      taker: config.constant.nulladdress,
-                      relayerRoyaltyRecipient: account.address,
-                      creatorRoyaltyRecipient: creatorRoyaltyRecipient,
-                      asset: client.contract.mche.options.address,
-                      id: params.id,
-                      price: wei,
-                      nonce: nonce,
-                      salt: salt,
-                      expiration: expiration,
-                      relayerRoyaltyRatio: relayerRoyaltyRatio,
-                      creatorRoyaltyRatio: creatorRoyaltyRatio,
-                      referralRatio: 0
-                    // proxy: client.contract.bazaaar_v2.options.address,
-                    // maker: account.address,
-                    // taker: config.constant.nulladdress,
-                    // creatorRoyaltyRecipient: config.recipient[project].ctn,
-                    // asset: client.contract.ctn.options.address,
-                    // id: params.id,
-                    // price: wei,
-                    // nonce: nonce,
-                    // salt: salt,
-                    // expiration: expiration,
-                    // creatorRoyaltyRatio: 500,
-                    // referralRatio: 500
-                }
-                console.log(order)
-                const signedOrder = await client.signOrder(order)
-                const datas = {
-                    order: signedOrder,
-                    msg: this.msg
-                }
-                var result = await functions.call('order', datas)
-                console.log(result)
-                this.hash = result.hash
-                this.ogp = result.ogp
-                this.modal = false
-                await sleep(1)
-                this.modalNo = 1
-                this.modal = true
-                this.loading = false
-                this.waitCancel = false
-            } catch (err) {
-              console.log(err)
-                alert(this.$t('error.message'))
-                this.loading = false
-                this.modal = false
-                this.waitCancel = false
-            }
-        },
-        async approve() {
-          if(this.assetType == 'ck'){
-            try{
-            this.loading = true
-            const account = this.account
-            const params = this.$route.params
-            client.contract.ck.methods
-              .approve(client.contract.bazaaar.options.address, params.id)
-              .send({ from: account.address })
-              .on('transactionHash', hash => {
-                this.hash = hash
-                this.modalNo = 2
-                this.modal = true
-                this.loading = false
-              })
-              .on('confirmation', (confirmationNumber, receipt) => {
-                location.reload()
-              }).catch((err) => {
-                alert(this.$t('error.message'))
-                this.loading = false;
-              })
-            } catch (err) {
-              alert(this.$t('error.message'))
-              this.loading = false;
-            }
-          }else if(this.assetType == 'ctn'){
-            try{
-            this.loading = true
-            const account = this.account
-            const params = this.$route.params
-            client.contract.ctn.methods
-                .approve(client.contract.bazaaar.options.address, params.id)
-                .send({ from: account.address })
-                .on('transactionHash', hash => {
-                this.hash = hash
-                this.modalNo = 2
-                this.modal = true
-                this.loading = false
-                })
-                .on('confirmation', (confirmationNumber, receipt) => {
-                location.reload()
-                }).catch((err) => {
-                alert(this.$t('error.message'))
-                this.loading = false;
-                })
-            } catch (err) {
-                alert(this.$t('error.message'))
-                this.loading = false;
-            }
-          }else {
-            try{
-            this.loading = true
-            const account = this.account
-            const params = this.$route.params
-            client.contract[this.assetType].methods
-              .setApprovalForAll(client.contract.bazaaar.options.address, params.id)
-              .send({ from: account.address })
-              .on('transactionHash', hash => {
-                this.hash = hash
-                this.modalNo = 2
-                this.modal = true
-                this.loading = false
-              })
-              .on('confirmation', (confirmationNumber, receipt) => {
-                location.reload()
-              }).catch((err) => {
-                alert(this.$t('error.message'))
-                this.loading = false;
-              })
-            } catch (err) {
-              alert(this.$t('error.message'))
-              this.loading = false;
-            }
-          }
-        },
-        async cancel() {
-            try{
-                this.loadingCancel = true
-                this.waitDiscount = true
-                const account = this.account
-                const order = this.order
-
-                await client.contract.bazaaar.methods
-                .orderCancel_(
-                    [
-                    order.proxy,
-                    order.maker,
-                    order.taker,
-                    order.creatorRoyaltyRecipient,
-                    order.asset
-                    ],
-                    [
-                    order.id,
-                    order.price,
-                    order.nonce,
-                    order.salt,
-                    order.expiration,
-                    order.creatorRoyaltyRatio,
-                    order.referralRatio
-                    ]
-                )
-                .send({ from: account.address })
-                .on('transactionHash', hash => {
-                    this.hash = hash
-                    this.modalNo = 3
-                    this.modal = true
-                    this.loadingCancel = false
-                    this.waitDiscount = false
-                })
-            } catch (err) {
-                alert(this.$t('error.message'))
-                this.loadingCancel = false
-                this.waitDiscount = false
-            }
-        }
+  methods: {
+    getRarity(asset, type) {
+      return lib.getRarity(asset, type)
     },
-}
+    fromWei(wei) {
+      return client.utils.fromWei(wei)
+    },
+    coolDownIndexToSpeed(index) {
+      return lib.coolDownIndexToSpeed(index)
+    },
+    async order_v1(type) {
+      const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
+      try {
+        console.log('order')
+        this.loading = true
+        this.waitCancel = true
+        this.modalNo = 5
+        this.modal = true
+        const account = this.account
+        const asset = this.asset[this.assetType]
+        const params = this.$route.params
+        const router = this.$router
+        const amount = this.price
+        const wei = client.utils.toWei(amount)
+        if (type == 'change' && this.order.price / 1000000000000000000 <= amount) {
+          alert('make it cheeper')
+          this.loading = false
+          this.modal = false
+          this.waitCancel = false
+          return
+        }
 
+        const nonce = await client.contract.bazaaar.methods.nonce_(account.address, client.contract[this.assetType].options.address, params.id).call()
+
+        const salt = Math.floor(Math.random() * 1000000000)
+        //const date = new Date()
+        //date.setDate(date.getDate() + 7)
+        //const expiration = Math.round(date.getTime() / 1000)
+
+        let creatorRoyaltyRecipient = ''
+        let relayerRoyaltyRatio = 500
+        let creatorRoyaltyRatio = 500
+
+        if (this.assetType == 'ck') {
+          relayerRoyaltyRatio = 0
+          creatorRoyaltyRatio = 0
+        } else if (this.assetType == 'ctn') {
+          creatorRoyaltyRecipient = config.recipient[project].ctn
+        } else if (this.assetType == 'mchh') {
+          if (this.asset.extra_data.current_art) {
+            creatorRoyaltyRecipient = this.asset.current_art_data.attributes.editor_address
+            relayerRoyaltyRatio = 1000 - this.asset.royalty_rate
+            creatorRoyaltyRatio = this.asset.royalty_rate
+          } else {
+            creatorRoyaltyRecipient = config.recipient[project].mch_distributer
+          }
+        }
+
+        const expiration = Math.round(9999999999999 / 1000) - 1
+        const order = {
+          proxy: client.contract.bazaaar.options.address,
+          maker: account.address,
+          taker: config.constant.nulladdress,
+          relayerRoyaltyRecipient: account.address,
+          creatorRoyaltyRecipient: creatorRoyaltyRecipient,
+          asset: client.contract[this.assetType].options.address,
+          id: params.id,
+          price: wei,
+          nonce: nonce,
+          salt: salt,
+          expiration: expiration,
+          relayerRoyaltyRatio: relayerRoyaltyRatio,
+          creatorRoyaltyRatio: creatorRoyaltyRatio,
+          referralRatio: 0
+          // proxy: client.contract.bazaaar_v2.options.address,
+          // maker: account.address,
+          // taker: config.constant.nulladdress,
+          // creatorRoyaltyRecipient: config.recipient[project].ctn,
+          // asset: client.contract.ctn.options.address,
+          // id: params.id,
+          // price: wei,
+          // nonce: nonce,
+          // salt: salt,
+          // expiration: expiration,
+          // creatorRoyaltyRatio: 500,
+          // referralRatio: 500
+        }
+        console.log(order)
+        const signedOrder = await client.signOrder(order)
+        const datas = {
+          order: signedOrder,
+          msg: this.msg
+        }
+        var result = await functions.call('order', datas)
+        console.log(result)
+        this.hash = result.hash
+        this.ogp = result.ogp
+        this.modal = false
+        await sleep(1)
+        this.modalNo = 1
+        this.modal = true
+        this.loading = false
+        this.waitCancel = false
+      } catch (err) {
+        console.log(err)
+        alert(this.$t('error.message'))
+        this.loading = false
+        this.modal = false
+        this.waitCancel = false
+      }
+    },
+    async approve() {
+      if (this.assetType == 'ck') {
+        try {
+          this.loading = true
+          const account = this.account
+          const params = this.$route.params
+          client.contract.ck.methods
+            .approve(client.contract.bazaaar.options.address, params.id)
+            .send({ from: account.address })
+            .on('transactionHash', hash => {
+              this.hash = hash
+              this.modalNo = 2
+              this.modal = true
+              this.loading = false
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+              location.reload()
+            })
+            .catch(err => {
+              alert(this.$t('error.message'))
+              this.loading = false
+            })
+        } catch (err) {
+          alert(this.$t('error.message'))
+          this.loading = false
+        }
+      } else if (this.assetType == 'ctn') {
+        try {
+          this.loading = true
+          const account = this.account
+          const params = this.$route.params
+          client.contract.ctn.methods
+            .approve(client.contract.bazaaar.options.address, params.id)
+            .send({ from: account.address })
+            .on('transactionHash', hash => {
+              this.hash = hash
+              this.modalNo = 2
+              this.modal = true
+              this.loading = false
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+              location.reload()
+            })
+            .catch(err => {
+              alert(this.$t('error.message'))
+              this.loading = false
+            })
+        } catch (err) {
+          alert(this.$t('error.message'))
+          this.loading = false
+        }
+      } else {
+        try {
+          this.loading = true
+          const account = this.account
+          const params = this.$route.params
+          client.contract[this.assetType].methods
+            .setApprovalForAll(client.contract.bazaaar.options.address, params.id)
+            .send({ from: account.address })
+            .on('transactionHash', hash => {
+              this.hash = hash
+              this.modalNo = 2
+              this.modal = true
+              this.loading = false
+            })
+            .on('confirmation', (confirmationNumber, receipt) => {
+              location.reload()
+            })
+            .catch(err => {
+              alert(this.$t('error.message'))
+              this.loading = false
+            })
+        } catch (err) {
+          alert(this.$t('error.message'))
+          this.loading = false
+        }
+      }
+    },
+    async cancel() {
+      try {
+        this.loadingCancel = true
+        this.waitDiscount = true
+        const account = this.account
+        const order = this.order
+
+        await client.contract.bazaaar.methods
+          .orderCancel_(
+            [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
+            [order.id, order.price, order.nonce, order.salt, order.expiration, order.creatorRoyaltyRatio, order.referralRatio]
+          )
+          .send({ from: account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modalNo = 3
+            this.modal = true
+            this.loadingCancel = false
+            this.waitDiscount = false
+          })
+      } catch (err) {
+        alert(this.$t('error.message'))
+        this.loadingCancel = false
+        this.waitDiscount = false
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

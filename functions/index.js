@@ -51,19 +51,12 @@ async function validateAssetStatus(order) {
       approvedAddress = await ctn.methods.entityIndexToApproved(order.id).call()
       if (order.maker == owner && config.contract[project].bazaaar == approvedAddress) passed = true
       break
-    case 'mchh':
-      owner = await mchh.methods.ownerOf(order.id).call()
-      isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
-      if (isApprovedForAll && order.maker != owner) passed = true
-      break
-    case 'mche':
-      owner = await mche.methods.ownerOf(order.id).call()
-      isApprovedForAll = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar)
-      if (isApprovedForAll && order.maker != owner) passed = true
-      break
     default:
-      return passed
+      owner = await mchh.methods.ownerOf(order.id).call()
+      isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
+      if (isApprovedForAll && order.maker == owner) passed = true
   }
+  return passed
 }
 
 async function getAssetMetadataByAssetId(asset, id) {
@@ -78,13 +71,17 @@ async function getAssetMetadataByAssetId(asset, id) {
       break
     case 'ctn':
       response = await axios.get(config.api.ctn.metadata + id + '.json')
-      const entities = await ctn.methods.getEntity(id).call()
       result = response.data
       result.id = id
-      result.generation = entities.generation
-      result.status = {cooldown_index: parseInt(entities.cooldownIndex)}
       result.iframe = true
       result.iframe_url = result.viewer
+      try {
+        const entities = await ctn.methods.getEntity(id.toString()).call()
+        result.generation = entities.generation
+        result.status = {cooldown_index: parseInt(entities.cooldownIndex)}
+      } catch (err) {
+        console.info(err)
+      }
       break
     case 'mchh':
       general = await axios.get(config.api.mch.metadata + 'hero/' + id)
@@ -180,7 +177,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const order = params.order
   const isAssetStatusValid = await validateAssetStatus(order)
   const hash = await requireValidOrder(order)
-  if (isAssetStatusValid || hash != null || order.referralRatio > 100) return
+  if (!isAssetStatusValid || hash == null || order.referralRatio > 100) return
   const batch = db.batch()
   const now = new Date().getTime()
   const assetNameArray = Object.keys(config.contract[project]).filter(key => {
@@ -188,7 +185,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   })
   const assetName = assetNameArray[0]
   const metadata = await getAssetMetadataByAssetId(assetName, order.id)
-  if ((assetName == 'mchh' || assetName == 'mche') && !metadata.sellable) return
+  if (project != 'sand' && (assetName == 'mchh' || assetName == 'mche') && !metadata.sellable ) return
   const promises = [readFile('./assets/img/bg1.png'), axios.get(metadata.image_url, { responseType: 'arraybuffer' })]
   if (assetName == 'mchh' && metadata.mch_artedit) {
     promises.push(axios.get('https://www.mycryptoheroes.net/arts/' + metadata.extra_data.current_art, { responseType: 'arraybuffer' }))
@@ -263,7 +260,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   else if (assetName == 'ctn') discordMsg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
   else if (assetName == 'mchh') discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
   else discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
-  const discordData = { content: discordMsg + config.discord.endpoint[project] + `${asset}/order/` + hash }
+  const discordData = { content: discordMsg + config.discord.endpoint[project] + `${assetName}/order/` + hash }
   await axios({ method: 'post', url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK, data: discordData })
   const result = { ogp: ogp, hash: hash }
   return result

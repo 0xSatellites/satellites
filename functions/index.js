@@ -73,16 +73,22 @@ async function getAssetMetadataByAssetId(asset, id) {
     case 'ck':
       response = await axios.get(config.api.ck.metadata + id, { headers: { 'x-api-token': config.token.kitty } })
       result = response.data
+      result.image = response.data.image_url
+      result.iframe = false
       break
     case 'ctn':
       response = await axios.get(config.api.ctn.metadata + id + '.json')
+      result.iframe = true
+      result.iframe_url = result.viewer
       result = response.data
       break
     case 'mchh':
-      result.mch_artedit = false
-      result.royalty_rate = 0
       general = await axios.get(config.api.mch.metadata + 'hero/' + id)
       result = general.data
+      result.image = general.data.image_url
+      result.iframe = false
+      result.mch_artedit = false
+      result.royalty_rate = 0
       promises.push(axios.get(config.api.mch.metadata + 'heroType/' + general.data.extra_data.hero_type))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.active_skill_id))
       promises.push(axios.get(config.api.mch.metadata + 'skill/' + general.data.extra_data.passive_skill_id))
@@ -92,7 +98,7 @@ async function getAssetMetadataByAssetId(asset, id) {
       result.active_skill = resolved[1].data
       result.passive_skill = resolved[2].data
       result.sellable = general.data.extra_data.art_history.length > 0 && general.data.attributes.lv > 1
-      if (general.data.extra_data.current_art) break
+      if (!general.data.extra_data.current_art) break
       result.current_art_data = resolved[3].data
       if (!resolved[3].data.attributes.editor_address) break
       doc = await db.collection('user').doc(web3.utils.toChecksumAddress(resolved[3].data.attributes.editor_address)).get() // prettier-ignore
@@ -109,6 +115,8 @@ async function getAssetMetadataByAssetId(asset, id) {
     case 'mche':
       general = await axios.get(config.api.mch.metadata + 'extension/' + id)
       result = general.data
+      result.image = general.data.image_url
+      result.iframe = false
       promises.push(axios(config.api.mch.metadata + 'extensionType/' + general.data.extra_data.extension_type))
       promises.push(axios(config.api.mch.metadata + 'skill/' + general.data.extra_data.skill_id))
       resolved = await Promise.all(promises)

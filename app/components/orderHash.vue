@@ -8,7 +8,7 @@
         {{ name }}
       </div>
       <div class="l-information__txt">#{{ order.id }}</div>
-      <div class="l-information__txt">{{ $t('assets.' + assetType) }}</div>
+      <div class="l-information__txt">{{ $t('asset.' + assetType) }}</div>
       <div class="l-information__txt">{{ $t('hash.seller') }} : {{ order.maker }}</div>
       <div v-if="assetType == 'mchh'">
         <div class="l-information__txt" v-if="order.creatorRoyaltyRatio >= 300">{{ $t('hash.creator') }} : {{ order.creatorRoyaltyRecipient }}</div>
@@ -125,9 +125,11 @@ export default {
             this.twitterUrl =
             baseURL + this.order.metadata.attributes.extension_name + ' / Lv.' + this.order.metadata.attributes.lv + ' / ' + this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
         } else if (this.assetType == 'ck'){
-            //   this.twitterUrl = baseURL +
+            this.twitterUrl =
+            baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, くりぷ豚'
         } else if (this.assetType == 'ctn'){
-            //   this.twitterUrl = baseURL +
+            this.twitterUrl =
+            baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, CryptoKitties'
         }
     },
     account() {
@@ -156,10 +158,10 @@ export default {
         const account = this.account
         const order = this.order
 
-        await client.contract.bazaaar_v3.methods
+        await client.contract.bazaaar.methods
           .orderMatch_(
-            [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset, config.recipient[project].mch_distributer],
-            [order.id, order.price, order.nonce, order.salt, order.expiration, order.creatorRoyaltyRatio, order.referralRatio],
+            [order.proxy, order.maker, order.taker, order.relayerRoyaltyRecipient, order.creatorRoyaltyRecipient, order.asset, order.maker],
+            [order.id, order.price, order.nonce, order.salt, order.expiration, order.relayerRoyaltyRatio, order.creatorRoyaltyRatio, order.referralRatio],
             order.v,
             order.r,
             order.s
@@ -171,6 +173,7 @@ export default {
             this.loading = false
           })
       } catch (err) {
+          console.log(err)
         this.loading = false
         this.modalNo = 6
         this.modal = true

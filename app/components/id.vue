@@ -98,6 +98,13 @@
         </div>
       </v-form>
     </div>
+    <modal
+      v-if="modal"
+      :ogp="ogp"
+      :hash="hash"
+      :modalNo="modalNo"
+      :url="url"
+    ></modal>
   </div>
 </template>
 
@@ -137,6 +144,7 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      url: { type: '', hash: '', project: '' },
       ck,
       ctn,
       mchh,
@@ -424,6 +432,7 @@ export default {
     },
     async cancel() {
       try {
+        console.log('1')
         this.loadingCancel = true
         this.waitDiscount = true
         const account = this.account
@@ -431,8 +440,8 @@ export default {
 
         await client.contract.bazaaar.methods
           .orderCancel_(
-            [order.proxy, order.maker, order.taker, order.creatorRoyaltyRecipient, order.asset],
-            [order.id, order.price, order.nonce, order.salt, order.expiration, order.creatorRoyaltyRatio, order.referralRatio]
+            [order.proxy, order.maker, order.taker, order.relayerRoyaltyRecipient, order.creatorRoyaltyRecipient, order.asset],
+            [order.id, order.price, order.nonce, order.salt, order.expiration, order.relayerRoyaltyRatio, order.creatorRoyaltyRatio, order.referralRatio]
           )
           .send({ from: account.address })
           .on('transactionHash', hash => {
@@ -443,6 +452,7 @@ export default {
             this.waitDiscount = false
           })
       } catch (err) {
+        console.log(err)
         alert(this.$t('error.message'))
         this.loadingCancel = false
         this.waitDiscount = false

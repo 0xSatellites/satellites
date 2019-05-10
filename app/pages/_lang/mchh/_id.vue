@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import id from '~/components/id_maki'
+import id from '~/components/id'
 import firestore from '~/plugins/firestore'
 import axios from 'axios'
 

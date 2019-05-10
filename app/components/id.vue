@@ -2,26 +2,43 @@
     <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="type.symbol === 'ctn'"></iframe>
-            <img :src="asset.image_url" alt="" v-if="type.symbol === 'ck'"/>
+            <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="asset.iframe"></iframe>
+            <img :src="asset.image" alt="" v-else/>
           </div>
         </div>
         <div>
-          <div class="l-item__name"  v-if="asset.name">{{ asset.name.substring(0,25) }}</div>
+          <div class="l-item__name">{{ asset.name }}</div>
           <div class="l-item__txt"># {{ asset.id }}</div>
-          <div class="l-item__txt">
-            CryptoKitties
-          </div>
+          <div class="l-item__txt">{{$t('asset.'+assetType)}}</div>
           <ul class="l-item__data">
-          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, 'ck')" :key="i + '-rarity'">★</span></li>
+          <li><span class="l-item__rarity l-item__rarity--5" v-for="(i) in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
           </ul>
-          <ul class="l-item__data" v-if="type.symbol === 'ck'">
+          <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
           <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <!-- <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li> -->
+          <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li>
           </ul>
-          <ul class="l-item__data" v-if="type.symbol === 'ctn'">
-          <li><strong>Gen：</strong> {{asset.generation}} </li>
-          <!-- <li><strong>Cooldown：</strong> {{coolDownIndexToSpeed(asset.status.cooldown_index)}}</li> -->
+
+          <ul class="l-information__data" v-if="assetType == 'mchh' || assetType == 'mche'">
+            <li><strong>HP：</strong> {{ asset.attributes.hp }}</li>
+            <li><strong>PHY：</strong> {{ asset.attributes.phy }}</li>
+            <li><strong>INT：</strong> {{ asset.attributes.int }}</li>
+            <li><strong>AGI：</strong> {{ asset.attributes.agi }}</li>
+          </ul>
+          <ul class="l-information__data" v-if="lang && assetType == 'mchh'">
+            <li>
+              <span class="l-item__skill--type">Active</span><b>{{ asset.active_skill.name[lang] }}</b
+              ><br />{{ asset.active_skill.description[lang].effects[0] }}
+            </li>
+            <li>
+              <span class="l-item__skill--type">Passive</span><b>{{ asset.passive_skill.name[lang] }}</b
+              ><br />{{ asset.passive_skill.description[lang].effects[0] }}
+            </li>
+          </ul>
+          <ul class="l-information__data" v-if="lang && assetType == 'mche'">
+            <li>
+              <span class="l-item__skill--type">Passive</span><b>{{ asset.skill.name[lang] }}</b
+              ><br />{{ asset.skill.description[lang].effects[0] }}
+            </li>
           </ul>
 
           <v-form>
@@ -145,7 +162,7 @@ export default {
     components: {
         Modal
     },
-    props: ['type', 'owned'],
+    props: ['type'],
     data() {
       return {
         modal: false,
@@ -159,6 +176,7 @@ export default {
         valid: true,
         checkbox: false,
         approved: false,
+        owned: false,
         owner: '',
         msg: '',
         ck,
@@ -180,7 +198,7 @@ export default {
     //   error({ statusCode: 404, message: 'Post not found' })
     // }
     // },
-     mounted: async function() {
+    mounted: async function() {
     const store = this.$store
     const params = this.$route.params
     var account
@@ -196,13 +214,56 @@ export default {
       }
 
 
-      client.contract.ctn.methods
-        .entityIndexToApproved(params.id)
-        .call()
-        .then(approvedAddress => {
-          this.approved =
-            approvedAddress == client.contract.bazaaar.options.address
-        })
+    if (this.assetType == 'ck'){
+        client.contract.ck.methods
+          .kittyIndexToApproved(params.id)
+          .call()
+          .then(approvedAddress => {
+            this.approved =
+              approvedAddress == client.contract.bazaaar.options.address
+          })
+
+        client.contract.ck.methods
+          .kittyIndexToOwner(params.id)
+          .call()
+          .then(owner => {
+            this.owned = owner == this.account.address
+          })
+    } else if(this.assetType == 'ctn'){
+        client.contract.ctn.methods
+          .entityIndexToApproved(params.id)
+          .call()
+          .then(approvedAddress => {
+            this.approved =
+              approvedAddress == client.contract.bazaaar.options.address
+          })
+
+        client.contract.ctn.methods
+          .entityIndexToOwner(params.id)
+          .call()
+          .then(owner => {
+            this.owned = owner == this.account.address
+          })
+    }else {
+        client.contract[this.assetType].methods
+          .isApprovedForAll(this.account.address, client.contract.bazaaar.options.address)
+          .call()
+          .then(result => {
+            this.approved = result
+          })
+
+        client.contract[this.assetType].methods
+          .ownerOf(params.id)
+          .call()
+          .then(owner => {
+            if(this.asset.sell){
+              this.owned = owner == this.account.address
+            }
+            //本番はartないアセットは売れないので下記は消す
+            // this.owned = owner == this.account.address
+          })
+    }
+
 
       firestore
         .getLowestCostOrderByMakerId(client.account.address, params.id)
@@ -216,6 +277,14 @@ export default {
     }
   },
   computed: {
+    assetType() {
+     const routeNames = this.$route.name.split('-')
+     if (routeNames[0] == 'lang') return routeNames[1]
+     else return routeNames[0]
+    },
+    lang(){
+      return this.$store.state.i18n.locale
+    },
     account() {
       return this.$store.getters['account/account']
     },

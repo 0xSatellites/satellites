@@ -182,8 +182,11 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const order = params.order
+  console.log(order)
   const isAssetStatusValid = await validateAssetStatus(order)
+  console.log(isAssetStatusValid)
   const hash = await requireValidOrder(order)
+  console.log(hash)
   if (isAssetStatusValid || hash != null || order.referralRatio > 100) return
   const batch = db.batch()
   const now = new Date().getTime()
@@ -191,7 +194,9 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     return config.contract[project][key] === order.asset
   })
   const assetName = assetNameArray[0]
+  console.log(assetName)
   const metadata = await getAssetMetadataByAssetId(assetName, order.id)
+  console.log(metadata)
   if ((assetName == 'mchh' || assetName == 'mche') && !metadata.sellable) return
   const promises = [readFile('./assets/img/bg1.png'), axios.get(metadata.image_url, { responseType: 'arraybuffer' })]
   if (assetName == 'mchh' && metadata.mch_artedit) {

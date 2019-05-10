@@ -30,7 +30,7 @@
       <h2 class="l-personal__title">Get <a href="https://www.go-wallet.app/" target="_blank">GO!WALLET</a> and login</h2>
     </section>
     <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.mch') }}</h2>
+      <h2 class="l-personal__title">{{ $t('asset.mchh') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -88,7 +88,7 @@
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.oink') }}</h2>
+      <h2 class="l-personal__title">{{ $t('asset.ctn') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "
@@ -130,7 +130,7 @@
     </section>
 
     <section class="c-index c-index--mypage" v-if="account.address">
-      <h2 class="l-personal__title">{{ $t('assets.kitty') }}</h2>
+      <h2 class="l-personal__title">{{ $t('asset.ck') }}</h2>
       <ul>
         <v-progress-circular
           class="loading "

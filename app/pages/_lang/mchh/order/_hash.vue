@@ -1,37 +1,28 @@
 <template>
-    <section class="l-information" v-if="order.asset === mchh">
-      <orderHash
-        :type="type"
-      ></orderHash>
-    </section>
+  <div>
+    <orderHash></orderHash>
+  </div>
 </template>
 <script>
-import client from '~/plugins/ethereum-client'
-import firestore from '~/plugins/firestore'
 import OrderHash from '~/components/orderHash'
-import '@fortawesome/fontawesome-free/css/all.css'
-
-const project = process.env.project
-const config = require('../../../../config.json')
-const mchh = config.contract[project].mchh
+import firestore from '~/plugins/firestore'
 
 export default {
   components: {
     OrderHash
   },
-  data() {
+  head() {
     return {
-      mchh,
-      type: { name: 'マイクリ', symbol: 'mchh' },
+      meta: [
+        { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
+        { hid: 'og:description', property: 'og:description', content: this.$t('meta.description') },
+        { hid: 'og:image', property: 'og:image', content: this.order.ogp }
+      ]
     }
   },
   async asyncData({ store, params, error }) {
-    try {
-      const order = await firestore.doc('order', params.hash)
-      await store.dispatch('order/setOrder', order)
-    } catch(err){
-      error({ statusCode: 404, message: 'Post not found' })
-    }
+    const order = await firestore.doc('order', params.hash)
+    await store.dispatch('order/setOrder', order)
   },
   computed: {
     order() {
@@ -40,4 +31,3 @@ export default {
   }
 }
 </script>
-

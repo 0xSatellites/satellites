@@ -30,50 +30,7 @@
         </ul>
         </div>
     </section>
-    <section class="c-index c-index--recommend">
-
-        <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
-        <ul>
-        <li v-for="(order, i) in orders" :key="i + '-ck'">
-            <nuxt-link v-if="order.asset === ck" :to="$t('index.holdLanguageCK') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ order.id }}</div>
-              <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(order.metadata.status.cooldown_index)}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
-            </nuxt-link>
-            <nuxt-link v-else-if="order.asset === ctn" :to="$t('index.holdLanguageCTN') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img :src="order.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ order.id }}</div>
-              <div class="c-card__txt">Gen {{order.metadata.generation}} : {{coolDownIndexToSpeed(Number(order.metadata.status.cooldown_index))}}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
-            </nuxt-link>
-            <nuxt-link v-else-if="order.asset === mchh" :to="$t('index.holdLanguageMCHH') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="order.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="order.metadata.attributes.hero_name">{{ order.metadata.attributes.hero_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ order.id }}</div>
-              <div class="c-card__txt">Lv: {{ order.metadata.attributes.lv }}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
-            </nuxt-link>
-            <nuxt-link v-else-if="order.asset === mche" :to="$t('index.holdLanguageMCHE') + order.hash" class="c-card">
-              <div class="c-card__label c-card__label__rarity--5"><span v-for="(i) in getRarity(order)" :key="i + '-rarity'">★</span></div>
-              <div class="c-card__img"><img class="pa-4" :src="order.metadata.image_url" /></div>
-              <div class="c-card__name" v-if="order.metadata.attributes.extension_name">{{ order.metadata.attributes.extension_name.substring(0,25) }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
-              <div class="c-card__txt"># {{ order.id }}</div>
-              <div class="c-card__txt">Lv: {{ order.metadata.attributes.lv }}</div>
-              <div class="c-card__eth">Ξ {{ fromWei(order.price) }} ETH</div>
-            </nuxt-link>
-        </li>
-        </ul>
-    </section>
+    <Related></Related>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
         <v-container grid-list-md align-center justify-space-between>
@@ -193,54 +150,21 @@ import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import lib from '~/plugins/lib'
 import info from '~/components/info'
+import Related from '~/components/related'
 
 
 const config = require('../../config.json')
 const project = process.env.project
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
-
 
 export default {
-  data() {
-    return {
-        ck,
-        ctn,
-        mchh,
-        mche
-      }
-  },
   components: {
-    info
+    info,
+    Related
   },
   head() {
     return { title: this.$t('meta.title') }
   },
-
-  async asyncData({ store, params }) {
-      const orders = await firestore.getLatestValidOrders(4)
-      await store.dispatch('order/setOrders', orders)
-  },
-  computed: {
-    orders() {
-      return this.$store.getters['order/orders']
-    },
-  },
-  methods: {
-    coolDownIndexToSpeed(index) {
-      return lib.coolDownIndexToSpeed(index)
-    },
-    getRarity(asset) {
-      return lib.getRarity(asset)
-    },
-    fromWei(wei) {
-        return client.utils.fromWei(wei)
-    }
-  }
 }
-
 </script>
 
 <style scope>

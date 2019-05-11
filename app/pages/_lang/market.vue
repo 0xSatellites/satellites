@@ -55,10 +55,6 @@ import lib from '~/plugins/lib'
 
 const config = require('../../config.json')
 const project = process.env.project
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
 
 export default {
   data() {
@@ -66,10 +62,6 @@ export default {
       pagenation: true,
       limit: 0,
       offset: 0,
-      ck,
-      ctn,
-      mchh,
-      mche,
       search_rarity_status: false,
       search_rarity: 0,
       selectedAsset: 'all',

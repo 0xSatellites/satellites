@@ -1,4 +1,6 @@
 <template>
+<div>
+ <section class="l-item">
   <div class="l-item__frame">
     <div class="l-item__img">
       <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="asset.iframe"></iframe>
@@ -98,14 +100,17 @@
         </div>
       </v-form>
     </div>
-    <modal
+  </div>
+ </section>
+  <related></related>
+ <modal
       v-if="modal"
       :ogp="ogp"
       :hash="hash"
       :modalNo="modalNo"
       :url="url"
     ></modal>
-  </div>
+</div>
 </template>
 
 <script>
@@ -114,18 +119,17 @@ import lib from '~/plugins/lib'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import Modal from '~/components/modal'
+import Related from '~/components/related'
 import api from '~/plugins/api'
 
 const config = require('../config.json')
 const project = process.env.project
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
+
 
 export default {
   components: {
-    Modal
+    Modal,
+    Related
   },
   props: ['type'],
   data() {
@@ -145,10 +149,6 @@ export default {
       owner: '',
       msg: '',
       url: { type: '', hash: '', project: '' },
-      ck,
-      ctn,
-      mchh,
-      mche
     }
   },
   mounted: async function() {

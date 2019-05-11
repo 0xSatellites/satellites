@@ -60,6 +60,7 @@
         </div>
       </v-form>
     </div>
+    <related></related>
     <modal v-if="modal" v-on:closeModal="closeModal" v-on:transitionTop="transitionTop" :hash="hash" :modalNo="modalNo" :url="url"></modal>
   </section>
 </template>
@@ -68,6 +69,7 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
+import Related from '~/components/related'
 
 const project = process.env.project
 const config = require('../config.json')
@@ -75,7 +77,8 @@ const host = config.host[project]
 
 export default {
   components: {
-    Modal
+    Modal,
+    Related
   },
   data() {
     return {

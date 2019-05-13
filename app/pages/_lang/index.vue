@@ -37,7 +37,7 @@
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm4>
                 <a href="https://www.cryptokitties.co/" target="_blank">
-                    <v-card>
+                    <v-card class="ma-1">
                         <v-img
                         v-bind:src="require('~/assets/img/asset/CryptoKitties.png')"
                         aspect-ratio="1.2"
@@ -47,7 +47,7 @@
                 </v-flex>
                 <v-flex xs6 sm4>
                 <a href="https://www.crypt-oink.io/" target="_blank">
-                    <v-card>
+                    <v-card class="ma-1">
                         <v-img
                         v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')"
                         aspect-ratio="1.2"
@@ -57,7 +57,7 @@
                 </v-flex>
                 <v-flex xs6 sm4>
                 <a href="https://www.mycryptoheroes.net/" target="_blank">
-                    <v-card>
+                    <v-card class="ma-1">
                         <v-img
                         v-bind:src="require('~/assets/img/asset/mch_logo.png')"
                         aspect-ratio="1.2"
@@ -90,7 +90,7 @@
             <v-layout row wrap justify-center>
                 <v-flex xs6 sm3>
                 <a href="https://tokenpocket.jp/ja/" target="_blank">
-                    <v-card class="partner pa-3">
+                    <v-card class="ma-1 pa-2">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/tokenpocket.png')"
                         aspect-ratio="1"
@@ -100,7 +100,7 @@
                 </v-flex>
                 <v-flex xs6 sm3>
                 <a href="https://www.go-wallet.app/" target="_blank">
-                    <v-card class="partner pa-3">
+                    <v-card class="ma-1 pa-4">
                         <v-img
                         v-bind:src="require('~/assets/img/partner/GoWallet.png')"
                         aspect-ratio="1"
@@ -120,7 +120,7 @@
             <v-layout row wrap justify-center>
                 <v-flex xs4 sm2>
                 <a href="https://twitter.com/bazaaario" target="_blank">
-                    <v-card class="partner">
+                    <v-card class="ma-1">
                         <v-img
                         v-bind:src="require('~/assets/img/sns/Twitter_Logo_Blue.png')"
                         aspect-ratio="1"
@@ -130,7 +130,7 @@
                 </v-flex>
                 <v-flex xs4 sm2>
                 <a href="mailto:bazaaar@block-base.co">
-                    <v-card class="partner">
+                    <v-card class="ma-1">
                         <v-img
                         v-bind:src="require('~/assets/img/sns/Gmail_Logo.png')"
                         aspect-ratio="1"
@@ -145,13 +145,8 @@
 </template>
 
 <script>
-
-import firestore from '~/plugins/firestore'
-import client from '~/plugins/ethereum-client'
-import lib from '~/plugins/lib'
 import info from '~/components/info'
 import Related from '~/components/related'
-
 
 const config = require('../../config.json')
 const project = process.env.project
@@ -167,12 +162,3 @@ export default {
 }
 </script>
 
-<style scope>
-    .text-box{
-        margin: auto;
-    }
-
-    .partner{
-        margin-right: 1em;
-    }
-</style>

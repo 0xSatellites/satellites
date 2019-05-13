@@ -141,9 +141,6 @@ export default {
     order() {
       return this.$store.getters['order/order']
     },
-    recommend() {
-      return this.$store.getters['order/orders']
-    }
   },
   methods: {
     coolDownIndexToSpeed(index) {

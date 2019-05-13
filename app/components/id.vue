@@ -237,9 +237,6 @@ export default {
     order() {
       return this.$store.getters['order/order']
     },
-    recommend() {
-      return this.$store.getters['order/orders']
-    }
   },
   methods: {
     getRarity(asset, type) {
@@ -432,7 +429,6 @@ export default {
     },
     async cancel() {
       try {
-        console.log('1')
         this.loadingCancel = true
         this.waitDiscount = true
         const account = this.account
@@ -463,11 +459,6 @@ export default {
 </script>
 
 <style scoped>
-.twitter-share-button {
-  text-decoration: none;
-  color: white;
-}
-
 .white_text {
   color: white;
 }

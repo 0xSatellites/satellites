@@ -298,8 +298,4 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
-.text-box {
-  margin: auto;
-}
 </style>

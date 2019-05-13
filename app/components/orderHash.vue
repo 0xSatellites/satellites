@@ -53,7 +53,7 @@
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>
           <div v-if="order.valid">
-            <a :href="twitterUrl" class="twitter-share-button" data-size="large" data-show-count="false" target="”_blank”">
+            <a :href="twitterUrl" data-size="large" data-show-count="false" target="”_blank”">
               <v-icon class="mt-4" color="#3498db">fab fa-twitter</v-icon>
             </a>
           </div>
@@ -70,6 +70,7 @@ import firestore from '~/plugins/firestore'
 import lib from '~/plugins/lib'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 const project = process.env.project
 const config = require('../config.json')
@@ -188,9 +189,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.twitter-share-button {
-  text-decoration: none;
-  color: white;
-}
-</style>

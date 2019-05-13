@@ -28,7 +28,7 @@
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('asset.mchh') }}</h2>
       <ul>
-        <v-progress-circular class="loading " v-if="this.loadingMCHH || this.loadingMCHE" :size="50" color="blue" indeterminate></v-progress-circular>
+        <v-progress-circular class="l-personal__loading" v-if="this.loadingMCHH || this.loadingMCHE" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(mchh, i) in this.heroes" :key="i + '-mchh'" v-else-if="this.heroes.length">
           <div>
             <nuxt-link :to="'/' + lang + '/mchh/' + mchh.attributes.id" class="c-card">
@@ -46,10 +46,9 @@
             <v-card>
               <v-img v-bind:src="require('~/assets/img/asset/MyCryptoHeros.png')" aspect-ratio="1.75" contain></v-img>
               <v-card-title primary-title>
-                <div class="text-box">
+                <v-layout justify-center>
                   <h3 class="headline mb-0">{{ $t('empty.mch') }}</h3>
-                  <h3 class="headline mb-0">{{ $t('empty.mch_maintenance') }}</h3>
-                </div>
+                </v-layout>
               </v-card-title>
             </v-card>
           </a>
@@ -76,7 +75,7 @@
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('asset.ctn') }}</h2>
       <ul>
-        <v-progress-circular class="loading " v-if="this.loadingCTN" :size="50" color="blue" indeterminate></v-progress-circular>
+        <v-progress-circular class="l-personal__loading" v-if="this.loadingCTN" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(ctn, i) in this.oinks" :key="i + '-ctn'" v-else-if="this.oinks.length">
           <div>
             <nuxt-link :to="'/' + lang + '/ctn/' + ctn.id" class="c-card">
@@ -96,9 +95,9 @@
           <v-card>
             <v-img v-bind:src="require('~/assets/img/asset/Crypt_Oink.png')" aspect-ratio="1.75"></v-img>
             <v-card-title primary-title>
-              <div class="text-box">
+              <v-layout justify-center>
                 <h3 class="headline mb-0">{{ $t('empty.oink') }}</h3>
-              </div>
+              </v-layout>
             </v-card-title>
           </v-card>
         </a>
@@ -108,7 +107,7 @@
     <section class="c-index c-index--mypage" v-if="account.address">
       <h2 class="l-personal__title">{{ $t('asset.ck') }}</h2>
       <ul>
-        <v-progress-circular class="loading " v-if="this.loadingCK" :size="50" color="blue" indeterminate></v-progress-circular>
+        <v-progress-circular class="l-personal__loading" v-if="this.loadingCK" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(ck, i) in this.kitties" :key="i + '-ck'" v-else-if="this.kitties.length">
           <div>
             <nuxt-link :to="'/' + lang + '/ck/' + ck.id" class="c-card">
@@ -128,9 +127,9 @@
           <v-card>
             <v-img v-bind:src="require('~/assets/img/asset/CryptoKitties.png')" aspect-ratio="1.75"></v-img>
             <v-card-title primary-title>
-              <div class="text-box">
+              <v-layout justify-center>
                 <h3 class="headline mb-0">{{ $t('empty.kitty') }}</h3>
-              </div>
+              </v-layout>
             </v-card-title>
           </v-card>
         </a>
@@ -309,15 +308,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.loading {
-  margin: auto;
-  margin-top: 30px;
-  display: block;
-}
-
-.text-box {
-  margin: auto;
-}
-</style>

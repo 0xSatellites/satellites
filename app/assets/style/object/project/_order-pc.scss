@@ -262,6 +262,17 @@ background: rgba(0,0,0,0.5);
     }
   }
 
+  &__twitter-share-button {
+    text-decoration: none;
+    color: white;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
 
 .checkbox_center{

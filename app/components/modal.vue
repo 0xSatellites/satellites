@@ -32,7 +32,7 @@
                   ' / from @bazaaario' +
                   '&hashtags=bazaaar, バザー, MCH, マイクリ'
               "
-              class="twitter-share-button"
+              class="l-modal__twitter-share-button"
               data-size="large"
               data-show-count="false"
               target="”_blank”"
@@ -59,7 +59,7 @@
                   ' / from @bazaaario' +
                   '&hashtags=bazaaar, バザー, MCH, マイクリ'
               "
-              class="twitter-share-button"
+              class="l-modal__twitter-share-button"
               data-size="large"
               data-show-count="false"
               target="”_blank”"
@@ -85,7 +85,7 @@
                 ' / from @bazaaario' +
                 '&hashtags=bazaaar, バザー, '
             "
-            class="twitter-share-button"
+            class="l-modal__twitter-share-button"
             data-size="large"
             data-show-count="false"
             target="”_blank”"
@@ -179,7 +179,7 @@
     <!-- OGP描画中のローディング -->
     <transition name="modal" v-else-if="modalNo == 5">
       <div class="l-modal">
-        <div class="l-modal__frame loading">
+        <div class="l-modal__frame l-modal__loading">
           <img src="~/assets/img/modal/loading.gif" width="50%" alt="" />
         </div>
       </div>
@@ -268,20 +268,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.twitter-share-button {
-  text-decoration: none;
-  color: white;
-}
-
-.white_text {
-  color: white;
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

@@ -93,8 +93,7 @@
     "empty":{
         "kitty": "You don't have kitty now!!",
         "oink": "You don't have Crypton now!!",
-        "mch":"You don't have Hero now!!",
-        "mch_maintenance":"or MCH is under maintenance!!"
+        "mch":"You don't have Hero now!! or MCH is under maintenance!!"
     },
     "error":{
         "message": "error"

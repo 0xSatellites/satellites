@@ -25,9 +25,6 @@ import client from '~/plugins/ethereum-client'
 import firestore from '~/plugins/firestore'
 import lib from '~/plugins/lib'
 
-const config = require('../config.json')
-const project = process.env.project
-
 export default {
     mounted: async function() {
       const store = this.$store

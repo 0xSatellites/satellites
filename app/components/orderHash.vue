@@ -61,7 +61,7 @@
       </v-form>
     </div>
     <related></related>
-    <modal v-if="modal" v-on:closeModal="closeModal" v-on:transitionTop="transitionTop" :hash="hash" :modalNo="modalNo"></modal>
+    <modal v-if="modal" :hash="hash" :modalNo="modalNo"></modal>
   </section>
 </template>
 <script>
@@ -174,14 +174,6 @@ export default {
         this.modalNo = 6
         this.modal = true
       }
-    },
-    closeModal() {
-      this.modal = false
-    },
-    transitionTop() {
-      const router = this.$router
-      this.modal = false
-      router.push({ path: '/' })
     },
     owner(maker) {
       return maker == this.account.address

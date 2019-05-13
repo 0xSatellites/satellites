@@ -38,12 +38,6 @@ const contract = {
   )
 }
 
-const project = process.env.project
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
-
 const account = {
   address: null,
   balance: null

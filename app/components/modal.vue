@@ -234,7 +234,7 @@ const project = process.env.project
 const config = require('../config.json')
 
 export default {
-  props: ['ogp', 'hash', 'modalNo'], //orderのimgが取れていないので購入時に描画されない
+  props: ['ogp', 'hash', 'modalNo'],
   computed: {
     assetType() {
       const routeNames = this.$route.name.split('-')

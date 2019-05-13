@@ -31,7 +31,7 @@
         <v-progress-circular class="loading " v-if="this.loadingMCHH || this.loadingMCHE" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(mchh, i) in this.heroes" :key="i + '-mchh'" v-else-if="this.heroes.length">
           <div>
-            <nuxt-link :to="$t('myitems.holdMCHH') + mchh.attributes.id" class="c-card">
+            <nuxt-link :to="'/' + lang + '/mchh/' + mchh.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if="selling.includes(mchh.attributes.id.toString())">{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(mchh, 'mchh')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mchh.image_url" /></div>
@@ -60,7 +60,7 @@
       <ul v-if="this.extensions.length">
         <li v-for="(mche, i) in this.extensions" :key="i + '-mche'">
           <div>
-            <nuxt-link :to="$t('myitems.holdMCHE') + mche.attributes.id" class="c-card">
+            <nuxt-link :to="'/' + lang + '/mche/' + mche.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if="selling.includes(mche.attributes.id.toString())">{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(mche, 'mche')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img class="pa-4" :src="mche.image_url" /></div>
@@ -79,7 +79,7 @@
         <v-progress-circular class="loading " v-if="this.loadingCTN" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(ctn, i) in this.oinks" :key="i + '-ctn'" v-else-if="this.oinks.length">
           <div>
-            <nuxt-link :to="$t('myitems.holdCTN') + ctn.id" class="c-card">
+            <nuxt-link :to="'/' + lang + '/ctn/' + ctn.id" class="c-card">
               <div class="c-card__label--exhibit" v-if="selling.includes(ctn.id.toString())">{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(ctn, 'ctn')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ctn.image" /></div>
@@ -111,7 +111,7 @@
         <v-progress-circular class="loading " v-if="this.loadingCK" :size="50" color="blue" indeterminate></v-progress-circular>
         <li v-for="(ck, i) in this.kitties" :key="i + '-ck'" v-else-if="this.kitties.length">
           <div>
-            <nuxt-link :to="$t('myitems.holdCK') + ck.id" class="c-card">
+            <nuxt-link :to="'/' + lang + '/ck/' + ck.id" class="c-card">
               <div class="c-card__label--exhibit" v-if="selling.includes(ck.id.toString())">{{ $t('myitems.sell') }}</div>
               <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(ck, 'ck')" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img"><img :src="ck.image_url" /></div>
@@ -256,6 +256,9 @@ export default {
   computed: {
     account() {
       return this.$store.getters['account/account']
+    },
+    lang() {
+      return this.$store.state.i18n.locale
     },
     selling() {
       const result = []

@@ -81,7 +81,7 @@
         <h2 class="c-index__title">{{ $t('index.info') }}</h2>
         <info></info>
         <v-layout justify-center>
-         <nuxt-link :to="$t('footer.infoHD')">{{ $t('index.readmore') }}</nuxt-link>
+         <nuxt-link :to="'/'+lang+'/info'">{{ $t('index.readmore') }}</nuxt-link>
         </v-layout>
     </section>
     <section class="c-index">
@@ -148,17 +148,19 @@
 import info from '~/components/info'
 import Related from '~/components/related'
 
-const config = require('../../config.json')
-const project = process.env.project
-
 export default {
   components: {
     info,
     Related
   },
-  head() {
-    return { title: this.$t('meta.title') }
-  },
+  computed: {
+    head() {
+      return { title: this.$t('meta.title') }
+    },
+    lang() {
+      return this.$store.state.i18n.locale
+    },
+  }
 }
 </script>
 

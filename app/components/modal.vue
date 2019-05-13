@@ -12,6 +12,61 @@
             <img :src="ogp" alt="" width="85%" />
           </div>
           <div class="l-modal__txt">{{ $t('modal.postOnSocialMedia') }}</div>
+
+          <div class="l-modal__btn" v-if="this.assetType === 'mchh'">
+            <a
+              :href="
+                'https://twitter.com/share?url=' +
+                  host +
+                  this.assetType +
+                  '/order/' +
+                  hash +
+                  '&text=' +
+                  'NOW ON SALE!! ' +
+                  ' / ' +
+                  asset.attributes.hero_name +
+                  ' / Lv.' +
+                  asset.attributes.lv +
+                  ' / ' +
+                  asset.attributes.rarity +
+                  ' / from @bazaaario' +
+                  '&hashtags=bazaaar, バザー, MCH, マイクリ'
+              "
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+            >
+              {{ $t('modal.tweet') }}
+            </a>
+          </div>
+          <div class="l-modal__btn" v-else-if="this.assetType === 'mche'">
+            <a
+              :href="
+                'https://twitter.com/share?url=' +
+                  host +
+                  this.assetType +
+                  '/order/' +
+                  hash +
+                  '&text=' +
+                  'NOW ON SALE!! ' +
+                  ' / ' +
+                  asset.attributes.extension_name +
+                  ' / Lv.' +
+                  asset.attributes.lv +
+                  ' / ' +
+                  asset.attributes.rarity +
+                  ' / from @bazaaario' +
+                  '&hashtags=bazaaar, バザー, MCH, マイクリ'
+              "
+              class="twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+              >{{ $t('modal.tweet') }}
+            </a>
+          </div>
+          <div class="l-modal__btn" v-else>
           <a
             :href="
               'https://twitter.com/share?url=' +
@@ -35,10 +90,9 @@
             data-show-count="false"
             target="”_blank”"
           >
-            <div class="l-modal__btn">
               {{ $t('modal.tweet') }}
-            </div>
-          </a>
+            </a>
+          </div>
           <div class="l-modal__close" @click="transitionOrder">
             <div class="l-modal__close__icon"></div>
             <div class="l-modal__close__txt u-obj--sp">{{ $t('modal.close') }}</div>
@@ -148,7 +202,7 @@
                   </a>
                 </v-flex>
                 <v-flex xs4 sm3>
-                  <a :href="'https://tokenpocket.github.io/applink?dappUrl=' + url.project + url.type + '/order/' + url.hash" target="_blank">
+                  <a :href="'https://tokenpocket.github.io/applink?dappUrl=' + host + this.assetType + '/order/' + this.$nuxt.$route.params.hash" target="_blank">
                     <v-card class="partner pa-3">
                       <v-img v-bind:src="require('~/assets/img/partner/tokenpocket.png')" aspect-ratio="1"></v-img>
                     </v-card>
@@ -172,86 +226,15 @@
         </div>
       </div>
     </transition>
-    <!-- マイクリ出品&値下げ -->
-    <transition name="modal" v-if="modalNo == 7">
-      <div class="l-modal">
-        <div class="l-modal__frame">
-          <div class="l-modal__icon">
-            <img src="~/assets/img/modal/icon.svg" alt="" />
-          </div>
-          <div class="l-modal__title">{{ $t('modal.sell') }}</div>
-          <div class="l-modal__og">
-            <img :src="ogp" alt="" width="85%" />
-          </div>
-          <div class="l-modal__txt">{{ $t('modal.postOnSocialMedia') }}</div>
-          <div class="l-modal__btn" v-if="this.assetType === 'mchh'">
-            <a
-              :href="
-                'https://twitter.com/share?url=' +
-                  host +
-                  this.assetType +
-                  '/order/' +
-                  hash +
-                  '&text=' +
-                  'NOW ON SALE!! ' +
-                  ' / ' +
-                  asset.attributes.hero_name +
-                  ' / Lv.' +
-                  asset.attributes.lv +
-                  ' / ' +
-                  asset.attributes.rarity +
-                  ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, MCH, マイクリ' +
-                  type.name
-              "
-              class="twitter-share-button"
-              data-size="large"
-              data-show-count="false"
-              target="”_blank”"
-            >
-              {{ $t('modal.tweet') }}
-            </a>
-          </div>
-          <div class="l-modal__btn" v-else>
-            <a
-              :href="
-                'https://twitter.com/share?url=' +
-                  host +
-                  this.assetType +
-                  '/order/' +
-                  hash +
-                  '&text=' +
-                  'NOW ON SALE!! ' +
-                  ' / ' +
-                  asset.attributes.extension_name +
-                  ' / Lv.' +
-                  asset.attributes.lv +
-                  ' / ' +
-                  asset.attributes.rarity +
-                  ' / from @bazaaario' +
-                  '&hashtags=bazaaar, バザー, MCH, マイクリ' +
-                  type.name
-              "
-              class="twitter-share-button"
-              data-size="large"
-              data-show-count="false"
-              target="”_blank”"
-              >{{ $t('modal.tweet') }}
-            </a>
-          </div>
-          <div class="l-modal__close" @click="transitionOrder">
-            <div class="l-modal__close__icon"></div>
-            <div class="l-modal__close__txt u-obj--sp">{{ $t('modal.close') }}</div>
-          </div>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
 <script>
+const project = process.env.project
+const config = require('../config.json')
+
 export default {
-  props: ['ogp', 'hash', 'modalNo', 'host', 'type'], //orderのimgが取れていないので購入時に描画されない
+  props: ['ogp', 'hash', 'modalNo'], //orderのimgが取れていないので購入時に描画されない
   computed: {
     assetType() {
       const routeNames = this.$route.name.split('-')
@@ -264,6 +247,9 @@ export default {
     asset() {
       return this.$store.getters['asset/asset']
     },
+    host(){
+      return config.host[project]
+    }
   },
   methods: {
       closeModal() {

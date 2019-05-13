@@ -61,7 +61,7 @@
       </v-form>
     </div>
     <related></related>
-    <modal v-if="modal" v-on:closeModal="closeModal" v-on:transitionTop="transitionTop" :hash="hash" :modalNo="modalNo" :url="url"></modal>
+    <modal v-if="modal" v-on:closeModal="closeModal" v-on:transitionTop="transitionTop" :hash="hash" :modalNo="modalNo"></modal>
   </section>
 </template>
 <script>
@@ -89,16 +89,15 @@ export default {
       modalNo: 4,
       hash: '',
       lang: '',
-      url: { type: '', hash: '', project: '' },
-      twitterUrl: '',
+      // url: { type: '', hash: '', project: '' },
       name: ''
     }
   },
   mounted: async function() {
     const store = this.$store
-    this.url.type = this.assetType
-    this.url.hash = this.$nuxt.$route.params.hash
-    this.url.project = config.host[project]
+    // this.url.type = this.assetType
+    // this.url.hash = this.$nuxt.$route.params.hash
+    // this.url.project = config.host[project]
     this.lang = store.state.i18n.locale
     var account
     if (typeof web3 != 'undefined') {
@@ -112,7 +111,6 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
-    const baseURL = 'https://twitter.com/share?url=' + host + this.assetType + '/order/' + this.order.hash + '&text=' + this.$t('hash.sell') + ' / '
   },
   computed: {
     assetType() {
@@ -121,18 +119,15 @@ export default {
       else return routeNames[0]
     },
     twitterUrl() {
+        const baseURL = 'https://twitter.com/share?url=' + host + this.assetType + '/order/' + this.order.hash + '&text=' + this.$t('hash.sell') + ' / '
         if(this.assetType == 'mchh') {
-            this.twitterUrl =
-            baseURL + this.order.metadata.attributes.hero_name + ' / Lv.' + this.order.metadata.attributes.lv + ' / ' + this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
+            return baseURL + this.order.metadata.attributes.hero_name + ' / Lv.' + this.order.metadata.attributes.lv + ' / ' + this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
         } else if (this.assetType == 'mche'){
-            this.twitterUrl =
-            baseURL + this.order.metadata.attributes.extension_name + ' / Lv.' + this.order.metadata.attributes.lv + ' / ' + this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
+            return baseURL + this.order.metadata.attributes.extension_name + ' / Lv.' + this.order.metadata.attributes.lv + ' / ' + this.order.metadata.attributes.rarity + '&hashtags=bazaaar, バザー, MCH, マイクリ'
         } else if (this.assetType == 'ck'){
-            this.twitterUrl =
-            baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, くりぷ豚'
+            return baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, くりぷ豚'
         } else if (this.assetType == 'ctn'){
-            this.twitterUrl =
-            baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, CryptoKitties'
+            return baseURL + this.order.metadata.name + '/ Gen.' + this.order.metadata.generation + '&hashtags=bazaaar, バザー, CryptoKitties'
         }
     },
     account() {
@@ -193,3 +188,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.twitter-share-button {
+  text-decoration: none;
+  color: white;
+}
+</style>

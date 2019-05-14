@@ -1,5 +1,11 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'api', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'metadata', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'order', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -9,17 +15,11 @@ steps:
   args: ['beta', 'functions', 'deploy', 'orderCleaningPubSub', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=orderCleaning']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'api', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  args: ['beta', 'functions', 'deploy', 'deactivateOrderImageOnOrderChange', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-resource=projects/${_PROJECT_ENV}/databases/(default)/documents/test/test_id', '--trigger-event=providers/cloud.firestore/eventTypes/document.update']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'metadata', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  args: ['beta', 'functions', 'deploy', 'stopProject', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-topic=stopProject']
   dir: 'functions/'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'getOinkById', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
-  dir: 'functions/'
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'getOinksByAddress', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
-  dir: 'functions/'
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'functions', 'deploy', 'userSign', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  args: ['beta', 'functions', 'deploy', 'spArteditUserSign', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'

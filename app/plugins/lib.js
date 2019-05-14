@@ -1,5 +1,5 @@
 const axios = require("axios")
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 const project = process.env.project
 const ck = config.contract[project].ck
@@ -8,34 +8,16 @@ const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
 
 
-
 const coolDownIndexToSpeed = index => {
-  switch(index) {
-    case 0:
-    return 'Fast'
-    case 1:
-    case 2:
-    return 'Swift'
-    case 3:
-    case 4:
-    return 'Snappy'
-    case 5:
-    case 6:
-    return 'Brisk'
-    case 7:
-    case 8:
-    return 'Ploddy'
-    case 9:
-    case 10:
-    return 'Slow'
-    case 11:
-    case 12:
-    return 'Sluggish'
-    case 13:
-    return 'Catatonic'
-    default:
-    return 'unknown'
-  }
+  if (index == 0) return 'Fast'
+  else if (index == 1 || index == 2) return 'Swift'
+  else if (index == 3 || index == 4) return 'Snappy'
+  else if (index == 5 || index == 6) return 'Brisk'
+  else if (index == 7 || index == 8) return 'Plodding'
+  else if (index == 9 || index == 10) return 'Slow'
+  else if (index == 11 || index == 12) return 'Sluggish'
+  else if (index == 13) return 'Catatonic'
+  else return 'unknown'
 }
 
 
@@ -94,10 +76,24 @@ const toAsset = asset => {
   }
 }
 
-const common = {
-  coolDownIndexToSpeed: coolDownIndexToSpeed,
-  getRarity: getRarity,
-  toAsset: toAsset
+const timeConverter = timestamp =>{
+  var _d = new Date(timestamp);
+
+  var Y = _d.getFullYear();
+  var m = ("0" + (_d.getMonth() + 1)).slice(-2);
+  var d = ("0" + _d.getDate()).slice(-2);
+  var H = ("0" + _d.getHours()).slice(-2);
+  var i = ("0" + _d.getMinutes()).slice(-2);
+  var s = ("0" + _d.getSeconds()).slice(-2);
+
+  return `${Y}/${m}/${d} ${H}:${i}:${s}`;
 }
 
-export default common
+const lib = {
+  coolDownIndexToSpeed: coolDownIndexToSpeed,
+  getRarity: getRarity,
+  toAsset: toAsset,
+  timeConverter:timeConverter
+}
+
+export default lib

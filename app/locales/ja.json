@@ -22,26 +22,17 @@
         "readmore":"もっと見る",
         "partners":"パートナー",
         "contact":"お問い合わせ",
-        "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください",
-        "holdLanguageCK": "/ck/order/",
-        "holdLanguageCTN": "/ctn/order/",
-        "holdLanguageMCHH": "/mchh/order/",
-        "holdLanguageMCHE": "/mche/order/"
+        "contactText":"TwitterのDM、またはメールにてお気軽にお問い合わせください"
     },
-    "assets":{
-        "kitty":"クリプトキティ",
-        "oink":"くりぷ豚",
-        "mch":"マイクリプトヒーローズ"
+    "asset":{
+        "ck":"クリプトキティ",
+        "ctn":"くりぷ豚",
+        "mchh":"マイクリプトヒーローズ",
+        "mche":"マイクリプトヒーローズ"
     },
     "header":{
         "mypage": "マイページ",
-        "market":"マーケット",
-        "howto": "使い方",
-        "english": "英語",
-        "japanese": "日本語",
-        "topHD": "/",
-        "mypageHD": "/myitems",
-        "marketHD": "/market"
+        "market":"マーケット"
     },
     "modal":{
         "sell": "出品されました!",
@@ -64,19 +55,13 @@
         "balance": "残高",
         "experiment": "試験中の機能",
         "mch_artedit": "Trueに設定しておくと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。",
-        "sell": "出品中",
-        "holdCK": "/ck/",
-        "holdCTN": "/ctn/",
-        "holdMCHH": "/mchh/",
-        "holdMCHE": "/mche/"
+        "sell": "出品中"
     },
     "footer":{
         "company": "運営会社",
         "terms": "利用規約",
         "info": "新着情報",
-        "contact": "お問い合わせ",
-        "infoHD": "/info",
-        "termsHD": "/terms"
+        "contact": "お問い合わせ"
     },
     "id":{
         "inputMessage": "一言メッセージを入力できます（18文字以内）",
@@ -106,8 +91,7 @@
     "empty":{
         "kitty": "キティ持ってないにゃ",
         "oink": "くりぷトン持ってないブー",
-        "mch":"ヒーローいないよ",
-        "mch_maintenance":"もしくはマイクリさんがメンテナンス中"
+        "mch":"ヒーローいないよ、もしくはマイクリさんがメンテナンス中"
     },
     "error":{
         "message": "エラー"

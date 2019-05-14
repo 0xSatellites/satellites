@@ -1,5 +1,5 @@
-var BazaaarProtocol_v1 = artifacts.require("./BazaaarProtocol_v1.sol");
+var BazaaarProtocol = artifacts.require("./BazaaarProtocol.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(BazaaarProtocol_v1)
+  deployer.deploy(BazaaarProtocol)
 };

@@ -3,21 +3,16 @@ pragma solidity 0.4.24;
 import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-
 /**
- * Title  :  BazaaarProtocol_v3
+ * Title  :  BazaaarProtocol
  * Asset  :  ERC721
  * Author :  BlockBase
  */
 contract ERC721 {
-    function getApproved(uint256 tokenId)public view returns (address operator);
-    function isApprovedForAll(address owner, address operator) public view returns (bool);
-    function balanceOf(address owner) public view returns (uint256 count);
-    function ownerOf(uint256 tokenId) public view returns (address owner);
     function transferFrom(address _from, address _to, uint256 _tokenId) public;
 }
 
-contract BazaaarProtocol_v3 is Pausable {
+contract BazaaarProtocol is Pausable {
     using SafeMath for uint;
 
     event OrderMatched(
@@ -38,6 +33,7 @@ contract BazaaarProtocol_v3 is Pausable {
         address proxy;
         address maker;
         address taker;
+        address relayerRoyaltyRecipient;
         address creatorRoyaltyRecipient;
         address asset;
         uint id;
@@ -45,12 +41,14 @@ contract BazaaarProtocol_v3 is Pausable {
         uint nonce;
         uint salt;
         uint expiration;
+        uint relayerRoyaltyRatio;
         uint creatorRoyaltyRatio;
         uint referralRatio;
     }
 
     struct Amount {
         uint maker;
+        uint relayerRoyalty;
         uint creatorRoyalty;
         uint referral;
     }
@@ -72,34 +70,34 @@ contract BazaaarProtocol_v3 is Pausable {
         return nonce[maker][asset][id];
     }
 
-    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
+    function orderMatch_(address[7] addrs, uint[8] uints, uint8 v, bytes32 r, bytes32 s)
         external
         payable
         whenNotPaused
     {
         orderMatch(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], addrs[5], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6], uints[7]),
             Sig(v, r, s)
         );
         distribute(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
-            addrs[5]
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], addrs[5], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6], uints[7]),
+            addrs[6]
         );
     }
 
-    function orderCancel_(address[5] addrs, uint[7] uints) external {
+    function orderCancel_(address[6] addrs, uint[8] uints) external {
         orderCancel(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6])
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], addrs[5], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6], uints[7])
         );
     }
 
-    function requireValidOrder_(address[5] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
+    function requireValidOrder_(address[6] addrs, uint[8] uints, uint8 v, bytes32 r, bytes32 s)
         external
         view
         returns (bytes32)
     {
         return requireValidOrder(
-            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6]),
+            Order(addrs[0], addrs[1], addrs[2], addrs[3], addrs[4], addrs[5], uints[0], uints[1], uints[2], uints[3], uints[4], uints[5], uints[6], uints[7]),
             Sig(v, r, s)
         );
     }
@@ -109,14 +107,17 @@ contract BazaaarProtocol_v3 is Pausable {
     {
         ERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
         Amount memory amount = computeAmount(order);
+        if(amount.relayerRoyalty > 0){
+            require(order.relayerRoyaltyRecipient.call.value(amount.relayerRoyalty)());
+        }
         if(amount.creatorRoyalty > 0){
-            order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
+            require(order.creatorRoyaltyRecipient.call.value(amount.creatorRoyalty)());
         }
         if(amount.referral > 0){
             require(referralRecipient.call.value(amount.referral)());
         }
         if(amount.maker > 0 ){
-            order.maker.transfer(amount.maker);
+            require(order.maker.call.value(amount.maker)());
         }
     }
 
@@ -125,9 +126,10 @@ contract BazaaarProtocol_v3 is Pausable {
         view
         returns (Amount memory amount)
     {
+        amount.relayerRoyalty = order.price.mul(order.relayerRoyaltyRatio).div(ratioBase);
         amount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
         amount.referral = order.price.mul(order.referralRatio).div(ratioBase);
-        amount.maker = order.price.sub(amount.creatorRoyalty).sub(amount.referral);
+        amount.maker = order.price.sub(amount.creatorRoyalty).sub(amount.creatorRoyalty).sub(amount.referral);
     }
 
     function orderMatch(Order memory order, Sig memory sig)
@@ -163,9 +165,6 @@ contract BazaaarProtocol_v3 is Pausable {
         view
         returns (bool)
     {
-        if (!validateAssetStatus(order)) {
-            return false;
-        }
         if (!validateOrderParameters(order)) {
             return false;
         }
@@ -173,20 +172,6 @@ contract BazaaarProtocol_v3 is Pausable {
             return true;
         }
         return false;
-    }
-
-    function validateAssetStatus(Order memory order)
-        internal
-        view
-        returns (bool)
-    {
-        if (ERC721(order.asset).ownerOf(order.id) != order.maker) {
-            return false;
-        }
-        if (ERC721(order.asset).getApproved(order.id) != address(this) && !ERC721(order.asset).isApprovedForAll(order.maker, address(this))) {
-            return false;
-        }
-        return true;
     }
 
     function validateOrderParameters(Order memory order)
@@ -228,6 +213,7 @@ contract BazaaarProtocol_v3 is Pausable {
                 order.proxy,
                 order.maker,
                 order.taker,
+                order.relayerRoyaltyRecipient,
                 order.creatorRoyaltyRecipient,
                 order.asset,
                 order.id,
@@ -235,6 +221,7 @@ contract BazaaarProtocol_v3 is Pausable {
                 order.nonce,
                 order.salt,
                 order.expiration,
+                order.relayerRoyaltyRatio,
                 order.creatorRoyaltyRatio,
                 order.referralRatio
         ));

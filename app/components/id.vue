@@ -60,7 +60,7 @@
             <label><input type="text" v-model="price" id="amount"/> ETH <input type="text" style="display:none"/></label>
           </div>
           <div class="l-item__action__textarea" v-if="approved && owned">
-            <v-text-field v-model="msg" :rules="msgRules" :counter="18" :placeholder="$t('id.inputMessage')"></v-text-field>
+            <v-text-field v-model="msg" :counter="18" :placeholder="$t('id.inputMessage')"></v-text-field>
           </div>
           <div v-if="approved && owned" class="small">
             (<a href="/terms">{{ $t('id.terms') }}</a
@@ -306,6 +306,8 @@ export default {
           } else {
             creatorRoyaltyRecipient = config.recipient[project].mch_distributer
           }
+        } else if (this.assetType == 'mche'){
+          creatorRoyaltyRecipient = config.recipient[project].mch_distributer
         }
 
         const expiration = Math.round(9999999999999 / 1000) - 1
@@ -339,10 +341,12 @@ export default {
         }
         console.log(order)
         const signedOrder = await client.signOrder(order)
+        console.log(signedOrder)
         const datas = {
           order: signedOrder,
           msg: this.msg
         }
+        console.log(datas)
         var result = await functions.call('order', datas)
         console.log(result)
         this.hash = result.hash

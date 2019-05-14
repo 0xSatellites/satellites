@@ -40,21 +40,27 @@ async function requireValidOrder(order) {
 async function validateAssetStatus(order) {
   let passed = false
   let owner, approvedAddress, isApprovedForAll
-  switch (order.assetName) {
-    case 'ck':
+  switch (order.asset) {
+    case config.contract[project].ck:
       owner = await ck.methods.kittyIndexToOwner(order.id).call()
       approvedAddress = await ck.methods.kittyIndexToApproved(order.id).call()
       if (order.maker == owner && config.contract[project].bazaaar == approvedAddress) passed = true
       break
-    case 'ctn':
+    case config.contract[project].ctn:
       owner = await ctn.methods.entityIndexToOwner(order.id).call()
       approvedAddress = await ctn.methods.entityIndexToApproved(order.id).call()
       if (order.maker == owner && config.contract[project].bazaaar == approvedAddress) passed = true
       break
-    default:
+    case config.contract[project].mche:
+      owner = await mche.methods.ownerOf(order.id).call()
+      isApprovedForAll = await mche.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
+      if (isApprovedForAll && order.maker == owner) passed = true
+      break
+    case config.contract[project].mchh:
       owner = await mchh.methods.ownerOf(order.id).call()
       isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
       if (isApprovedForAll && order.maker == owner) passed = true
+      break
   }
   return passed
 }
@@ -175,7 +181,10 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const order = params.order
+  console.log(order)
+  console.log(bazaaar)
   const isAssetStatusValid = await validateAssetStatus(order)
+  console.log(isAssetStatusValid)
   const hash = await requireValidOrder(order)
   if (!isAssetStatusValid || hash == null || order.referralRatio > 100) return
   const batch = db.batch()

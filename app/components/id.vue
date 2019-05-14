@@ -159,6 +159,7 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      price: ''
     }
   },
   mounted: async function() {

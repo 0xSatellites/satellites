@@ -1,5 +1,5 @@
 const axios = require("axios")
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 const kittyInstance = axios.create({
   baseURL: 'https://public.api.cryptokitties.co/v1/',

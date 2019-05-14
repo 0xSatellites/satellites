@@ -1,23 +1,11 @@
 const Web3 = require('web3')
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 const  web3 = new Web3(config.node[process.env.project].https)
 const contract = {
   bazaaar: new web3.eth.Contract(
     config.abi.bazaaar,
     config.contract[process.env.project].bazaaar
-  ),
-  bazaaar_v1: new web3.eth.Contract(
-    config.abi.bazaaar_v1,
-    config.contract[process.env.project].bazaaar_v1
-  ),
-  bazaaar_v2: new web3.eth.Contract(
-    config.abi.bazaaar_v2,
-    config.contract[process.env.project].bazaaar_v2
-  ),
-  bazaaar_v3: new web3.eth.Contract(
-    config.abi.bazaaar_v3,
-    config.contract[process.env.project].bazaaar_v3
   ),
   ck: new web3.eth.Contract(
     config.abi.ck,

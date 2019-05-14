@@ -1,5 +1,5 @@
 const axios = require("axios")
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 const project = process.env.project
 const ck = config.contract[project].ck

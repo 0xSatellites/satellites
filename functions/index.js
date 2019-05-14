@@ -195,7 +195,7 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const assetName = assetNameArray[0]
   const metadata = await getAssetMetadataByAssetId(assetName, order.id)
   if (project != 'sand' && (assetName == 'mchh' || assetName == 'mche') && !metadata.sellable ) return
-  const promises = [readFile('./assets/img/bg1.png'), axios.get(metadata.image_url, { responseType: 'arraybuffer' })]
+  const promises = [readFile('./assets/img/bg1.png'), axios.get(metadata.image, { responseType: 'arraybuffer' })]
   if (assetName == 'mchh' && metadata.mch_artedit) {
     promises.push(axios.get('https://www.mycryptoheroes.net/arts/' + metadata.extra_data.current_art, { responseType: 'arraybuffer' }))
   }
@@ -264,13 +264,13 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   const imageBuffer = Buffer.from(base64EncodedImageString, 'base64')
   const file = bucket.file(hash + '.png')
   await Promise.all([file.save(imageBuffer, { metadata: { contentType: 'image/png' } }), batch.commit()])
-  let discordMsg
-  if (assetName == 'ck') discordMsg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '
-  else if (assetName == 'ctn') discordMsg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #くりぷ豚 '
-  else if (assetName == 'mchh') discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
-  else discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
-  const discordData = { content: discordMsg + config.discord.endpoint[project] + `${assetName}/order/` + hash }
-  await axios({ method: 'post', url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK, data: discordData })
+  // let discordMsg
+  // if (assetName == 'ck') discordMsg = 'NOW ON SALE!!' + ' / Id.' + order.id + ' / Gen.' + metadata.generation + ' / ' + coolDownIndexToSpeed(metadata.status.cooldown_index) + ' / #CryptoKitties '
+  // else if (assetName == 'ctn') discordMsg = 'NOW ON SALE!!' + ' / Id.' + order.id  + ' / ' + ' / #くりぷ豚 '
+  // else if (assetName == 'mchh') discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.hero_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+  // else discordMsg = 'NOW ON SALE!!' + ' / ' + metadata.attributes.extension_name + ' / Lv.' + metadata.attributes.lv + ' / ' + metadata.attributes.rarity + ' / #MCH '
+  // const discordData = { content: discordMsg + config.discord.endpoint[project] + `${assetName}/order/` + hash }
+  // await axios({ method: 'post', url: 'https://discordapp.com/api/webhooks/' + process.env.DISCORD_WEBHOOK, data: discordData })
   const result = { ogp: ogp, hash: hash }
   return result
 })

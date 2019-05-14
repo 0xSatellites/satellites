@@ -120,7 +120,6 @@
       :ogp="ogp"
       :hash="hash"
       :modalNo="modalNo"
-      :url="url"
     ></modal>
 </div>
 </template>
@@ -160,7 +159,6 @@ export default {
       owned: false,
       owner: '',
       msg: '',
-      url: { type: '', hash: '', project: '' },
     }
   },
   mounted: async function() {

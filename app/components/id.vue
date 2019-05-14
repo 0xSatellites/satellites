@@ -5,11 +5,23 @@
     <div class="l-item__img">
       <iframe style="border-style: none; width: 100%; zoom: 1.5;" :src="'https://www.crypt-oink.io/viewer/?' + $route.params.id" v-if="asset.iframe"></iframe>
       <img :src="asset.image" alt="" v-else />
+      <img :src="'https://www.mycryptoheroes.net/arts/'+asset.extra_data.current_art" v-if="asset.mch_artedit" >
+            <div class="favorite" v-if="asset.mch_artedit">
+              <v-layout
+                align-center
+              >
+                <v-icon color="red">favorite</v-icon>
+                <span class="subheading">{{asset.current_art_data.attributes.likes}}</span>
+              </v-layout>
+            </div>
     </div>
 
     <div>
-      <div class="l-item__name">{{ asset.name }}</div>
-      <div class="l-item__txt"># {{ asset.id }}</div>
+      <div class="l-item__name" v-if="assetType === 'ck' || assetType === 'ctn'">{{ asset.name }}</div>
+      <div class="l-item__name" v-if="assetType == 'mchh'">{{ asset.hero_type.name[lang] }}</div>
+      <div class="l-item__name" v-if="assetType == 'mche'">{{ asset.extension_type.name[lang] }}</div>
+      <div class="l-item__txt" v-if="assetType === 'ck' || assetType === 'ctn'"># {{ asset.id }}</div>
+      <div class="l-item__txt" v-if="assetType == 'mchh' || assetType == 'mche'">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
       <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
       <ul class="l-item__data">
         <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
@@ -19,13 +31,13 @@
         <li><strong>Cooldown：</strong> {{ coolDownIndexToSpeed(asset.status.cooldown_index) }}</li>
       </ul>
 
-      <ul class="l-information__data" v-if="assetType == 'mchh' || assetType == 'mche'">
+      <ul class="l-item__data" v-if="assetType == 'mchh' || assetType == 'mche'">
         <li><strong>HP：</strong> {{ asset.attributes.hp }}</li>
         <li><strong>PHY：</strong> {{ asset.attributes.phy }}</li>
         <li><strong>INT：</strong> {{ asset.attributes.int }}</li>
         <li><strong>AGI：</strong> {{ asset.attributes.agi }}</li>
       </ul>
-      <ul class="l-information__data" v-if="lang && assetType == 'mchh'">
+      <ul class="l-item__data" v-if="lang && assetType == 'mchh'">
         <li>
           <span class="l-item__skill--type">Active</span><b>{{ asset.active_skill.name[lang] }}</b
           ><br />{{ asset.active_skill.description[lang].effects[0] }}
@@ -35,7 +47,7 @@
           ><br />{{ asset.passive_skill.description[lang].effects[0] }}
         </li>
       </ul>
-      <ul class="l-information__data" v-if="lang && assetType == 'mche'">
+      <ul class="l-item__data" v-if="lang && assetType == 'mche'">
         <li>
           <span class="l-item__skill--type">Passive</span><b>{{ asset.skill.name[lang] }}</b
           ><br />{{ asset.skill.description[lang].effects[0] }}

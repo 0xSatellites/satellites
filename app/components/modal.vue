@@ -112,7 +112,7 @@
           <div class="l-modal__txt">{{ $t('modal.announce') }}</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.image_url" alt="" />
+              <img :src="asset.image" alt="" />
             </div>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
@@ -138,7 +138,7 @@
           <div class="l-modal__title">{{ $t('modal.cancel') }}</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="asset.image_url" alt="" />
+              <img :src="asset.image" alt="" />
             </div>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
@@ -160,7 +160,7 @@
           <div class="l-modal__title">{{ $t('modal.purchase') }}</div>
           <div class="l-modal__og">
             <div id="modalImg">
-              <img :src="order.metadata.image_url" alt="" />
+              <img :src="order.metadata.image" alt="" />
             </div>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>

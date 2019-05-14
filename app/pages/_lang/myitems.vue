@@ -160,7 +160,7 @@ import axios from 'axios'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 
-const config = require('../../config.json')
+const config = require('../../../functions/config.json')
 const project = process.env.project
 
 export default {

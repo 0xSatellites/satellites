@@ -53,7 +53,7 @@ import firestore from '~/plugins/firestore'
 import client from '~/plugins/ethereum-client'
 import lib from '~/plugins/lib'
 
-const config = require('../../config.json')
+const config = require('../../../functions/config.json')
 const project = process.env.project
 
 export default {

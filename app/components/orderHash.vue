@@ -73,7 +73,7 @@ import Related from '~/components/related'
 import '@fortawesome/fontawesome-free/css/all.css'
 
 const project = process.env.project
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 const host = config.host[project]
 
 export default {

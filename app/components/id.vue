@@ -289,7 +289,7 @@ export default {
         //date.setDate(date.getDate() + 7)
         //const expiration = Math.round(date.getTime() / 1000)
 
-        let creatorRoyaltyRecipient = ''
+        let creatorRoyaltyRecipient = config.constant.nulladdress
         let relayerRoyaltyRatio = 500
         let creatorRoyaltyRatio = 500
 

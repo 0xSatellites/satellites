@@ -29,8 +29,7 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
   return result
 }
 
-const getMaketLength = async (asset, by, order) => {
-  var result = []
+const getMarketLength = async (asset, by, order) => {
   const snapshots = await db.collection('order')
     .where('valid', '==', true)
     .get()
@@ -184,7 +183,7 @@ const firestore = {
   getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
   getMarket:getMarket,
   getMarketWithConditions:getMarketWithConditions,
-  getMaketLength:getMaketLength,
+  getMarketLength:getMarketLength,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

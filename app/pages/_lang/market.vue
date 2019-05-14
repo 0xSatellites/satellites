@@ -112,7 +112,7 @@ export default {
     }
   },
   async asyncData({ store, params, query }) {
-    const limit = Math.ceil((await firestore.getMaketLength()) / 20)
+    const limit = Math.ceil((await firestore.getMarketLength()) / 20)
     const marketAsset = 'all'
     const sortBy = 'created'
     const marketOrder = 'desc'

@@ -181,10 +181,7 @@ exports.metadata = functions.region('asia-northeast1').https.onRequest(async (re
 
 exports.order = functions.region('asia-northeast1').https.onCall(async (params, context) => {
   const order = params.order
-  console.log(order)
-  console.log(bazaaar)
   const isAssetStatusValid = await validateAssetStatus(order)
-  console.log(isAssetStatusValid)
   const hash = await requireValidOrder(order)
   if (!isAssetStatusValid || hash == null || order.referralRatio > 100) return
   const batch = db.batch()

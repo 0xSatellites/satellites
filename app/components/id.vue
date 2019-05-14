@@ -159,6 +159,7 @@ export default {
       owned: false,
       owner: '',
       msg: '',
+      price: ''
     }
   },
   mounted: async function() {
@@ -324,29 +325,13 @@ export default {
           relayerRoyaltyRatio: relayerRoyaltyRatio,
           creatorRoyaltyRatio: creatorRoyaltyRatio,
           referralRatio: 0
-          // proxy: client.contract.bazaaar_v2.options.address,
-          // maker: account.address,
-          // taker: config.constant.nulladdress,
-          // creatorRoyaltyRecipient: config.recipient[project].ctn,
-          // asset: client.contract.ctn.options.address,
-          // id: params.id,
-          // price: wei,
-          // nonce: nonce,
-          // salt: salt,
-          // expiration: expiration,
-          // creatorRoyaltyRatio: 500,
-          // referralRatio: 500
         }
-        console.log(order)
         const signedOrder = await client.signOrder(order)
-        console.log(signedOrder)
         const datas = {
           order: signedOrder,
           msg: this.msg
         }
-        console.log(datas)
         var result = await functions.call('order', datas)
-        console.log(result)
         this.hash = result.hash
         this.ogp = result.ogp
         this.modal = false
@@ -356,7 +341,6 @@ export default {
         this.loading = false
         this.waitCancel = false
       } catch (err) {
-        console.log(err)
         alert(this.$t('error.message'))
         this.loading = false
         this.modal = false

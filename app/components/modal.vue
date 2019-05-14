@@ -80,8 +80,6 @@
                 asset.id +
                 ' / Gen.' +
                 asset.generation +
-                ' / ' +
-                $emit('coolDownIndexToSpeed', asset.status.cooldown_index) +
                 ' / from @bazaaario' +
                 '&hashtags=bazaaar, バザー, '
             "
@@ -115,9 +113,8 @@
               <img :src="asset.image" alt="" />
             </div>
           </div>
-          <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
           <div class="l-modal__txt">
-            <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
+            <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Etherscan</a>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.approve') }}</div>
           <div class="l-modal__close" @click="closeModal">

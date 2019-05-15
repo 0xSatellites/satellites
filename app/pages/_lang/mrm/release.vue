@@ -8,7 +8,7 @@
     <div class="l-item__frame">
         <div>
           <div class="l-item__img">
-            <img src="~/assets/img/maltine/MARU174.jpg"/>
+            <img src="~/assets/img/maltine/AcidAcid_1024.png"/>
           </div>
         </div>
         <div class="l-item-frame">
@@ -16,10 +16,10 @@
           <div class="l-item__txt">Artist: Mitaka Sound</div>
           <br>
           <div class="l-item__txt2">TrackList / TokenList: </div>
-          <div class="l-item__txt2">01 AcidAcid(さよひめぼう Remix) </div>
-          <div class="l-item__txt2">02 AcidAcid </div>
-          <div class="l-item__txt2">03 AcidAcid(Gassyoh Remix) </div>
-          <div class="l-item__txt2">04 AcidAcid(コバルト爆弾αΩ Remix) </div>
+          <div class="l-item__txt2">ACID ACID EP Vol.1 / ACID ACID (さよひめぼう Remix) / Mitaka Sound </div>
+          <div class="l-item__txt2">ACID ACID EP Vol.2 / ACID ACID / Mitaka Sound </div>
+          <div class="l-item__txt2">ACID ACID EP Vol.3 / ACID ACID (Gassyoh Remix) / Mitaka Sound </div>
+          <div class="l-item__txt2">ACID ACID EP Vol.4 / ACID ACID (コバルト爆弾αΩ Remix) / Mitaka Sound </div>
           <br>
           <div class="l-item__txt2">Label: Maltine Records</div>
           <div class="l-item__txt2">Producer: Cobalt Bomb Alpha Omega</div>
@@ -28,11 +28,11 @@
           <div class="l-item__txt2">Contract Design: BlockBase,Inc</div>
           <div class="l-item__txt2">Executive Producer: tomad</div>
           <br>
-          <a :href="'http://maltinerecords.cs8.biz'" target="_blank">Maltine Records Link</a>
+          <a class="l-item__txt2" :href="'http://maltinerecords.cs8.biz'" target="_blank">Maltine Records Link</a>
           <br>
           <br>
           <div class="l-item__txt2">Sample Music</div>
-          <audio src="@/assets/img/maltine/Sample01.mp3" controls></audio>
+          <audio src="@/assets/img/maltine/Sample.mp3" controls></audio>
            <br>
            <br>
           <div class="l-item__txt2">

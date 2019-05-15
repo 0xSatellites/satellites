@@ -28,6 +28,7 @@
   },
   "private": true,
   "devDependencies": {
+    "firebase-functions-test": "^0.1.6",
     "firebase-tools": "^6.3.1",
     "prettier": "^1.17.0"
   }

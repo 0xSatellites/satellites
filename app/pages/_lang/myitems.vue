@@ -294,7 +294,7 @@ export default {
           status: switch1,
           modified: await date.getTime()
         }
-        await functions.call('userSign', datas)
+        await functions.call('spArteditUserSign', datas)
       } catch (err) {
         alert(this.$t('error.message'))
         const result = await firestore.doc('user', client.account.address)

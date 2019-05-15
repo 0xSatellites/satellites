@@ -117,6 +117,9 @@
   <related></related>
  <modal
       v-if="modal"
+      v-on:closeModal="closeModal"
+      v-on:transitionTop="transitionTop"
+      v-on:transitionOrder="transitionOrder"
       :ogp="ogp"
       :hash="hash"
       :modalNo="modalNo"
@@ -462,7 +465,20 @@ export default {
         this.loadingCancel = false
         this.waitDiscount = false
       }
-    }
+    },
+    closeModal() {
+        this.modal = false
+    },
+    transitionTop() {
+        const router = this.$router
+        this.modal = false
+        router.push({ path: '/' })
+      },
+      transitionOrder() {
+        const router = this.$router
+        this.modal = false
+        router.push({ path: '/' + this.assetType + '/order/' + this.hash })
+      }
   }
 }
 </script>

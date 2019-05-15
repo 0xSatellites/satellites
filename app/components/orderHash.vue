@@ -181,3 +181,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.white_text {
+  color: white;
+}
+</style>
+

@@ -1,0 +1,88 @@
+<template>
+<section class="l-information">
+    <div class="l-information__img">
+      <img class="ogpimg" src="~/assets/img/maltine/maltinelogo.png" />
+    </div>
+    <br>
+    <h2 class="c-index__title">NEW MUSIC</h2>
+    <div class="l-item__frame">
+        <div>
+          <div class="l-item__img">
+            <img src="~/assets/img/maltine/MARU174.jpg"/>
+          </div>
+        </div>
+        <div class="l-item-frame">
+          <div class="l-item__name">Acid Acid EP</div>
+          <div class="l-item__txt">Artist: Mitaka Sound</div>
+          <br>
+          <div class="l-item__txt2">TrackList / TokenList: </div>
+          <div class="l-item__txt2">01 AcidAcid(さよひめぼう Remix) </div>
+          <div class="l-item__txt2">02 AcidAcid </div>
+          <div class="l-item__txt2">03 AcidAcid(Gassyoh Remix) </div>
+          <div class="l-item__txt2">04 AcidAcid(コバルト爆弾αΩ Remix) </div>
+          <br>
+          <div class="l-item__txt2">Label: Maltine Records</div>
+          <div class="l-item__txt2">Producer: Cobalt Bomb Alpha Omega</div>
+          <div class="l-item__txt2">Artwork: NC Empire</div>
+          <div class="l-item__txt2">Mastering Enginner: Tatsuya Shiozawa</div>
+          <div class="l-item__txt2">Contract Design: BlockBase,Inc</div>
+          <div class="l-item__txt2">Executive Producer: tomad</div>
+          <br>
+          <a :href="'http://maltinerecords.cs8.biz'" target="_blank">Maltine Records Link</a>
+          <br>
+          <br>
+          <div class="l-item__txt2">Sample Music</div>
+          <audio src="@/assets/img/maltine/Sample01.mp3" controls></audio>
+           <br>
+           <br>
+          <div class="l-item__txt2">
+            インターネット上で無償配布される予定のmp3音源ファイルに関するレコード製作者の権利（以下、原盤権）の一部(※1)をトークン化しました。<br>
+            原盤権は一般的にレコード会社が保有しているものですが、今回4つのMP3ファイル1つ1つを原盤としてとらえ、ブロックチェーンで権利関係を明示したトークンとする事で、NFTのマッチングプラットフォーム“bazaaar”での権利移転が可能となりました。<br>
+            また、著作者の権利の一部である翻案権・演奏権がトークン保有により無条件に許諾されることがトークン内に明記されており、トークン保持者は著作者や管理団体に対してその都度使用許諾を得ることなく、これらの権利を行使することができます。<br>
+            つまり、トークン保有者はMP3音源のコピー、配布、Remix、カバー演奏がレコード制作者や著作者にその都度許可を得ることなく自由に行えます(※2)。<br>
+            <br>
+            また今回のトークンの入手には、下記の応募フォームからの抽選への応募が必要となります。<br>
+            抽選は本企画の趣旨に沿い、BlockBase株式会社、Maltine Records、コバルト爆弾αΩにて行います。<br>
+            <br>
+            ※1 原盤権の一部：複製権・譲渡権。原盤権の複製権・譲渡権を行使すれば、マスタリング済の音源パッケージ（原盤）を使って新たな音源(CD/レコード)をリリースできます。<br>
+            ※2 想定される例<br>
+            ・コンピレーションアルバムを作成し、CDリリース。<br>
+            ・新たに作成したRemixをレコード化し、リリース。<br>
+            ・ストリーミングサイトでの公開や音源直販サイトでの販売。<br>
+
+          </div>
+          <br>
+          <div class="l-item__action" >
+            <v-btn
+            class="l-item__action__btn white_text"
+            color="#3498db"
+            large
+          >
+
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSeCf7SAQXFfrZhcAsNMHuCIXzatpCXpT-KQy5q2SBS-Hnx9gA/viewform" target="_blank" class="white_text">
+          抽選に参加する
+          </a>
+          </v-btn>
+
+          </div>
+      </div>
+    </div>
+</section>
+</template>
+
+<script>
+
+export default {
+
+}
+</script>
+
+<style scoped>
+.white_text {
+  color: white;
+}
+
+.l-item-frame{
+  padding: 0px 30px;
+}
+</style>

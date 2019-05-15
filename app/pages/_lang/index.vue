@@ -30,6 +30,7 @@
         </ul>
         </div>
     </section>
+    
     <section class="c-index c-index--recommend">
 
         <h2 class="c-index__title">{{ $t('index.newAssets') }}</h2>
@@ -73,6 +74,10 @@
             </nuxt-link>
         </li>
         </ul>
+    </section>
+    <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.topic') }}</h2>
+         <nuxt-link to="/mrm/release" class="py-3 px-2"><img src="~/assets/img/maltine/maltinelogo.png" alt="" width="100%"></nuxt-link>
     </section>
     <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>

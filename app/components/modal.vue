@@ -80,8 +80,6 @@
                 asset.id +
                 ' / Gen.' +
                 asset.generation +
-                ' / ' +
-                $emit('coolDownIndexToSpeed', asset.status.cooldown_index) +
                 ' / from @bazaaario' +
                 '&hashtags=bazaaar, バザー, '
             "

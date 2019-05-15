@@ -11,7 +11,6 @@
             <img src="~/assets/img/maltine/MARU174.jpg"/>
           </div>
         </div>
-        <!-- todo スマホ対応 -->
         <div class="l-item-frame">
           <div class="l-item__name">Acid Acid EP</div>
           <div class="l-item__txt">Artist: Mitaka Sound</div>
@@ -29,15 +28,13 @@
           <div class="l-item__txt2">Contract Design: BlockBase,Inc</div>
           <div class="l-item__txt2">Executive Producer: tomad</div>
           <br>
-          <!-- todo リンク対応 -->
-          <a :href="'http://maltinerecords.cs8.biz/175.html'" target="_blank">Maltine Records Link</a>
+          <a :href="'http://maltinerecords.cs8.biz'" target="_blank">Maltine Records Link</a>
           <br>
           <br>
           <div class="l-item__txt2">Sample Music</div>
           <audio src="@/assets/img/maltine/Sample01.mp3" controls></audio>
            <br>
            <br>
-           <!-- todo 文言最適化 -->
           <div class="l-item__txt2">
             インターネット上で無償配布される予定のmp3音源ファイルに関するレコード製作者の権利（以下、原盤権）の一部(※1)をトークン化しました。<br>
             原盤権は一般的にレコード会社が保有しているものですが、今回4つのMP3ファイル1つ1つを原盤としてとらえ、ブロックチェーンで権利関係を明示したトークンとする事で、NFTのマッチングプラットフォーム“bazaaar”での権利移転が可能となりました。<br>
@@ -61,7 +58,7 @@
             color="#3498db"
             large
           >
-          <!-- todo リンク応募フォームに変更 -->
+
           <a href="https://docs.google.com/forms/d/e/1FAIpQLSeCf7SAQXFfrZhcAsNMHuCIXzatpCXpT-KQy5q2SBS-Hnx9gA/viewform" target="_blank" class="white_text">
           抽選に参加する
           </a>

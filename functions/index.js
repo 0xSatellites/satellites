@@ -108,7 +108,8 @@ async function getAssetMetadataByAssetId(asset, id) {
       if (!general.data.extra_data.current_art) break
       result.current_art_data = resolved[3].data
       if (!resolved[3].data.attributes.editor_address) break
-      doc = await db.collection('user').doc(web3.utils.toChecksumAddress(resolved[3].data.attributes.editor_address)).get() // prettier-ignore
+      result.current_art_data.attributes.editor_address = web3.utils.toChecksumAddress(resolved[3].data.attributes.editor_address)
+      doc = await db.collection('user').doc(result.current_art_data.attributes.editor_address).get() // prettier-ignore
       if (!doc.exists) break
       data = doc.data()
       result.mch_artedit = data.mch_artedit

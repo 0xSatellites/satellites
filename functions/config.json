@@ -39,7 +39,7 @@
       "mch_distributer": "0x0a7c935c8df4090c4436af8504aa5559c9382be3"
     },
     "staging": {
-      "bazaaar": "",
+      "bazaaar": "0x9f3d1c75bf463a99ce21309Bc78EA7019F718F6f",
       "ck": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
       "ctn": "0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",
@@ -47,7 +47,7 @@
       "mch_distributer": "0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
     },
     "production": {
-      "bazaaar": "",
+      "bazaaar": "0x9f3d1c75bf463a99ce21309Bc78EA7019F718F6f",
       "ck": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
       "ctn": "0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",

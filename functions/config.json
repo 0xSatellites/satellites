@@ -31,12 +31,12 @@
   },
   "contract": {
     "sand": {
-      "bazaaar": "0xecFdcB6bFbbd60FF332ecFAf8F31B3E665bC9dfa",
+      "bazaaar": "0xd2183B5360065F567FeE479E56260aa1dA6409Cd",
       "ck": "0x16baF0dE678E52367adC69fD067E5eDd1D33e3bF",
       "ctn": "0x587Ae915D4ccaa5C2220c638069f2605e1F7404C",
       "mchh": "0xc106D47FB4bF5F9EbaF46E3219Ef3fABCbd26606",
       "mche": "0x5220Debd5a575d1BF85b5531c9E0f6CeD243975C",
-      "mch_distributer": "0x0a7c935c8df4090c4436af8504aa5559c9382be3"
+      "mch_distributer": "0x0A7C935C8df4090c4436af8504AA5559c9382BE3"
     },
     "staging": {
       "bazaaar": "0x9f3d1c75bf463a99ce21309Bc78EA7019F718F6f",
@@ -114,7 +114,7 @@
     "sand":{
         "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
         "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-        "mch_distributer":"0x0a7c935c8df4090c4436af8504aa5559c9382be3"
+        "mch_distributer":"0x0A7C935C8df4090c4436af8504AA5559c9382BE3"
     },
     "staging":{
         "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",

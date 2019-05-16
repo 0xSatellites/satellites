@@ -289,33 +289,36 @@ export default {
         //date.setDate(date.getDate() + 7)
         //const expiration = Math.round(date.getTime() / 1000)
 
+        let relayerRoyaltyRecipient = config.recipient[project].bazaaar
         let creatorRoyaltyRecipient = config.constant.nulladdress
-        let relayerRoyaltyRatio = 500
-        let creatorRoyaltyRatio = 500
-
+        let relayerRoyaltyRatio = 1000
+        let creatorRoyaltyRatio = 0
+        console.log(this.asset)
         if (this.assetType == 'ck') {
           relayerRoyaltyRatio = 0
           creatorRoyaltyRatio = 0
         } else if (this.assetType == 'ctn') {
+          relayerRoyaltyRatio = 500
+          creatorRoyaltyRatio = 500
           creatorRoyaltyRecipient = config.recipient[project].ctn
         } else if (this.assetType == 'mchh') {
           if (this.asset.extra_data.current_art) {
+            relayerRoyaltyRecipient = config.recipient[project].mch_distributer
             creatorRoyaltyRecipient = this.asset.current_art_data.attributes.editor_address
             relayerRoyaltyRatio = 1000 - this.asset.royalty_rate
             creatorRoyaltyRatio = this.asset.royalty_rate
           } else {
-            creatorRoyaltyRecipient = config.recipient[project].mch_distributer
+            relayerRoyaltyRecipient = config.recipient[project].mch_distributer
           }
         } else if (this.assetType == 'mche'){
-          creatorRoyaltyRecipient = config.recipient[project].mch_distributer
+          relayerRoyaltyRecipient = config.recipient[project].mch_distributer
         }
-
         const expiration = Math.round(9999999999999 / 1000) - 1
         const order = {
           proxy: client.contract.bazaaar.options.address,
           maker: account.address,
           taker: config.constant.nulladdress,
-          relayerRoyaltyRecipient: account.address,
+          relayerRoyaltyRecipient: relayerRoyaltyRecipient,
           creatorRoyaltyRecipient: creatorRoyaltyRecipient,
           asset: client.contract[this.assetType].options.address,
           id: params.id,
@@ -339,6 +342,7 @@ export default {
           // creatorRoyaltyRatio: 500,
           // referralRatio: 500
         }
+        console.log(order)
         const signedOrder = await client.signOrder(order)
         const datas = {
           order: signedOrder,

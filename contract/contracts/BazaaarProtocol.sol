@@ -129,7 +129,7 @@ contract BazaaarProtocol is Pausable {
         amount.relayerRoyalty = order.price.mul(order.relayerRoyaltyRatio).div(ratioBase);
         amount.creatorRoyalty = order.price.mul(order.creatorRoyaltyRatio).div(ratioBase);
         amount.referral = order.price.mul(order.referralRatio).div(ratioBase);
-        amount.maker = order.price.sub(amount.creatorRoyalty).sub(amount.creatorRoyalty).sub(amount.referral);
+        amount.maker = order.price.sub(amount.relayerRoyaltyRatio).sub(amount.creatorRoyalty).sub(amount.referral);
     }
 
     function orderMatch(Order memory order, Sig memory sig)

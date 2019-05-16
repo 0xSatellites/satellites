@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="l-item-frame">
-          <div class="l-item__name">Acid Acid EP</div>
+          <div class="l-item__name">ACID ACID EP</div>
           <div class="l-item__txt">Artist: Mitaka Sound</div>
           <br>
           <div class="l-item__txt2">TrackList / TokenList: </div>
@@ -28,7 +28,7 @@
           <div class="l-item__txt2">Contract Design: BlockBase,Inc</div>
           <div class="l-item__txt2">Executive Producer: tomad</div>
           <br>
-          <a class="l-item__txt2" :href="'http://maltinerecords.cs8.biz'" target="_blank">Maltine Records Link</a>
+          <a class="l-item__txt2" :href="'http://maltinerecords.cs8.biz/b1.html'" target="_blank">Maltine Records Link</a>
           <br>
           <br>
           <div class="l-item__txt2">Sample Music</div>

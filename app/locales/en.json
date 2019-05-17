@@ -47,7 +47,9 @@
         "approve": "It takes while before it reflects",
         "mypage": "It takes while before it reflects to mypage",
         "error":"Do you have your wallet ready and enough balance?",
-        "error2":"Please prepare a wallet from the following services"
+        "error2":"Please prepare a wallet from the following services",
+        "giftProcessStarted":"Gift started!",
+        "gift":"It takes while before it reflects"
     },
     "myitems":{
         "mypage": "Mypage",
@@ -64,6 +66,9 @@
         "contact": "contact"
     },
     "id":{
+        "gift":"gift",
+        "giftLabel":"gift Function",
+        "toAddress":"toAddress",
         "inputMessage": "Opitional Message (18 characters or less)",
         "fee":"10% fee will be charged",
         "approve": "approve",

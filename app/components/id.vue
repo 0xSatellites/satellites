@@ -110,6 +110,29 @@
             </div>
           </div>
         </div>
+        <br>
+        <br>
+        <div class="l-item__action">
+          <div v-if="owned">
+            <div class="l-item__action__textarea"
+            >
+              <label>{{$t('id.giftLabel')}}</label>
+              <v-text-field v-model="toAddress" :placeholder="$t('id.toAddress')"></v-text-field>
+            </div>
+            <div class="l-item__action__btns">
+                <v-btn
+                  class="l-item__action__btn l-item__action__btn--type1 white_text"
+                  :disabled="loading"
+                  color="#3498db"
+                  large
+                  @click="gift"
+                >
+                  {{$t('id.gift')}}
+                <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
+              </v-btn>
+            </div>
+          </div>
+        </div>
       </v-form>
     </div>
   </div>
@@ -121,6 +144,7 @@
       :ogp="ogp"
       :hash="hash"
       :modalNo="modalNo"
+      :etherScanBaseURL="etherScanBaseURL"
     ></modal>
 </div>
 </template>
@@ -160,7 +184,9 @@ export default {
       owned: false,
       owner: '',
       msg: '',
-      price: ''
+      price: '',
+      toAddress:"",
+      etherScanBaseURL: config.etherScan[project]
     }
   },
   mounted: async function() {
@@ -259,6 +285,52 @@ export default {
     },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
+    },
+    async gift() {
+      this.loading = true
+      this.waitCancel = true
+      this.modalNo = 7
+      var result = false
+      try{
+        if (this.assetType == 'ck') {
+          await client.contract.ck.methods.transfer(this.toAddress, this.$route.params.id)
+          .send({ from: this.account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
+          result = true
+        } else if (this.assetType == 'ctn') {
+          await client.contract.ctn.methods.transfer(this.toAddress, this.$route.params.id)
+          .send({ from: this.account.address }).on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
+        } else if (this.assetType == 'mchh') {
+          await client.contract.mchh.methods.transferFrom(this.account.address, this.toAddress, this.$route.params.id)
+          .send({ from: this.account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
+        } else if (this.assetType == 'mche'){
+          await client.contract.mche.methods.transferFrom(this.account.address, this.toAddress, this.$route.params.id)
+          .send({ from: this.account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
+        }
+      } catch (err) {
+        alert(this.$t('error.message'))
+        this.loading = false
+        this.modal = false
+        this.waitCancel = false
+      }
     },
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))

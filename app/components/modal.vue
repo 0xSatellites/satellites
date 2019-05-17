@@ -224,6 +224,32 @@
         </div>
       </div>
     </transition>
+
+    <!-- gift -->
+    <transition name="modal" v-else-if="modalNo == 7">
+      <div class="l-modal">
+        <div class="l-modal__frame">
+          <div class="l-modal__icon">
+            <img src="~/assets/img/modal/icon.svg" alt="" />
+          </div>
+          <div class="l-modal__title">{{ $t('modal.giftProcessStarted') }}</div>
+          <div class="l-modal__og">
+            <div id="modalImg">
+              <img :src="asset.image" alt="" />
+            </div>
+          </div>
+          <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
+          <div class="l-modal__txt">
+            <a :href="etherScanBaseURL+ 'tx/' + hash" target="_blank">Ethescan</a>
+          </div>
+          <div class="l-modal__txt1">{{ $t('modal.gift') }}</div>
+          <div class="l-modal__close" @click="$emit('closeModal')">
+            <div class="l-modal__close__icon"></div>
+            <div class="l-modal__close__txt u-obj--sp">{{ $t('modal.close') }}</div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -232,7 +258,7 @@ const project = process.env.project
 const config = require('../../functions/config.json')
 
 export default {
-  props: ['ogp', 'hash', 'modalNo'],
+  props: ['ogp', 'hash', 'modalNo', 'etherScanBaseURL'],
   computed: {
     assetType() {
       const routeNames = this.$route.name.split('-')

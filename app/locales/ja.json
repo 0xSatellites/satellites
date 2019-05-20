@@ -68,7 +68,7 @@
     "id":{
         "gift":"送る",
         "giftLabel":"ギフト機能",
-        "toAddress":"送信先のアドレス",
+        "giftReceiverAddress":"送信先のアドレス",
         "inputMessage": "一言メッセージを入力できます（18文字以内）",
         "fee":"手数料10%を頂戴します",
         "approve": "承認する",

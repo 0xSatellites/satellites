@@ -68,7 +68,7 @@
     "id":{
         "gift":"gift",
         "giftLabel":"gift Function",
-        "toAddress":"toAddress",
+        "giftReceiverAddress":"gift receiver's address",
         "inputMessage": "Opitional Message (18 characters or less)",
         "fee":"10% fee will be charged",
         "approve": "approve",

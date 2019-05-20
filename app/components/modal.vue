@@ -115,7 +115,7 @@
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
           <div class="l-modal__txt">
-            <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
+            <a :href="etherScanBaseURL + 'tx/' + hash" target="_blank">Ethescan</a>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.approve') }}</div>
           <div class="l-modal__close" @click="$emit('closeModal')">
@@ -141,7 +141,7 @@
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
           <div class="l-modal__txt">
-            <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
+            <a :href="etherScanBaseURL +'tx/' + hash" target="_blank">Ethescan</a>
           </div>
           <div class="l-modal__close" @click="transitionTop()">
             <div class="l-modal__close__icon"></div>
@@ -163,7 +163,7 @@
           </div>
           <div class="l-modal__txt1">{{ $t('modal.transaction') }}</div>
           <div class="l-modal__txt">
-            <a :href="'https://etherscan.io/tx/' + hash" target="_blank">Ethescan</a>
+            <a :href="etherScanBaseURL+'tx/' + hash" target="_blank">Ethescan</a>
           </div>
           <div class="l-modal__txt1">{{ $t('modal.mypage') }}</div>
           <p></p>
@@ -258,7 +258,13 @@ const project = process.env.project
 const config = require('../../functions/config.json')
 
 export default {
-  props: ['ogp', 'hash', 'modalNo', 'etherScanBaseURL'],
+  props: ['ogp', 'hash', 'modalNo'],
+  data(){
+    return{
+      host: config.host[project],
+      etherScanBaseURL: config.etherScan[project]
+    }
+  },
   computed: {
     assetType() {
       const routeNames = this.$route.name.split('-')
@@ -271,9 +277,6 @@ export default {
     asset() {
       return this.$store.getters['asset/asset']
     },
-    host(){
-      return config.host[project]
-    }
   },
   methods: {
   transitionTop() {

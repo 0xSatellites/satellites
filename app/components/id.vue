@@ -16,7 +16,7 @@
             </div>
     </div>
 
-    <div>
+    <div class="l-item__area">
       <div class="l-item__name" v-if="assetType === 'ck' || assetType === 'ctn'">{{ asset.name }}</div>
       <div class="l-item__name" v-if="assetType == 'mchh'">{{ asset.hero_type.name[lang] }}</div>
       <div class="l-item__name" v-if="assetType == 'mche'">{{ asset.extension_type.name[lang] }}</div>
@@ -111,13 +111,12 @@
           </div>
         </div>
         <br>
-        <br>
-        <div class="l-item__action">
+        <!-- <div class="l-item__action">
           <div v-if="owned">
             <div class="l-item__action__textarea"
             >
               <label>{{$t('id.giftLabel')}}</label>
-              <v-text-field v-model="toAddress" :placeholder="$t('id.toAddress')"></v-text-field>
+              <v-text-field v-model="giftReceiverAddress" :placeholder="$t('id.giftReceiverAddress')"></v-text-field>
             </div>
             <div class="l-item__action__btns">
                 <v-btn
@@ -132,7 +131,7 @@
               </v-btn>
             </div>
           </div>
-        </div>
+        </div> -->
       </v-form>
     </div>
   </div>
@@ -144,7 +143,6 @@
       :ogp="ogp"
       :hash="hash"
       :modalNo="modalNo"
-      :etherScanBaseURL="etherScanBaseURL"
     ></modal>
 </div>
 </template>
@@ -185,8 +183,7 @@ export default {
       owner: '',
       msg: '',
       price: '',
-      toAddress:"",
-      etherScanBaseURL: config.etherScan[project]
+      giftReceiverAddress:"",
     }
   },
   mounted: async function() {
@@ -293,7 +290,7 @@ export default {
       var result = false
       try{
         if (this.assetType == 'ck') {
-          await client.contract.ck.methods.transfer(this.toAddress, this.$route.params.id)
+          await client.contract.ck.methods.transfer(this.giftReceiverAddress, this.$route.params.id)
           .send({ from: this.account.address })
           .on('transactionHash', hash => {
             this.hash = hash
@@ -302,14 +299,14 @@ export default {
           })
           result = true
         } else if (this.assetType == 'ctn') {
-          await client.contract.ctn.methods.transfer(this.toAddress, this.$route.params.id)
+          await client.contract.ctn.methods.transfer(this.giftReceiverAddress, this.$route.params.id)
           .send({ from: this.account.address }).on('transactionHash', hash => {
             this.hash = hash
             this.modal = true
             this.loading = false
           })
         } else if (this.assetType == 'mchh') {
-          await client.contract.mchh.methods.transferFrom(this.account.address, this.toAddress, this.$route.params.id)
+          await client.contract.mchh.methods.transferFrom(this.account.address, this.giftReceiverAddress, this.$route.params.id)
           .send({ from: this.account.address })
           .on('transactionHash', hash => {
             this.hash = hash
@@ -317,7 +314,7 @@ export default {
             this.loading = false
           })
         } else if (this.assetType == 'mche'){
-          await client.contract.mche.methods.transferFrom(this.account.address, this.toAddress, this.$route.params.id)
+          await client.contract.mche.methods.transferFrom(this.account.address, this.giftReceiverAddress, this.$route.params.id)
           .send({ from: this.account.address })
           .on('transactionHash', hash => {
             this.hash = hash

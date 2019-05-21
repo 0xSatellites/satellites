@@ -39,7 +39,7 @@
       "mch_distributer": "0x0A7C935C8df4090c4436af8504AA5559c9382BE3"
     },
     "staging": {
-      "bazaaar": "0x9f3d1c75bf463a99ce21309Bc78EA7019F718F6f",
+      "bazaaar": "0x7D5Aea490837f3E5df9d1703005C2Cce3C136830",
       "ck": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
       "ctn": "0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",
@@ -47,7 +47,7 @@
       "mch_distributer": "0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
     },
     "production": {
-      "bazaaar": "0x9f3d1c75bf463a99ce21309Bc78EA7019F718F6f",
+      "bazaaar": "0x7D5Aea490837f3E5df9d1703005C2Cce3C136830",
       "ck": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
       "ctn": "0x1a94fce7ef36Bc90959E206bA569a12AFBC91ca1",
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",

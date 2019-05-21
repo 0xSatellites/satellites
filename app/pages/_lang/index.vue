@@ -32,6 +32,10 @@
     </section>
     <Related></Related>
     <section class="c-index">
+        <h2 class="c-index__title">{{ $t('index.topic') }}</h2>
+         <nuxt-link to="/mrm/release" class="py-3 px-2"><img src="~/assets/img/maltine/maltinelogo.png" alt="" width="100%"></nuxt-link>
+    </section>
+    <section class="c-index">
         <h2 class="c-index__title">{{ $t('index.handlingAssets') }}</h2>
         <v-container grid-list-md align-center justify-space-between>
             <v-layout row wrap justify-center>

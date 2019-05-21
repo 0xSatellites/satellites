@@ -54,6 +54,14 @@ margin: floor-decimal(15vw * 100 / 375, 2) auto 0;
   text-align: center;
   }
 
+  &__txt2{
+    padding: floor-decimal(4vw * 100 / 375, 2) floor-decimal(8vw * 100 / 375, 2) 0;
+    font-size: floor-decimal(14vw * 100 / 375, 2);
+    line-height: 1.4;
+    font-weight: normal;
+    // text-align: center;
+    }
+
   &__data{//
   list-style: none;
   width: floor-decimal(328vw * 100 / 375, 2);

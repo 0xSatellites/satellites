@@ -23,26 +23,17 @@
         "readmore":"read more",
         "partners":"Partners",
         "contact":"Contact",
-        "contactText":"Please contact us via Twitter or email.",
-        "holdLanguageCK": "/en/ck/order/",
-        "holdLanguageCTN": "/en/ctn/order/",
-        "holdLanguageMCHH": "/en/mchh/order/",
-        "holdLanguageMCHE": "/en/mche/order/"
+        "contactText":"Please contact us via Twitter or email."
     },
-    "assets":{
-        "kitty":"CryptoKitties",
-        "oink":"Crypt-Oink",
-        "mch":"MyCryptoHeros"
+    "asset":{
+        "ck":"CryptoKitties",
+        "ctn":"Crypt-Oink",
+        "mchh":"MyCryptoHeros",
+        "mche":"MyCryptoHeros"
     },
     "header":{
         "mypage": "MyPage",
-        "market":"Market",
-        "howto": "HowTo",
-        "english": "EnglishVer",
-        "japanese": "JapaneseVer",
-        "topHD": "/en/",
-        "mypageHD": "/en/myitems",
-        "marketHD": "/en/market"
+        "market":"Market"
     },
     "modal":{
         "sell": "NOW ON SALE!!",
@@ -57,7 +48,9 @@
         "approve": "It takes while before it reflects",
         "mypage": "It takes while before it reflects to mypage",
         "error":"Do you have your wallet ready and enough balance?",
-        "error2":"Please prepare a wallet from the following services"
+        "error2":"Please prepare a wallet from the following services",
+        "giftProcessStarted":"Gift started!",
+        "gift":"It takes while before it reflects"
     },
     "myitems":{
         "mypage": "Mypage",
@@ -65,21 +58,18 @@
         "balance": "balance",
         "experiment": "experimental feture",
         "mch_artedit": "When MyCryptoHeros asset edited by you has traded, you can recieve royalty",
-        "sell": "ON SALE",
-        "holdCK": "/en/ck/",
-        "holdCTN": "/en/ctn/",
-        "holdMCHH": "/en/mchh/",
-        "holdMCHE": "/en/mche/"
+        "sell": "ON SALE"
     },
     "footer":{
         "company": "company",
         "terms": "terms",
         "info": "info",
-        "contact": "contact",
-        "infoHD": "/en/info",
-        "termsHD": "/en/terms"
+        "contact": "contact"
     },
     "id":{
+        "gift":"gift",
+        "giftLabel":"gift Function",
+        "giftReceiverAddress":"gift receiver's address",
         "inputMessage": "Opitional Message (18 characters or less)",
         "fee":"10% fee will be charged",
         "approve": "approve",
@@ -109,8 +99,7 @@
     "empty":{
         "kitty": "You don't have kitty now!!",
         "oink": "You don't have Crypton now!!",
-        "mch":"You don't have Hero now!!",
-        "mch_maintenance":"or MCH is under maintenance!!"
+        "mch":"You don't have Hero now!! or MCH is under maintenance!!"
     },
     "error":{
         "message": "error"

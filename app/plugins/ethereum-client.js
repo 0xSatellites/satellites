@@ -1,19 +1,11 @@
 const Web3 = require('web3')
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 const  web3 = new Web3(config.node[process.env.project].https)
 const contract = {
-  bazaaar_v1: new web3.eth.Contract(
-    config.abi.bazaaar_v1,
-    config.contract[process.env.project].bazaaar_v1
-  ),
-  bazaaar_v2: new web3.eth.Contract(
-    config.abi.bazaaar_v2,
-    config.contract[process.env.project].bazaaar_v2
-  ),
-  bazaaar_v3: new web3.eth.Contract(
-    config.abi.bazaaar_v3,
-    config.contract[process.env.project].bazaaar_v3
+  bazaaar: new web3.eth.Contract(
+    config.abi.bazaaar,
+    config.contract[process.env.project].bazaaar
   ),
   ck: new web3.eth.Contract(
     config.abi.ck,
@@ -33,12 +25,6 @@ const contract = {
     config.contract[process.env.project].mche
   )
 }
-
-const project = process.env.project
-const ck = config.contract[project].ck
-const ctn = config.contract[project].ctn
-const mchh = config.contract[project].mchh
-const mche = config.contract[project].mche
 
 const account = {
   address: null,
@@ -88,6 +74,7 @@ const signOrder = async order => {
     order.proxy,
     order.maker,
     order.taker,
+    order.relayerRoyaltyRecipient,
     order.creatorRoyaltyRecipient,
     order.asset,
     order.id,
@@ -95,8 +82,9 @@ const signOrder = async order => {
     order.nonce,
     order.salt,
     order.expiration,
+    order.relayerRoyaltyRatio,
     order.creatorRoyaltyRatio,
-    order.referralRatio
+    order.referralRatio,
   )
   const sig = await web3.eth.personal.sign(data, order.maker)
 
@@ -112,18 +100,6 @@ const signUser = async() =>{
   return signedUser
 }
 
-const toAsset = asset => {
-  switch(asset) {
-  case ck:
-  return 'CryptoKitties'
-  case ctn:
-  return 'Crypt-Oink'
-  case mchh:
-  case mche:
-  return 'MyCryptoHeros'
-  }
-}
-
 const client = {
   account: account,
   activate: activate,
@@ -132,8 +108,7 @@ const client = {
   signOrder:signOrder,
   utils: web3.utils,
   web3: web3,
-  toAsset: toAsset,
-  signUser: signUser
+  signUser: signUser,
 }
 
 export default client

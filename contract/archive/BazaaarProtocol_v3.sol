@@ -1,229 +1,23 @@
 pragma solidity 0.4.24;
 
-// File: /usr/src/app/bazaaar.io/contract/node_modules/openzeppelin-solidity/contracts/access/Roles.sol
+import "../node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
+import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 
 /**
- * @title Roles
- * @dev Library for managing addresses assigned to a Role.
- */
-library Roles {
-  struct Role {
-    mapping (address => bool) bearer;
-  }
-
-  /**
-   * @dev give an account access to this role
-   */
-  function add(Role storage role, address account) internal {
-    require(account != address(0));
-    require(!has(role, account));
-
-    role.bearer[account] = true;
-  }
-
-  /**
-   * @dev remove an account's access to this role
-   */
-  function remove(Role storage role, address account) internal {
-    require(account != address(0));
-    require(has(role, account));
-
-    role.bearer[account] = false;
-  }
-
-  /**
-   * @dev check if an account has this role
-   * @return bool
-   */
-  function has(Role storage role, address account)
-    internal
-    view
-    returns (bool)
-  {
-    require(account != address(0));
-    return role.bearer[account];
-  }
-}
-
-// File: /usr/src/app/bazaaar.io/contract/node_modules/openzeppelin-solidity/contracts/access/roles/PauserRole.sol
-
-contract PauserRole {
-  using Roles for Roles.Role;
-
-  event PauserAdded(address indexed account);
-  event PauserRemoved(address indexed account);
-
-  Roles.Role private pausers;
-
-  constructor() internal {
-    _addPauser(msg.sender);
-  }
-
-  modifier onlyPauser() {
-    require(isPauser(msg.sender));
-    _;
-  }
-
-  function isPauser(address account) public view returns (bool) {
-    return pausers.has(account);
-  }
-
-  function addPauser(address account) public onlyPauser {
-    _addPauser(account);
-  }
-
-  function renouncePauser() public {
-    _removePauser(msg.sender);
-  }
-
-  function _addPauser(address account) internal {
-    pausers.add(account);
-    emit PauserAdded(account);
-  }
-
-  function _removePauser(address account) internal {
-    pausers.remove(account);
-    emit PauserRemoved(account);
-  }
-}
-
-// File: /usr/src/app/bazaaar.io/contract/node_modules/openzeppelin-solidity/contracts/lifecycle/Pausable.sol
-
-/**
- * @title Pausable
- * @dev Base contract which allows children to implement an emergency stop mechanism.
- */
-contract Pausable is PauserRole {
-  event Paused(address account);
-  event Unpaused(address account);
-
-  bool private _paused;
-
-  constructor() internal {
-    _paused = false;
-  }
-
-  /**
-   * @return true if the contract is paused, false otherwise.
-   */
-  function paused() public view returns(bool) {
-    return _paused;
-  }
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is not paused.
-   */
-  modifier whenNotPaused() {
-    require(!_paused);
-    _;
-  }
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is paused.
-   */
-  modifier whenPaused() {
-    require(_paused);
-    _;
-  }
-
-  /**
-   * @dev called by the owner to pause, triggers stopped state
-   */
-  function pause() public onlyPauser whenNotPaused {
-    _paused = true;
-    emit Paused(msg.sender);
-  }
-
-  /**
-   * @dev called by the owner to unpause, returns to normal state
-   */
-  function unpause() public onlyPauser whenPaused {
-    _paused = false;
-    emit Unpaused(msg.sender);
-  }
-}
-
-// File: /usr/src/app/bazaaar.io/contract/node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol
-
-/**
- * @title SafeMath
- * @dev Math operations with safety checks that revert on error
- */
-library SafeMath {
-
-  /**
-  * @dev Multiplies two numbers, reverts on overflow.
-  */
-  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-    // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-    // benefit is lost if 'b' is also tested.
-    // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
-    if (a == 0) {
-      return 0;
-    }
-
-    uint256 c = a * b;
-    require(c / a == b);
-
-    return c;
-  }
-
-  /**
-  * @dev Integer division of two numbers truncating the quotient, reverts on division by zero.
-  */
-  function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    require(b > 0); // Solidity only automatically asserts when dividing by 0
-    uint256 c = a / b;
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-
-    return c;
-  }
-
-  /**
-  * @dev Subtracts two numbers, reverts on overflow (i.e. if subtrahend is greater than minuend).
-  */
-  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-    require(b <= a);
-    uint256 c = a - b;
-
-    return c;
-  }
-
-  /**
-  * @dev Adds two numbers, reverts on overflow.
-  */
-  function add(uint256 a, uint256 b) internal pure returns (uint256) {
-    uint256 c = a + b;
-    require(c >= a);
-
-    return c;
-  }
-
-  /**
-  * @dev Divides two numbers and returns the remainder (unsigned integer modulo),
-  * reverts when dividing by zero.
-  */
-  function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-    require(b != 0);
-    return a % b;
-  }
-}
-
-// File: contracts/BazaaarProtocol_v2.sol
-
-/**
- * Title  :  BazaaarProtocol_v1
- * Asset  :  CryptoKitties
+ * Title  :  BazaaarProtocol_v3
+ * Asset  :  ERC721
  * Author :  BlockBase
  */
-contract CTN {
-    function entityIndexToApproved(uint256 tokenId)public view returns (address operator);
+contract ERC721 {
+    function getApproved(uint256 tokenId)public view returns (address operator);
+    function isApprovedForAll(address owner, address operator) public view returns (bool);
     function balanceOf(address owner) public view returns (uint256 count);
     function ownerOf(uint256 tokenId) public view returns (address owner);
     function transferFrom(address _from, address _to, uint256 _tokenId) public;
 }
 
-contract BazaaarProtocol_v2 is Pausable {
+contract BazaaarProtocol_v3 is Pausable {
     using SafeMath for uint;
 
     event OrderMatched(
@@ -278,7 +72,7 @@ contract BazaaarProtocol_v2 is Pausable {
         return nonce[maker][asset][id];
     }
 
-    function orderMatch_(address[6] addrs, uint[7] uints, uint8 v, bytes32 r, bytes32 s)
+    function orderMatch_(address[6] addrs, uint[8] uints, uint8 v, bytes32 r, bytes32 s)
         external
         payable
         whenNotPaused
@@ -313,13 +107,13 @@ contract BazaaarProtocol_v2 is Pausable {
     function distribute(Order memory order, address referralRecipient)
         internal
     {
-        CTN(order.asset).transferFrom(order.maker, msg.sender, order.id);
+        ERC721(order.asset).transferFrom(order.maker, msg.sender, order.id);
         Amount memory amount = computeAmount(order);
         if(amount.creatorRoyalty > 0){
             order.creatorRoyaltyRecipient.transfer(amount.creatorRoyalty);
         }
         if(amount.referral > 0){
-            referralRecipient.transfer(amount.referral);
+            require(referralRecipient.call.value(amount.referral)());
         }
         if(amount.maker > 0 ){
             order.maker.transfer(amount.maker);
@@ -386,10 +180,10 @@ contract BazaaarProtocol_v2 is Pausable {
         view
         returns (bool)
     {
-        if (CTN(order.asset).ownerOf(order.id) != order.maker) {
+        if (ERC721(order.asset).ownerOf(order.id) != order.maker) {
             return false;
         }
-        if (CTN(order.asset).entityIndexToApproved(order.id) != address(this)) {
+        if (ERC721(order.asset).getApproved(order.id) != address(this) && !ERC721(order.asset).isApprovedForAll(order.maker, address(this))) {
             return false;
         }
         return true;

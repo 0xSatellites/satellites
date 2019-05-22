@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase[process.env.project])
@@ -29,8 +29,7 @@ const getLowestCostOrderByMakerId = async (maker, id) => {
   return result
 }
 
-const getMaketLength = async (asset, by, order) => {
-  var result = []
+const getMarketLength = async (asset, by, order) => {
   const snapshots = await db.collection('order')
     .where('valid', '==', true)
     .get()
@@ -184,7 +183,7 @@ const firestore = {
   getLowestCostOrderByMakerId:getLowestCostOrderByMakerId,
   getMarket:getMarket,
   getMarketWithConditions:getMarketWithConditions,
-  getMaketLength:getMaketLength,
+  getMarketLength:getMarketLength,
   getOrdersByMaker:getOrdersByMaker,
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,

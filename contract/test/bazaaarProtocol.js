@@ -3,7 +3,7 @@ var testBazaaarProtocol_v1 = artifacts.require('test/TestBazaaarProtocol_v1')
 var KittyCore = artifacts.require('tokens/ck/KittyCore')
 var Web3 = require('web3')
 
-contract('Test BazaaarProtocol_v1', async function(accounts) {
+contract('BazaaarProtocol', async function(accounts) {
 
     //contracts
     var contract

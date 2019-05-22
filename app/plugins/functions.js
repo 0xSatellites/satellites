@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/functions'
 
-const config = require('../config.json')
+const config = require('../../functions/config.json')
 
 if (!firebase.apps.length) {
   firebase.initializeApp(config.firebase[process.env.project])

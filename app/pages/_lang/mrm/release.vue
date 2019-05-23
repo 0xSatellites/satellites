@@ -28,7 +28,32 @@
           <div class="l-item__txt2">Contract Design: BlockBase,Inc</div>
           <div class="l-item__txt2">Executive Producer: tomad</div>
           <br>
-          <a class="l-item__txt2" :href="'http://maltinerecords.cs8.biz/b1.html'" target="_blank">Maltine Records Link</a>
+          <div>
+            <v-list two-line>
+              <template v-for="item in items">
+                <v-subheader
+                  v-if="item.header"
+                  :key="item.header"
+                >
+                  {{ item.header }}
+                </v-subheader>
+                <v-list-tile
+                  v-else
+                  :key="item.userId"
+                  avatar
+                >
+                  <v-list-tile-avatar>
+                    <img :src="item.avatar">
+                  </v-list-tile-avatar>
+
+                  <v-list-tile-content>
+                    <v-list-tile-title ><a :href="'https://twitter.com/' + item.userId">{{ item.userId }}</a>- {{ item.track_title}}</v-list-tile-title>
+                    <v-list-tile-sub-title >{{ item.address }}</v-list-tile-sub-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-list>
+          </div>
           <br>
           <br>
           <div class="l-item__txt2">Sample Music</div>
@@ -49,22 +74,16 @@
             ・コンピレーションアルバムを作成し、CDリリース。<br>
             ・新たに作成したRemixをレコード化し、リリース。<br>
             ・ストリーミングサイトでの公開や音源直販サイトでの販売。<br>
+            ※3 抽選は終了しました。<br>
+            <br>
 
           </div>
+          <div class="l-item__txt2">
+          また原盤権が付与されないMP3ファイルは、別途無償にて配布を行います。
+          </div>
+          <a class="l-item__txt2" :href="'http://maltinerecords.cs8.biz/b1.html'" target="_blank">Maltine Records Link</a>
+
           <br>
-          <div class="l-item__action" >
-            <v-btn
-            class="l-item__action__btn white_text"
-            color="#3498db"
-            large
-          >
-
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSeCf7SAQXFfrZhcAsNMHuCIXzatpCXpT-KQy5q2SBS-Hnx9gA/viewform" target="_blank" class="white_text">
-          抽選に参加する
-          </a>
-          </v-btn>
-
-          </div>
       </div>
     </div>
 </section>
@@ -73,6 +92,37 @@
 <script>
 
 export default {
+  data () {
+      return {
+        items: [
+          { header: 'TokenHolder' },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/1127239081417531393/chTncmIG_400x400.png',
+            userId: 'pianoid',
+            track_title:'ACID ACID (さよひめぼう Remix)',
+            address: "0x93B82487D468A6b85f0759D86bDdC6ECC33A349E"
+          },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/953996596559032320/bQcnZPLW_400x400.jpg',
+            userId: 'fugakura',
+            track_title:'ACID ACID',
+            address: "0x568288D40EB4887446fBbFFF879F2184E91827d3"
+          },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/506240121423683584/2HFnycx7_400x400.jpeg',
+            userId: 'mikiomurahatibu',
+            track_title:'ACID ACID (Gassyoh Remix)',
+            address: "0x43A0E71A09d8126820C3290d71A5514e87D617ab"
+          },
+          {
+            avatar: 'https://pbs.twimg.com/profile_images/927851243422097408/tL9fwfVr_400x400.jpg',
+            userId: 'Sheep_Musik',
+            track_title:'ACID ACID (コバルト爆弾αΩ Remix) ',
+            address: "0x8A389057B4500a881Ac58e03381109B1b2D14fb4"
+          },
+        ]
+      }
+    }
 
 }
 </script>

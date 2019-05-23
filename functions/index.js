@@ -404,8 +404,8 @@ exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(asy
   return address == params.address
 })
 
+const mrm_metadata = require('./assets/token/mrm_metadata.json')
 exports.spMasterRightsforMusicAPI = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
-  const mrm_metadata = require('./assets/token/mrm_metadata.json')
   res.set('Access-Control-Allow-Origin', '*')
   res.set('Access-Control-Allow-Methods', 'GET')
   res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')

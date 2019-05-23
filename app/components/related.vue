@@ -7,8 +7,9 @@
             <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(recommend)" :key="i + '-rarity'">★</span></div>
             <div class="c-card__img pa-4" v-if="recommend.assetName == 'mche' || recommend.assetName == 'mchh'"><img :src="recommend.metadata.image" /></div>
             <div class="c-card__img" v-else><img :src="recommend.metadata.image" /></div>
-            <div class="c-card__name" v-if="recommend.metadata.name">{{ recommend.metadata.name }}</div>
-            <div class="c-card__name" v-else>Gonbee</div>
+            <div class="c-card__name" v-if="recommend.assetName == 'ck' || recommend.assetName == 'ctn'">{{ recommend.metadata.name }}</div>
+            <div class="c-card__name" v-if="recommend.assetName == 'mchh'">{{ recommend.metadata.hero_type.name[lang] }}</div>
+            <div class="c-card__name" v-if="recommend.assetName == 'mche'">{{ recommend.metadata.extension_type.name[lang] }}</div>
             <div class="c-card__txt"># {{ recommend.id }}</div>
             <div class="c-card__txt" v-if="recommend.assetName == 'ck' || recommend.assetName == 'ctn'">
               Gen {{ recommend.metadata.generation }} : {{ coolDownIndexToSpeed(recommend.metadata.status.cooldown_index) }}

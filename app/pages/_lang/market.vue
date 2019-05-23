@@ -29,8 +29,9 @@
               <div class="c-card__label c-card__label__rarity--5"><span v-for="i in getRarity(order)" :key="i + '-rarity'">★</span></div>
               <div class="c-card__img pa-4" v-if="order.assetName == 'mche' || order.assetName == 'mchh'"><img :src="order.metadata.image" /></div>
               <div class="c-card__img" v-else><img :src="order.metadata.image" /></div>
-              <div class="c-card__name" v-if="order.metadata.name">{{ order.metadata.name }}</div>
-              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__name" v-if="order.assetName == 'ck' || order.assetName == 'ctn'">{{ order.metadata.name }}</div>
+              <div class="c-card__name" v-if="order.assetName == 'mchh'">{{ order.metadata.hero_type.name[lang] }}</div>
+              <div class="c-card__name" v-if="order.assetName == 'mche'">{{ order.metadata.extension_type.name[lang] }}</div>
               <div class="c-card__txt"># {{ order.id }}</div>
               <div class="c-card__txt" v-if="order.assetName == 'ck' || order.assetName == 'ctn'">
                 Gen {{ order.metadata.generation }} : {{ coolDownIndexToSpeed(order.metadata.status.cooldown_index) }}

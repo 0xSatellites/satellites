@@ -403,3 +403,18 @@ exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(asy
   }
   return address == params.address
 })
+
+const mrm_metadata = require('./assets/token/mrm_metadata.json')
+exports.spMasterRightsforMusicAPI = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*')
+  res.set('Access-Control-Allow-Methods', 'GET')
+  res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+
+  const id = req.query.id
+  if(mrm_metadata[id]){
+    res.json(mrm_metadata[id])
+  }else{
+    res.json('code=404, message=Not Found')
+  }
+})

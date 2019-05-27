@@ -18,6 +18,18 @@
           {{ $t('myitems.mch_artedit') }}
           <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
         </v-flex>
+
+        <div v-if="!isLogin">
+                <v-btn @click=twitterLogin>Twitterログイン</v-btn>
+               </div>
+               <div v-else>
+                <p>{{ twitterAccount.displayName }}</p>
+                <v-list-tile-avatar class="news__item__avatar">
+                        <img :src="twitterAccount.photoURL">
+                    </v-list-tile-avatar>
+                <v-btn @click=twitterLogout>ログアウト</v-btn>
+        </div>
+
       </div>
     </section>
     <section class="l-personal" v-else>
@@ -159,6 +171,7 @@ import api from '~/plugins/api'
 import axios from 'axios'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import firebase from 'firebase'
 
 const config = require('../../../functions/config.json')
 const project = process.env.project
@@ -172,18 +185,33 @@ export default {
       loadingMCHH: true,
       loadingMCHE: true,
       switch1: false,
+      isLogin: false,
+      twitterAccount: [],
       kitties: [],
       oinks: [],
       heroes: [],
       extensions: [],
       transactions: [],
-      order: []
+      order: [],
+      user: []
     }
   },
   mounted: async function() {
     const order = this.order
     const store = this.$store
     var account
+
+    firebase.auth().onAuthStateChanged(twitterAccount =>{
+      if (twitterAccount) {
+        this.isLogin = true
+        this.twitterAccount = twitterAccount
+        console.log(twitterAccount)
+      } else {
+        this.isLogin = false
+        this.twitterAccount = []
+      };
+    })
+
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
         if (window.ethereum) {
@@ -268,6 +296,13 @@ export default {
     }
   },
   methods: {
+    async twitterLogin() {
+      const provider = new firebase.auth.TwitterAuthProvider()
+      firebase.auth().signInWithRedirect(provider)
+    },
+    twitterLogout () {
+      firebase.auth().signOut()
+    },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
     },

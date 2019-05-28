@@ -16,7 +16,7 @@
         <v-flex xs12 px-3>
           <h4>{{ $t('myitems.experiment') }}</h4>
           {{ $t('myitems.mch_artedit') }}
-          <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
+           <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
         </v-flex>
 
         <div v-if="!isLogin">
@@ -177,6 +177,7 @@ const config = require('../../../functions/config.json')
 const project = process.env.project
 
 export default {
+  
   data() {
     return {
       headers: [{ text: 'date', value: 'date' }, { text: 'result', value: 'result' }, { text: 'asset', value: 'asset' }, { text: 'id', value: 'id' }, { text: 'price', value: 'price' }],
@@ -196,6 +197,13 @@ export default {
       user: []
     }
   },
+  watch: {
+    isLogin: function(val){
+      if(val){
+      this.twitterDataPass()
+      }
+    }
+  },
   mounted: async function() {
     const order = this.order
     const store = this.$store
@@ -205,7 +213,7 @@ export default {
       if (twitterAccount) {
         this.isLogin = true
         this.twitterAccount = twitterAccount
-        console.log(twitterAccount)
+        
       } else {
         this.isLogin = false
         this.twitterAccount = []
@@ -221,7 +229,7 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-
+      
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
         this.kitties = tokens
         this.loadingCK = false
@@ -274,7 +282,11 @@ export default {
 
       const result = await firestore.doc('user', client.account.address)
       if (result) {
+        if(result.mch_artedit){
         this.switch1 = result.mch_artedit
+        }else{
+          this.switch1 = false
+        }
       } else {
         this.switch1 = false
       }
@@ -317,6 +329,27 @@ export default {
     },
     toAsset(asset) {
       return lib.toAsset(asset)
+    },
+    async twitterDataPass() {
+    try {
+      
+      if(this.isLogin){
+      
+      console.log(this.twitterAccount)
+      
+      const sig =await client.signUserForTwitter()
+      const datas = {
+          sig: sig,
+          address: client.account.address,
+          twitterAccount: this.twitterAccount.providerData
+      }
+      console.log("datas",datas)
+      await functions.call('spTwitter', datas)
+      
+      }
+    } catch (err) {
+      console.log("err",err)
+    }
     },
     async permitArtedit() {
       try {

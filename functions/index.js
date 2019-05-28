@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = "sand" //process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -400,6 +400,17 @@ exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(asy
   const address = web3.eth.accounts.recover(msg, params.sig)
   if (address == params.address) {
     await db.collection('user').doc(address).set({mch_artedit: params.status,modified: params.modified}) // prettier-ignore
+  }
+  return address == params.address
+})
+
+exports.spTwitter = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  const msg = web3.utils.utf8ToHex(
+    'この署名を行うと、あなたのTwitterアカウントがbazaaarに紐づけられます。'
+  )
+  const address = web3.eth.accounts.recover(msg, params.sig)
+  if (address == params.address) {
+  await db.collection('user').doc(address).set({twitterAccount: params.twitterAccount}) // prettier-ignore
   }
   return address == params.address
 })

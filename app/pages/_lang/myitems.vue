@@ -136,6 +136,36 @@
       </v-flex>
     </section>
 
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('asset.mrm') }}</h2>
+      <ul>
+        <v-progress-circular class="l-personal__loading" v-if="this.loadingMRM" :size="50" color="blue" indeterminate></v-progress-circular>
+        <li v-for="(mrm, i) in this.records" :key="i + '-mrm'" v-else-if="this.records.length">
+          <div>
+            <nuxt-link :to="'/' + lang + '/mrm/' + mrm.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if="selling.includes(mrm.attributes.id.toString())">{{ $t('myitems.sell') }}</div>
+              <div class="c-card__img"><img :src="mrm.image_url" /></div>
+              <div class="c-card__name" v-if="mrm.name">{{ mrm.name.substring(0, 25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mrm.attributes.id }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+      </ul>
+      <v-flex xs12 sm6 offset-sm3 v-if="!this.records.length && !this.loadingMRM">
+        <a href="http://maltinerecords.cs8.biz/b1.html" target="_blank">
+          <v-card>
+            <v-img v-bind:src="require('~/assets/img/maltine/maltinelogo.png')" aspect-ratio="1.75"></v-img>
+            <v-card-title primary-title>
+              <v-layout justify-center>
+                <h3 class="headline mb-0">{{ $t('empty.mrm') }}</h3>
+              </v-layout>
+            </v-card-title>
+          </v-card>
+        </a>
+      </v-flex>
+    </section>
+
     <!-- 履歴 -->
     <section class="c-index c-index--mypage" v-if="this.transactions.length">
       <v-data-table :headers="headers" :items="this.transactions" class="elevation-1">
@@ -171,11 +201,13 @@ export default {
       loadingCTN: true,
       loadingMCHH: true,
       loadingMCHE: true,
+      loadingMRM: true,
       switch1: false,
       kitties: [],
       oinks: [],
       heroes: [],
       extensions: [],
+      records: [],
       transactions: [],
       order: []
     }
@@ -228,6 +260,7 @@ export default {
       })
 
       client.ownedTokens('mche').then(async tokenIds => {
+        
         const promises = [],
           extensions = []
         for (var tokenId of tokenIds) {
@@ -239,6 +272,24 @@ export default {
         }
         this.extensions = extensions
         this.loadingMCHE = false
+      })
+
+      client.ownedTokens('mrm').then(async tokenIds => {
+        const promises = [],
+          records = []
+        for (var tokenId of tokenIds) {
+          promises.push(axios.get(config.functions[project] + 'metadata?asset=mrm' + '&id=' + tokenId))
+        }
+        
+        const results = await Promise.all(promises)
+        
+        for (var result of results) {
+          records.push(result.data)
+        }
+  
+        this.records = records
+        console.log("records",this.records)
+        this.loadingMRM = false
       })
 
       this.transactions = await firestore.getHistoryByAddress(client.account.address)

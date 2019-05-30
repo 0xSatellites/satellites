@@ -22,10 +22,18 @@
       <div class="l-item__name" v-if="assetType == 'mche'">{{ asset.extension_type.name[lang] }}</div>
       <div class="l-item__txt" v-if="assetType === 'ck' || assetType === 'ctn'"># {{ asset.id }}</div>
       <div class="l-item__txt" v-if="assetType == 'mchh' || assetType == 'mche'">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
+      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ asset.name }}</div>
+      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ `Id: ${asset.attributes.id}` }}</div>
+
       <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
       <ul class="l-item__data">
         <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
       </ul>
+
+      <ul class="l-item__data" v-if="assetType === 'mrm'">
+        <li><strong>Artist：</strong>{{ asset.attributes.Artist}}</li>
+      </ul>
+
       <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
         <li><strong>Gen：</strong> {{ asset.generation }}</li>
         <li><strong>Cooldown：</strong> {{ coolDownIndexToSpeed(asset.status.cooldown_index) }}</li>

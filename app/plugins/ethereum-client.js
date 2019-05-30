@@ -23,6 +23,10 @@ const contract = {
   mche: new web3.eth.Contract(
     config.abi.mche,
     config.contract[process.env.project].mche
+  ),
+  mrm: new web3.eth.Contract(
+    config.abi.mrm,
+    config.contract[process.env.project].mrm
   )
 }
 
@@ -57,6 +61,7 @@ const activate = async provider => {
 }
 
 const ownedTokens = async name => {
+  console.log("owned", name)
   const balance = await contract[name].methods.balanceOf(account.address).call()
   if (balance == 0) {
     return []

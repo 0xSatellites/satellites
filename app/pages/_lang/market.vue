@@ -32,6 +32,7 @@
               <div class="c-card__name" v-if="order.assetName == 'ck' || order.assetName == 'ctn'">{{ order.metadata.name }}</div>
               <div class="c-card__name" v-if="order.assetName == 'mchh'">{{ order.metadata.hero_type.name[lang] }}</div>
               <div class="c-card__name" v-if="order.assetName == 'mche'">{{ order.metadata.extension_type.name[lang] }}</div>
+              <div class="c-card__name" v-if="order.assetName == 'mrm'">{{ order.metadata.name }}</div>
               <div class="c-card__txt"># {{ order.id }}</div>
               <div class="c-card__txt" v-if="order.assetName == 'ck' || order.assetName == 'ctn'">
                 Gen {{ order.metadata.generation }} : {{ coolDownIndexToSpeed(order.metadata.status.cooldown_index) }}

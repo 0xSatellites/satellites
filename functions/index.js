@@ -21,6 +21,7 @@ const ck = new web3.eth.Contract(config.abi.ck, config.contract[project].ck)
 const ctn = new web3.eth.Contract(config.abi.ctn, config.contract[project].ctn)
 const mchh = new web3.eth.Contract(config.abi.mchh, config.contract[project].mchh)
 const mche = new web3.eth.Contract(config.abi.mche, config.contract[project].mche)
+const mrm = new web3.eth.Contract(config.abi.mrm, config.contract[project].mrm)
 const { google } = require('googleapis')
 const cloudbilling = google.cloudbilling('v1')
 const { auth } = require('google-auth-library')
@@ -61,6 +62,11 @@ async function validateAssetStatus(order) {
       isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
       if (isApprovedForAll && order.maker == owner) passed = true
       break
+    case config.contract[project].mrm:
+    owner = await mrm.methods.ownerOf(order.id).call()
+    isApprovedForAll = await mrm.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
+    if (isApprovedForAll && order.maker == owner) passed = true
+    break
   }
   return passed
 }
@@ -245,9 +251,11 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   } else if (assetName == 'mchh') {
     c.fillText(metadata.attributes.hero_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
     c.fillText(metadata.attributes.rarity, 840, 305, 720)
-  } else {
+  } else if (assetName == "mche") {
     c.fillText(metadata.attributes.extension_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
     c.fillText(metadata.attributes.rarity, 840, 305, 720)
+  } else if (assetName == "mrm") {
+    c.fillText(metadata.attributes.name, 840, 255, 720)
   }
   c.font = "bold 75px 'Noto Sans JP Bold'"
   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)

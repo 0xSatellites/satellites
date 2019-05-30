@@ -23,15 +23,20 @@
       <div class="l-item__txt" v-if="assetType === 'ck' || assetType === 'ctn'"># {{ asset.id }}</div>
       <div class="l-item__txt" v-if="assetType == 'mchh' || assetType == 'mche'">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
       <div class="l-item__txt" v-if="assetType == 'mrm'">{{ asset.name }}</div>
-      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ `Id: ${asset.attributes.id}` }}</div>
+      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ `#${asset.attributes.id}` }}</div>
 
       <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
       <ul class="l-item__data">
         <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
       </ul>
 
-      <ul class="l-item__data" v-if="assetType === 'mrm'">
+      <ul class="l-item__data" style="display: block" v-if="assetType === 'mrm'">
         <li><strong>Artist：</strong>{{ asset.attributes.Artist}}</li>
+        <li><strong>Label：</strong>{{ asset.attributes.Label}}</li>
+        <li><strong>Artwork</strong>{{ asset.attributes.Artwork}}</li>
+        <li><strong>Mastering Engineer：</strong>{{ asset.attributes.Mastering_Enginner}}</li>
+        <li><strong>Contract Design：</strong>{{ asset.attributes.Contract_Designer}}</li>
+        <li><strong>Executive Producer：</strong>{{ asset.attributes.Executive_Producer}}</li>
       </ul>
 
       <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
@@ -114,6 +119,14 @@
               >
                 cancel
                 <v-progress-circular size="16" class="ma-2" v-if="loadingCancel" indeterminate></v-progress-circular>
+              </v-btn>
+            </div>
+            <div class="l-item__action_btns" style="margin-top: 10px" v-if="assetType=='mrm'">
+              <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.audio_url" target="_blank">
+                audio_url
+              </v-btn>
+              <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.track_data" target="_blank">
+                track_data
               </v-btn>
             </div>
           </div>
@@ -329,6 +342,14 @@ export default {
             this.modal = true
             this.loading = false
           })
+        } else if (this.assetType == 'mrm'){
+          await client.contract.mrm.methods.transferFrom(this.account.address, this.giftReceiverAddress, this.$route.params.id)
+          .send({ from: this.account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
         }
       } catch (err) {
         alert(this.$t('error.message'))
@@ -340,7 +361,6 @@ export default {
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
       try {
-        console.log('order')
         this.loading = true
         this.waitCancel = true
         this.modalNo = 5
@@ -370,11 +390,10 @@ export default {
         let creatorRoyaltyRecipient = config.constant.nulladdress
         let relayerRoyaltyRatio = 1000
         let creatorRoyaltyRatio = 0
-        console.log(this.asset)
         if (this.assetType == 'ck') {
           relayerRoyaltyRatio = 0
           creatorRoyaltyRatio = 0
-        } else if (this.assetType == 'ctn') {
+          } else if (this.assetType == 'ctn') {
           relayerRoyaltyRatio = 500
           creatorRoyaltyRatio = 500
           creatorRoyaltyRecipient = config.recipient[project].ctn
@@ -389,6 +408,9 @@ export default {
           }
         } else if (this.assetType == 'mche'){
           relayerRoyaltyRecipient = config.recipient[project].mch_distributer
+        } else if (this.assetType == "mrm"){
+          creatorRoyaltyRatio = 500
+          creatorRoyaltyRecipient = this.asset.Remixer_address
         }
         const expiration = Math.round(9999999999999 / 1000) - 1
         const order = {
@@ -419,7 +441,6 @@ export default {
           // creatorRoyaltyRatio: 500,
           // referralRatio: 500
         }
-        console.log(order)
         const signedOrder = await client.signOrder(order)
         const datas = {
           order: signedOrder,
@@ -435,6 +456,7 @@ export default {
         this.loading = false
         this.waitCancel = false
       } catch (err) {
+        console.log(err)
         alert(this.$t('error.message'))
         this.loading = false
         this.modal = false

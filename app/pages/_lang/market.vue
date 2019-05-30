@@ -88,6 +88,10 @@ export default {
         {
           name: 'MyCryptoHeros Extension',
           marketAsset: 'mche'
+        },
+        {
+          name: 'Maltine Records',
+          marketAsset: 'mrm'
         }
       ],
       sorts: [

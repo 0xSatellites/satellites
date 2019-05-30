@@ -409,6 +409,7 @@ export default {
         } else if (this.assetType == 'mche'){
           relayerRoyaltyRecipient = config.recipient[project].mch_distributer
         } else if (this.assetType == "mrm"){
+          relayerRoyaltyRatio = 500
           creatorRoyaltyRatio = 500
           creatorRoyaltyRecipient = this.asset.Remixer_address
         }

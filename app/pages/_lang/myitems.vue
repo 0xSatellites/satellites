@@ -255,7 +255,11 @@ export default {
       } else {
         console.log("logout")
         this.isLogin = false
+        this.isSigned = false
         this.twitterAccount = []
+        var twitterStoredState = this.twitterAccount.providerData[0]
+        twitterStoredState.isSigned = this.isSigned
+        this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       };
     })
 
@@ -393,8 +397,6 @@ export default {
       
       if(this.isLogin){
 
-      
-      
       const sig =await client.signUserForTwitter()
       const datas = {
           sig: sig,

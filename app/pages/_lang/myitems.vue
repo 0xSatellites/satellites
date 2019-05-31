@@ -12,30 +12,33 @@
           <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000) / 10000 }} ETH</dd>
         </dl>
       </div>
+
+      <div v-if="!dataExists" class="l-personal__frame">
+          <div v-if="!isLogin">
+          <v-btn @click=twitterLogin>Twitterログイン</v-btn>
+          </div>
+          <div　v-else-if="!isSigned">
+            <div class="l-item__txt">
+                {{ $t('myitems.needSign')}}
+            </div>
+          </div>
+          <div v-else>
+            <p>{{ twitterAccount.displayName }}</p>
+            <v-list-tile-avatar class="news__item__avatar">
+              <img :src="twitterAccount.photoURL">
+            </v-list-tile-avatar>
+          <!-- <v-btn @click=twitterLogout>ログアウト</v-btn> -->
+          </div>   
+      </div>
+
       <div class="l-personal__frame">
         <v-flex xs12 px-3>
           <h4>{{ $t('myitems.experiment') }}</h4>
           {{ $t('myitems.mch_artedit') }}
            <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
         </v-flex>
-
-        <div v-if="!isLogin">
-                <v-btn @click=twitterLogin>Twitterログイン</v-btn>
-                </div>
-                <div v-else-if="!isSigned">
-                  <div class="l-item__txt">
-                      {{ $t('myitems.needSign')}}
-                  </div>
-                </div>
-                <div v-else>
-                <p>{{ twitterAccount.displayName }}</p>
-                <v-list-tile-avatar class="news__item__avatar">
-                        <img :src="twitterAccount.photoURL">
-                    </v-list-tile-avatar>
-                <v-btn @click=twitterLogout>ログアウト</v-btn>
-        </div>
-
       </div>
+
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
@@ -225,6 +228,8 @@ export default {
       isLogin: false,
       isSigned: false,
       twitterAccount: [],
+      storedTwitterData: [],
+      dataExists: false,
       kitties: [],
       oinks: [],
       heroes: [],
@@ -233,13 +238,6 @@ export default {
       transactions: [],
       order: [],
       user: [],
-    }
-  },
-  watch: {
-    isLogin: function(val){
-      if(val){
-      this.twitterDataPass()
-      }
     }
   },
   mounted: async function() {
@@ -251,10 +249,9 @@ export default {
       if (twitterAccount) {
         this.isLogin = true
         this.twitterAccount = twitterAccount
-        
+        //this.twitterLogout()
+        this.twitterDataPass()
       } else {
-        console.log("logout")
-        this.isLogin = false
         this.isSigned = false
         this.twitterAccount = []
         var twitterStoredState = this.twitterAccount.providerData[0]
@@ -272,6 +269,22 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
+
+      this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+        console.log("data exists!")
+        this.dataExists = true
+        this.isSigned = true
+        this.twitterAccount = this.storedTwitterData[0]
+      var twitterStoredState = this.twitterAccount
+      twitterStoredState.isSigned = this.isSigned
+      this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
+      }else{
+        console.log("data no")
+        this.dataExists = false
+      }
+
       
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
         this.kitties = tokens
@@ -372,10 +385,11 @@ export default {
     async twitterLogin() {
       const provider = new firebase.auth.TwitterAuthProvider()
       firebase.auth().signInWithRedirect(provider)
+      
     },
     twitterLogout () {
-
       firebase.auth().signOut()
+      this.isLogin = false
     },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
@@ -409,11 +423,13 @@ export default {
       twitterStoredState.isSigned = this.isSigned
       this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
 
+      console.log("twiteerdata", datas)
+
       await functions.call('spTwitter', datas)
-      
+
       }
     } catch (err) {
-      console.log("error",err)
+      console.log("errorが起こりました",err)
     }
     },
     async permitArtedit() {

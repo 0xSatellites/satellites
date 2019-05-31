@@ -49,7 +49,7 @@
         </div>
         
         <div class="l-information__action">
-          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isLogin || !checkbox || loading" value="purchase"
+          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isSigned || !checkbox || loading" value="purchase"
             >{{ $t('hash.purchase') }}
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>
@@ -98,7 +98,7 @@ export default {
       lang: '',
       // url: { type: '', hash: '', project: '' },
       name: '',
-      isLogin: false,
+      isSigned: false,
       twitterAccount: [],
     }
   },
@@ -120,9 +120,17 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+
+  this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+
+        this.isSigned = true
+      }else{
+        this.isSigned = false
+      }
+
     if (store.getters['account/account'].twitterAccount.isSigned){
-      console.log("login")
-        this.isLogin = true,
         this.twitterAccount = store.getters['account/account'].twitterAccount
       }
   },

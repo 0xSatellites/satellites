@@ -30,7 +30,6 @@ export const actions = {
     commit('setAccount', account)
   },
   async setTwitterAccount({ state, commit }, account) {
-    console.log(account)
     commit('setTwitterAccount', account)
   },
 }

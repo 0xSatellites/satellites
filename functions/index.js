@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = process.env.PROJECT
+const project = 'sand'//process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -401,7 +401,7 @@ exports.spTwitter = functions.region('asia-northeast1').https.onCall(async (para
   )
   const address = web3.eth.accounts.recover(msg, params.sig)
   if (address == params.address) {
-  await db.collection('user').doc(address).update({twitterAccount: params.twitterAccount}) // prettier-ignore
+  await db.collection('user').doc(address).set({twitterAccount: params.twitterAccount}) // prettier-ignore
   }
   return address == params.address
 })

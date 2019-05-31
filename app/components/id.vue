@@ -97,7 +97,7 @@
             <div class="l-item__action__btns" v-else-if="approved && !order.id">
               <v-btn
                 class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!isLogin || !valid || loading || !approved || !checkbox || !account.address"
+                :disabled="!isSigned || !valid || loading || !approved || !checkbox || !account.address"
                 color="#3498db"
                 large
                 @click="order_v1"
@@ -212,7 +212,8 @@ export default {
       msg: '',
       price: '',
       giftReceiverAddress:"",
-      isLogin: false,
+      isSigned: false,
+      storedTwitterData: [],
       twitterAccount: [],
     }
   },
@@ -231,8 +232,16 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
+      this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+
+        this.isSigned = true
+      }else{
+        this.isSigned = false
+      }
+
       if (store.getters['account/account'].twitterAccount.isSigned){
-        this.isLogin = true,
         this.twitterAccount = store.getters['account/account'].twitterAccount
       }
 

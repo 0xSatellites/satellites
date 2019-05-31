@@ -80,6 +80,12 @@
             >)
           </div>
           <v-checkbox v-model="checkbox" :rules="[v => !!v || '']" :label="$t('id.agree')" required v-if="approved && owned" height="20"></v-checkbox>
+
+          <div v-if="assetType=='mrm'" class="l-item__txt">
+            <a href="/myitems">
+            {{ $t('id.mrm_sell_condition')}}
+            </a>
+            </div>
           <div v-if="owned">
             <div class="l-item__action__btns" v-if="!approved">
               <v-btn class="l-item__action__btn" :disabled="!valid || loading" large @click="approve">
@@ -91,7 +97,7 @@
             <div class="l-item__action__btns" v-else-if="approved && !order.id">
               <v-btn
                 class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!valid || loading || !approved || !checkbox || !account.address"
+                :disabled="!isLogin || !valid || loading || !approved || !checkbox || !account.address"
                 color="#3498db"
                 large
                 @click="order_v1"
@@ -205,6 +211,8 @@ export default {
       msg: '',
       price: '',
       giftReceiverAddress:"",
+      isLogin: false,
+      twitterAccount: [],
     }
   },
   mounted: async function() {
@@ -220,6 +228,11 @@ export default {
           account = await client.activate(web3.currentProvider)
         }
         store.dispatch('account/setAccount', account)
+      }
+
+      if (store.getters['account/account'].twitterAccount.isSigned){
+        this.isLogin = true,
+        this.twitterAccount = store.getters['account/account'].twitterAccount
       }
 
       if (this.assetType == 'ck') {

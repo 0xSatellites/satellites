@@ -21,8 +21,13 @@
 
         <div v-if="!isLogin">
                 <v-btn @click=twitterLogin>Twitterログイン</v-btn>
-               </div>
-               <div v-else>
+                </div>
+                <div v-else-if="!isSigned">
+                  <div class="l-item__txt">
+                      {{ $t('myitems.needSign')}}
+                  </div>
+                </div>
+                <div v-else>
                 <p>{{ twitterAccount.displayName }}</p>
                 <v-list-tile-avatar class="news__item__avatar">
                         <img :src="twitterAccount.photoURL">
@@ -218,6 +223,7 @@ export default {
       loadingMRM: true,
       switch1: false,
       isLogin: false,
+      isSigned: false,
       twitterAccount: [],
       kitties: [],
       oinks: [],
@@ -226,7 +232,7 @@ export default {
       records: [],
       transactions: [],
       order: [],
-      user: []
+      user: [],
     }
   },
   watch: {
@@ -247,6 +253,7 @@ export default {
         this.twitterAccount = twitterAccount
         
       } else {
+        console.log("logout")
         this.isLogin = false
         this.twitterAccount = []
       };
@@ -324,7 +331,6 @@ export default {
         }
   
         this.records = records
-        console.log("records",this.records)
         this.loadingMRM = false
       })
 
@@ -364,6 +370,7 @@ export default {
       firebase.auth().signInWithRedirect(provider)
     },
     twitterLogout () {
+
       firebase.auth().signOut()
     },
     coolDownIndexToSpeed(index) {
@@ -385,8 +392,8 @@ export default {
     try {
       
       if(this.isLogin){
+
       
-      console.log(this.twitterAccount)
       
       const sig =await client.signUserForTwitter()
       const datas = {
@@ -394,12 +401,17 @@ export default {
           address: client.account.address,
           twitterAccount: this.twitterAccount.providerData
       }
-      console.log("datas",datas)
+      this.isSigned = true
+
+      var twitterStoredState = this.twitterAccount.providerData[0]
+      twitterStoredState.isSigned = this.isSigned
+      this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
+
       await functions.call('spTwitter', datas)
       
       }
     } catch (err) {
-      console.log("err",err)
+      console.log("error",err)
     }
     },
     async permitArtedit() {

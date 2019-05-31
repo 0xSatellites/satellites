@@ -59,7 +59,8 @@
         "balance": "残高",
         "experiment": "試験中の機能",
         "mch_artedit": "Trueに設定しておくと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。",
-        "sell": "出品中"
+        "sell": "出品中",
+        "needSign": "bazaaarとtwitterアカウントを連携するためにはウォレットの署名をおこなってください。"
     },
     "footer":{
         "company": "運営会社",
@@ -81,7 +82,9 @@
         "terms":"利用規約",
         "relatedAsset": "関連アセット",
         "mchh_condition": "※ヒーローはLv2以上かつ「アートエディット」が行われている必要があります。",
-        "mche_condition": "※エクステンションはLv2以上かつ「二つ名」が行われている必要があります。"
+        "mche_condition": "※エクステンションはLv2以上かつ「二つ名」が行われている必要があります。",
+        "mrm_sell_condition":"※出品するにはtwitter連携が必要です。",
+        "mrm_buy_condition":"※購入するにはtwitter連携が必要です。"
     },
     "hash":{
         "seller":"出品者",

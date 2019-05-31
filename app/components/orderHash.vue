@@ -47,11 +47,17 @@
         <div class="checkbox_center">
           <v-checkbox class="center" v-model="checkbox" :rules="[v => !!v || '']" :label="$t('hash.agree')" required v-if="!owner(order.maker)"></v-checkbox>
         </div>
+        
         <div class="l-information__action">
-          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!checkbox || loading" value="purchase"
+          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isLogin || !checkbox || loading" value="purchase"
             >{{ $t('hash.purchase') }}
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>
+          <div v-if="assetType=='mrm'" class="l-item__txt" style="margin-top: 10px">
+          <a href="/myitems">
+            {{ $t('id.mrm_buy_condition')}}
+          </a>
+        </div>
           <div v-if="order.valid">
             <a :href="twitterUrl" data-size="large" data-show-count="false" target="”_blank”">
               <v-icon class="mt-4" color="#3498db">fab fa-twitter</v-icon>
@@ -91,7 +97,9 @@ export default {
       hash: '',
       lang: '',
       // url: { type: '', hash: '', project: '' },
-      name: ''
+      name: '',
+      isLogin: false,
+      twitterAccount: [],
     }
   },
   mounted: async function() {
@@ -112,6 +120,11 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+    if (store.getters['account/account'].twitterAccount.isSigned){
+      console.log("login")
+        this.isLogin = true,
+        this.twitterAccount = store.getters['account/account'].twitterAccount
+      }
   },
   computed: {
     assetType() {

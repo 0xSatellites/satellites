@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = 'sand'//process.env.PROJECT
+const project = process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()

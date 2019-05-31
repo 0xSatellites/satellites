@@ -22,14 +22,14 @@
                 {{ $t('myitems.needSign')}}
             </div>
           </div>
-          <div v-else>
-            <p>{{ twitterAccount.displayName }}</p>
-            <v-list-tile-avatar class="news__item__avatar">
-              <img :src="twitterAccount.photoURL">
-            </v-list-tile-avatar>
-          <!-- <v-btn @click=twitterLogout>ログアウト</v-btn> -->
-          </div>   
       </div>
+      <div v-else class="l-personal__frame">
+        <p>{{ twitterAccount.displayName }}</p>
+        <v-list-tile-avatar class="news__item__avatar">
+          <img :src="twitterAccount.photoURL">
+        </v-list-tile-avatar>
+        <!-- <v-btn @click=twitterLogout>ログアウト</v-btn> -->
+      </div>   
 
       <div class="l-personal__frame">
         <v-flex xs12 px-3>
@@ -250,13 +250,12 @@ export default {
         this.isLogin = true
         this.twitterAccount = twitterAccount
         //this.twitterLogout()
-        this.twitterDataPass()
       } else {
         this.isSigned = false
         this.twitterAccount = []
-        var twitterStoredState = this.twitterAccount.providerData[0]
-        twitterStoredState.isSigned = this.isSigned
-        this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
+        // var twitterStoredState = this.twitterAccount.providerData[0]
+        // twitterStoredState.isSigned = this.isSigned
+        // this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       };
     })
 
@@ -273,7 +272,6 @@ export default {
       this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
 
       if(this.storedTwitterData.length > 0){
-        console.log("data exists!")
         this.dataExists = true
         this.isSigned = true
         this.twitterAccount = this.storedTwitterData[0]
@@ -281,8 +279,8 @@ export default {
       twitterStoredState.isSigned = this.isSigned
       this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       }else{
-        console.log("data no")
         this.dataExists = false
+        this.twitterDataPass()
       }
 
       
@@ -385,7 +383,6 @@ export default {
     async twitterLogin() {
       const provider = new firebase.auth.TwitterAuthProvider()
       firebase.auth().signInWithRedirect(provider)
-      
     },
     twitterLogout () {
       firebase.auth().signOut()
@@ -408,9 +405,8 @@ export default {
     },
     async twitterDataPass() {
     try {
-      
       if(this.isLogin){
-
+        console.log("twiteerdata")
       const sig =await client.signUserForTwitter()
       const datas = {
           sig: sig,
@@ -418,13 +414,11 @@ export default {
           twitterAccount: this.twitterAccount.providerData
       }
       this.isSigned = true
-
+      
       var twitterStoredState = this.twitterAccount.providerData[0]
       twitterStoredState.isSigned = this.isSigned
+
       this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
-
-      console.log("twiteerdata", datas)
-
       await functions.call('spTwitter', datas)
 
       }

@@ -16,8 +16,20 @@
         <v-flex xs12 px-3>
           <h4>{{ $t('myitems.experiment') }}</h4>
           {{ $t('myitems.mch_artedit') }}
-          <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
+           <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
         </v-flex>
+
+        <div v-if="!isLogin">
+                <v-btn @click=twitterLogin>Twitterログイン</v-btn>
+               </div>
+               <div v-else>
+                <p>{{ twitterAccount.displayName }}</p>
+                <v-list-tile-avatar class="news__item__avatar">
+                        <img :src="twitterAccount.photoURL">
+                    </v-list-tile-avatar>
+                <v-btn @click=twitterLogout>ログアウト</v-btn>
+        </div>
+
       </div>
     </section>
     <section class="l-personal" v-else>
@@ -189,11 +201,13 @@ import api from '~/plugins/api'
 import axios from 'axios'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import firebase from 'firebase'
 
 const config = require('../../../functions/config.json')
 const project = process.env.project
 
 export default {
+  
   data() {
     return {
       headers: [{ text: 'date', value: 'date' }, { text: 'result', value: 'result' }, { text: 'asset', value: 'asset' }, { text: 'id', value: 'id' }, { text: 'price', value: 'price' }],
@@ -203,19 +217,41 @@ export default {
       loadingMCHE: true,
       loadingMRM: true,
       switch1: false,
+      isLogin: false,
+      twitterAccount: [],
       kitties: [],
       oinks: [],
       heroes: [],
       extensions: [],
       records: [],
       transactions: [],
-      order: []
+      order: [],
+      user: []
+    }
+  },
+  watch: {
+    isLogin: function(val){
+      if(val){
+      this.twitterDataPass()
+      }
     }
   },
   mounted: async function() {
     const order = this.order
     const store = this.$store
     var account
+
+    firebase.auth().onAuthStateChanged(twitterAccount =>{
+      if (twitterAccount) {
+        this.isLogin = true
+        this.twitterAccount = twitterAccount
+        
+      } else {
+        this.isLogin = false
+        this.twitterAccount = []
+      };
+    })
+
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
         if (window.ethereum) {
@@ -225,7 +261,7 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
-
+      
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
         this.kitties = tokens
         this.loadingCK = false
@@ -297,7 +333,11 @@ export default {
 
       const result = await firestore.doc('user', client.account.address)
       if (result) {
+        if(result.mch_artedit){
         this.switch1 = result.mch_artedit
+        }else{
+          this.switch1 = false
+        }
       } else {
         this.switch1 = false
       }
@@ -319,6 +359,13 @@ export default {
     }
   },
   methods: {
+    async twitterLogin() {
+      const provider = new firebase.auth.TwitterAuthProvider()
+      firebase.auth().signInWithRedirect(provider)
+    },
+    twitterLogout () {
+      firebase.auth().signOut()
+    },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
     },
@@ -333,6 +380,27 @@ export default {
     },
     toAsset(asset) {
       return lib.toAsset(asset)
+    },
+    async twitterDataPass() {
+    try {
+      
+      if(this.isLogin){
+      
+      console.log(this.twitterAccount)
+      
+      const sig =await client.signUserForTwitter()
+      const datas = {
+          sig: sig,
+          address: client.account.address,
+          twitterAccount: this.twitterAccount.providerData
+      }
+      console.log("datas",datas)
+      await functions.call('spTwitter', datas)
+      
+      }
+    } catch (err) {
+      console.log("err",err)
+    }
     },
     async permitArtedit() {
       try {

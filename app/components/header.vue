@@ -15,6 +15,7 @@
               <NuxtLink v-else-if="$i18n.locale === 'ja' && $route.fullPath.match(/en/)" :to="$route.fullPath" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>
               <NuxtLink v-else-if="$i18n.locale === 'ja'" :to="`/en` + $route.fullPath" class="ml-2"><img src="~/assets/img/country/japan.png"/></NuxtLink>
               <NuxtLink v-else :to="$route.fullPath.replace('/en', '')" class="ml-2"><img src="~/assets/img/country/english.png"/></NuxtLink>
+              <NuxtLink v-if="isLogin" :to="$t('header.mypageHD')"><img :src="twitterAccount.photoURL"></NuxtLink>
             </li>
           </ul>
 
@@ -23,7 +24,28 @@
 </template>
 
 <script>
+
+import firebase from 'firebase'
+
 export default {
+  mounted: async function() {
+    firebase.auth().onAuthStateChanged(twitterAccount =>{
+      if (twitterAccount) {
+        this.isLogin = true
+        this.twitterAccount = twitterAccount
+      } else {
+        this.isLogin = false
+        this.twitterAccount = []
+      };
+    })
+  },
+  data() {
+      return {
+        isLogin: false,
+        twitterAccount: []
+      }
+    },
+
   computed: {
     lang() {
       return this.$store.state.i18n.locale

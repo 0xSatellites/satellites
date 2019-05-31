@@ -418,6 +418,17 @@ exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(asy
   return address == params.address
 })
 
+exports.spTwitter = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  const msg = web3.utils.utf8ToHex(
+    'この署名を行うと、あなたのTwitterアカウントがbazaaarに紐づけられます。'
+  )
+  const address = web3.eth.accounts.recover(msg, params.sig)
+  if (address == params.address) {
+  await db.collection('user').doc(address).set({twitterAccount: params.twitterAccount}) // prettier-ignore
+  }
+  return address == params.address
+})
+
 const mrm_metadata = require('./assets/token/mrm_metadata.json')
 exports.spMasterRightsforMusicAPI = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')

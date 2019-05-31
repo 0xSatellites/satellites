@@ -41,7 +41,8 @@
       "mchh": "0xc106D47FB4bF5F9EbaF46E3219Ef3fABCbd26606",
       "mche": "0x5220Debd5a575d1BF85b5531c9E0f6CeD243975C",
       "mch_distributer": "0x0A7C935C8df4090c4436af8504AA5559c9382BE3",
-      "mrm": "0x2FE1662A0b7F9F16d2fdcCd221eB0B6bE6AF586e"
+      "mrm": "0x2FE1662A0b7F9F16d2fdcCd221eB0B6bE6AF586e",
+      "mrm_distributer": "0x09AFECfF1CF2954677baba47Dbf527635CEb7168"
     },
     "staging": {
       "bazaaar": "0x7D5Aea490837f3E5df9d1703005C2Cce3C136830",
@@ -50,7 +51,8 @@
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",
       "mche": "0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
       "mch_distributer": "0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64",
-      "mrm": "0xff9208a8384934bA94F2A27996620Fc5F14d916A"
+      "mrm": "0xff9208a8384934bA94F2A27996620Fc5F14d916A",
+      "mrm_distributer": ""
     },
     "production": {
       "bazaaar": "0x7D5Aea490837f3E5df9d1703005C2Cce3C136830",
@@ -59,7 +61,8 @@
       "mchh": "0x273f7F8E6489682Df756151F5525576E322d51A3",
       "mche": "0xdceaf1652a131F32a821468Dc03A92df0edd86Ea",
       "mch_distributer": "0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64",
-      "mrm": "0xff9208a8384934bA94F2A27996620Fc5F14d916A"
+      "mrm": "0xff9208a8384934bA94F2A27996620Fc5F14d916A",
+      "mrm_distributer": ""
     }
   },
   "firebase": {
@@ -126,17 +129,20 @@
     "sand":{
         "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
         "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-        "mch_distributer":"0x0A7C935C8df4090c4436af8504AA5559c9382BE3"
+        "mch_distributer":"0x0A7C935C8df4090c4436af8504AA5559c9382BE3",
+        "mrm_distributer": "0x09AFECfF1CF2954677baba47Dbf527635CEb7168"
     },
     "staging":{
         "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
         "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-        "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
+        "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64",
+        "mrm_distributer": ""
     },
     "production":{
         "bazaaar":"0xf9b744152a6897198b9B9999d8d340b59807595E",
         "ctn":"0x5926824315aF6016f98E83De841C5B28b959DF51",
-        "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64"
+        "mch_distributer":"0xFC43AeCB5c07f34AD2D8E32B590DA98f56FBaf64",
+        "mrm_distributer": ""
     }
   },
   "billion": {

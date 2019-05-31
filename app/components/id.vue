@@ -176,6 +176,7 @@ import functions from '~/plugins/functions'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 import api from '~/plugins/api'
+import { constants } from 'crypto';
 
 const config = require('../../functions/config.json')
 const project = process.env.project
@@ -385,7 +386,6 @@ export default {
         //const date = new Date()
         //date.setDate(date.getDate() + 7)
         //const expiration = Math.round(date.getTime() / 1000)
-
         let relayerRoyaltyRecipient = config.recipient[project].bazaaar
         let creatorRoyaltyRecipient = config.constant.nulladdress
         let relayerRoyaltyRatio = 1000
@@ -409,9 +409,10 @@ export default {
         } else if (this.assetType == 'mche'){
           relayerRoyaltyRecipient = config.recipient[project].mch_distributer
         } else if (this.assetType == "mrm"){
-          relayerRoyaltyRatio = 500
-          creatorRoyaltyRatio = 500
+          relayerRoyaltyRecipient = config.recipient[project].mrm_distributer
           creatorRoyaltyRecipient = this.asset.Remixer_address
+          relayerRoyaltyRatio = 650
+          creatorRoyaltyRatio = 350
         }
         const expiration = Math.round(9999999999999 / 1000) - 1
         const order = {
@@ -429,18 +430,6 @@ export default {
           relayerRoyaltyRatio: relayerRoyaltyRatio,
           creatorRoyaltyRatio: creatorRoyaltyRatio,
           referralRatio: 0
-          // proxy: client.contract.bazaaar_v2.options.address,
-          // maker: account.address,
-          // taker: config.constant.nulladdress,
-          // creatorRoyaltyRecipient: config.recipient[project].ctn,
-          // asset: client.contract.ctn.options.address,
-          // id: params.id,
-          // price: wei,
-          // nonce: nonce,
-          // salt: salt,
-          // expiration: expiration,
-          // creatorRoyaltyRatio: 500,
-          // referralRatio: 500
         }
         const signedOrder = await client.signOrder(order)
         const datas = {

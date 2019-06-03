@@ -15,7 +15,7 @@
 
       <div v-if="!dataExists" class="l-personal__frame">
           <div v-if="!isLogin">
-          <v-btn @click=twitterLogin>Twitterログイン</v-btn>
+          <v-btn @click=twitterLogin>Twitter連携</v-btn>
           </div>
           <div　v-else-if="!isSigned">
             <div class="l-item__txt">
@@ -24,10 +24,11 @@
           </div>
       </div>
       <div v-else class="l-personal__frame">
-        <p>{{ twitterAccount.displayName }}</p>
-        <v-list-tile-avatar class="news__item__avatar">
+        <div class="l-item__txt" style="margin-left: 20px">Twitter連携済み</div>
+        <!-- <p>{{ twitterAccount.displayName }}</p> -->
+        <!-- <v-list-tile-avatar class="news__item__avatar">
           <img :src="twitterAccount.photoURL">
-        </v-list-tile-avatar>
+        </v-list-tile-avatar> -->
         <!-- <v-btn @click=twitterLogout>ログアウト</v-btn> -->
       </div>   
 

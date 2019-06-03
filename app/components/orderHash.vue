@@ -53,7 +53,7 @@
             >{{ $t('hash.purchase') }}
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>
-          <div v-if="assetType=='mrm'" class="l-item__txt" style="margin-top: 10px">
+          <div v-if="assetType=='mrm' && !isSigned" class="l-item__txt" style="margin-top: 10px">
           <a href="/myitems">
             {{ $t('id.mrm_buy_condition')}}
           </a>

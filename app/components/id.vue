@@ -81,7 +81,7 @@
           </div>
           <v-checkbox v-model="checkbox" :rules="[v => !!v || '']" :label="$t('id.agree')" required v-if="approved && owned" height="20"></v-checkbox>
 
-          <div v-if="assetType=='mrm'" class="l-item__txt">
+          <div v-if="assetType=='mrm' && !isSigned" class="l-item__txt">
             <a href="/myitems">
             {{ $t('id.mrm_sell_condition')}}
             </a>

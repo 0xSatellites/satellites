@@ -322,7 +322,7 @@ exports.orderCleaningPubSub = functions.region('asia-northeast1').pubsub.topic('
     for (let i = 0; i < docs.length; i++) {
       const doc = await db.collection('order').doc(docs[i]).get() // prettier-ignore
       const data = doc.data()
-      const isAssetStatusValid = await validateAssetStatus(order)
+      const isAssetStatusValid = await validateAssetStatus(data)
       try {
         const hash = await requireValidOrder(data)
         if (hash != data.hash || !isAssetStatusValid) {

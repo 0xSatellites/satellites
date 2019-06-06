@@ -15,7 +15,7 @@
 
       <div v-if="!dataExists" class="l-personal__frame">
           <div v-if="!isLogin">
-          <v-btn @click=twitterLogin>Twitter連携</v-btn>
+          <v-btn @click=twitterLogin>{{$t('myitems.twitter_connection')}}</v-btn>
           </div>
           <div　v-else-if="!isSigned">
             <div class="l-item__txt">
@@ -24,7 +24,7 @@
           </div>
       </div>
       <div v-else class="l-personal__frame">
-        <div class="l-item__txt" style="margin-left: 20px">Twitter連携済み</div>
+        <div class="l-item__txt" style="margin-left: 20px">{{$t('myitems.twitter_connection_done')}}</div>
         <!-- <p>{{ twitterAccount.displayName }}</p> -->
         <!-- <v-list-tile-avatar class="news__item__avatar">
           <img :src="twitterAccount.photoURL">
@@ -212,6 +212,7 @@ import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
 import firebase from 'firebase'
 
+//const twitter = require("twitter")
 const config = require('../../../functions/config.json')
 const project = process.env.project
 
@@ -246,11 +247,12 @@ export default {
     const store = this.$store
     var account
 
+  //this.twitterLogout();
+
     firebase.auth().onAuthStateChanged(twitterAccount =>{
       if (twitterAccount) {
         this.isLogin = true
-        this.twitterAccount = twitterAccount
-        //this.twitterLogout()
+        this.twitterAccount = twitterAccount  
       } else {
         this.isSigned = false
         this.twitterAccount = []
@@ -269,6 +271,7 @@ export default {
         }
         store.dispatch('account/setAccount', account)
       }
+
 
       this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
 
@@ -302,6 +305,10 @@ export default {
         }
         this.oinks = oinks
         this.loadingCTN = false
+      })
+
+      api.getTwitterDataByTwitterId("986986259624091648").then(async data => {
+        console.log("twitterDatataa", data)
       })
 
       client.ownedTokens('mchh').then(async tokenIds => {
@@ -383,7 +390,7 @@ export default {
   methods: {
     async twitterLogin() {
       const provider = new firebase.auth.TwitterAuthProvider()
-      firebase.auth().signInWithRedirect(provider)
+      var result = firebase.auth().signInWithRedirect(provider)
     },
     twitterLogout () {
       firebase.auth().signOut()
@@ -407,7 +414,6 @@ export default {
     async twitterDataPass() {
     try {
       if(this.isLogin){
-        console.log("twiteerdata")
       const sig =await client.signUserForTwitter()
       const datas = {
           sig: sig,

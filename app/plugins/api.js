@@ -10,6 +10,12 @@ const oinkInstance = axios.create({
   baseURL: 'https://api.crypt-oink.io/',
 })
 
+const twitterInstance = axios.create({
+  baseURL: "https://api.twitter.com/1.1/users/",
+})
+
+console.log(twitterInstance)
+
 const getKittiesByWalletAddress = async address => {
   const result = await kittyInstance.get('kitties?owner_wallet_address='+ address +'&limit=100')
   return result.data.kitties
@@ -20,9 +26,15 @@ const getOinkIdsByWalletAddress = async address => {
   return result.data
 }
 
+const getTwitterDataByTwitterId = async twitterId => {
+  const result = await twitterInstance.get('show.json?user_id	=' + twitterId)
+  return result.data
+}
+
 const api = {
   getKittiesByWalletAddress: getKittiesByWalletAddress,
-  getOinkIdsByWalletAddress: getOinkIdsByWalletAddress
+  getOinkIdsByWalletAddress: getOinkIdsByWalletAddress,
+  getTwitterDataByTwitterId: getTwitterDataByTwitterId
 }
 
 export default api

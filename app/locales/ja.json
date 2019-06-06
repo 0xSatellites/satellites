@@ -60,7 +60,10 @@
         "experiment": "試験中の機能",
         "mch_artedit": "Trueに設定しておくと、マイクリプトヒーローズ内で設定されているあなたの作成したアートエディットが、bazaaar内で表示されるようになります。またアセットの売買が発生した際に取引手数料の分配を受け取ることができます。",
         "sell": "出品中",
-        "needSign": "bazaaarとtwitterアカウントを連携するためにはウォレットの署名をおこなってください。"
+        "needSign": "bazaaarとtwitterアカウントを連携するためにはウォレットの署名をおこなってください。",
+        "twitter_connection":"Twitter連携",
+        "twitter_connection_done":"Twitter連携済み"
+
     },
     "footer":{
         "company": "運営会社",

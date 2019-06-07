@@ -17,7 +17,7 @@ const getTwitterDataByUser = async address => {
       if (!doc.exists) {
       } else {
         if(doc.data().twitterAccount){
-      result.push(doc.data().twitterAccount[0])
+      result.push(doc.data().twitterAccount)
         }
       }
     })

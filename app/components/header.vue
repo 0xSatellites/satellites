@@ -32,17 +32,14 @@ export default {
     firebase.auth().onAuthStateChanged(twitterAccount =>{
       if (twitterAccount) {
         this.isLogin = true
-        this.twitterAccount = twitterAccount
       } else {
         this.isLogin = false
-        this.twitterAccount = []
       };
     })
   },
   data() {
       return {
         isLogin: false,
-        twitterAccount: []
       }
     },
 

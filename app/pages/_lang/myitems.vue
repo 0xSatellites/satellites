@@ -15,7 +15,7 @@
 
       <div v-if="!dataExists" class="l-personal__frame">
           <div v-if="!isLogin">
-          <v-btn @click=twitterLogin>{{$t('myitems.twitter_connection')}}</v-btn>
+          <v-btn @click=twitterLogin v-if="this.loadingTwitter">{{$t('myitems.twitter_connection')}}</v-btn>
           </div>
           <div　v-else-if="!isSigned">
             <div class="l-item__txt">
@@ -226,10 +226,10 @@ export default {
       loadingMCHH: true,
       loadingMCHE: true,
       loadingMRM: true,
+      loadingTwitter: true,
       switch1: false,
       isLogin: false,
       isSigned: false,
-      twitterAccount: [],
       storedTwitterData: [],
       dataExists: false,
       kitties: [],
@@ -246,19 +246,16 @@ export default {
     const order = this.order
     const store = this.$store
     var account
+    var self = this
 
   //this.twitterLogout();
 
     firebase.auth().onAuthStateChanged(twitterAccount =>{
       if (twitterAccount) {
+    
         this.isLogin = true
-        this.twitterAccount = twitterAccount  
       } else {
         this.isSigned = false
-        this.twitterAccount = []
-        // var twitterStoredState = this.twitterAccount.providerData[0]
-        // twitterStoredState.isSigned = this.isSigned
-        // this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       };
     })
 
@@ -274,19 +271,23 @@ export default {
 
 
       this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+      console.log(this.storedTwitterData)
 
       if(this.storedTwitterData.length > 0){
         this.dataExists = true
-        this.isSigned = true
-        this.twitterAccount = this.storedTwitterData[0]
-      var twitterStoredState = this.twitterAccount
-      twitterStoredState.isSigned = this.isSigned
+      var twitterStoredState = this.storedTwitterData[0]
+      twitterStoredState.isSigned = true
       this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       }else{
         this.dataExists = false
-        this.twitterDataPass()
       }
 
+      firebase.auth().getRedirectResult().then(function(result) {
+        if(self.isLogin){
+          self.loadingTwitter = false
+          self.twitterDataPass(result)
+        }
+      });
       
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
         this.kitties = tokens
@@ -305,10 +306,6 @@ export default {
         }
         this.oinks = oinks
         this.loadingCTN = false
-      })
-
-      api.getTwitterDataByTwitterId("986986259624091648").then(async data => {
-        console.log("twitterDatataa", data)
       })
 
       client.ownedTokens('mchh').then(async tokenIds => {
@@ -411,24 +408,27 @@ export default {
     toAsset(asset) {
       return lib.toAsset(asset)
     },
-    async twitterDataPass() {
+    async twitterDataPass(result) {
     try {
-      if(this.isLogin){
+      console.log("resls",result);
+      
       const sig =await client.signUserForTwitter()
       const datas = {
           sig: sig,
           address: client.account.address,
-          twitterAccount: this.twitterAccount.providerData
+          twitterAccount: result.user.providerData[0],
+          username: result.additionalUserInfo.username
       }
       this.isSigned = true
       
-      var twitterStoredState = this.twitterAccount.providerData[0]
+      var twitterStoredState = result.user.providerData[0]
       twitterStoredState.isSigned = this.isSigned
+      twitterStoredState.username = result.additionalUserInfo.username
 
       this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
       await functions.call('spTwitter', datas)
 
-      }
+      
     } catch (err) {
       console.log("errorが起こりました",err)
     }

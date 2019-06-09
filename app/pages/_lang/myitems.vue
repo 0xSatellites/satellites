@@ -248,8 +248,6 @@ export default {
     var account
     var self = this
 
-  //this.twitterLogout();
-
     firebase.auth().onAuthStateChanged(twitterAccount =>{
       if (twitterAccount) {
     
@@ -284,6 +282,10 @@ export default {
 
       firebase.auth().getRedirectResult().then(function(result) {
         if(self.isLogin){
+          if(result.user == null){
+            self.twitterLogout();
+            return
+          }
           self.loadingTwitter = false
           self.twitterDataPass(result)
         }

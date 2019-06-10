@@ -139,7 +139,9 @@ async function getAssetMetadataByAssetId(asset, id) {
       result.sellable = general.data.extra_data.nickname != undefined
       break
       case 'mrm':
-      response = await axios.get(config.functions[process.env.project] + "spMasterRightsforMusicAPI?id=" + id)
+      //todo 環境変数に応じて取得するAPIを変更する
+      // response = await axios.get(config.functions[process.env.project] + "spMasterRightsforMusicAPI?id=" + id)
+      response = await axios.get("https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/spMasterRightsforMusicAPI?id" + id)
       result = response.data
       result.image = response.data.image_url
       result.iframe = false

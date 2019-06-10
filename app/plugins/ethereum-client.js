@@ -23,6 +23,10 @@ const contract = {
   mche: new web3.eth.Contract(
     config.abi.mche,
     config.contract[process.env.project].mche
+  ),
+  mrm: new web3.eth.Contract(
+    config.abi.mrm,
+    config.contract[process.env.project].mrm
   )
 }
 
@@ -100,6 +104,12 @@ const signUser = async() =>{
   return signedUser
 }
 
+const signUserForTwitter = async() =>{
+  const data = web3.utils.utf8ToHex("この署名を行うと、あなたのTwitterアカウントがbazaaarに紐づけられます。")
+  const signedUser = await web3.eth.personal.sign(data, account.address)
+  return signedUser
+}
+
 const client = {
   account: account,
   activate: activate,
@@ -109,6 +119,7 @@ const client = {
   utils: web3.utils,
   web3: web3,
   signUser: signUser,
+  signUserForTwitter: signUserForTwitter
 }
 
 export default client

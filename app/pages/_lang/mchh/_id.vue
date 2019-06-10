@@ -16,7 +16,6 @@ export default {
     id
   },
   head() {
-    console.log("dfdfdfd")
     return {
       meta: [
         { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },

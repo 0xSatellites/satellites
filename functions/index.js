@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project =  process.env.PROJECT
+const project = process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -139,7 +139,7 @@ async function getAssetMetadataByAssetId(asset, id) {
       result.sellable = general.data.extra_data.nickname != undefined
       break
       case 'mrm':
-      response = await axios.get(config.functions[process.env.project] + "spMasterRightsforMusicAPI?id=" + id)
+      response = await axios.get(config.functions[project] + "spMasterRightsforMusicAPI?id=" + id)
       result = response.data
       result.image = response.data.image_url
       result.iframe = false

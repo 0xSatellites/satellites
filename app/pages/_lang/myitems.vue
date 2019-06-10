@@ -269,7 +269,6 @@ export default {
 
 
       this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
-      console.log(this.storedTwitterData)
 
       if(this.storedTwitterData.length > 0){
         this.dataExists = true
@@ -431,7 +430,7 @@ export default {
 
       
     } catch (err) {
-      console.log("errorが起こりました",err)
+      
     }
     },
     async permitArtedit() {

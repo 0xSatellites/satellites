@@ -129,10 +129,10 @@
             </div>
             <div class="l-item__action_btns" style="margin-top: 10px" v-if="assetType=='mrm'">
               <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.audio_url" target="_blank">
-                audio_url
+                Audio
               </v-btn>
               <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.track_data" target="_blank">
-                track_data
+                TrackData
               </v-btn>
             </div>
           </div>

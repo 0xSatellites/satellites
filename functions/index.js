@@ -470,8 +470,8 @@ app.get('/mrmholder', async function(req, res){
           //todo uidを@のuseridに変更する
           'id': id,
           'owner': owner,
-          'twitterId': doc.data().twitterAccount[0].uid,
-          'twitterIcon': doc.data().twitterAccount[0].photoURL
+          'twitterId': doc.data().twitterAccount.username,
+          'twitterIcon': doc.data().twitterAccount.photoURL
         }
         res.send(data)
       }

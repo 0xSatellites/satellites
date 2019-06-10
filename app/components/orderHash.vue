@@ -38,6 +38,9 @@
           ><br />{{ order.metadata.skill.description[lang].effects[0] }}
         </li>
       </ul>
+      <ul class="l-information__txt" v-if="assetType == 'mrm'">
+        <a :href="'http://maltinerecords.cs8.biz/b1.html'" target="_blank">Maltine Records Link</a>
+      </ul>
       <ul class="l-information__data">
         <li>
           <span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span>
@@ -47,7 +50,6 @@
         <div class="checkbox_center">
           <v-checkbox class="center" v-model="checkbox" :rules="[v => !!v || '']" :label="$t('hash.agree')" required v-if="!owner(order.maker)"></v-checkbox>
         </div>
-        
         <div class="l-information__action">
           <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isSigned || !checkbox || loading" value="purchase"
             >{{ $t('hash.purchase') }}

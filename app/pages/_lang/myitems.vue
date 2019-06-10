@@ -165,7 +165,7 @@
           <div>
             <nuxt-link :to="'/' + lang + '/mrm/' + mrm.attributes.id" class="c-card">
               <div class="c-card__label--exhibit" v-if="selling.includes(mrm.attributes.id.toString())">{{ $t('myitems.sell') }}</div>
-              <div class="c-card__img"><img :src="mrm.image_url" /></div>
+              <div class="c-card__img pa-4"><img :src="mrm.image_url" /></div>
               <div class="c-card__name" v-if="mrm.name">{{ mrm.name.substring(0, 25) }}</div>
               <div class="c-card__name" v-else>Gonbee</div>
               <div class="c-card__txt"># {{ mrm.attributes.id }}</div>

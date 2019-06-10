@@ -20,23 +20,14 @@
       <div class="l-item__name" v-if="assetType === 'ck' || assetType === 'ctn'">{{ asset.name }}</div>
       <div class="l-item__name" v-if="assetType == 'mchh'">{{ asset.hero_type.name[lang] }}</div>
       <div class="l-item__name" v-if="assetType == 'mche'">{{ asset.extension_type.name[lang] }}</div>
+      <div class="l-item__name" v-if="assetType == 'mrm'">{{ asset.name }}</div>
       <div class="l-item__txt" v-if="assetType === 'ck' || assetType === 'ctn'"># {{ asset.id }}</div>
       <div class="l-item__txt" v-if="assetType == 'mchh' || assetType == 'mche'">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
-      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ asset.name }}</div>
       <div class="l-item__txt" v-if="assetType == 'mrm'">{{ `#${asset.attributes.id}` }}</div>
 
       <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
       <ul class="l-item__data">
         <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
-      </ul>
-
-      <ul class="l-item__data" style="display: block" v-if="assetType === 'mrm'">
-        <li><strong>Artist：</strong>{{ asset.attributes.Artist}}</li>
-        <li><strong>Label：</strong>{{ asset.attributes.Label}}</li>
-        <li><strong>Artwork</strong>{{ asset.attributes.Artwork}}</li>
-        <li><strong>Mastering Engineer：</strong>{{ asset.attributes.Mastering_Enginner}}</li>
-        <li><strong>Contract Design：</strong>{{ asset.attributes.Contract_Designer}}</li>
-        <li><strong>Executive Producer：</strong>{{ asset.attributes.Executive_Producer}}</li>
       </ul>
 
       <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
@@ -65,6 +56,15 @@
           <span class="l-item__skill--type">Passive</span><b>{{ asset.skill.name[lang] }}</b
           ><br />{{ asset.skill.description[lang].effects[0] }}
         </li>
+      </ul>
+
+      <ul class="l-item__data" style="display: block" v-if="assetType === 'mrm'">
+        <li><strong>Artist：</strong>{{ asset.attributes.Artist}}</li>
+        <li><strong>Label：</strong>{{ asset.attributes.Label}}</li>
+        <li><strong>Artwork：</strong>{{ asset.attributes.Artwork}}</li>
+        <li><strong>Mastering Engineer：</strong>{{ asset.attributes.Mastering_Enginner}}</li>
+        <li><strong>Contract Design：</strong>{{ asset.attributes.Contract_Designer}}</li>
+        <li><strong>Executive Producer：</strong>{{ asset.attributes.Executive_Producer}}</li>
       </ul>
 
       <v-form>

@@ -11,7 +11,7 @@ const app = firebase.app().functions('asia-northeast1');
 
 //for local development
 // const app = firebase.app().functions();
-// app.useFunctionsEmulator('http://localhost:5000')
+// app.useFunctionsEmulator('http://localhost:5001')
 
 
 const call = async (endpoint, param) => {

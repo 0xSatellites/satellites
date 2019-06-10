@@ -1,5 +1,5 @@
 const config = require('./config.json')
-const project = 'sand'//process.env.PROJECT
+const project = process.env.PROJECT
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 admin.initializeApp()
@@ -232,7 +232,8 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
     c.fillText(metadata.attributes.extension_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
     c.fillText(metadata.attributes.rarity, 840, 305, 720)
   } else if (assetName == "mrm") {
-    c.fillText(metadata.attributes.name, 840, 255, 720)
+    c.fillText(metadata.description, 840, 255, 720)
+    c.fillText(metadata.name, 840, 305, 720)
   }
   c.font = "bold 75px 'Noto Sans JP Bold'"
   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)

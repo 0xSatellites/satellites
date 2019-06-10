@@ -13,7 +13,33 @@
           </div>
           <div class="l-modal__txt">{{ $t('modal.postOnSocialMedia') }}</div>
 
-          <div class="l-modal__btn" v-if="this.assetType === 'mchh'">
+          <div class="l-modal__btn" v-if="this.assetType === 'mrm'">
+            <a
+              :href="
+                'https://twitter.com/share?url=' +
+                  host +
+                  this.assetType +
+                  '/order/' +
+                  hash +
+                  '&text=' +
+                  'NOW ON SALE!! ' +
+                  ' / ' +
+                  asset.description +
+                  ' / ' +
+                  asset.name +
+                  ' / from @bazaaario' +
+                  '&hashtags=bazaaar, バザー, '
+              "
+              class="l-modal__twitter-share-button"
+              data-size="large"
+              data-show-count="false"
+              target="”_blank”"
+            >
+              {{ $t('modal.tweet') }}
+            </a>
+          </div>
+
+          <div class="l-modal__btn" v-else-if="this.assetType === 'mchh'">
             <a
               :href="
                 'https://twitter.com/share?url=' +

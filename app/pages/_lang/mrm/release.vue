@@ -39,16 +39,16 @@
                 </v-subheader>
                 <v-list-tile
                   v-else
-                  :key="item.userId"
+                  :key="item.id"
                   avatar
                 >
                   <v-list-tile-avatar>
-                    <img :src="item.avatar">
+                    <img :src="item.twitterIcon">
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
-                    <v-list-tile-title ><a :href="'https://twitter.com/' + item.userId">{{ item.userId }}</a>- {{ item.track_title}}</v-list-tile-title>
-                    <v-list-tile-sub-title >{{ item.address }}</v-list-tile-sub-title>
+                    <v-list-tile-title ><a :href="'https://twitter.com/' + item.id">{{ item.twitterId }}</a>- {{ item.track_title}}</v-list-tile-title>
+                    <v-list-tile-sub-title >{{ item.owner }}</v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
               </template>
@@ -90,39 +90,26 @@
 </template>
 
 <script>
+import api from '~/plugins/api'
 
 export default {
   data () {
       return {
+        ids:[1,2,3,4],
         items: [
           { header: 'TokenHolder' },
-          {
-            avatar: 'https://pbs.twimg.com/profile_images/1127239081417531393/chTncmIG_400x400.png',
-            userId: 'pianoid',
-            track_title:'ACID ACID (さよひめぼう Remix)',
-            address: "0x93B82487D468A6b85f0759D86bDdC6ECC33A349E"
-          },
-          {
-            avatar: 'https://pbs.twimg.com/profile_images/953996596559032320/bQcnZPLW_400x400.jpg',
-            userId: 'fugakura',
-            track_title:'ACID ACID',
-            address: "0x568288D40EB4887446fBbFFF879F2184E91827d3"
-          },
-          {
-            avatar: 'https://pbs.twimg.com/profile_images/506240121423683584/2HFnycx7_400x400.jpeg',
-            userId: 'mikiomurahatibu',
-            track_title:'ACID ACID (Gassyoh Remix)',
-            address: "0x43A0E71A09d8126820C3290d71A5514e87D617ab"
-          },
-          {
-            avatar: 'https://pbs.twimg.com/profile_images/927851243422097408/tL9fwfVr_400x400.jpg',
-            userId: 'Sheep_Musik',
-            track_title:'ACID ACID (コバルト爆弾αΩ Remix) ',
-            address: "0x8A389057B4500a881Ac58e03381109B1b2D14fb4"
-          },
         ]
       }
-    }
+    },
+  mounted () {
+
+  for (var i=0; i < this.ids.length; i++){
+    api.getMrmHolderById(this.ids[i]).then(async holder => {
+        this.items.push(holder.data)
+      })
+  }
+  console.log(this.items)
+  }
 
 }
 </script>

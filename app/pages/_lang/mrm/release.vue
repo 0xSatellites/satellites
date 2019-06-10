@@ -91,6 +91,7 @@
 
 <script>
 import api from '~/plugins/api'
+import firestore from '~/plugins/firestore'
 
 export default {
   data () {

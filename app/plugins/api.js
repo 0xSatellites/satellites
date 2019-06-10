@@ -11,12 +11,8 @@ const oinkInstance = axios.create({
   baseURL: 'https://api.crypt-oink.io/',
 })
 
-const mrmHolderInstance = axios.create({
-  baseURL: 'https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/api/'
-})
-
 const mrmInstance = axios.create({
-  baseURL: 'https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/'
+  baseURL: config.functions[process.env.project]
 })
 
 const getKittiesByWalletAddress = async address => {
@@ -30,7 +26,7 @@ const getOinkIdsByWalletAddress = async address => {
 }
 
 const getMrmHolderById = async id => {
-  const result = await mrmHolderInstance.get('mrmholder?id=' + id)
+  const result = await mrmInstance.get('api/mrmholder?id=' + id)
   return result
 }
 

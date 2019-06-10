@@ -102,13 +102,18 @@ export default {
       }
     },
   mounted () {
+    
 
   for (var i=0; i < this.ids.length; i++){
+    api.getMrmInstanceById(this.ids[i]).then(async instance =>{
+      this.track_title = instance.data.name
+    })
     api.getMrmHolderById(this.ids[i]).then(async holder => {
+      holder.data.track_title = this.track_title
         this.items.push(holder.data)
       })
+    
   }
-  console.log(this.items)
   }
 
 }

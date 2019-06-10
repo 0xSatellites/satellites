@@ -38,6 +38,9 @@
           ><br />{{ order.metadata.skill.description[lang].effects[0] }}
         </li>
       </ul>
+      <ul class="l-information__txt" v-if="assetType == 'mrm'">
+        <a :href="'http://maltinerecords.cs8.biz/b1.html'" target="_blank">Maltine Records Link</a>
+      </ul>
       <ul class="l-information__data">
         <li>
           <span class="l-information__name">Ξ {{ fromWei(order.price) }} ETH</span>
@@ -48,10 +51,15 @@
           <v-checkbox class="center" v-model="checkbox" :rules="[v => !!v || '']" :label="$t('hash.agree')" required v-if="!owner(order.maker)"></v-checkbox>
         </div>
         <div class="l-information__action">
-          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!checkbox || loading" value="purchase"
+          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isSigned || !checkbox || loading" value="purchase"
             >{{ $t('hash.purchase') }}
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>
+          <div v-if="assetType=='mrm' && !isSigned" class="l-item__txt" style="margin-top: 10px">
+          <a href="/myitems">
+            {{ $t('id.mrm_buy_condition')}}
+          </a>
+        </div>
           <div v-if="order.valid">
             <a :href="twitterUrl" data-size="large" data-show-count="false" target="”_blank”">
               <v-icon class="mt-4" color="#3498db">fab fa-twitter</v-icon>
@@ -91,7 +99,9 @@ export default {
       hash: '',
       lang: '',
       // url: { type: '', hash: '', project: '' },
-      name: ''
+      name: '',
+      isSigned: false,
+      twitterAccount: [],
     }
   },
   mounted: async function() {
@@ -112,6 +122,19 @@ export default {
         store.dispatch('account/setAccount', account)
       }
     }
+
+  this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+
+        this.isSigned = true
+      }else{
+        this.isSigned = false
+      }
+
+    if (store.getters['account/account'].twitterAccount.isSigned){
+        this.twitterAccount = store.getters['account/account'].twitterAccount
+      }
   },
   computed: {
     assetType() {

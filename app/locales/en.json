@@ -29,7 +29,8 @@
         "ck":"CryptoKitties",
         "ctn":"Crypt-Oink",
         "mchh":"MyCryptoHeros",
-        "mche":"MyCryptoHeros"
+        "mche":"MyCryptoHeros",
+        "mrm":"Master Rights for Music"
     },
     "header":{
         "mypage": "MyPage",
@@ -58,7 +59,10 @@
         "balance": "balance",
         "experiment": "experimental feture",
         "mch_artedit": "When MyCryptoHeros asset edited by you has traded, you can recieve royalty",
-        "sell": "ON SALE"
+        "sell": "ON SALE",
+        "needSign": "Please sign the wallet to connect bazaaar and twitter account.",
+        "twitter_connection":"Twitter Connection",
+        "twitter_connection_done":"Twitter Connection Done"
     },
     "footer":{
         "company": "company",

@@ -1,6 +1,7 @@
 const axios = require("axios")
 const config = require('../../functions/config.json')
 
+
 const kittyInstance = axios.create({
   baseURL: 'https://public.api.cryptokitties.co/v1/',
   headers: {'x-api-token': config.token.kitty}
@@ -22,7 +23,7 @@ const getOinkIdsByWalletAddress = async address => {
 
 const api = {
   getKittiesByWalletAddress: getKittiesByWalletAddress,
-  getOinkIdsByWalletAddress: getOinkIdsByWalletAddress
+  getOinkIdsByWalletAddress: getOinkIdsByWalletAddress,
 }
 
 export default api

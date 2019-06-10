@@ -6,7 +6,7 @@ const ck = config.contract[project].ck
 const ctn = config.contract[project].ctn
 const mchh = config.contract[project].mchh
 const mche = config.contract[project].mche
-
+const mrm = config.contract[project].mrm
 
 const coolDownIndexToSpeed = index => {
   if (index == 0) return 'Fast'
@@ -60,6 +60,9 @@ const getRarity = (asset, type) => {
       if(asset.attributes.rarity=='Uncommon') rarity =2
       if(asset.attributes.rarity=='Common') rarity =1
     }
+  }
+  if(asset.asset == mrm || type == 'mrm'){
+    rarity = 3
   }
   return rarity
 }

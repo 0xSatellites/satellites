@@ -21,6 +21,7 @@ const ck = new web3.eth.Contract(config.abi.ck, config.contract[project].ck)
 const ctn = new web3.eth.Contract(config.abi.ctn, config.contract[project].ctn)
 const mchh = new web3.eth.Contract(config.abi.mchh, config.contract[project].mchh)
 const mche = new web3.eth.Contract(config.abi.mche, config.contract[project].mche)
+const mrm = new web3.eth.Contract(config.abi.mrm, config.contract[project].mrm)
 const { google } = require('googleapis')
 const cloudbilling = google.cloudbilling('v1')
 const { auth } = require('google-auth-library')
@@ -61,6 +62,11 @@ async function validateAssetStatus(order) {
       isApprovedForAll = await mchh.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
       if (isApprovedForAll && order.maker == owner) passed = true
       break
+    case config.contract[project].mrm:
+    owner = await mrm.methods.ownerOf(order.id).call()
+    isApprovedForAll = await mrm.methods.isApprovedForAll(order.maker, config.contract[project].bazaaar).call()
+    if (isApprovedForAll && order.maker == owner) passed = true
+    break
   }
   return passed
 }
@@ -132,6 +138,12 @@ async function getAssetMetadataByAssetId(asset, id) {
       result.skill = resolved[1].data
       result.sellable = general.data.extra_data.nickname != undefined
       break
+      case 'mrm':
+      response = await axios.get("https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/spMasterRightsforMusicAPI?id=" + id)
+      result = response.data
+      result.image = response.data.image_url
+      result.iframe = false
+      break
   }
   return result
 }
@@ -147,29 +159,6 @@ function coolDownIndexToSpeed(index) {
   else if (index == 13) return 'Catatonic'
   else return 'unknown'
 }
-
-exports.api = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*')
-  res.set('Access-Control-Allow-Methods', 'GET')
-  res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
-  const result = []
-  const limit = Number(req.query.limit)
-  if (limit > 300) limit = 300
-  const snapshots = await db.collection('order').where('valid', '==', true).orderBy('created', 'desc').limit(limit).get() // prettier-ignore
-  snapshots.forEach(function(doc) {
-    const data = doc.data()
-    result.push({
-      price: data.price,
-      id: data.id,
-      name: data.metadata.name,
-      image: data.metadata.image_url,
-      ogp: data.ogp,
-      url: config.host[project] + data.symbol + '/order/' + data.hash
-    })
-  })
-  return result
-})
 
 exports.metadata = functions.region('asia-northeast1').https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*')
@@ -239,9 +228,12 @@ exports.order = functions.region('asia-northeast1').https.onCall(async (params, 
   } else if (assetName == 'mchh') {
     c.fillText(metadata.attributes.hero_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
     c.fillText(metadata.attributes.rarity, 840, 305, 720)
-  } else {
+  } else if (assetName == "mche") {
     c.fillText(metadata.attributes.extension_name + ' / ' + 'Lv.' + metadata.attributes.lv, 840, 255, 720)
     c.fillText(metadata.attributes.rarity, 840, 305, 720)
+  } else if (assetName == "mrm") {
+    c.fillText(metadata.description, 840, 255, 720)
+    c.fillText(metadata.name, 840, 305, 720)
   }
   c.font = "bold 75px 'Noto Sans JP Bold'"
   c.fillText(web3.utils.fromWei(order.price) + ' ETH', 840, 375, 720)
@@ -399,7 +391,18 @@ exports.spArteditUserSign = functions.region('asia-northeast1').https.onCall(asy
   )
   const address = web3.eth.accounts.recover(msg, params.sig)
   if (address == params.address) {
-    await db.collection('user').doc(address).set({mch_artedit: params.status,modified: params.modified}) // prettier-ignore
+    await db.collection('user').doc(address).update({mch_artedit: params.status,modified: params.modified}) // prettier-ignore
+  }
+  return address == params.address
+})
+
+exports.spTwitter = functions.region('asia-northeast1').https.onCall(async (params, context) => {
+  const msg = web3.utils.utf8ToHex(
+    'この署名を行うと、あなたのTwitterアカウントがbazaaarに紐づけられます。'
+  )
+  const address = web3.eth.accounts.recover(msg, params.sig)
+  if (address == params.address) {
+  await db.collection('user').doc(address).set({twitterAccount: params.twitterAccount}) // prettier-ignore
   }
   return address == params.address
 })
@@ -418,3 +421,61 @@ exports.spMasterRightsforMusicAPI = functions.region('asia-northeast1').https.on
     res.json('code=404, message=Not Found')
   }
 })
+
+const express = require('express');
+const app = express();
+app.use(function (req, res, next) {
+  res.set('Access-Control-Allow-Origin', '*')
+  res.set('Access-Control-Allow-Methods', 'GET')
+  res.set('Access-Control-Allow-Headers', 'Content-Type, authorization')
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600')
+  next();
+});
+
+app.get('/', async function(req, res){
+  res.send('This is bazaaarAPI');
+})
+
+app.get('/order', async function(req, res){
+  const result = []
+  const limit = Number(req.query.limit)
+  if (limit > 300) limit = 300
+  const snapshots = await db.collection('order').where('valid', '==', true).orderBy('created', 'desc').limit(limit).get() // prettier-ignore
+  snapshots.forEach(function(doc) {
+    const data = doc.data()
+    result.push({
+      price: data.price,
+      id: data.id,
+      name: data.metadata.name,
+      image: data.metadata.image_url,
+      ogp: data.ogp,
+      url: config.host[project] + data.symbol + '/order/' + data.hash
+    })
+  })
+  res.send(result)
+})
+
+app.get('/mrmholder', async function(req, res){
+  const result = []
+  const id = Number(req.query.id)
+  const totalSupply = await mrm.methods.totalSupply().call()
+  if(id > totalSupply) res.send('code=404, message=Not Found')
+  owner = await mrm.methods.ownerOf(id).call()
+  await db.collection('user').doc(owner).get()
+    .then(doc => {
+      if (!doc.exists) {
+        res.send('code=404, message=Not Found')
+      } else {
+        const data = {
+          //todo uidを@のuseridに変更する
+          'id': id,
+          'owner': owner,
+          'twitterId': doc.data().twitterAccount[0].uid,
+          'twitterIcon': doc.data().twitterAccount[0].photoURL
+        }
+        res.send(data)
+      }
+    })
+})
+
+exports.api = functions.https.onRequest(app);

@@ -9,6 +9,21 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore()
 
+const getTwitterDataByUser = async address => {
+  const result = []
+  const snapshots = await db.collection('user')
+    .doc(address).get()
+    .then(doc => {
+      if (!doc.exists) {
+      } else {
+        if(doc.data().twitterAccount){
+      result.push(doc.data().twitterAccount)
+        }
+      }
+    })
+  return result
+}
+
 const getLatestValidOrders = async limit => {
   const result = []
   const snapshots = await db.collection('order')
@@ -188,7 +203,8 @@ const firestore = {
   getRelatedValidOrders:getRelatedValidOrders,
   getHistoryByAddress:getHistoryByAddress,
   getValidOrdersByMaker:getValidOrdersByMaker,
-  getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus
+  getValidOrdersByMakerIdStatus:getValidOrdersByMakerIdStatus,
+  getTwitterDataByUser:getTwitterDataByUser
 }
 
 export default firestore

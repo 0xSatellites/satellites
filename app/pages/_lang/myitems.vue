@@ -412,7 +412,6 @@ export default {
     },
     async twitterDataPass(result) {
     try {
-      console.log("resls",result);
       
       const sig =await client.signUserForTwitter()
       const datas = {

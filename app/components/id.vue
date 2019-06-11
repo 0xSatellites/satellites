@@ -20,12 +20,16 @@
       <div class="l-item__name" v-if="assetType === 'ck' || assetType === 'ctn'">{{ asset.name }}</div>
       <div class="l-item__name" v-if="assetType == 'mchh'">{{ asset.hero_type.name[lang] }}</div>
       <div class="l-item__name" v-if="assetType == 'mche'">{{ asset.extension_type.name[lang] }}</div>
+      <div class="l-item__name" v-if="assetType == 'mrm'">{{ asset.name }}</div>
       <div class="l-item__txt" v-if="assetType === 'ck' || assetType === 'ctn'"># {{ asset.id }}</div>
       <div class="l-item__txt" v-if="assetType == 'mchh' || assetType == 'mche'">{{ `Id: ${asset.attributes.id} / Lv: ${asset.attributes.lv} `}}</div>
+      <div class="l-item__txt" v-if="assetType == 'mrm'">{{ `#${asset.attributes.id}` }}</div>
+
       <div class="l-item__txt">{{ $t('asset.' + assetType) }}</div>
       <ul class="l-item__data">
         <li><span class="l-item__rarity l-item__rarity--5" v-for="i in getRarity(asset, assetType)" :key="i + '-rarity'">★</span></li>
       </ul>
+
       <ul class="l-item__data" v-if="assetType === 'ck' || assetType === 'ctn'">
         <li><strong>Gen：</strong> {{ asset.generation }}</li>
         <li><strong>Cooldown：</strong> {{ coolDownIndexToSpeed(asset.status.cooldown_index) }}</li>
@@ -54,6 +58,15 @@
         </li>
       </ul>
 
+      <ul class="l-item__data" style="display: block" v-if="assetType === 'mrm'">
+        <li><strong>Artist：</strong>{{ asset.attributes.Artist}}</li>
+        <li><strong>Label：</strong>{{ asset.attributes.Label}}</li>
+        <li><strong>Artwork：</strong>{{ asset.attributes.Artwork}}</li>
+        <li><strong>Mastering Engineer：</strong>{{ asset.attributes.Mastering_Enginner}}</li>
+        <li><strong>Contract Design：</strong>{{ asset.attributes.Contract_Designer}}</li>
+        <li><strong>Executive Producer：</strong>{{ asset.attributes.Executive_Producer}}</li>
+      </ul>
+
       <v-form>
         <div class="l-item__action">
           <div class="l-item__action__price" v-if="approved && owned">
@@ -67,6 +80,12 @@
             >)
           </div>
           <v-checkbox v-model="checkbox" :rules="[v => !!v || '']" :label="$t('id.agree')" required v-if="approved && owned" height="20"></v-checkbox>
+
+          <div v-if="assetType=='mrm' && !isSigned" class="l-item__txt">
+            <a href="/myitems">
+            {{ $t('id.mrm_sell_condition')}}
+            </a>
+            </div>
           <div v-if="owned">
             <div class="l-item__action__btns" v-if="!approved">
               <v-btn class="l-item__action__btn" :disabled="!valid || loading" large @click="approve">
@@ -78,7 +97,7 @@
             <div class="l-item__action__btns" v-else-if="approved && !order.id">
               <v-btn
                 class="l-item__action__btn l-item__action__btn--type1 white_text"
-                :disabled="!valid || loading || !approved || !checkbox || !account.address"
+                :disabled="!isSigned || !valid || loading || !approved || !checkbox || !account.address"
                 color="#3498db"
                 large
                 @click="order_v1"
@@ -106,6 +125,14 @@
               >
                 cancel
                 <v-progress-circular size="16" class="ma-2" v-if="loadingCancel" indeterminate></v-progress-circular>
+              </v-btn>
+            </div>
+            <div class="l-item__action_btns" style="margin-top: 10px" v-if="assetType=='mrm'">
+              <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.audio_url" target="_blank">
+                Audio
+              </v-btn>
+              <v-btn class="l-item__action__btn" :disabled="!valid || loading" large :href="asset.track_data" target="_blank">
+                TrackData
               </v-btn>
             </div>
           </div>
@@ -155,6 +182,7 @@ import functions from '~/plugins/functions'
 import Modal from '~/components/modal'
 import Related from '~/components/related'
 import api from '~/plugins/api'
+import { constants } from 'crypto';
 
 const config = require('../../functions/config.json')
 const project = process.env.project
@@ -184,6 +212,9 @@ export default {
       msg: '',
       price: '',
       giftReceiverAddress:"",
+      isSigned: false,
+      storedTwitterData: [],
+      twitterAccount: [],
     }
   },
   mounted: async function() {
@@ -199,6 +230,19 @@ export default {
           account = await client.activate(web3.currentProvider)
         }
         store.dispatch('account/setAccount', account)
+      }
+
+      this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+
+        this.isSigned = true
+      }else{
+        this.isSigned = false
+      }
+
+      if (store.getters['account/account'].twitterAccount.isSigned){
+        this.twitterAccount = store.getters['account/account'].twitterAccount
       }
 
       if (this.assetType == 'ck') {
@@ -321,6 +365,14 @@ export default {
             this.modal = true
             this.loading = false
           })
+        } else if (this.assetType == 'mrm'){
+          await client.contract.mrm.methods.transferFrom(this.account.address, this.giftReceiverAddress, this.$route.params.id)
+          .send({ from: this.account.address })
+          .on('transactionHash', hash => {
+            this.hash = hash
+            this.modal = true
+            this.loading = false
+          })
         }
       } catch (err) {
         alert(this.$t('error.message'))
@@ -332,7 +384,6 @@ export default {
     async order_v1(type) {
       const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
       try {
-        console.log('order')
         this.loading = true
         this.waitCancel = true
         this.modalNo = 5
@@ -357,16 +408,14 @@ export default {
         //const date = new Date()
         //date.setDate(date.getDate() + 7)
         //const expiration = Math.round(date.getTime() / 1000)
-
         let relayerRoyaltyRecipient = config.recipient[project].bazaaar
         let creatorRoyaltyRecipient = config.constant.nulladdress
         let relayerRoyaltyRatio = 1000
         let creatorRoyaltyRatio = 0
-        console.log(this.asset)
         if (this.assetType == 'ck') {
           relayerRoyaltyRatio = 0
           creatorRoyaltyRatio = 0
-        } else if (this.assetType == 'ctn') {
+          } else if (this.assetType == 'ctn') {
           relayerRoyaltyRatio = 500
           creatorRoyaltyRatio = 500
           creatorRoyaltyRecipient = config.recipient[project].ctn
@@ -381,6 +430,11 @@ export default {
           }
         } else if (this.assetType == 'mche'){
           relayerRoyaltyRecipient = config.recipient[project].mch_distributer
+        } else if (this.assetType == "mrm"){
+          relayerRoyaltyRecipient = config.recipient[project].mrm_distributer
+          creatorRoyaltyRecipient = this.asset.Remixer_address
+          relayerRoyaltyRatio = 650
+          creatorRoyaltyRatio = 350
         }
         const expiration = Math.round(9999999999999 / 1000) - 1
         const order = {
@@ -398,20 +452,7 @@ export default {
           relayerRoyaltyRatio: relayerRoyaltyRatio,
           creatorRoyaltyRatio: creatorRoyaltyRatio,
           referralRatio: 0
-          // proxy: client.contract.bazaaar_v2.options.address,
-          // maker: account.address,
-          // taker: config.constant.nulladdress,
-          // creatorRoyaltyRecipient: config.recipient[project].ctn,
-          // asset: client.contract.ctn.options.address,
-          // id: params.id,
-          // price: wei,
-          // nonce: nonce,
-          // salt: salt,
-          // expiration: expiration,
-          // creatorRoyaltyRatio: 500,
-          // referralRatio: 500
         }
-        console.log(order)
         const signedOrder = await client.signOrder(order)
         const datas = {
           order: signedOrder,
@@ -427,6 +468,7 @@ export default {
         this.loading = false
         this.waitCancel = false
       } catch (err) {
+        console.log(err)
         alert(this.$t('error.message'))
         this.loading = false
         this.modal = false

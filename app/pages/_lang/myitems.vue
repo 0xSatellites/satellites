@@ -12,13 +12,34 @@
           <dd>{{ Math.round((account.balance / 1000000000000000000) * 10000) / 10000 }} ETH</dd>
         </dl>
       </div>
+
+      <div v-if="!dataExists" class="l-personal__frame">
+          <div v-if="!isLogin">
+          <v-btn @click=twitterLogin v-if="this.loadingTwitter">{{$t('myitems.twitter_connection')}}</v-btn>
+          </div>
+          <div　v-else-if="!isSigned">
+            <div class="l-item__txt">
+                {{ $t('myitems.needSign')}}
+            </div>
+          </div>
+      </div>
+      <div v-else class="l-personal__frame">
+        <div class="l-item__txt" style="margin-left: 20px">{{$t('myitems.twitter_connection_done')}}</div>
+        <!-- <p>{{ twitterAccount.displayName }}</p> -->
+        <!-- <v-list-tile-avatar class="news__item__avatar">
+          <img :src="twitterAccount.photoURL">
+        </v-list-tile-avatar> -->
+        <!-- <v-btn @click=twitterLogout>ログアウト</v-btn> -->
+      </div>   
+
       <div class="l-personal__frame">
         <v-flex xs12 px-3>
           <h4>{{ $t('myitems.experiment') }}</h4>
           {{ $t('myitems.mch_artedit') }}
-          <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
+           <v-switch v-model="switch1" :label="`${switch1.toString()}`" @change="permitArtedit()" color="primary"></v-switch>
         </v-flex>
       </div>
+
     </section>
     <section class="l-personal" v-else>
       <h2 class="l-personal__title">Get <a href="https://metamask.io/" target="_blank">metamask</a> or</h2>
@@ -136,6 +157,36 @@
       </v-flex>
     </section>
 
+    <section class="c-index c-index--mypage" v-if="account.address">
+      <h2 class="l-personal__title">{{ $t('asset.mrm') }}</h2>
+      <ul>
+        <v-progress-circular class="l-personal__loading" v-if="this.loadingMRM" :size="50" color="blue" indeterminate></v-progress-circular>
+        <li v-for="(mrm, i) in this.records" :key="i + '-mrm'" v-else-if="this.records.length">
+          <div>
+            <nuxt-link :to="'/' + lang + '/mrm/' + mrm.attributes.id" class="c-card">
+              <div class="c-card__label--exhibit" v-if="selling.includes(mrm.attributes.id.toString())">{{ $t('myitems.sell') }}</div>
+              <div class="c-card__img pa-4"><img :src="mrm.image_url" /></div>
+              <div class="c-card__name" v-if="mrm.name">{{ mrm.name.substring(0, 25) }}</div>
+              <div class="c-card__name" v-else>Gonbee</div>
+              <div class="c-card__txt"># {{ mrm.attributes.id }}</div>
+            </nuxt-link>
+          </div>
+        </li>
+      </ul>
+      <v-flex xs12 sm6 offset-sm3 v-if="!this.records.length && !this.loadingMRM">
+        <a href="http://maltinerecords.cs8.biz/b1.html" target="_blank">
+          <v-card>
+            <v-img v-bind:src="require('~/assets/img/maltine/maltinelogo.png')" aspect-ratio="1.75"></v-img>
+            <v-card-title primary-title>
+              <v-layout justify-center>
+                <h3 class="headline mb-0">{{ $t('empty.mrm') }}</h3>
+              </v-layout>
+            </v-card-title>
+          </v-card>
+        </a>
+      </v-flex>
+    </section>
+
     <!-- 履歴 -->
     <section class="c-index c-index--mypage" v-if="this.transactions.length">
       <v-data-table :headers="headers" :items="this.transactions" class="elevation-1">
@@ -159,11 +210,14 @@ import api from '~/plugins/api'
 import axios from 'axios'
 import firestore from '~/plugins/firestore'
 import functions from '~/plugins/functions'
+import firebase from 'firebase'
 
+//const twitter = require("twitter")
 const config = require('../../../functions/config.json')
 const project = process.env.project
 
 export default {
+  
   data() {
     return {
       headers: [{ text: 'date', value: 'date' }, { text: 'result', value: 'result' }, { text: 'asset', value: 'asset' }, { text: 'id', value: 'id' }, { text: 'price', value: 'price' }],
@@ -171,19 +225,38 @@ export default {
       loadingCTN: true,
       loadingMCHH: true,
       loadingMCHE: true,
+      loadingMRM: true,
+      loadingTwitter: true,
       switch1: false,
+      isLogin: false,
+      isSigned: false,
+      storedTwitterData: [],
+      dataExists: false,
       kitties: [],
       oinks: [],
       heroes: [],
       extensions: [],
+      records: [],
       transactions: [],
-      order: []
+      order: [],
+      user: [],
     }
   },
   mounted: async function() {
     const order = this.order
     const store = this.$store
     var account
+    var self = this
+
+    firebase.auth().onAuthStateChanged(twitterAccount =>{
+      if (twitterAccount) {
+    
+        this.isLogin = true
+      } else {
+        this.isSigned = false
+      };
+    })
+
     if (typeof web3 != 'undefined' || window.ethereum) {
       if (!client.account.address) {
         if (window.ethereum) {
@@ -194,6 +267,29 @@ export default {
         store.dispatch('account/setAccount', account)
       }
 
+
+      this.storedTwitterData = await firestore.getTwitterDataByUser(client.account.address)
+
+      if(this.storedTwitterData.length > 0){
+        this.dataExists = true
+      var twitterStoredState = this.storedTwitterData[0]
+      twitterStoredState.isSigned = true
+      this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
+      }else{
+        this.dataExists = false
+      }
+
+      firebase.auth().getRedirectResult().then(function(result) {
+        if(self.isLogin){
+          if(result.user == null){
+            self.twitterLogout();
+            return
+          }
+          self.loadingTwitter = false
+          self.twitterDataPass(result)
+        }
+      });
+      
       api.getKittiesByWalletAddress(client.account.address).then(async tokens => {
         this.kitties = tokens
         this.loadingCK = false
@@ -228,6 +324,7 @@ export default {
       })
 
       client.ownedTokens('mche').then(async tokenIds => {
+        
         const promises = [],
           extensions = []
         for (var tokenId of tokenIds) {
@@ -241,12 +338,33 @@ export default {
         this.loadingMCHE = false
       })
 
+      client.ownedTokens('mrm').then(async tokenIds => {
+        const promises = [],
+          records = []
+        for (var tokenId of tokenIds) {
+          promises.push(axios.get(config.functions[project] + 'metadata?asset=mrm' + '&id=' + tokenId))
+        }
+        
+        const results = await Promise.all(promises)
+        
+        for (var result of results) {
+          records.push(result.data)
+        }
+  
+        this.records = records
+        this.loadingMRM = false
+      })
+
       this.transactions = await firestore.getHistoryByAddress(client.account.address)
       this.order = await firestore.getValidOrdersByMaker(client.account.address)
 
       const result = await firestore.doc('user', client.account.address)
       if (result) {
+        if(result.mch_artedit){
         this.switch1 = result.mch_artedit
+        }else{
+          this.switch1 = false
+        }
       } else {
         this.switch1 = false
       }
@@ -268,6 +386,14 @@ export default {
     }
   },
   methods: {
+    async twitterLogin() {
+      const provider = new firebase.auth.TwitterAuthProvider()
+      var result = firebase.auth().signInWithRedirect(provider)
+    },
+    twitterLogout () {
+      firebase.auth().signOut()
+      this.isLogin = false
+    },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
     },
@@ -282,6 +408,30 @@ export default {
     },
     toAsset(asset) {
       return lib.toAsset(asset)
+    },
+    async twitterDataPass(result) {
+    try {
+      
+      const sig =await client.signUserForTwitter()
+      const datas = {
+          sig: sig,
+          address: client.account.address,
+          twitterAccount: result.user.providerData[0],
+          username: result.additionalUserInfo.username
+      }
+      this.isSigned = true
+      
+      var twitterStoredState = result.user.providerData[0]
+      twitterStoredState.isSigned = this.isSigned
+      twitterStoredState.username = result.additionalUserInfo.username
+
+      this.$store.dispatch('account/setTwitterAccount', twitterStoredState)
+      await functions.call('spTwitter', datas)
+
+      
+    } catch (err) {
+      
+    }
     },
     async permitArtedit() {
       try {

@@ -23,3 +23,9 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['beta', 'functions', 'deploy', 'spArteditUserSign', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
   dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'spMasterRightsforMusicAPI', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'functions', 'deploy', 'spTwitter', '--runtime=nodejs8', '--region=asia-northeast1', '--trigger-http']
+  dir: 'functions/'

@@ -104,16 +104,18 @@ export default {
     },
   mounted () {
   var track_title;
+  var self = this;
 
-  for (var i=0; i < this.ids.length; i++){
-    api.getMrmInstanceById(this.ids[i]).then(async instance =>{
+  for (var i=0; i < this.ids.length;i++){
+    (function(i){
+    api.getMrmInstanceById(self.ids[i]).then(async instance =>{
       track_title = instance.data.name
     })
-    api.getMrmHolderById(this.ids[i]).then(async holder => {
+    api.getMrmHolderById(self.ids[i]).then(async holder => {
       holder.data.track_title = track_title
-        this.items.push(holder.data)
+        self.items.push(holder.data)
       })
-    
+    })(i)
   }
   }
 

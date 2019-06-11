@@ -99,6 +99,31 @@ export default {
         ids:[1,2,3,4],
         items: [
           { header: 'TokenHolder' },
+           {
+            twitterIcon: '',
+            twitterId: '',
+            track_title:'ACID ACID (さよひめぼう Remix)',
+            owner: ''
+          },
+          {
+            twitterIcon: '',
+            twitterId: '',
+            track_title:'ACID ACID',
+            owner: ''
+          },
+          {
+            twitterIcon: '',
+            twitterId: '',
+            track_title:'ACID ACID (Gassyoh Remix)',
+            owner: ''
+          },
+          {
+            twitterIcon: '',
+            twitterId: '',
+            track_title:'ACID ACID (コバルト爆弾αΩ Remix)',
+            owner: ''
+          },
+
         ]
       }
     },
@@ -108,12 +133,10 @@ export default {
 
   for (var i=0; i < this.ids.length;i++){
     (function(i){
-    api.getMrmInstanceById(self.ids[i]).then(async instance =>{
-      track_title = instance.data.name
-    })
     api.getMrmHolderById(self.ids[i]).then(async holder => {
-      holder.data.track_title = track_title
-        self.items.push(holder.data)
+      self.items[i+1].twitterIcon = holder.data.twitterIcon
+      self.items[i+1].twitterId = holder.data.twitterId
+      self.items[i+1].owner = holder.data.owner
       })
     })(i)
   }

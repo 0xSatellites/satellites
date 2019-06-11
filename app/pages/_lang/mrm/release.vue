@@ -29,7 +29,7 @@
           <div class="l-item__txt2">Executive Producer: tomad</div>
           <br>
           <div>
-            <v-list two-line>
+            <v-list two-line style="white-space: initial">
               <template v-for="item in items">
                 <v-subheader
                   v-if="item.header"
@@ -47,7 +47,11 @@
                   </v-list-tile-avatar>
 
                   <v-list-tile-content>
-                    <v-list-tile-title ><a :href="'https://twitter.com/' + item.id">{{ item.twitterId }}</a>- {{ item.track_title}}</v-list-tile-title>
+                    <v-list-tile-title style="
+                    white-space: initial;
+                    overflow: initial;
+                    height: auto;
+                    "><a :href="'https://twitter.com/' + item.id">{{ item.twitterId }}</a>- {{ item.track_title}}</v-list-tile-title>
                     <v-list-tile-sub-title >{{ item.owner }}</v-list-tile-sub-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -100,24 +104,28 @@ export default {
         items: [
           { header: 'TokenHolder' },
            {
+            id: 1,
             twitterIcon: '',
             twitterId: '',
             track_title:'ACID ACID (さよひめぼう Remix)',
             owner: ''
           },
           {
+            id: 2,
             twitterIcon: '',
             twitterId: '',
             track_title:'ACID ACID',
             owner: ''
           },
           {
+            id: 3,
             twitterIcon: '',
             twitterId: '',
             track_title:'ACID ACID (Gassyoh Remix)',
             owner: ''
           },
           {
+            id: 4,
             twitterIcon: '',
             twitterId: '',
             track_title:'ACID ACID (コバルト爆弾αΩ Remix)',

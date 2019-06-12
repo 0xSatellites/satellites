@@ -51,7 +51,11 @@
           <v-checkbox class="center" v-model="checkbox" :rules="[v => !!v || '']" :label="$t('hash.agree')" required v-if="!owner(order.maker)"></v-checkbox>
         </div>
         <div class="l-information__action">
-          <v-btn class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!isSigned || !checkbox || loading" value="purchase"
+           <v-btn  v-if="assetType=='mrm'" class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase"  :disabled="!isSigned || !checkbox || loading" value="purchase"
+            >{{ $t('hash.purchase') }}
+            <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
+          </v-btn>
+          <v-btn v-if="assetType !='mrm'" class="l-item__action__btn l-item__action__btn--type1 white_text" color="#3498db" large @click="purchase" :disabled="!checkbox || loading" value="purchase"
             >{{ $t('hash.purchase') }}
             <v-progress-circular size="16" class="ma-2" v-if="loading" indeterminate></v-progress-circular>
           </v-btn>

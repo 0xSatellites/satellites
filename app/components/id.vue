@@ -95,9 +95,18 @@
             </div>
 
             <div class="l-item__action__btns" v-else-if="approved && !order.id">
-              <v-btn
+              <v-btn v-if="assetType=='mrm'"
                 class="l-item__action__btn l-item__action__btn--type1 white_text"
                 :disabled="!isSigned || !valid || loading || !approved || !checkbox || !account.address"
+                color="#3498db"
+                large
+                @click="order_v1"
+              >
+                {{ $t('id.sell') }}
+              </v-btn>
+               <v-btn v-if="assetType !='mrm'"
+                class="l-item__action__btn l-item__action__btn--type1 white_text"
+                :disabled="!valid || loading || !approved || !checkbox || !account.address"
                 color="#3498db"
                 large
                 @click="order_v1"

@@ -144,8 +144,17 @@
                 TrackData
               </v-btn>
             </div>
+
+
+
           </div>
         </div>
+            <v-btn
+              class="l-item__action__btn l-item__action__btn--type1 white_text"
+              color="#3498db"
+              @click="openseaOrder"
+            >Opensea
+            </v-btn>
         <br>
         <!-- <div class="l-item__action">
           <div v-if="owned">
@@ -196,6 +205,10 @@ import { constants } from 'crypto';
 const config = require('../../functions/config.json')
 const project = process.env.project
 
+import * as Web3 from 'web3'
+import { OpenSeaPort, Network } from 'opensea-js'
+
+var opensea;
 
 export default {
   components: {
@@ -227,10 +240,20 @@ export default {
     }
   },
   mounted: async function() {
+
+    // This example provider won't let you make transactions, only read-only calls:
+
     const store = this.$store
     const params = this.$route.params
     var account
     if (typeof web3 != 'undefined') {
+      console.log(web3.currentProvider)
+      //const provider = new Web3.providers.HttpProvider(window.ethereum)
+      console.log('test')
+      opensea = new OpenSeaPort(web3.currentProvider, {
+        networkName: Network.Rinkeby
+      })
+
       if (!client.account.address) {
         //initialize web3 client
         if (window.ethereum) {
@@ -299,12 +322,14 @@ export default {
           })
       }
 
+      /*
       firestore.getLowestCostOrderByMakerId(client.account.address, params.id).then(order => {
         store.dispatch('order/setOrder', order)
         if (order.price) {
           this.price = client.utils.fromWei(order.price)
         }
       })
+      */
     }
   },
   computed: {
@@ -335,6 +360,23 @@ export default {
     },
     coolDownIndexToSpeed(index) {
       return lib.coolDownIndexToSpeed(index)
+    },
+    async openseaOrder(){
+
+      // Price the Genesis CryptoKitty at 100 ETH
+      const startAmount = 0.1
+      // Reward referrers with 10% of the final sale price,
+      // or 10 ETH in this case
+      const extraBountyPercent = 1
+      // The final bounty will be 10% + 1% from OpenSea, or 11 ETH!
+
+      await opensea.createSellOrder({
+        tokenAddress: "0x16baf0de678e52367adc69fd067e5edd1d33e3bf", // CryptoKitties
+        tokenId: "1097", // Token ID
+        accountAddress: '0xaad0bb0dFfaEF8C2b0C07Dc9Ba9603083E8bE1f5',
+        startAmount,
+        extraBountyBasisPoints: extraBountyPercent * 100
+      })
     },
     async gift() {
       this.loading = true

@@ -15,7 +15,7 @@
             <div class="c-card__txt" v-if="recommend.assetName == 'ck' || recommend.assetName == 'ctn'">
               Gen {{ recommend.metadata.generation }} : {{ coolDownIndexToSpeed(recommend.metadata.status.cooldown_index) }}
             </div>
-            <div class="c-card__eth">Ξ {{ fromWei(recommend.price) }} ETH</div>
+            <div class="c-card__eth">Ξ {{ fromWei(recommend.takerAssetAmount) }} ETH</div>
           </nuxt-link>
       </li>
     </ul>

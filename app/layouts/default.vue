@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navigation></Navigation>
+    <Navigation :drawer="drawer"></Navigation>
     <Toolbar :drawer="drawer"></Toolbar>
     <v-content>
       <v-container>
@@ -24,7 +24,7 @@ import Footer from '~/components/organisms/Footer.vue'
     Navigation
   }
 })
-export default class Default extends Vue {
-  drawer: boolean = false
+export default class DefaultLayout extends Vue {
+  drawer: boolean = true
 }
 </script>

@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <Orders></Orders>
+    <Home></Home>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Orders from '~/components/organisms/Orders.vue'
+import Home from '~/components/templates/Home.vue'
 
 @Component({
   components: {
-    Orders
+    Home
   }
 })
 export default class Index extends Vue {}

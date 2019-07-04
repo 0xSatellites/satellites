@@ -3,7 +3,10 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
-export default class Navigation extends Vue {}
+@Component
+export default class Navigation extends Vue {
+  @Prop() drawer!: boolean
+}
 </script>

@@ -26,7 +26,8 @@
     },
     "types": [
       "@types/node",
-      "@nuxt/vue-app"
+      "@nuxt/vue-app",
+      "@nuxt/axios"
     ]
   }
 }

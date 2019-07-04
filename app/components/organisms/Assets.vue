@@ -5,7 +5,10 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
-export default class Assets extends Vue {}
+@Component
+export default class Assets extends Vue {
+  @Prop() assets!: []
+}
 </script>

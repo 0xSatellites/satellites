@@ -1,7 +1,0 @@
-{
-  "projects": {
-    "dev": "blockbase-bazaaar-sand",
-    "stg": "alien-outlet-233005",
-    "prd": "bold-vial-233010"
-  }
-}

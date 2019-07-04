@@ -1,30 +1,71 @@
 <template>
-  <div>
-    <header-temp></header-temp>
-    <nuxt />
-    <footer-temp></footer-temp>
-  </div>
+  <v-app>
+    <v-navigation-drawer v-model="drawer" clipped app>
+      <v-list>
+        <v-list-tile
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title v-text="item.title" />
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar clipped-left fixed app>
+      <v-btn icon @click="drawer = !drawer">
+        <v-icon>menu</v-icon>
+      </v-btn>
+      <v-btn icon @click.stop="fixed = !fixed">
+        <v-icon>remove</v-icon>
+      </v-btn>
+      <v-toolbar-title v-text="title" />
+      <v-spacer />
+      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
+        <v-icon>menu</v-icon>
+      </v-btn>
+    </v-toolbar>
+    <v-content>
+      <v-container>
+        <nuxt />
+      </v-container>
+    </v-content>
+    <v-footer app>
+      <v-flex text-xs-center>
+        &copy;2019 BlockBase,Inc.
+      </v-flex>
+    </v-footer>
+  </v-app>
 </template>
-<script>
-import HeaderTemp from '~/components/header'
-import FooterTemp from '~/components/footer'
 
+<script>
 export default {
-  components: {
-    HeaderTemp,
-    FooterTemp
-  },
-  head() {
-    var order = this.order
+  data() {
     return {
-      meta: [
-        { title: this.$t('meta.title') },
-        { description: this.$t('meta.description') },
-        { hid: 'og:title', property: 'og:title', content: this.$t('meta.title') },
-        { hid: 'og:description', property: 'og:description', content: this.$t('meta.description')  },
-         { hid: 'og:image', property: 'og:image', content: this.$t('meta.image') }
-        ]
+      drawer: false,
+      fixed: false,
+      items: [
+        {
+          icon: 'apps',
+          title: 'Welcome',
+          to: '/'
+        },
+        {
+          icon: 'bubble_chart',
+          title: 'Inspire',
+          to: '/inspire'
+        }
+      ],
+      right: true,
+      rightDrawer: false,
+      title: 'Vuetify.js'
     }
-  },
+  }
 }
 </script>

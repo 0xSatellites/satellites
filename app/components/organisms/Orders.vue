@@ -1,43 +1,6 @@
 <template>
   <div>
     <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
-    <div class="container">orders comp<br /></div>
   </div>
 </template>
 

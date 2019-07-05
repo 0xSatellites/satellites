@@ -9,6 +9,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class Assets extends Vue {
-  @Prop() assets!: []
+  @Prop() assets!: String[]
 }
 </script>

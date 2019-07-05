@@ -14,15 +14,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "0x.js": "^6.0.9",
-    "@0x/connect": "^5.0.10",
-    "@0x/web3-wrapper": "^6.0.6",
     "@nuxt/typescript": "^2.8.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^2.6.0",
     "@nuxtjs/vuetify": "0.5.5",
     "nuxt": "^2.0.0",
-    "opensea-js": "^0.5.0-rc13",
     "ts-node": "^8.3.0",
     "vue-property-decorator": "^8.2.1",
     "web3": "^1.0.0-beta.55"

@@ -13,5 +13,9 @@ import Assets from '~/components/organisms/Assets.vue'
     Assets
   }
 })
-export default class Index extends Vue {}
+export default class Index extends Vue {
+  mounted() {
+    console.log(this)
+  }
+}
 </script>

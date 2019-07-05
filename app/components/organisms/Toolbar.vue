@@ -8,11 +8,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+//  import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class Toolbar extends Vue {
-  @Prop() drawer!: boolean
+  // @Prop() drawer!: boolean
+  drawer: boolean = true
   title: String = 'Bazaaar.io'
 }
 </script>

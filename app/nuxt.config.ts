@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 import NuxtConfiguration from '@nuxt/config'
 
 const nuxtConfig: NuxtConfiguration = {
-  mode: 'universal',
+  mode: 'spa',
   /*
    ** Headers of the page
    */
@@ -48,7 +48,7 @@ const nuxtConfig: NuxtConfiguration = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
   ],
   /*
    ** Axios module configuration

@@ -1,7 +1,7 @@
 {
   "name": "Bazaaar.io",
   "version": "1.0.0",
-  "description": "NFT Trade Matching Platform ",
+  "description": "NFT Trade Matching Platform",
   "author": "BlockBase",
   "private": true,
   "scripts": {

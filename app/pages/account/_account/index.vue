@@ -14,8 +14,12 @@ import Assets from '~/components/organisms/Assets.vue'
   }
 })
 export default class Index extends Vue {
-  mounted() {
-    console.log(this)
+  async mounted() {
+    const account = this.$route.params.account
+    const assets = await this.$axios.get(
+      `https://api.opensea.io/api/v1/assets?owner=${account}`
+    )
+    console.log(assets)
   }
 }
 </script>

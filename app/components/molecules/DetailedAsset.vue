@@ -1,14 +1,7 @@
 <template>
-  <div>
-    <v-card>
-      <v-img :src="asset.image_url"></v-img>
-      <v-card-title>
-        <div>
-          <span>{{ asset.name }}</span>
-        </div>
-      </v-card-title>
-    </v-card>
-  </div>
+  <v-card flat>
+    <v-img :src="asset.image_url"></v-img>
+  </v-card>
 </template>
 
 <script lang="ts">

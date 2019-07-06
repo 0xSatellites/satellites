@@ -1,5 +1,5 @@
 <template>
-  <v-footer app>
+  <v-footer dark class="secondary">
     <v-flex text-xs-center>
       &copy;2019 BlockBase,Inc.
     </v-flex>

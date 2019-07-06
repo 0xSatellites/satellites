@@ -1,24 +1,19 @@
 <template>
-  <div>
-    <v-card>
-      <nuxt-link
-        :to="{
-          name: 'asset-address-id',
-          params: {
-            address: asset.asset_contract.address,
-            id: asset.token_id
-          }
-        }"
-      >
+  <v-card flat>
+    <nuxt-link
+      :to="{
+        name: 'asset-address-id',
+        params: {
+          address: asset.asset_contract.address,
+          id: asset.token_id
+        }
+      }"
+    >
+      <div class="pa-2">
         <v-img :src="asset.image_url"></v-img>
-      </nuxt-link>
-      <v-card-title>
-        <div>
-          <span>{{ asset.name }}</span>
-        </div>
-      </v-card-title>
-    </v-card>
-  </div>
+      </div>
+    </nuxt-link>
+  </v-card>
 </template>
 
 <script lang="ts">

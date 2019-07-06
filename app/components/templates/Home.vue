@@ -1,10 +1,15 @@
 <template>
-  <div>This is home page</div>
+  <TopVisual></TopVisual>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import TopVisual from '~/components/organisms/TopVisual.vue'
 
-@Component
+@Component({
+  components: {
+    TopVisual
+  }
+})
 export default class Home extends Vue {}
 </script>

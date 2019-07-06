@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap>
-    <v-flex v-for="asset in assets" :key="asset.id" xs4>
+    <v-flex v-for="asset in assets" :key="asset.id" xs4 md2>
       <SimpleAsset :asset="asset"></SimpleAsset>
     </v-flex>
   </v-layout>

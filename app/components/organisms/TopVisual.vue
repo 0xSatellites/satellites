@@ -1,0 +1,12 @@
+<template>
+  <div>
+    <img src="~/assets/img/bg_pc.png" alt="" width="100%" />
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component
+export default class TopVisual extends Vue {}
+</script>

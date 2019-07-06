@@ -1,6 +1,6 @@
 # Bazaaar.io
 
-> NFT Trade Matching Platform 
+> NFT Trade Matching Platform
 
 ## Build Setup
 

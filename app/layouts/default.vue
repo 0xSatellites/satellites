@@ -1,7 +1,7 @@
 <template>
-  <v-app>
-    <Navigation :drawer="drawer"></Navigation>
-    <Toolbar :drawer="drawer"></Toolbar>
+  <v-app class="white">
+    <v-system-bar absolute app height="7px" color="primary"></v-system-bar>
+    <Header></Header>
     <v-content>
       <v-container>
         <nuxt />
@@ -13,18 +13,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Navigation from '~/components/organisms/Navigation.vue'
-import Toolbar from '~/components/organisms/Toolbar.vue'
+import Header from '~/components/organisms/Header.vue'
 import Footer from '~/components/organisms/Footer.vue'
 
 @Component({
   components: {
-    Footer,
-    Toolbar,
-    Navigation
+    Header,
+    Footer
   }
 })
-export default class DefaultLayout extends Vue {
-  drawer: boolean = true
-}
+export default class DefaultLayout extends Vue {}
 </script>

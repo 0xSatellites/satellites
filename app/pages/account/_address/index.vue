@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Assets></Assets>
+    <Assets :assets="assets"></Assets>
   </div>
 </template>
 
@@ -14,12 +14,14 @@ import Assets from '~/components/organisms/Assets.vue'
   }
 })
 export default class Index extends Vue {
+  assets = []
   async mounted() {
-    const account = this.$route.params.account
+    const owner = this.$route.params.address
     const assets = await this.$axios.get(
-      `https://api.opensea.io/api/v1/assets?owner=${account}`
+      `https://api.opensea.io/api/v1/assets?owner=${owner}`
     )
-    console.log(assets)
+    console.log(assets.data.assets)
+    this.assets = assets.data.assets
   }
 }
 </script>

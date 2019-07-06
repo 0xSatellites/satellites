@@ -27,7 +27,7 @@
     "types": [
       "@types/node",
       "@nuxt/vue-app",
-      "@nuxt/axios"
+      "@nuxtjs/axios"
     ],
     //"typeRoots": ["node_modules/@0x/typescript-typings/types", "node_modules/@types"],
   }

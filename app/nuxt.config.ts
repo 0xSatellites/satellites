@@ -63,7 +63,7 @@ const nuxtConfig: NuxtConfiguration = {
     theme: {
       primary: '#3498db',
       secondary: '#575656',
-      accent: '#DADB34',
+      accent: colors.orange,
     }
   },
   /*

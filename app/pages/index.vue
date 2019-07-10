@@ -13,7 +13,5 @@ import Home from '~/components/templates/Home.vue'
     Home
   }
 })
-export default class Index extends Vue {
-  public static layout = 'home'
-}
+export default class Index extends Vue {}
 </script>

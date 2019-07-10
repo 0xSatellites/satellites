@@ -1,18 +1,18 @@
 <template>
   <v-layout row wrap>
     <v-flex v-for="asset in assets" :key="asset.id" xs4 md2>
-      <SimpleAsset :asset="asset"></SimpleAsset>
+      <Asset :asset="asset"></Asset>
     </v-flex>
   </v-layout>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import SimpleAsset from '~/components/molecules/SimpleAsset.vue'
+import Asset from '~/components/molecules/Asset.vue'
 
 @Component({
   components: {
-    SimpleAsset
+    Asset
   }
 })
 export default class Assets extends Vue {

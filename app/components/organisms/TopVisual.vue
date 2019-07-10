@@ -1,6 +1,7 @@
 <template>
   <div>
     <img src="~/assets/img/bg_pc.png" alt="" width="100%" />
+    <img src="~/assets/img/illust.png" alt="" />
   </div>
 </template>
 

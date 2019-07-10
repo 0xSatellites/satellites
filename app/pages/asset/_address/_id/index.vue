@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import DetailedAsset from '~/components/molecules/DetailedAsset.vue'
+import DetailedAsset from '~/components/organisms/DetailedAsset.vue'
 
 @Component({
   components: {

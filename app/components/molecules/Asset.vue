@@ -9,8 +9,8 @@
         }
       }"
     >
-      <div class="pa-2">
-        <v-img :src="asset.image_url"></v-img>
+      <div class="pa-3">
+        <v-img :src="asset.image_url" aspect-ratio="1"></v-img>
       </div>
     </nuxt-link>
   </v-card>

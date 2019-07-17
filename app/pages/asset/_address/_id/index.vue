@@ -1,9 +1,7 @@
 <template>
   <v-content>
     <v-container>
-      <div v-for="asset in assets" :key="asset.id">
-        <DetailedAsset :asset="asset"></DetailedAsset>
-      </div>
+      <Detail :assets="assets"></Detail>
     </v-container>
   </v-content>
 </template>
@@ -12,12 +10,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { HttpClient } from '@0x/connect'
 import { assetDataUtils, BigNumber } from '0x.js'
-import DetailedAsset from '~/components/organisms/DetailedAsset.vue'
+import Detail from '~/components/organisms/Detail.vue'
 const httpClient = new HttpClient('http://35.200.51.207:3000/v2/')
 
 @Component({
   components: {
-    DetailedAsset
+    Detail
   }
 })
 export default class Index extends Vue {

@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-container>
-      <Orders :orders="orders"></Orders>
+      <Assets :assets="assets"></Assets>
     </v-container>
   </v-content>
 </template>
@@ -10,16 +10,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { HttpClient } from '@0x/connect'
 import { assetDataUtils } from '0x.js'
-import Orders from '~/components/organisms/Orders.vue'
+import Assets from '~/components/organisms/Assets.vue'
 const httpClient = new HttpClient('http://35.200.51.207:3000/v2/')
 
 @Component({
   components: {
-    Orders
+    Assets
   }
 })
 export default class Index extends Vue {
-  orders = []
+  assets = []
   async mounted() {
     const rawOrders = await httpClient.getOrdersAsync({ networkId: 4 })
     const refinedOrders = {}
@@ -48,16 +48,16 @@ export default class Index extends Vue {
       metadataPromises.push(this.$axios.get(requestURL))
     }
     const metadataResolved = await Promise.all(metadataPromises)
-    const orders = []
+    const assets = []
     for (const metadataPerAsset of metadataResolved) {
       for (const metadata of metadataPerAsset.data.assets) {
-        const order = metadata
-        order.price =
+        const asset = metadata
+        asset.price =
           refinedOrders[metadata.asset_contract.address][metadata.token_id]
-        orders.push(order)
+        assets.push(asset)
       }
     }
-    this.orders = orders
+    this.assets = assets
   }
 }
 </script>

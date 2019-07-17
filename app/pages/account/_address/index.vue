@@ -27,6 +27,7 @@ export default class Index extends Vue {
       `https://rinkeby-api.opensea.io/api/v1/assets?order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
     )
     this.assets = assets.data.assets
+    console.log(assets.data.assets)
   }
   getAssetContractAddresses() {
     return [

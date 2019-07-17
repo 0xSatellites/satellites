@@ -17,5 +17,8 @@ import Asset from '~/components/molecules/Asset.vue'
 })
 export default class Assets extends Vue {
   @Prop() assets
+  mounted() {
+    console.log('test')
+  }
 }
 </script>

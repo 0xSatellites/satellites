@@ -14,8 +14,38 @@
           <span class="grey--text">{{ asset.description }}</span>
         </v-card-title>
         <v-card-actions class="justify-center">
-          <v-btn flat color="accent">Sell</v-btn>
-          <v-btn flat color="accent">Gift</v-btn>
+          <v-btn
+            v-if="
+              asset.owner.address !== this.$store.state.address && asset.price
+            "
+            flat
+            color="accent"
+            >Purchase</v-btn
+          >
+          <v-btn
+            v-if="
+              asset.owner.address === this.$store.state.address && asset.price
+            "
+            flat
+            color="accent"
+            >Cancel</v-btn
+          >
+          <v-btn
+            v-if="
+              asset.owner.address === this.$store.state.address && !asset.price
+            "
+            flat
+            color="accent"
+            >Sell</v-btn
+          >
+          <v-btn
+            v-if="
+              asset.owner.address === this.$store.state.address && !asset.price
+            "
+            flat
+            color="accent"
+            >Gift</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-flex>

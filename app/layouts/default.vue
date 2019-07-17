@@ -2,11 +2,7 @@
   <v-app class="white">
     <v-system-bar absolute app height="7px" color="primary"></v-system-bar>
     <Header></Header>
-    <v-content>
-      <v-container>
-        <nuxt />
-      </v-container>
-    </v-content>
+    <nuxt />
     <Footer></Footer>
   </v-app>
 </template>

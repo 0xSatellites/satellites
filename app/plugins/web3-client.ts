@@ -1,4 +1,5 @@
 const Web3 = require('web3')
+const config = require('./config.json')
 
 export default async function({ store, isServer }, inject) {
   if (isServer) {
@@ -21,11 +22,13 @@ export default async function({ store, isServer }, inject) {
 
   const accounts = await store.$web3.eth.getAccounts()
   store.commit('address', accounts[0].toLowerCase())
+  inject('config', config)
 
   setInterval(async () => {
     const accounts = await store.$web3.eth.getAccounts()
-    if (store.state.address !== accounts[0]) {
-      store.commit('address', accounts[0].toLowerCase())
+    const address = accounts[0].toLowerCase()
+    if (store.state.address !== address) {
+      location.reload()
     }
   }, 100)
 }

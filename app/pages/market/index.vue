@@ -31,9 +31,9 @@ export default class Index extends Vue {
       }
       if (
         !refinedOrders[assetData.tokenAddress][assetData.tokenId] ||
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] > order.order.takerAssetAmount
+        refinedOrders[assetData.tokenAddress][assetData.tokenId].takerAssetAmount > order.order.takerAssetAmount
       ) {
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] = order.order.takerAssetAmount
+        refinedOrders[assetData.tokenAddress][assetData.tokenId] = order.order
       }
     }
     const metadataPromises = []
@@ -50,7 +50,7 @@ export default class Index extends Vue {
       for (const metadata of metadataPerAsset.data.assets) {
         const asset = metadata
         if (refinedOrders[metadata.asset_contract.address][metadata.token_id]) {
-          asset.price = refinedOrders[metadata.asset_contract.address][metadata.token_id].toString()
+          asset.order = refinedOrders[metadata.asset_contract.address][metadata.token_id]
         }
         assets.push(asset)
       }

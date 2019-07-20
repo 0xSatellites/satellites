@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-container>
-      <Detail :assets="assets" :relatedAssets="relatedAssets"></Detail>
+      <Detail :assets="assets"></Detail>
     </v-container>
   </v-content>
 </template>
@@ -20,75 +20,34 @@ const httpClient = new HttpClient('http://35.200.51.207:3000/v2/')
 })
 export default class Index extends Vue {
   assets = []
-  relatedAssets = []
   async mounted() {
     const tokenId = this.$route.params.id
     const assetContractAddress = this.$route.params.address
     const assetData = assetDataUtils.encodeERC721AssetData(assetContractAddress, new BigNumber(tokenId))
     const orderbookRequest = {
       baseAssetData: assetData,
-      quoteAssetData: '0xf47261b00000000000000000000000003d5633c01483e1b85f4683e22260c9a52ebb1d4c'
+      quoteAssetData: '0xf47261b00000000000000000000000000e5b093bfee5021110e1b672bb169ae77503658f'
     }
     const orderBooks = await httpClient.getOrderbookAsync(orderbookRequest, {
       networkId: 4
     })
-    let price = null
-    for (const order of orderBooks.asks.records) {
-      if (!price) {
-        price = order.order.takerAssetAmount
-      } else if (price > order.order.takerAssetAmount) {
-        price = order.order.takerAssetAmount
+    let order = null
+    for (const record of orderBooks.asks.records) {
+      if (!order) {
+        order = record.order
+      } else if (order.takerAssetAmount > record.order.takerAssetAmount) {
+        order = record.order
       }
     }
+
     const asset = await this.$axios.get(
       `https://rinkeby-api.opensea.io/api/v1/assets?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
     )
     const assets = asset.data.assets
-    if (price) {
-      assets[0].price = price.toString()
-    }
-    console.log(assets)
-    this.assets = assets
 
-    //  related Assets
-    const rawOrders = await httpClient.getOrdersAsync({ networkId: 4 })
-    const refinedOrders = {}
-    for (const order of rawOrders.records) {
-      const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
-      if (!refinedOrders[assetData.tokenAddress]) {
-        refinedOrders[assetData.tokenAddress] = {}
-      }
-      if (
-        !refinedOrders[assetData.tokenAddress][assetData.tokenId] ||
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] > order.order.takerAssetAmount
-      ) {
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] = order.order.takerAssetAmount
-      }
-    }
-    const metadataPromises = []
-    for (const tokenAddress in refinedOrders) {
-      let requestURL = `https://rinkeby-api.opensea.io/api/v1/assets?asset_contract_address=${tokenAddress}`
-      for (const tokenId in refinedOrders[tokenAddress]) {
-        requestURL = requestURL + `&token_ids=${tokenId}`
-      }
-      metadataPromises.push(this.$axios.get(requestURL))
-    }
-    const metadataResolved = await Promise.all(metadataPromises)
-    const relatedAssets = []
-    let index = 0
-    for (const metadataPerAsset of metadataResolved) {
-      for (const metadata of metadataPerAsset.data.assets) {
-        const asset = metadata
-        if (refinedOrders[metadata.asset_contract.address][metadata.token_id]) {
-          asset.price = refinedOrders[metadata.asset_contract.address][metadata.token_id].toString()
-        }
-        if (index < 3) {
-          relatedAssets.push(asset)
-          index++
-        }
-      }
-    }
-    this.relatedAssets = relatedAssets
+    assets[0].order = order
+    console.log(assets[0].order.takerAssetAmount)
+    this.assets = assets
   }
 }
 </script>

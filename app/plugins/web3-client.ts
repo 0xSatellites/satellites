@@ -5,6 +5,7 @@ export default async function({ store, isServer }, inject) {
   if (isServer) {
     return
   }
+
   const web3 = (window as any).web3
   const ethereum = (window as any).ethereum
 

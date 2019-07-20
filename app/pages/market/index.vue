@@ -22,21 +22,18 @@ export default class Index extends Vue {
   assets = []
   async mounted() {
     const rawOrders = await httpClient.getOrdersAsync({ networkId: 4 })
+    console.log(rawOrders)
     const refinedOrders = {}
     for (const order of rawOrders.records) {
-      const assetData = assetDataUtils.decodeERC721AssetData(
-        order.order.makerAssetData
-      )
+      const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
       if (!refinedOrders[assetData.tokenAddress]) {
         refinedOrders[assetData.tokenAddress] = {}
       }
       if (
         !refinedOrders[assetData.tokenAddress][assetData.tokenId] ||
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] >
-          order.order.takerAssetAmount
+        refinedOrders[assetData.tokenAddress][assetData.tokenId] > order.order.takerAssetAmount
       ) {
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] =
-          order.order.takerAssetAmount
+        refinedOrders[assetData.tokenAddress][assetData.tokenId] = order.order.takerAssetAmount
       }
     }
     const metadataPromises = []
@@ -52,8 +49,9 @@ export default class Index extends Vue {
     for (const metadataPerAsset of metadataResolved) {
       for (const metadata of metadataPerAsset.data.assets) {
         const asset = metadata
-        asset.price =
-          refinedOrders[metadata.asset_contract.address][metadata.token_id]
+        if (refinedOrders[metadata.asset_contract.address][metadata.token_id]) {
+          asset.price = refinedOrders[metadata.asset_contract.address][metadata.token_id].toString()
+        }
         assets.push(asset)
       }
     }

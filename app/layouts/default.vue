@@ -3,7 +3,7 @@
     <v-system-bar absolute app height="7px" color="primary"></v-system-bar>
     <Header></Header>
     <nuxt />
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
   </v-app>
 </template>
 

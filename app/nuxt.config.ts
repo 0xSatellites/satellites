@@ -1,5 +1,3 @@
-import colors from 'vuetify/es5/util/colors'
-
 import NuxtConfiguration from '@nuxt/config'
 
 const nuxtConfig: NuxtConfiguration = {
@@ -23,8 +21,7 @@ const nuxtConfig: NuxtConfiguration = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href:
-          'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'
+        href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'
       }
     ]
   },
@@ -39,9 +36,7 @@ const nuxtConfig: NuxtConfiguration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [
-    '@/plugins/web3-client.ts'
-  ],
+  plugins: ['@/plugins/web3-client.ts'],
   /*
    ** Nuxt.js modules
    */
@@ -50,7 +45,7 @@ const nuxtConfig: NuxtConfiguration = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    '@nuxtjs/eslint-module',
+    '@nuxtjs/eslint-module'
   ],
   /*
    ** Axios module configuration
@@ -65,7 +60,7 @@ const nuxtConfig: NuxtConfiguration = {
     theme: {
       primary: '#3498db',
       secondary: '#575656',
-      accent: colors.orange,
+      accent: '#dbcb34'
     }
   },
   /*
@@ -75,7 +70,7 @@ const nuxtConfig: NuxtConfiguration = {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    //  extend(config, ctx) {}
   }
 }
 export default nuxtConfig

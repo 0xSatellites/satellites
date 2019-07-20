@@ -1,7 +1,7 @@
 <template>
-  <v-footer dark class="secondary">
+  <v-footer class="white">
     <v-flex text-xs-center>
-      &copy;2019 BlockBase,Inc.
+      &copy;2019 BlockBase, Inc.
     </v-flex>
   </v-footer>
 </template>

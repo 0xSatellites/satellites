@@ -1,12 +1,21 @@
 <template>
   <v-layout row wrap>
-    <v-flex v-for="asset in assets" :key="asset.token_id" xs12 md4 offset-md4>
-      <Asset class="pa-2" :asset="asset"></Asset>
+    <v-flex xs12 md6>
+      <v-card height="100%" flat class="pa-2">
+        <iframe width="100%" height="90%" :src="url"></iframe>
+        <v-card-action>
+          <a :href="url">
+            <v-btn block color="primary">Original Page</v-btn>
+          </a>
+        </v-card-action>
+      </v-card>
     </v-flex>
-    <!--
-    <v-flex v-for="asset in assets" :key="asset.token_id" xs12 md1></v-flex>
-    <v-flex v-for="asset in assets" :key="asset.token_id" xs12 md6>
-      <Property :asset="asset"></Property>
+    <v-flex xs12 md1></v-flex>
+    <v-flex xs12 md5>
+      <v-card flat class="pa-2">
+        <v-card-title><span class="title font-weight-light">Advertisement</span></v-card-title>
+        <img src="https://adnico.co.jp/images/banner320_100.png" />
+      </v-card>
       <v-card flat class="pa-2">
         <v-card-title><span class="title font-weight-light">Related Assets</span></v-card-title>
         <v-layout row wrap>
@@ -16,23 +25,20 @@
         </v-layout>
       </v-card>
     </v-flex>
-    -->
   </v-layout>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Asset from '~/components/molecules/Asset.vue'
-//  import Property from '~/components/molecules/Property.vue'
 
 @Component({
   components: {
     Asset
-    //  Property
   }
 })
-export default class Assets extends Vue {
-  @Prop() assets
+export default class Game extends Vue {
   @Prop() relatedAssets
+  @Prop() url
 }
 </script>

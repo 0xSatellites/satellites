@@ -19,15 +19,12 @@ export default class Index extends Vue {
   assets = []
   async mounted() {
     const assetContractAddresses = this.getAssetContractAddresses()
-    const assetContractAddressesQuery = this.getAssetContractAddressesQuery(
-      assetContractAddresses
-    )
+    const assetContractAddressesQuery = this.getAssetContractAddressesQuery(assetContractAddresses)
     const owner = this.$route.params.address
     const assets = await this.$axios.get(
       `https://rinkeby-api.opensea.io/api/v1/assets?order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
     )
     this.assets = assets.data.assets
-    console.log(assets.data.assets)
   }
   getAssetContractAddresses() {
     return [
@@ -45,8 +42,7 @@ export default class Index extends Vue {
     const base = '&asset_contract_addresses='
     let assetContractAddressesQuery = ''
     for (const assetContractAddress of assetContractAddresses) {
-      assetContractAddressesQuery =
-        assetContractAddressesQuery + base + assetContractAddress
+      assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
     }
     return assetContractAddressesQuery
   }

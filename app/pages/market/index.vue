@@ -8,10 +8,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { HttpClient } from '@0x/connect'
-import { assetDataUtils } from '0x.js'
 import Assets from '~/components/organisms/Assets.vue'
-const httpClient = new HttpClient('http://35.200.51.207:3000/v2/')
 
 @Component({
   components: {
@@ -21,21 +18,7 @@ const httpClient = new HttpClient('http://35.200.51.207:3000/v2/')
 export default class Index extends Vue {
   assets = []
   async mounted() {
-    const rawOrders = await httpClient.getOrdersAsync({ networkId: 4 })
-    console.log(rawOrders)
-    const refinedOrders = {}
-    for (const order of rawOrders.records) {
-      const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
-      if (!refinedOrders[assetData.tokenAddress]) {
-        refinedOrders[assetData.tokenAddress] = {}
-      }
-      if (
-        !refinedOrders[assetData.tokenAddress][assetData.tokenId] ||
-        refinedOrders[assetData.tokenAddress][assetData.tokenId].takerAssetAmount > order.order.takerAssetAmount
-      ) {
-        refinedOrders[assetData.tokenAddress][assetData.tokenId] = order.order
-      }
-    }
+    const refinedOrders = await this.$satellites.getOrders()
     const metadataPromises = []
     for (const tokenAddress in refinedOrders) {
       let requestURL = `https://rinkeby-api.opensea.io/api/v1/assets?asset_contract_address=${tokenAddress}`

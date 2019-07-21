@@ -1,0 +1,22 @@
+{
+  "name": "satellites.js",
+  "version": "0.0.1",
+  "description": "0x satelite library",
+  "main": "dist/index.js",
+  "author": "BlockBase, Inc.",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b && prettier --write dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "0x.js": "^6.0.12"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.3"
+  }
+}

@@ -118,7 +118,7 @@ export default class Asset extends Vue {
   }
   gift() {
     this.dialogKey = 4
-    const contract = new this.$web3.eth.Contract(this.$config.abi.erc721, this.asset.asset_contract.address)
+    const contract = this.$satellites.erc721(this.asset.asset_contract.address)
     contract.methods
       .transferFrom(this.$store.state.address, this.asset.asset_contract.address, this.asset.token_id)
       .send({ from: this.$store.state.address })
@@ -128,7 +128,7 @@ export default class Asset extends Vue {
       })
   }
   async sell() {
-    const contract = new this.$web3.eth.Contract(this.$config.abi.erc721, this.asset.asset_contract.address)
+    const contract = this.$satellites.erc721(this.asset.asset_contract.address)
     const isApprovedForAll = await contract.methods
       .isApprovedForAll(this.$store.state.address, this.$satellites.contractAddresses.erc721Proxy)
       .call()

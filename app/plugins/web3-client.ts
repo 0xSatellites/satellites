@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const config = require('./config.json')
-import Satellites from '../satellites.js/src/index'
+import Satellites from '../satellites.js/src/index.ts'
 
 export default async function({ store, isServer }, inject) {
   if (isServer) {

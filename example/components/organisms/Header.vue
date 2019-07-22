@@ -7,8 +7,7 @@
       <v-btn v-if="this.$store.state.address" flat color="primary" :to="'/account/' + this.$store.state.address">
         MyPage
       </v-btn>
-      <v-btn flat color="primary" :to="'/market'">Market</v-btn>
-      <v-btn flat color="primary" :to="'/game?url=https%3A%2F%2Fmchdungeon.com%2Fgame'">Game</v-btn>
+      <v-btn flat color="primary" :to="'/'">Market</v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>

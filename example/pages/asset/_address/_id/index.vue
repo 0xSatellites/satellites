@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-container>
-      <Detail :assets="assets"></Detail>
+      <Detail v-if="asset" :asset="asset"></Detail>
     </v-container>
   </v-content>
 </template>
@@ -16,19 +16,14 @@ import Detail from '~/components/organisms/Detail.vue'
   }
 })
 export default class Index extends Vue {
-  assets = []
+  asset = null
   async mounted() {
     const tokenId = this.$route.params.id
     const assetContractAddress = this.$route.params.address
     const order = await this.$satellites.getOrder(assetContractAddress, tokenId)
-
-    const asset = await this.$axios.get(
-      `https://rinkeby-api.opensea.io/api/v1/assets?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
-    )
-    const assets = asset.data.assets
-
-    assets[0].order = order
-    this.assets = assets
+    const asset = await this.$satellites.getAssetData(assetContractAddress, tokenId)
+    asset.order = order
+    this.asset = asset
   }
 }
 </script>

@@ -1,6 +1,6 @@
 const Web3 = require('web3')
 const config = require('./config.json')
-import Satellites from '../satellites.js/src/index'
+import Satellites from '../../src/index'
 
 export default async function({ store, isServer }, inject) {
   if (isServer) {
@@ -27,7 +27,14 @@ export default async function({ store, isServer }, inject) {
   const accounts = await store.$web3.eth.getAccounts()
   store.commit('address', accounts[0].toLowerCase())
 
-  const satellites = new Satellites(4, store.$web3.currentProvider)
+  const tokens = [
+    '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',
+    '0x5220debd5a575d1bf85b5531c9e0f6ced243975c',
+    '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
+    '0x587ae915d4ccaa5c2220c638069f2605e1f7404c'
+  ]
+
+  const satellites = new Satellites(4, store.$web3.currentProvider, 'http://35.200.51.207:3000/v2/', tokens)
   inject('satellites', satellites)
 
   setInterval(async () => {

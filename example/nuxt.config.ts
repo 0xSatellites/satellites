@@ -36,7 +36,7 @@ const nuxtConfig: NuxtConfiguration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/web3-client.ts'],
+  plugins: ['@/plugins/initialize.ts'],
   /*
    ** Nuxt.js modules
    */

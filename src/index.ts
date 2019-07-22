@@ -16,6 +16,8 @@ import { ERC20TokenWrapper, ERC20ProxyWrapper, ERC721ProxyWrapper, ERC721TokenWr
 import { classUtils } from '@0x/utils'
 import { Web3Wrapper } from '@0x/web3-wrapper'
 
+import axios from 'axios'
+
 const DECIMALS = 18
 const GAS_LIMIT = 4000000
 const DEFAULT_RELAYER = 'http://35.200.51.207:3000/v2/'
@@ -313,7 +315,7 @@ interface SatellitesContractAddresses {
   passer: string
 }
 
-interface refinedOrders {
+interface RefinedOrders {
   [address: string]: {
     [tokenId: string]: SignedOrder
   }
@@ -333,6 +335,11 @@ const networkToSatellitesContractAddresses: { [networkId: number]: SatellitesCon
 const networkToSquoteAssetData: { [networkId: number]: string } = {
   1: `0xf47261b0000000000000000000000000${networkToSatellitesContractAddresses[1].passer.slice(2)}`,
   4: `0xf47261b0000000000000000000000000${networkToSatellitesContractAddresses[4].passer.slice(2)}`
+}
+
+const networkToAssetMetadataAPIBase: { [networkId: number]: string } = {
+  1: `https://api.opensea.io/api/v1/assets`,
+  4: `https://rinkeby-api.opensea.io/api/v1/assets`
 }
 
 //  Classes
@@ -444,9 +451,11 @@ export default class Satellites {
   public erc20Token: ERC20TokenWrapper
   public erc721Proxy: ERC721ProxyWrapper
   public erc721Token: ERC721TokenWrapper
-  public exchangeWrapper: ExchangeWrapper 
+  public exchangeWrapper: ExchangeWrapper
+  public apiBase: string
+  public whitelists: string[] | undefined
 
-  constructor(networkId: number, supportedProvider: SupportedProvider, relayer?: string, txDefaults?: Partial<TxData>) {
+  constructor(networkId: number, supportedProvider: SupportedProvider, relayer?: string, whitelists?: string[], txDefaults?: Partial<TxData>) {
     this.networkId = networkId
     this.supportedProvider = supportedProvider
     this.httpClient = new HttpClient(relayer || DEFAULT_RELAYER)
@@ -476,6 +485,8 @@ export default class Satellites {
       this.erc721Proxy
     )
     this.exchangeWrapper = new ExchangeWrapper(this.web3Wrapper, this.networkId, this.erc20Token, this.erc721Token)
+    this.apiBase = networkToAssetMetadataAPIBase[this.networkId]
+    this.whitelists = null || whitelists
   }
 
   async sell(makerAddress: string, contractAddress: string, tokenId: number, price: number) {
@@ -573,43 +584,93 @@ export default class Satellites {
 
   async getOrders() {
     const orders = await this.httpClient.getOrdersAsync({ networkId: this.networkId })
-    const refinedOrders: refinedOrders = {}
+    const refinedOrders: RefinedOrders = {}
     for (const order of orders.records) {
       const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
       const tokenId = assetData.tokenId.toString()
-      if (!refinedOrders[assetData.tokenAddress]) {
-        refinedOrders[assetData.tokenAddress] = {}
-      }
-      if (
-        !refinedOrders[assetData.tokenAddress][tokenId] ||
-        refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
-      ) {
-        refinedOrders[assetData.tokenAddress][tokenId] = order.order
+
+      if(!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
+        if (!refinedOrders[assetData.tokenAddress]) {
+          refinedOrders[assetData.tokenAddress] = {}
+        }
+        if (
+          !refinedOrders[assetData.tokenAddress][tokenId] ||
+          refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
+        ) {
+          refinedOrders[assetData.tokenAddress][tokenId] = order.order
+        }
       }
     }
     return refinedOrders
   }
 
-  async getOrder(assetContractAddress: string, tokenId: number) {
-    const assetData = assetDataUtils.encodeERC721AssetData(assetContractAddress, new BigNumber(tokenId))
-    const orderbookRequest = {
-      baseAssetData: assetData,
-      quoteAssetData: networkToSquoteAssetData[this.networkId]
+  async getAssetDataForOrders(refinedOrders: RefinedOrders) {
+    const metadataPromises:any = []
+    for (const tokenAddress in refinedOrders) {
+      let requestURL = `${this.apiBase}?asset_contract_address=${tokenAddress}`
+      for (const tokenId in refinedOrders[tokenAddress]) {
+        requestURL = `${requestURL}&token_ids=${tokenId}`
+      }
+      metadataPromises.push(axios.get(requestURL))
     }
-    const orderBooks = await this.httpClient.getOrderbookAsync(orderbookRequest, {
-      networkId: this.networkId
-    })
+    const metadataResolved = await Promise.all(metadataPromises)
+    const assets:any = []
+    for (const metadataPerAsset of metadataResolved) {
+      for (const metadata of (metadataPerAsset as any).data.assets) {
+        const asset = metadata
+        if (refinedOrders[metadata.asset_contract.address][metadata.token_id]) {
+          asset.order = refinedOrders[metadata.asset_contract.address][metadata.token_id]
+        }
+        assets.push(asset)
+      }
+    }
+    return assets
+  }
 
+  async getOrder(assetContractAddress: string, tokenId: number) {
     let order: SignedOrder | undefined
     let price: BigNumber
-    orderBooks.asks.records.forEach((record, index) => {
-      if (index === 1) {
-        order = record.order
-        price = record.order.takerAssetAmount
-      } else if (price > record.order.takerAssetAmount) {
-        order = record.order
+    if(!this.whitelists || this.whitelists.includes(assetContractAddress)) {
+      const assetData = assetDataUtils.encodeERC721AssetData(assetContractAddress, new BigNumber(tokenId))
+      const orderbookRequest = {
+        baseAssetData: assetData,
+        quoteAssetData: networkToSquoteAssetData[this.networkId]
       }
-    })
+      const orderBooks = await this.httpClient.getOrderbookAsync(orderbookRequest, {
+        networkId: this.networkId
+      })
+      orderBooks.asks.records.forEach((record, index) => {
+        if (index === 0) {
+          order = record.order
+          price = record.order.takerAssetAmount
+        } else if (price > record.order.takerAssetAmount) {
+          order = record.order
+        }
+      })
+    }
     return order
   }
+
+  async getAssetData(assetContractAddress: string, tokenId: number) {
+    const asset = await axios.get(
+      `${this.apiBase}?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
+    )
+    const assets = asset.data.assets
+    return assets[0]
+  }
+
+  async getAssetDataForOwner(owner: string){
+    let assetContractAddressesQuery = ''
+    if(this.whitelists) {
+      const base = '&asset_contract_addresses='
+      for (const assetContractAddress of this.whitelists) {
+        assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
+      }
+    }
+    const assets = await axios.get(
+      `${this.apiBase}?order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
+    )
+    return assets.data.assets
+  }
+
 }

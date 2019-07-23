@@ -516,7 +516,7 @@ export default class Satellites {
 
     const provider = new MetamaskSubprovider(this.web3Wrapper.getProvider())
     const signedOrder = await signatureUtils.ecSignTypedDataOrderAsync(provider, order, makerAddress)
-    await this.httpClient.submitOrderAsync(signedOrder, { networkId: this.networkId })
+    return await this.httpClient.submitOrderAsync(signedOrder, { networkId: this.networkId })
   }
 
   async buy(takerAddress: string, signedOrder: SignedOrder, feeRecipientAddresses?: string[], feeAmounts?: number[]) {
@@ -544,7 +544,7 @@ export default class Satellites {
         totalFee = feeAmountsBigNumber[i].plus(totalFee)
       }
       const amountWithFee = signedOrder.takerAssetAmount.plus(totalFee)
-      await this.distributor.fillOrder.sendTransactionAsync(
+      return await this.distributor.fillOrder.sendTransactionAsync(
         signedOrder,
         signedOrder.takerAssetAmount,
         salt,
@@ -559,7 +559,7 @@ export default class Satellites {
         }
       )
     } else {
-      await this.passer.fillOrder.sendTransactionAsync(
+      return await this.passer.fillOrder.sendTransactionAsync(
         signedOrder,
         signedOrder.takerAssetAmount,
         salt,
@@ -575,11 +575,11 @@ export default class Satellites {
   }
 
   async cancel(signedOrder: SignedOrder) {
-    await this.exchangeWrapper.cancelOrderAsync(signedOrder)
+    return await this.exchangeWrapper.cancelOrderAsync(signedOrder)
   }
 
   async gift(tokenAddress: string, receiverAddress: string, senderAddress: string, tokenId: number) {
-    await this.erc721Token.transferFromAsync(tokenAddress, receiverAddress, senderAddress, new BigNumber(tokenId))
+    return await this.erc721Token.transferFromAsync(tokenAddress, receiverAddress, senderAddress, new BigNumber(tokenId))
   }
 
   async getOrders() {

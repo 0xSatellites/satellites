@@ -19,6 +19,14 @@ export default class Index extends Vue {
   assets = null
   async mounted() {
     const assets = await this.$satellites.getAssetDataForOwner(this.$route.params.address)
+    const refinedOrders = await this.$satellites.getOrders()
+    for (const asset of assets) {
+      if (refinedOrders[asset.asset_contract.address]) {
+        if (refinedOrders[asset.asset_contract.address][asset.token_id]) {
+          asset.order = refinedOrders[asset.asset_contract.address][asset.token_id]
+        }
+      }
+    }
     this.assets = assets
   }
 }

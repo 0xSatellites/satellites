@@ -14,8 +14,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import logoPc from '~/assets/img/logo_pc.svg'
-import logoSp from '~/assets/img/logo_sp.svg'
+const logoPc = require('~/assets/img/logo_pc.svg')
+const logoSp = require('~/assets/img/logo_sp.svg')
 
 @Component
 export default class Header extends Vue {

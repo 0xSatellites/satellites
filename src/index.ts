@@ -18,8 +18,6 @@ import { Web3Wrapper } from '@0x/web3-wrapper'
 
 import axios from 'axios'
 
-axiosRetry(axios, { retries: 3 })
-
 const DECIMALS = 18
 const GAS_LIMIT = 450000
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'

@@ -11,7 +11,8 @@ export default async function({ store, isServer }, inject) {
       '0x06012c8cf97bead5deae237070f9587f8e7a266d',
       '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
       '0x273f7f8e6489682df756151f5525576e322d51a3',
-      '0xdceaf1652a131f32a821468dc03a92df0edd86ea'
+      '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
+      '0xfac7bea255a6990f749363002136af6556b31e04'
     ],
     4: [
       '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',

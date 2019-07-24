@@ -75,6 +75,10 @@ const nuxtConfig: NuxtConfiguration = {
       accent: '#dbcb34'
     }
   },
+  manifest: {
+    background_color: '#fff',
+    theme_color: '#3498db'
+  },
   /*
    ** Build configuration
    */

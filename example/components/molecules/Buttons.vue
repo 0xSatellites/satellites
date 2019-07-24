@@ -236,7 +236,7 @@ const addressToFeeRecipient = {
 const defaultRatio = 500
 const feeBase = 10000
 
-const exceptions = networkIdToexceptions[process.env.NETWORK_ID || 4]
+const exceptions = networkIdToexceptions[process.env.NETWORK_ID || 1]
 
 const contracts = {}
 

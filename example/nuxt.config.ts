@@ -5,7 +5,7 @@ const nuxtConfig: NuxtConfiguration = {
 
   env: {
     NETWORK_ID: process.env.NETWORK_ID || '1',
-    RELAYER: process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/',
+    RELAYER: process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
   },
   /*
    ** Headers of the page
@@ -22,8 +22,12 @@ const nuxtConfig: NuxtConfiguration = {
       { hid: 'og:url', property: 'og:url', content: 'https://bazaaar.io' },
       { hid: 'og:title', property: 'og:title', content: 'Bazaaar.io' },
       { hid: 'og:description', property: 'og:description', content: 'Bazaaar.io, the 0x satellites NFT market place.' },
-      { hid: 'og:image', property: 'og:image', content: 'https://ipfs.io/ipfs/QmQP7vu6piKFCT9CKrN7NyNZL3P2sw9E6pR4sRnFx2gWWc' },
-      { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image'}
+      {
+        hid: 'og:image',
+        property: 'og:image',
+        content: 'https://ipfs.io/ipfs/QmQP7vu6piKFCT9CKrN7NyNZL3P2sw9E6pR4sRnFx2gWWc'
+      },
+      { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -44,10 +48,7 @@ const nuxtConfig: NuxtConfiguration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [
-    '@/plugins/initialize.ts',
-    { src: '@/plugins/ga.js', ssr: false }
-  ],
+  plugins: ['@/plugins/initialize.ts', { src: '@/plugins/ga.js', ssr: false }],
   /*
    ** Nuxt.js modules
    */

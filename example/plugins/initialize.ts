@@ -1,7 +1,7 @@
-const Web3 = require('web3')
 import Satellites from 'satellites.js'
+const Web3 = require('web3')
 
-export default async function({ store, isServer }, inject) {
+export default function({ store, isServer }, inject) {
   if (isServer) {
     return
   }
@@ -36,13 +36,15 @@ export default async function({ store, isServer }, inject) {
 
   if (!ethereum && !web3) {
     inject('web3', new Web3(infura[NETWORK_ID]))
+    const satellites = new Satellites(NETWORK_ID, store.$web3.currentProvider, RELAYER, tokens[NETWORK_ID])
+    inject('satellites', satellites)
     return
   }
 
   if (ethereum) {
     inject('web3', new Web3(ethereum))
-    ethereum.enable().then(function(accounts){
-      if(accounts.length > 0){
+    ethereum.enable().then(function(accounts) {
+      if (accounts.length > 0) {
         store.commit('address', accounts[0].toLowerCase())
       }
     })
@@ -53,8 +55,8 @@ export default async function({ store, isServer }, inject) {
   const satellites = new Satellites(NETWORK_ID, store.$web3.currentProvider, RELAYER, tokens[NETWORK_ID])
   inject('satellites', satellites)
 
-  store.$web3.eth.getAccounts().then(function(accounts){
-    if(accounts.length > 0){
+  store.$web3.eth.getAccounts().then(function(accounts) {
+    if (accounts.length > 0) {
       store.commit('address', accounts[0].toLowerCase())
       setInterval(async () => {
         const accounts = await store.$web3.eth.getAccounts()
@@ -65,5 +67,4 @@ export default async function({ store, isServer }, inject) {
       }, 100)
     }
   })
-
 }

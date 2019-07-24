@@ -4,8 +4,8 @@ const nuxtConfig: NuxtConfiguration = {
   mode: 'spa',
 
   env: {
-    NETWORK_ID: process.env.NETWORK_ID || '4',
-    RELAYER: process.env.RELAYER || 'https://relayer.ookimaki.com/v2/',
+    NETWORK_ID: process.env.NETWORK_ID || '1',
+    RELAYER: process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/',
   },
   /*
    ** Headers of the page

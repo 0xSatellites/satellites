@@ -88,3 +88,5 @@ sw.*
 .DS_Store
 
 public
+
+.firebase

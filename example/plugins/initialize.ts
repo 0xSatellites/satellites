@@ -26,8 +26,8 @@ export default async function({ store, isServer }, inject) {
     4: 'https://rinkeby.infura.io/'
   }
 
-  const NETWORK_ID = Number(process.env.NETWORK_ID) || 4
-  const RELAYER = process.env.RELAYER || 'https://relayer.ookimaki.com/v2/'
+  const NETWORK_ID = Number(process.env.NETWORK_ID) || 1
+  const RELAYER = process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
 
   const web3 = (window as any).web3
   const ethereum = (window as any).ethereum

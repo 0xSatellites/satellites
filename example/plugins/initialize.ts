@@ -1,4 +1,4 @@
-import Satellites from 'satellites.js'
+import Satellites from '../../src/index'
 const Web3 = require('web3')
 
 export default function({ store, isServer }, inject) {

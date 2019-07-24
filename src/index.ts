@@ -18,6 +18,8 @@ import { Web3Wrapper } from '@0x/web3-wrapper'
 
 import axios from 'axios'
 
+axiosRetry(axios, { retries: 3 })
+
 const DECIMALS = 18
 const GAS_LIMIT = 450000
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -606,7 +608,7 @@ export default class Satellites {
   async getAssetDataForOrders(refinedOrders: RefinedOrders) {
     const assets:any = []
     for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.apiBase}?limit=100&asset_contract_address=${tokenAddress}`
+      let requestURL = `${this.apiBase}?limit=300&asset_contract_address=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {
         requestURL = `${requestURL}&token_ids=${tokenId}`
       }
@@ -662,7 +664,7 @@ export default class Satellites {
       }
     }
     const assets = await axios.get(
-      `${this.apiBase}?limit=100&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
+      `${this.apiBase}?limit=300&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
     )
     return assets.data.assets
   }

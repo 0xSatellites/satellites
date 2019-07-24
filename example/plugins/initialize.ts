@@ -41,7 +41,11 @@ export default async function({ store, isServer }, inject) {
 
   if (ethereum) {
     inject('web3', new Web3(ethereum))
-    ethereum.enable()
+    ethereum.enable().then(function(accounts){
+      if(accounts.length > 0){
+        store.commit('address', accounts[0].toLowerCase())
+      }
+    })
   } else if (web3) {
     inject('web3', new Web3(web3.currentProvider))
   }
@@ -49,14 +53,17 @@ export default async function({ store, isServer }, inject) {
   const satellites = new Satellites(NETWORK_ID, store.$web3.currentProvider, RELAYER, tokens[NETWORK_ID])
   inject('satellites', satellites)
 
-  const accounts = await store.$web3.eth.getAccounts()
-  store.commit('address', accounts[0].toLowerCase())
-
-  setInterval(async () => {
-    const accounts = await store.$web3.eth.getAccounts()
-    const address = accounts[0].toLowerCase()
-    if (store.state.address !== address) {
-      location.reload()
+  store.$web3.eth.getAccounts().then(function(accounts){
+    if(accounts.length > 0){
+      store.commit('address', accounts[0].toLowerCase())
+      setInterval(async () => {
+        const accounts = await store.$web3.eth.getAccounts()
+        const address = accounts[0].toLowerCase()
+        if (store.state.address !== address) {
+          location.reload()
+        }
+      }, 100)
     }
-  }, 100)
+  })
+
 }

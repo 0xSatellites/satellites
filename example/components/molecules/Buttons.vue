@@ -51,7 +51,7 @@
             </div>
             <div v-if="dialogKey == 2">
               <v-card-title>
-                <span class="grey--text">Input Price.</span>
+                <span class="grey--text">Input Price. It will be sold with {{ computeFee() }}% fee. </span>
               </v-card-title>
               <v-card-text>
                 <v-text-field v-model="takerAssetAmount" label="amount" placeholder="ETH"></v-text-field>
@@ -249,6 +249,13 @@ export default class Buttons extends Vue {
   etherscan = ''
 
   @Prop() asset
+  computeFee() {
+    if (addressToFeeRatio[this.asset.asset_contract.address]) {
+      return addressToFeeRatio[this.asset.asset_contract.address] / 100
+    } else {
+      return defaultRatio / 100
+    }
+  }
   openDialog(dialogKey) {
     this.dialogDisplay = true
     this.dialogKey = dialogKey

@@ -4,7 +4,12 @@
     <nuxt-link :src="logoSp" tag="img" height="60%" to="/" class="hidden-sm-and-up"> </nuxt-link>
     <v-spacer></v-spacer>
     <v-toolbar-items>
-      <v-btn v-if="this.$store.state.address" flat color="primary" :to="'/account/' + this.$store.state.address">
+      <v-btn
+        v-if="this.$store.state.address"
+        flat
+        color="primary"
+        :to="'/account?address=' + this.$store.state.address"
+      >
         MyPage
       </v-btn>
       <v-btn flat color="primary" :to="'/'">Market</v-btn>

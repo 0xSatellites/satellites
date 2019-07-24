@@ -19,8 +19,7 @@ import { Web3Wrapper } from '@0x/web3-wrapper'
 import axios from 'axios'
 
 const DECIMALS = 18
-const GAS_LIMIT = 4000000
-const DEFAULT_RELAYER = 'http://35.200.51.207:3000/v2/'
+const GAS_LIMIT = 450000
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const distributer_abi = [
@@ -323,8 +322,8 @@ interface RefinedOrders {
 
 const networkToSatellitesContractAddresses: { [networkId: number]: SatellitesContractAddresses } = {
   1: {
-    distributer: '0x080bf510fcbf18b91105470639e9561022937712',
-    passer: '0x95e6f48254609a6ee006f7d493c8e5fb97094cef'
+    distributer: '0x38c751500bfbf3f525b37a393a2f0c1bf5e8386a',
+    passer: '0x1416e2cfd202916037f7862c66f8f57ebe792dfd'
   },
   4: {
     distributer: '0x4618b3d9091387f6ebe2ab241dced31f863a5c07',
@@ -455,10 +454,10 @@ export default class Satellites {
   public apiBase: string
   public whitelists: string[] | undefined
 
-  constructor(networkId: number, supportedProvider: SupportedProvider, relayer?: string, whitelists?: string[], txDefaults?: Partial<TxData>) {
+  constructor(networkId: number, supportedProvider: SupportedProvider, relayer: string, whitelists?: string[], txDefaults?: Partial<TxData>) {
     this.networkId = networkId
     this.supportedProvider = supportedProvider
-    this.httpClient = new HttpClient(relayer || DEFAULT_RELAYER)
+    this.httpClient = new HttpClient(relayer)
     this.distributor = new DistributerContract(
       distributer_abi,
       networkToSatellitesContractAddresses[this.networkId].distributer,
@@ -605,21 +604,16 @@ export default class Satellites {
   }
 
   async getAssetDataForOrders(refinedOrders: RefinedOrders) {
-    const metadataPromises:any = []
+    const assets:any = []
     for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.apiBase}?asset_contract_address=${tokenAddress}`
+      let requestURL = `${this.apiBase}?limit=100&asset_contract_address=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {
         requestURL = `${requestURL}&token_ids=${tokenId}`
       }
-      metadataPromises.push(axios.get(requestURL))
-    }
-    const metadataResolved = await Promise.all(metadataPromises)
-    const assets:any = []
-    for (const metadataPerAsset of metadataResolved) {
-      for (const metadata of (metadataPerAsset as any).data.assets) {
-        const asset = metadata
-        if (refinedOrders[metadata.asset_contract.address][metadata.token_id]) {
-          asset.order = refinedOrders[metadata.asset_contract.address][metadata.token_id]
+      const response = await axios.get(requestURL)
+      for (const asset of response.data.assets) {
+        if (refinedOrders[asset.asset_contract.address][asset.token_id]) {
+          asset.order = refinedOrders[asset.asset_contract.address][asset.token_id]
         }
         assets.push(asset)
       }
@@ -668,7 +662,7 @@ export default class Satellites {
       }
     }
     const assets = await axios.get(
-      `${this.apiBase}?order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
+      `${this.apiBase}?limit=100&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
     )
     return assets.data.assets
   }

@@ -18,9 +18,8 @@ import Detail from '~/components/organisms/Detail.vue'
 export default class Index extends Vue {
   asset = null
   async mounted() {
-    console.log(this.$route)
-    const tokenId = this.$route.params.id
-    const assetContractAddress = this.$route.params.address
+    const tokenId = this.$route.query.id
+    const assetContractAddress = this.$route.query.address
     const asset = await this.$satellites.getAssetData(assetContractAddress, tokenId)
     const order = await this.$satellites.getOrder(assetContractAddress, tokenId)
     asset.order = order

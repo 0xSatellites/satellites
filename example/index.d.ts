@@ -3,6 +3,7 @@ declare module '*.vue' {
       interface Vue {
         $satellites: any;
         $web3: any;
+        $exceptions: any;
       }
     }
   }

@@ -10,5 +10,8 @@
       "pretty": true,
       "newLine": "lf",
       "outDir": "dist"
-    }
+    },
+    "include": [
+      "src/*"
+    ],
   }

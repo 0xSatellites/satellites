@@ -28,7 +28,7 @@ export default class Index extends Vue {
     const assets = await this.getAssetDataForOrders(refinedOrders)
     this.assets = assets
   }
-  async getAssetDataForOrders(refinedOrders: RefinedOrders) {
+  async getAssetDataForOrders(refinedOrders) {
     const assets: any = []
     for (const tokenAddress in refinedOrders) {
       let requestURL = `${this.apiBase}?limit=300&asset_contract_address=${tokenAddress}`

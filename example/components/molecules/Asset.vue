@@ -34,6 +34,7 @@ const addressToFeeRatio = {
   '0xdceaf1652a131f32a821468dc03a92df0edd86ea': 1000
 }
 
+const defaultRatio = 500
 const feeBase = 10000
 
 @Component
@@ -47,7 +48,9 @@ export default class Asset extends Vue {
       const fee = price.times(feeRatio)
       amount = price.plus(fee)
     } else {
-      amount = price
+      const feeRatio = defaultRatio / feeBase
+      const fee = price.times(feeRatio)
+      amount = price.plus(fee)
     }
     return this.$web3.utils.fromWei(amount.toString())
   }

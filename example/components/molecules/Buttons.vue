@@ -233,6 +233,7 @@ const addressToFeeRecipient = {
   '0xdceaf1652a131f32a821468dc03a92df0edd86ea': '0x070c22f0887bd1836A1E7C9ae0cd88108e0ECB19'
 }
 
+const defaultRatio = 500
 const feeBase = 10000
 
 const exceptions = networkIdToexceptions[process.env.NETWORK_ID || 4]
@@ -351,6 +352,11 @@ export default class Buttons extends Vue {
       const actualFee = fee.div(2)
       recipients = [addressToFeeRecipient[this.asset.asset_contract.address], blockbaseAddress]
       fees = [actualFee, actualFee]
+    } else {
+      const feeRatio = defaultRatio / feeBase
+      const fee = this.asset.order.takerAssetAmount.times(feeRatio)
+      recipients = [blockbaseAddress]
+      fees = [fee]
     }
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)
     this.etherscan = `https://etherscan.io/tx/${txhash}`

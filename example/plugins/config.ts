@@ -12,7 +12,7 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
 }
 
 const networkIdToAPI: { [networkId: number]: string } = {
-  1: `https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/`,
+  1: `https://asia-northeast1-bold-vial-233010.cloudfunctions.net/`,
   4: `https://rinkeby-api.opensea.io/api/v1/assets`
 }
 

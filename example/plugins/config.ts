@@ -30,13 +30,13 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
     },
     {
       contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
-      symbol: 'MyCryptoHeroes:Hero',
-      name: 'MCHH'
+      symbol: 'MCHH',
+      name: 'MyCryptoHeroes:Hero'
     },
     {
       contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
-      symbol: 'MyCryptoHeroes:Extensions',
-      name: 'MCHE'
+      symbol: 'MCHE',
+      name: 'MyCryptoHeroes:Extensions'
     },
     {
       contract: '0xfac7bea255a6990f749363002136af6556b31e04',

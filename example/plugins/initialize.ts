@@ -2,7 +2,7 @@ import Satellites from '../../src/index'
 import { config } from './config'
 const Web3 = require('web3')
 
-export default function({ store, isServer }, inject) {
+export default async function({ store, isServer }, inject) {
   if (isServer) {
     return
   }
@@ -43,16 +43,15 @@ export default function({ store, isServer }, inject) {
   )
   inject('satellites', satellites)
 
-  store.$web3.eth.getAccounts().then(function(accounts) {
-    if (accounts.length > 0) {
-      store.commit('address', accounts[0].toLowerCase())
-      setInterval(async () => {
-        const accounts = await store.$web3.eth.getAccounts()
-        const address = accounts[0].toLowerCase()
-        if (store.state.address !== address) {
-          location.reload()
-        }
-      }, 100)
-    }
-  })
+  const accounts = await store.$web3.eth.getAccounts()
+  if (accounts.length > 0) {
+    store.commit('address', accounts[0].toLowerCase())
+    setInterval(async () => {
+      const accounts = await store.$web3.eth.getAccounts()
+      const address = accounts[0].toLowerCase()
+      if (store.state.address !== address) {
+        location.reload()
+      }
+    }, 100)
+  }
 }

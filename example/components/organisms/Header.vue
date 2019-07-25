@@ -4,12 +4,7 @@
     <nuxt-link :src="logoSp" tag="img" height="60%" to="/" class="hidden-sm-and-up"> </nuxt-link>
     <v-spacer></v-spacer>
     <v-toolbar-items>
-      <v-btn
-        v-if="this.$store.state.address"
-        flat
-        color="primary"
-        :to="'/account?address=' + this.$store.state.address"
-      >
+      <v-btn v-if="this.$store.state.address" flat color="primary" to="/mypage">
         MyPage
       </v-btn>
       <v-menu offset-y>
@@ -18,15 +13,11 @@
             Market
           </v-btn>
         </template>
-        <v-list v-for="token in this.$store.state.tokens" :key="token.contract">
-          <v-list-tile>
-            <v-btn flat color="primary" :to="'/'">Market</v-btn>
-          </v-list-tile>
-          <v-list-tile>
-            <v-btn flat color="primary" :to="'/'">Market</v-btn>
-          </v-list-tile>
-          <v-list-tile>
-            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+        <v-list>
+          <v-list-tile v-for="token in this.$config.tokens" :key="token.contract">
+            <a :href="`/?${token.contract}`"
+              ><v-btn flat color="primary">{{ token.name }}</v-btn></a
+            >
           </v-list-tile>
         </v-list>
       </v-menu>
@@ -43,6 +34,5 @@ const logoSp = require('~/assets/img/logo_sp.svg')
 export default class Header extends Vue {
   logoPc = logoPc
   logoSp = logoSp
-  items = [{ index: 1, title: 'test' }, { index: 2, title: 'ok' }, { index: 3, title: 'tee' }]
 }
 </script>

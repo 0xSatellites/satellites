@@ -18,7 +18,11 @@ import Assets from '~/components/organisms/Assets.vue'
 export default class Index extends Vue {
   assets = null
   async mounted() {
-    const refinedOrders = await this.$satellites.getOrders()
+    let addresses
+    if (!this.isEmpty(this.$route.query)) {
+      addresses = [Object.keys(this.$route.query)[0]]
+    }
+    const refinedOrders = await this.$satellites.getOrders(addresses)
     const assets = await this.getAssetDataForOrders(refinedOrders)
     this.assets = assets
   }
@@ -38,6 +42,12 @@ export default class Index extends Vue {
       }
     }
     return assets
+  }
+  isEmpty(obj) {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) return false
+    }
+    return true
   }
 }
 </script>

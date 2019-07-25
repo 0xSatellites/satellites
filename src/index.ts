@@ -581,22 +581,23 @@ export default class Satellites {
     return await this.erc721Token.transferFromAsync(tokenAddress, receiverAddress, senderAddress, new BigNumber(tokenId))
   }
 
-  async getOrders() {
+  async getOrders(tokenAddresses?: string[]) {
     const orders = await this.httpClient.getOrdersAsync({ networkId: this.networkId })
     const refinedOrders: RefinedOrders = {}
     for (const order of orders.records) {
       const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
       const tokenId = assetData.tokenId.toString()
-
       if(!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
-        if (!refinedOrders[assetData.tokenAddress]) {
-          refinedOrders[assetData.tokenAddress] = {}
-        }
-        if (
-          !refinedOrders[assetData.tokenAddress][tokenId] ||
-          refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
-        ) {
-          refinedOrders[assetData.tokenAddress][tokenId] = order.order
+        if(!tokenAddresses || tokenAddresses.length === 0 || tokenAddresses.includes(assetData.tokenAddress)) {
+          if (!refinedOrders[assetData.tokenAddress]) {
+            refinedOrders[assetData.tokenAddress] = {}
+          }
+          if (
+            !refinedOrders[assetData.tokenAddress][tokenId] ||
+            refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
+          ) {
+            refinedOrders[assetData.tokenAddress][tokenId] = order.order
+          }
         }
       }
     }

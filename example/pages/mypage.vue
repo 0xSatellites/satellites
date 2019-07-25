@@ -18,7 +18,7 @@ import Assets from '~/components/organisms/Assets.vue'
 export default class Index extends Vue {
   assets = null
   async mounted() {
-    const assets = await this.getAssetDataForOwner(this.$route.query.address as string)
+    const assets = await this.getAssetDataForOwner(this.$store.state.address as string)
     const refinedOrders = await this.$satellites.getOrders()
     for (const asset of assets) {
       if (refinedOrders[asset.asset_contract.address]) {

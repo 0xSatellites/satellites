@@ -86,7 +86,3 @@ sw.*
 
 # Mac OSX
 .DS_Store
-
-public
-
-.firebase

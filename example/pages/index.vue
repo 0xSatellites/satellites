@@ -43,46 +43,63 @@
         <v-layout row wrap justify-center>
           <v-flex xs6 sm4>
             <a href="https://www.cryptokitties.co/" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/CryptoKitties.png')" aspect-ratio="1.2"></v-img>
               </v-card>
             </a>
           </v-flex>
           <v-flex xs6 sm4>
             <a href="https://www.crypt-oink.io/" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/Crypt_Oink.png')" aspect-ratio="1.2"></v-img>
               </v-card>
             </a>
           </v-flex>
           <v-flex xs6 sm4>
             <a href="https://www.mycryptoheroes.net/" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/mch_logo.png')" aspect-ratio="1.2" contain></v-img>
               </v-card>
             </a>
           </v-flex>
           <v-flex xs6 sm4>
             <a href="https://ens.domains/" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/ens.png')" aspect-ratio="1.2" contain></v-img>
               </v-card>
             </a>
           </v-flex>
           <v-flex xs6 sm4>
             <a href="https://www.cryptovoxels.com/" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/CryptovoxelsParcel.jpg')" aspect-ratio="1.2" contain></v-img>
               </v-card>
             </a>
           </v-flex>
           <v-flex xs6 sm4>
             <a href="http://maltinerecords.cs8.biz/b1.html" target="_blank">
-              <v-card class="ma-1">
+              <v-card flat class="ma-1">
                 <v-img :src="require('~/assets/img/asset/mrm.png')" aspect-ratio="1.2" contain></v-img>
               </v-card>
             </a>
           </v-flex>
+        </v-layout>
+      </v-container>
+    </section>
+    <section class="c-index">
+      <h2 class="c-index__title">Tweets</h2>
+      <v-container grid-list-md align-center>
+        <v-layout justify-center>
+          <a
+            class="twitter-timeline"
+            data-width="420"
+            data-height="600"
+            data-theme="light"
+            data-link-color="#2B7BB9"
+            href="https://twitter.com/bazaaario?ref_src=twsrc%5Etfw"
+            >Tweets by bazaaario</a
+          >
+          <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         </v-layout>
       </v-container>
     </section>

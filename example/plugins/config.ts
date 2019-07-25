@@ -18,16 +18,16 @@ const networkIdToAPI: { [networkId: number]: string } = {
 
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
-    {
-      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
-      symbol: 'CK',
-      name: 'CryptoKitties'
-    },
-    {
-      contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
-      symbol: 'CTN',
-      name: 'Crypt-Oink'
-    },
+    // {
+    //   contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+    //   symbol: 'CK',
+    //   name: 'CryptoKitties'
+    // },
+    // {
+    //   contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
+    //   symbol: 'CTN',
+    //   name: 'Crypt-Oink'
+    // },
     {
       contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
       symbol: 'MCHH',

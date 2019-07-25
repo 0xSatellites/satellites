@@ -15,7 +15,7 @@
         </template>
         <v-list>
           <v-list-tile v-for="token in this.$config.tokens" :key="token.contract">
-            <a :href="`/?${token.contract}`"
+            <a :href="`/market?address=${token.contract}`"
               ><v-btn flat color="primary">{{ token.name }}</v-btn></a
             >
           </v-list-tile>
@@ -36,3 +36,9 @@ export default class Header extends Vue {
   logoSp = logoSp
 }
 </script>
+
+<style scoped>
+a {
+  text-decoration: none;
+}
+</style>

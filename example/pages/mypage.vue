@@ -37,8 +37,9 @@ export default class Index extends Vue {
         assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
       }
     }
+    console.log(`${this.$config.api}getAssetsByOwnerAddress?owner=${owner}${assetContractAddressesQuery}`)
     const assets = await this.$axios.get(
-      `${this.$config.opensea}?limit=300&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
+      `${this.$config.api}getAssetsByOwnerAddress?owner=${owner}${assetContractAddressesQuery}`
     )
     return assets.data.assets
   }

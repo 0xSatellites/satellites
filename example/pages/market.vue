@@ -18,19 +18,27 @@ import Assets from '~/components/organisms/Assets.vue'
 export default class Index extends Vue {
   assets = null
   async mounted() {
-    const refinedOrders = await this.$satellites.getOrders([this.$route.query.address])
+    let params
+    if (this.$route.query.address) {
+      params = [this.$route.query.address]
+    }
+    const refinedOrders = await this.$satellites.getOrders(params)
     const assets = await this.getAssetDataForOrders(refinedOrders)
     this.assets = assets
   }
   async getAssetDataForOrders(refinedOrders) {
     const assets: any = []
+    const promisses: any = []
     for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.$config.opensea}?limit=300&asset_contract_address=${tokenAddress}`
+      let requestURL = `${this.$config.api}getAssetsByAssetAddressesTokenIds?asset_contract_addresses=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {
         requestURL = `${requestURL}&token_ids=${tokenId}`
       }
-      const response = await this.$axios.get(requestURL)
-      for (const asset of response.data.assets) {
+      promisses.push(this.$axios.get(requestURL))
+    }
+    const resolves = await Promise.all(promisses)
+    for (const resolve of resolves) {
+      for (const asset of resolve.data.assets) {
         if (refinedOrders[asset.asset_contract.address][asset.token_id]) {
           asset.order = refinedOrders[asset.asset_contract.address][asset.token_id]
         }
@@ -38,12 +46,6 @@ export default class Index extends Vue {
       }
     }
     return assets
-  }
-  isEmpty(obj) {
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) return false
-    }
-    return true
   }
 }
 </script>

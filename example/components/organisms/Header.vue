@@ -14,6 +14,13 @@
           </v-btn>
         </template>
         <v-list>
+          <v-list-tile>
+            <a href="/market">
+              <v-btn flat color="primary">
+                All Assets
+              </v-btn>
+            </a>
+          </v-list-tile>
           <v-list-tile v-for="token in this.$config.tokens" :key="token.contract">
             <a :href="`/market?address=${token.contract}`"
               ><v-btn flat color="primary">{{ token.name }}</v-btn></a

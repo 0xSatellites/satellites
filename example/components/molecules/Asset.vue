@@ -28,27 +28,18 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 const opensea = require('~/assets/img/opensea-logomark-flat-colored-blue.png')
 
-const addressToFeeRatio = {
-  '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': 1000,
-  '0x273f7f8e6489682df756151f5525576e322d51a3': 1000,
-  '0xdceaf1652a131f32a821468dc03a92df0edd86ea': 1000
-}
-
-const defaultRatio = 500
-const feeBase = 10000
-
 @Component
 export default class Asset extends Vue {
   @Prop() asset
   opensea = opensea
   computePrice(price) {
     let amount
-    if (addressToFeeRatio[this.asset.asset_contract.address]) {
-      const feeRatio = addressToFeeRatio[this.asset.asset_contract.address] / feeBase
+    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
+      const feeRatio = this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.feeBase
       const fee = price.times(feeRatio)
       amount = price.plus(fee)
     } else {
-      const feeRatio = defaultRatio / feeBase
+      const feeRatio = this.$config.defaultRatio / this.$config.feeBase
       const fee = price.times(feeRatio)
       amount = price.plus(fee)
     }

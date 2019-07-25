@@ -96,148 +96,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-const networkIdToexceptions = {
-  1: {
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'kittyIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ],
-    '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'entityIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ]
-  },
-  4: {
-    '0x16baf0de678e52367adc69fd067e5edd1d33e3bf': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'kittyIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ],
-    '0x587ae915d4ccaa5c2220c638069f2605e1f7404c': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'entityIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ]
-  }
-}
-
-const blockbaseAddress = '0xf9b744152a6897198b9B9999d8d340b59807595E'
-
-const addressToFeeRatio = {
-  '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': 1000,
-  '0x273f7f8e6489682df756151f5525576e322d51a3': 1000,
-  '0xdceaf1652a131f32a821468dc03a92df0edd86ea': 1000
-}
-
-const addressToFeeRecipient = {
-  '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': '0x5926824315aF6016f98E83De841C5B28b959DF51',
-  '0x273f7f8e6489682df756151f5525576e322d51a3': '0x070c22f0887bd1836A1E7C9ae0cd88108e0ECB19',
-  '0xdceaf1652a131f32a821468dc03a92df0edd86ea': '0x070c22f0887bd1836A1E7C9ae0cd88108e0ECB19'
-}
-
-const defaultRatio = 500
-const feeBase = 10000
-
-const exceptions = networkIdToexceptions[process.env.NETWORK_ID || 1]
-
 const contracts = {}
 
 @Component
@@ -250,10 +108,10 @@ export default class Buttons extends Vue {
 
   @Prop() asset
   computeFee() {
-    if (addressToFeeRatio[this.asset.asset_contract.address]) {
-      return addressToFeeRatio[this.asset.asset_contract.address] / 100
+    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
+      return this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.perBase
     } else {
-      return defaultRatio / 100
+      return this.$config.defaultRatio / this.$config.perBase
     }
   }
   openDialog(dialogKey) {
@@ -274,22 +132,22 @@ export default class Buttons extends Vue {
       this.$store.state.address,
       this.asset.token_id
     )
-    this.etherscan = `https://etherscan.io/tx/${txhash}`
+    this.etherscan = `${this.$config.etherscan}${txhash}`
     this.openDialog(6)
   }
   async sell() {
     let approved = false
-    if (!exceptions[this.asset.asset_contract.address]) {
+    if (!this.$config.exceptions[this.asset.asset_contract.address]) {
       approved = await this.$satellites.erc721Token.isApprovedForAllAsync(
         this.asset.asset_contract.address,
         this.$store.state.address,
         this.$satellites.contractAddresses.erc721Proxy
       )
     } else {
-      const name = exceptions[this.asset.asset_contract.address][0].name
+      const name = this.$config.exceptions[this.asset.asset_contract.address][0].name
       if (!contracts[this.asset.asset_contract.address]) {
         const contract = new this.$web3.eth.Contract(
-          exceptions[this.asset.asset_contract.address],
+          this.$config.exceptions[this.asset.asset_contract.address],
           this.asset.asset_contract.address
         )
         contracts[this.asset.asset_contract.address] = contract
@@ -318,20 +176,20 @@ export default class Buttons extends Vue {
 
   async executeApprove() {
     this.openDialog(3)
-    if (!exceptions[this.asset.asset_contract.address]) {
+    if (!this.$config.exceptions[this.asset.asset_contract.address]) {
       const txhash = await this.$satellites.erc721Token.setApprovalForAllAsync(
         this.asset.asset_contract.address,
         this.$store.state.address,
         this.$satellites.contractAddresses.erc721Proxy,
         true
       )
-      this.etherscan = `https://etherscan.io/tx/${txhash}`
+      this.etherscan = `${this.$config.etherscan}${txhash}`
       this.openDialog(6)
     } else {
-      const name = exceptions[this.asset.asset_contract.address][1].name
+      const name = this.$config.exceptions[this.asset.asset_contract.address][1].name
       if (!contracts[this.asset.asset_contract.address]) {
         const contract = new this.$web3.eth.Contract(
-          exceptions[this.asset.asset_contract.address],
+          this.$config.exceptions[this.asset.asset_contract.address],
           this.asset.asset_contract.address
         )
         contracts[this.asset.asset_contract.address] = contract
@@ -343,7 +201,7 @@ export default class Buttons extends Vue {
       )
         .send({ from: this.$store.state.address })
         .on('transactionHash', function(txhash) {
-          self.etherscan = `https://etherscan.io/tx/${txhash}`
+          self.etherscan = self.$config.etherscan + txhash
           self.openDialog(6)
         })
     }
@@ -353,27 +211,30 @@ export default class Buttons extends Vue {
     this.openDialog(4)
     let recipients: string[] | undefined
     let fees: string[] | undefined
-    if (addressToFeeRatio[this.asset.asset_contract.address]) {
-      const feeRatio = addressToFeeRatio[this.asset.asset_contract.address] / feeBase
+    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
+      const feeRatio = this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.feeBase
       const fee = this.asset.order.takerAssetAmount.times(feeRatio)
       const actualFee = fee.div(2)
-      recipients = [addressToFeeRecipient[this.asset.asset_contract.address], blockbaseAddress]
+      recipients = [
+        this.$config.addressToFee[this.asset.asset_contract.address].recipients,
+        this.$config.blockbaseAddress
+      ]
       fees = [actualFee, actualFee]
     } else {
-      const feeRatio = defaultRatio / feeBase
+      const feeRatio = this.$config.defaultRatio / this.$config.feeBase
       const fee = this.asset.order.takerAssetAmount.times(feeRatio)
-      recipients = [blockbaseAddress]
+      recipients = [this.$config.blockbaseAddress]
       fees = [fee]
     }
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)
-    this.etherscan = `https://etherscan.io/tx/${txhash}`
+    this.etherscan = `${this.$config.etherscan}${txhash}`
     this.openDialog(6)
   }
 
   async executeCancel() {
     this.openDialog(4)
     const txhash = await this.$satellites.cancel(this.asset.order)
-    this.etherscan = `https://etherscan.io/tx/${txhash}`
+    this.etherscan = `${this.$config.etherscan}${txhash}`
     this.openDialog(6)
   }
 }

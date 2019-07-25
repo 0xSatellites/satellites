@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <v-toolbar absolute flat clipped-left app class="white">
     <nuxt-link :src="logoPc" tag="img" height="60%" to="/" class="hidden-sm-and-down"> </nuxt-link>
@@ -12,7 +13,27 @@
       >
         MyPage
       </v-btn>
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn flat color="primary" v-on="on">
+            Dropdown
+          </v-btn>
+        </template>
+          <v-layout row wrap>
+            <v-flex xs12>
+            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+            <v-btn flat color="primary" :to="'/'">Market</v-btn>
+            </v-flex>
+          </v-layout>
+      </v-menu>
+
+      <!--
       <v-btn flat color="primary" :to="'/'">Market</v-btn>
+      -->
     </v-toolbar-items>
   </v-toolbar>
 </template>
@@ -26,5 +47,6 @@ const logoSp = require('~/assets/img/logo_sp.svg')
 export default class Header extends Vue {
   logoPc = logoPc
   logoSp = logoSp
+  items = [{ index: 1, title: 'test' }, { index: 2, title: 'ok' }, { index: 3, title: 'tee' }]
 }
 </script>

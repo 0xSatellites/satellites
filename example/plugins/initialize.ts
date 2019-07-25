@@ -18,7 +18,7 @@ export default function({ store, isServer }, inject) {
       store.$config.networkId,
       store.$web3.currentProvider,
       store.$config.relayer,
-      store.$config.tokens
+      store.$config.whitelists
     )
     inject('satellites', satellites)
     return
@@ -39,7 +39,7 @@ export default function({ store, isServer }, inject) {
     store.$config.networkId,
     store.$web3.currentProvider,
     store.$config.relayer,
-    store.$config.tokens
+    store.$config.whitelists
   )
   inject('satellites', satellites)
 

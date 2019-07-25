@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <v-toolbar absolute flat clipped-left app class="white">
     <nuxt-link :src="logoPc" tag="img" height="60%" to="/" class="hidden-sm-and-down"> </nuxt-link>
@@ -13,27 +12,24 @@
       >
         MyPage
       </v-btn>
-
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn flat color="primary" v-on="on">
-            Dropdown
+            Market
           </v-btn>
         </template>
-          <v-layout row wrap>
-            <v-flex xs12>
+        <v-list v-for="token in this.$store.state.tokens" :key="token.contract">
+          <v-list-tile>
             <v-btn flat color="primary" :to="'/'">Market</v-btn>
+          </v-list-tile>
+          <v-list-tile>
             <v-btn flat color="primary" :to="'/'">Market</v-btn>
+          </v-list-tile>
+          <v-list-tile>
             <v-btn flat color="primary" :to="'/'">Market</v-btn>
-            <v-btn flat color="primary" :to="'/'">Market</v-btn>
-            <v-btn flat color="primary" :to="'/'">Market</v-btn>
-            </v-flex>
-          </v-layout>
+          </v-list-tile>
+        </v-list>
       </v-menu>
-
-      <!--
-      <v-btn flat color="primary" :to="'/'">Market</v-btn>
-      -->
     </v-toolbar-items>
   </v-toolbar>
 </template>

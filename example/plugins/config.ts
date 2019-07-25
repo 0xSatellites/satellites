@@ -11,20 +11,65 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
   4: 'https://rinkeby.etherscan.io/tx/'
 }
 
-const networkIdToTokens: { [networkId: number]: string[] } = {
+const networkIdToOpenSea: { [networkId: number]: string } = {
+  1: `https://api.opensea.io/api/v1/assets`,
+  4: `https://rinkeby-api.opensea.io/api/v1/assets`
+}
+
+const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d',
-    '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
-    '0x273f7f8e6489682df756151f5525576e322d51a3',
-    '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
-    '0xfac7bea255a6990f749363002136af6556b31e04',
-    '0x79986af15539de2db9a5086382daeda917a9cf0c'
+    {
+      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+      symbol: 'CK',
+      name: 'CryptoKitties'
+    },
+    {
+      contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
+      symbol: 'CTN',
+      name: 'Crypt-Oink'
+    },
+    {
+      contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
+      symbol: 'MyCryptoHeroes:Hero',
+      name: 'MCHH'
+    },
+    {
+      contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
+      symbol: 'MyCryptoHeroes:Extensions',
+      name: 'MCHE'
+    },
+    {
+      contract: '0xfac7bea255a6990f749363002136af6556b31e04',
+      symbol: 'ENS',
+      name: 'Ether Name Service'
+    },
+    {
+      contract: '0x79986af15539de2db9a5086382daeda917a9cf0c',
+      symbol: 'CVPA',
+      name: 'Cryptovoxels Parcel'
+    }
   ],
   4: [
-    '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',
-    '0x5220debd5a575d1bf85b5531c9e0f6ced243975c',
-    '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
-    '0x587ae915d4ccaa5c2220c638069f2605e1f7404c'
+    {
+      contract: '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',
+      symbol: 'CK',
+      name: 'CryptoKitties'
+    },
+    {
+      contract: '0x5220debd5a575d1bf85b5531c9e0f6ced243975c',
+      symbol: 'CTN',
+      name: 'Crypt-Oink'
+    },
+    {
+      contract: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
+      symbol: 'MyCryptoHeroes:Hero',
+      name: 'MCHH'
+    },
+    {
+      contract: '0x587ae915d4ccaa5c2220c638069f2605e1f7404c',
+      symbol: 'MyCryptoHeroes:Extensions',
+      name: 'MCHE'
+    }
   ]
 }
 
@@ -166,13 +211,20 @@ const addressToFee = {
   }
 }
 
+const whitelists: any[] = []
+for (let i = 0; i < networkIdToTokens[NETWORK_ID].length; i++) {
+  whitelists.push(networkIdToTokens[NETWORK_ID][i].contract)
+}
+
 export const config = {
   networkId: NETWORK_ID,
   relayer: RELAYER,
   exceptions: networkIdToExceptions[NETWORK_ID],
   infura: networkIdToInfura[NETWORK_ID],
   etherscan: networkIdToEtherscan[NETWORK_ID],
+  opensea: networkIdToOpenSea[NETWORK_ID],
   tokens: networkIdToTokens[NETWORK_ID],
+  whitelists: whitelists,
   addressToFee: addressToFee,
   blockbaseAddress: '0xf9b744152a6897198b9B9999d8d340b59807595E',
   defaultRatio: 500,

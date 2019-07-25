@@ -10,11 +10,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import Assets from '~/components/organisms/Assets.vue'
 
-const networkToAssetMetadataAPIBase: { [networkId: number]: string } = {
-  1: `https://api.opensea.io/api/v1/assets`,
-  4: `https://rinkeby-api.opensea.io/api/v1/assets`
-}
-
 @Component({
   components: {
     Assets
@@ -22,7 +17,6 @@ const networkToAssetMetadataAPIBase: { [networkId: number]: string } = {
 })
 export default class Index extends Vue {
   assets = null
-  apiBase = networkToAssetMetadataAPIBase[process.env.NETWORK_ID || 1]
   async mounted() {
     const refinedOrders = await this.$satellites.getOrders()
     const assets = await this.getAssetDataForOrders(refinedOrders)
@@ -31,7 +25,7 @@ export default class Index extends Vue {
   async getAssetDataForOrders(refinedOrders) {
     const assets: any = []
     for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.apiBase}?limit=300&asset_contract_address=${tokenAddress}`
+      let requestURL = `${this.$config.opensea}?limit=300&asset_contract_address=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {
         requestURL = `${requestURL}&token_ids=${tokenId}`
       }

@@ -17,7 +17,7 @@
     "@nuxt/typescript": "^2.8.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^2.6.0",
-    "@nuxtjs/vuetify": "^1.0.0",
+    "@nuxtjs/vuetify": "0.5.5",
     "satellites.js": "0.0.6",
     "nuxt": "^2.0.0",
     "ts-node": "^8.3.0",

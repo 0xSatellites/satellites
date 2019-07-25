@@ -38,7 +38,7 @@ export default class Index extends Vue {
     }
     const resolves = await Promise.all(promisses)
     for (const resolve of resolves) {
-      for (const asset of resolve.data.assets) {
+      for (const asset of (resolve as any).data.assets) {
         if (refinedOrders[asset.asset_contract.address][asset.token_id]) {
           asset.order = refinedOrders[asset.asset_contract.address][asset.token_id]
         }

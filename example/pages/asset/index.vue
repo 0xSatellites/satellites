@@ -20,12 +20,12 @@ export default class Index extends Vue {
   async mounted() {
     const tokenId = this.$route.query.id
     const assetContractAddress = this.$route.query.address
-    const asset = await this.getAssetData(assetContractAddress as string, tokenId)
+    const asset = await this.getAssetData(assetContractAddress, tokenId)
     const order = await this.$satellites.getOrder(assetContractAddress, tokenId)
     asset.order = order
     this.asset = asset
   }
-  async getAssetData(assetContractAddress: string, tokenId: number) {
+  async getAssetData(assetContractAddress, tokenId) {
     const asset = await this.$axios.get(
       `${this.$config.api}getAssetByAssetAddresseTokenId?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
     )

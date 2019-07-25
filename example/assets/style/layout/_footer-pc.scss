@@ -1,0 +1,100 @@
+@charset "UTF-8";
+
+.l-footer{
+position: relative;
+
+width: 100%;
+min-width: 1000px;
+max-width: 2400px;
+margin-top: 100px;
+//border-top: 1px solid rgb(221, 221, 221);
+padding: 0 0 40px;
+background: #575656;
+color: #fff;
+
+
+  &__company{
+  position: relative;
+  padding: 1em 0 0 2em;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+    a{
+      &:link,&:visited{
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      }
+      &:hover{
+      color:#3498db;
+      }
+    }
+  }
+
+  &__backtop{
+  position: absolute;
+  right: 1em;
+  top: -2em;
+  font-size: 12px;
+  line-height: 1.1;
+
+    a{
+    display: inline-block;
+    vertical-align: top;
+    font-weight: 500;
+      &::after{
+      position: relative;
+      left: 0;
+      top: 0.1em;
+      content: '▲';
+      display: inline-block;
+      vertical-align: top;
+      margin-left:0.5em;
+      }
+      &:link{
+      color: #000;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      }
+      &:hover{
+      color:#3498db;
+      }
+    }
+  }
+
+  &__links{
+  position: absolute;
+  right: 1em + 2;
+  top: 1em;
+  display: flex;
+  font-size: 12px;
+  line-height: 1.5;
+    &>div{
+    margin-left: 2em;
+    }
+  }
+  &__title{
+  font-weight: 900;
+  }
+  &__item{
+    a{
+      &:link,&:visited{
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      }
+      &:hover{
+      color:#3498db;
+      }
+    }
+  }
+
+  &__note{
+  display: inline-block;
+  vertical-align: bottom;
+  font-size: 10px;
+  margin-left: 0.5em;
+  }
+
+}
+

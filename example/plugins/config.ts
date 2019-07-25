@@ -47,6 +47,11 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       contract: '0x79986af15539de2db9a5086382daeda917a9cf0c',
       symbol: 'CVPA',
       name: 'Cryptovoxels Parcel'
+    },
+    {
+      contract: '0xff9208a8384934bA94F2A27996620Fc5F14d916A',
+      symbol: 'MRM',
+      name: 'Master Rights for Music'
     }
   ],
   4: [

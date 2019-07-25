@@ -11,8 +11,8 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
   4: 'https://rinkeby.etherscan.io/tx/'
 }
 
-const networkIdToOpenSea: { [networkId: number]: string } = {
-  1: `https://api.opensea.io/api/v1/assets`,
+const networkIdToAPI: { [networkId: number]: string } = {
+  1: `https://asia-northeast1-bold-vial-233010.cloudfunctions.net/`,
   4: `https://rinkeby-api.opensea.io/api/v1/assets`
 }
 
@@ -227,7 +227,7 @@ export const config = {
   exceptions: networkIdToExceptions[NETWORK_ID],
   infura: networkIdToInfura[NETWORK_ID],
   etherscan: networkIdToEtherscan[NETWORK_ID],
-  opensea: networkIdToOpenSea[NETWORK_ID],
+  api: networkIdToAPI[NETWORK_ID],
   tokens: networkIdToTokens[NETWORK_ID],
   whitelists: whitelists,
   addressToFee: addressToFee,

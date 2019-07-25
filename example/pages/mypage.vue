@@ -1,6 +1,7 @@
 <template>
   <v-content>
     <v-container>
+      <Loading v-if="loading"></Loading>
       <Assets v-if="assets" :assets="assets"></Assets>
     </v-container>
   </v-content>
@@ -9,14 +10,17 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Assets from '~/components/organisms/Assets.vue'
+import Loading from '~/components/organisms/Loading.vue'
 
 @Component({
   components: {
-    Assets
+    Assets,
+    Loading
   }
 })
 export default class Index extends Vue {
   assets = null
+  loading = true
   async mounted() {
     const assets = await this.getAssetDataForOwner(this.$store.state.address as string)
     const refinedOrders = await this.$satellites.getOrders()
@@ -28,6 +32,7 @@ export default class Index extends Vue {
       }
     }
     this.assets = assets
+    this.loading = false
   }
   async getAssetDataForOwner(owner: string) {
     let assetContractAddressesQuery = ''
@@ -37,8 +42,9 @@ export default class Index extends Vue {
         assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
       }
     }
+    console.log(`${this.$config.api}getAssetsByOwnerAddress?owner=${owner}${assetContractAddressesQuery}`)
     const assets = await this.$axios.get(
-      `${this.$config.opensea}?limit=300&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
+      `${this.$config.api}getAssetsByOwnerAddress?owner=${owner}${assetContractAddressesQuery}`
     )
     return assets.data.assets
   }

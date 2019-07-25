@@ -16,8 +16,6 @@ import { ERC20TokenWrapper, ERC20ProxyWrapper, ERC721ProxyWrapper, ERC721TokenWr
 import { classUtils } from '@0x/utils'
 import { Web3Wrapper } from '@0x/web3-wrapper'
 
-import axios from 'axios'
-
 const DECIMALS = 18
 const GAS_LIMIT = 450000
 const NULL_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -604,24 +602,6 @@ export default class Satellites {
     return refinedOrders
   }
 
-  async getAssetDataForOrders(refinedOrders: RefinedOrders) {
-    const assets:any = []
-    for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.apiBase}?limit=300&asset_contract_address=${tokenAddress}`
-      for (const tokenId in refinedOrders[tokenAddress]) {
-        requestURL = `${requestURL}&token_ids=${tokenId}`
-      }
-      const response = await axios.get(requestURL)
-      for (const asset of response.data.assets) {
-        if (refinedOrders[asset.asset_contract.address][asset.token_id]) {
-          asset.order = refinedOrders[asset.asset_contract.address][asset.token_id]
-        }
-        assets.push(asset)
-      }
-    }
-    return assets
-  }
-
   async getOrder(assetContractAddress: string, tokenId: number) {
     let order: SignedOrder | undefined
     let price: BigNumber
@@ -644,28 +624,6 @@ export default class Satellites {
       })
     }
     return order
-  }
-
-  async getAssetData(assetContractAddress: string, tokenId: number) {
-    const asset = await axios.get(
-      `${this.apiBase}?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
-    )
-    const assets = asset.data.assets
-    return assets[0]
-  }
-
-  async getAssetDataForOwner(owner: string){
-    let assetContractAddressesQuery = ''
-    if(this.whitelists) {
-      const base = '&asset_contract_addresses='
-      for (const assetContractAddress of this.whitelists) {
-        assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
-      }
-    }
-    const assets = await axios.get(
-      `${this.apiBase}?limit=300&order_by=token_id&owner=${owner}${assetContractAddressesQuery}`
-    )
-    return assets.data.assets
   }
 
 }

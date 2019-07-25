@@ -2,4 +2,4 @@
 [build]
   base = "example"
   publish = "example/dist/"
-  command = "npm run build"
+  command = "npm run generate"

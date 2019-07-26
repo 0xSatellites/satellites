@@ -13,7 +13,7 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
 
 const networkIdToAPI: { [networkId: number]: string } = {
   1: `https://asia-northeast1-bold-vial-233010.cloudfunctions.net/`,
-  4: `https://rinkeby-api.opensea.io/api/v1/assets`
+  4: `https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/`
 }
 
 const networkIdToTokens: { [networkId: number]: any[] } = {
@@ -53,6 +53,11 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       symbol: 'MRM',
       name: 'Master Rights for Music'
     }
+    // {
+    //   contract: '0x8c9b261Faef3b3C2e64ab5E58e04615F8c788099',
+    //   symbol: 'MLBCB',
+    //   name: 'MLB Champions'
+    // }
   ],
   4: [
     {

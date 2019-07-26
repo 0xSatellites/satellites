@@ -13,7 +13,7 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
 
 const networkIdToAPI: { [networkId: number]: string } = {
   1: `https://asia-northeast1-bold-vial-233010.cloudfunctions.net/`,
-  4: `https://rinkeby-api.opensea.io/api/v1/assets`
+  4: `https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/`
 }
 
 const networkIdToTokens: { [networkId: number]: any[] } = {
@@ -49,10 +49,20 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       name: 'Cryptovoxels Parcel'
     },
     {
-      contract: '0xff9208a8384934bA94F2A27996620Fc5F14d916A',
+      contract: '0xff9208a8384934ba94f2a27996620fc5f14d916a',
       symbol: 'MRM',
       name: 'Master Rights for Music'
     }
+    // {
+    //   contract: '0x8c9b261faef3b3c2e64ab5e58e04615f8c788099',
+    //   symbol: 'MLBCB',
+    //   name: 'MLB Champions'
+    // },
+    // {
+    //   contract: '0x67cbbb366a51fff9ad869d027e496ba49f5f6d55',
+    //   symbol: 'CSPL',
+    //   name: 'CryptoSpells'
+    // }
   ],
   4: [
     {

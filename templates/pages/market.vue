@@ -34,12 +34,13 @@ export default class Index extends Vue {
   async getAssetDataForOrders(refinedOrders) {
     const assets: any = []
     const promisses: any = []
+    console.log(refinedOrders)
     for (const tokenAddress in refinedOrders) {
-      let requestURL = `${this.$config.api}getAssetsByAssetAddressesTokenIds?asset_contract_addresses=${tokenAddress}`
+      const baseURL = `${this.$config.api}assets?asset_contract_addresses=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {
-        requestURL = `${requestURL}&token_ids=${tokenId}`
+        const requestURL = `${baseURL}&token_ids=${tokenId}`
+        promisses.push(this.$axios.get(requestURL))
       }
-      promisses.push(this.$axios.get(requestURL))
     }
     const resolves = await Promise.all(promisses)
     for (const resolve of resolves) {

@@ -2,7 +2,7 @@ const NETWORK_ID = Number(process.env.NETWORK_ID) || 1
 const RELAYER = process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
 
 const networkIdToInfura: { [networkId: number]: string } = {
-  1: 'https://mainnet.rinkeby.infura.io/',
+  1: 'https://mainnet.infura.io/',
   4: 'https://rinkeby.infura.io/'
 }
 
@@ -12,22 +12,22 @@ const networkIdToEtherscan: { [networkId: number]: string } = {
 }
 
 const networkIdToAPI: { [networkId: number]: string } = {
-  1: `https://asia-northeast1-bold-vial-233010.cloudfunctions.net/`,
-  4: `https://asia-northeast1-blockbase-bazaaar-sand.cloudfunctions.net/`
+  1: `https://api.opensea.io/api/v1/`,
+  4: `https://rinkeby-api.opensea.io/api/v1/`
 }
 
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
-    // {
-    //   contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
-    //   symbol: 'CK',
-    //   name: 'CryptoKitties'
-    // },
-    // {
-    //   contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
-    //   symbol: 'CTN',
-    //   name: 'Crypt-Oink'
-    // },
+    {
+      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+      symbol: 'CK',
+      name: 'CryptoKitties'
+    },
+    {
+      contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
+      symbol: 'CTN',
+      name: 'Crypt-Oink'
+    },
     {
       contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
       symbol: 'MCHH',

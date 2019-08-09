@@ -1,7 +1,8 @@
 
 ![Satellites screenshot](./resources/repository/top.png)
 
-Satellites - Launch a DEX Marketplace of NFT
+:satellite: Satellites - Launch a DEX Marketplace of NFT :tada:
+
 :mega: The Satellites team uses [IssueHunt](https://issuehunt.io/) for a sustainable open-source ecosystem.
 
 ## Quick start
@@ -22,4 +23,5 @@ $ npm run dev
 ## Community
 - [Discord](https://discord.gg/swnEJUf)
 
-#### License
+## License
+Apache license 2.0

@@ -32,7 +32,7 @@ export default class Index extends Vue {
   }
   async getAssetData(assetContractAddress, tokenId) {
     const asset = await this.$axios.get(
-      `${this.$config.api}getAssetByAssetAddresseTokenId?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
+      `${this.$config.api}assets?token_ids=${tokenId}&asset_contract_address=${assetContractAddress}`
     )
     const assets = asset.data.assets
     return assets[0]

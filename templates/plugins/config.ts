@@ -23,46 +23,6 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       symbol: 'CK',
       name: 'CryptoKitties'
     },
-    {
-      contract: '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1',
-      symbol: 'CTN',
-      name: 'Crypt-Oink'
-    },
-    {
-      contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
-      symbol: 'MCHH',
-      name: 'MyCryptoHeroes:Hero'
-    },
-    {
-      contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
-      symbol: 'MCHE',
-      name: 'MyCryptoHeroes:Extensions'
-    },
-    {
-      contract: '0xfac7bea255a6990f749363002136af6556b31e04',
-      symbol: 'ENS',
-      name: 'Ether Name Service'
-    },
-    {
-      contract: '0x79986af15539de2db9a5086382daeda917a9cf0c',
-      symbol: 'CVPA',
-      name: 'Cryptovoxels Parcel'
-    },
-    {
-      contract: '0xff9208a8384934ba94f2a27996620fc5f14d916a',
-      symbol: 'MRM',
-      name: 'Master Rights for Music'
-    }
-    // {
-    //   contract: '0x8c9b261faef3b3c2e64ab5e58e04615f8c788099',
-    //   symbol: 'MLBCB',
-    //   name: 'MLB Champions'
-    // },
-    // {
-    //   contract: '0x67cbbb366a51fff9ad869d027e496ba49f5f6d55',
-    //   symbol: 'CSPL',
-    //   name: 'CryptoSpells'
-    // }
   ],
   4: [
     {
@@ -70,21 +30,6 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       symbol: 'CK',
       name: 'CryptoKitties'
     },
-    {
-      contract: '0x5220debd5a575d1bf85b5531c9e0f6ced243975c',
-      symbol: 'CTN',
-      name: 'Crypt-Oink'
-    },
-    {
-      contract: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
-      symbol: 'MyCryptoHeroes:Hero',
-      name: 'MCHH'
-    },
-    {
-      contract: '0x587ae915d4ccaa5c2220c638069f2605e1f7404c',
-      symbol: 'MyCryptoHeroes:Extensions',
-      name: 'MCHE'
-    }
   ]
 }
 

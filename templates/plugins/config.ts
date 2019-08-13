@@ -1,5 +1,7 @@
 const NETWORK_ID = Number(process.env.NETWORK_ID) || 1
 const RELAYER = process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
+const recipientAddress = process.env.RECIPIENT_ADDRESS || '0x6183e0EA3727E40c770A28ebaD62A4F008543fe4'
+const feeRatio = Number(process.env.FEE_RARIO) || 900
 
 const networkIdToInfura: { [networkId: number]: string } = {
   1: 'https://mainnet.infura.io/',
@@ -19,17 +21,17 @@ const networkIdToAPI: { [networkId: number]: string } = {
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
     {
-      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
+      contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
       symbol: 'CK',
       name: 'CryptoKitties'
-    },
+    }
   ],
   4: [
     {
       contract: '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',
       symbol: 'CK',
       name: 'CryptoKitties'
-    },
+    }
   ]
 }
 
@@ -157,17 +159,14 @@ const networkIdToExceptions = {
 }
 
 const addressToFee = {
-  '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': {
+  // 0 is satellitesAddress. This Fee goes to issueHunt and is returned to the developer.
+  '0':{
     recipients: '0x5926824315aF6016f98E83De841C5B28b959DF51',
-    ratio: 1000
+    ratio: 100
   },
-  '0x273f7f8e6489682df756151f5525576e322d51a3': {
-    recipients: '0x070c22f0887bd1836A1E7C9ae0cd88108e0ECB19',
-    ratio: 1000
-  },
-  '0xdceaf1652a131f32a821468dc03a92df0edd86ea': {
-    recipients: '0x070c22f0887bd1836A1E7C9ae0cd88108e0ECB19',
-    ratio: 1000
+  '1':{
+    recipients: recipientAddress,
+    ratio: feeRatio
   }
 }
 
@@ -186,8 +185,7 @@ export const config = {
   tokens: networkIdToTokens[NETWORK_ID],
   whitelists: whitelists,
   addressToFee: addressToFee,
-  blockbaseAddress: '0xf9b744152a6897198b9B9999d8d340b59807595E',
-  defaultRatio: 500,
+  defaultRatio: feeRatio + addressToFee[0].ratio,
   feeBase: 10000,
   perBase: 100
 }

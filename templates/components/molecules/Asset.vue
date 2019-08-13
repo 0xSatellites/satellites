@@ -33,16 +33,9 @@ export default class Asset extends Vue {
   @Prop() asset
   opensea = opensea
   computePrice(price) {
-    let amount
-    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
-      const feeRatio = this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.feeBase
-      const fee = price.times(feeRatio)
-      amount = price.plus(fee)
-    } else {
-      const feeRatio = this.$config.defaultRatio / this.$config.feeBase
-      const fee = price.times(feeRatio)
-      amount = price.plus(fee)
-    }
+    const feeRatio = this.$config.defaultRatio / this.$config.feeBase
+    const fee = price.times(feeRatio)
+    const amount = price.plus(fee)
     return this.$web3.utils.fromWei(amount.toString())
   }
 }

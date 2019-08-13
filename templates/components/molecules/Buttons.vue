@@ -108,11 +108,7 @@ export default class Buttons extends Vue {
 
   @Prop() asset
   computeFee() {
-    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
-      return this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.perBase
-    } else {
-      return this.$config.defaultRatio / this.$config.perBase
-    }
+    return this.$config.defaultRatio / this.$config.perBase
   }
   openDialog(dialogKey) {
     this.dialogDisplay = true
@@ -209,23 +205,24 @@ export default class Buttons extends Vue {
 
   async executeBuy() {
     this.openDialog(4)
-    let recipients: string[] | undefined
-    let fees: string[] | undefined
-    if (this.$config.addressToFee[this.asset.asset_contract.address]) {
-      const feeRatio = this.$config.addressToFee[this.asset.asset_contract.address].ratio / this.$config.feeBase
-      const fee = this.asset.order.takerAssetAmount.times(feeRatio)
-      const actualFee = fee.div(2)
-      recipients = [
-        this.$config.addressToFee[this.asset.asset_contract.address].recipients,
-        this.$config.blockbaseAddress
-      ]
-      fees = [actualFee, actualFee]
-    } else {
-      const feeRatio = this.$config.defaultRatio / this.$config.feeBase
-      const fee = this.asset.order.takerAssetAmount.times(feeRatio)
-      recipients = [this.$config.blockbaseAddress]
-      fees = [fee]
-    }
+    // let recipients: string[] | undefined
+    // let fees: string[] | undefined
+    // const keys = Object.keys(this.$config.addressToFee)
+    // for (let i = 0; i < keys.length; i++) {
+    //   const feeRatio = this.$config.addressToFee[i].ratio / this.$config.feeBase
+    //   const fee = this.asset.order.takerAssetAmount.times(feeRatio)
+    //   fees.push(fee)
+    //   recipients.push(this.$config.addressToFee[i].recipients)
+    // }
+
+    const feeRatio0 = this.$config.addressToFee[0].ratio / this.$config.feeBase
+    const fee0 = this.asset.order.takerAssetAmount.times(feeRatio0)
+    const feeRatio1 = this.$config.addressToFee[1].ratio / this.$config.feeBase
+    const fee1 = this.asset.order.takerAssetAmount.times(feeRatio1)
+    const fees = [fee0, fee1]
+    const recipients = [this.$config.addressToFee[0].recipients, this.$config.addressToFee[1].recipients]
+    console.log(fees)
+    console.log(recipients)
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)
     this.etherscan = `${this.$config.etherscan}${txhash}`
     this.openDialog(6)

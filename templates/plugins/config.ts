@@ -21,14 +21,14 @@ const networkIdToAPI: { [networkId: number]: string } = {
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
     {
-      contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
+      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
       symbol: 'CK',
       name: 'CryptoKitties'
     }
   ],
   4: [
     {
-      contract: '0xc106d47fb4bf5f9ebaf46e3219ef3fabcbd26606',
+      contract: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
       symbol: 'CK',
       name: 'CryptoKitties'
     }
@@ -160,11 +160,11 @@ const networkIdToExceptions = {
 
 const addressToFee = {
   // 0 is satellitesAddress. This Fee goes to issueHunt and is returned to the developer.
-  '0':{
+  '0': {
     recipients: '0x5926824315aF6016f98E83De841C5B28b959DF51',
     ratio: 100
   },
-  '1':{
+  '1': {
     recipients: recipientAddress,
     ratio: feeRatio
   }

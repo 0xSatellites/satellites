@@ -3,6 +3,8 @@
 
 :tada: Satellites - Launch a DEX Marketplace of NFT
 
+:earth_americas: The satellite uses the 0x protocol and the original extension contract.
+
 :mega: The Satellites team uses [IssueHunt](https://issuehunt.io/) for a sustainable open-source ecosystem.
 
 ## Quick start
@@ -20,19 +22,28 @@ $ npm install
 $ npm run dev
 ```
 
-#### Pre-requirements
+#### Customization
 1. Open the `plugins/config.ts` file and edit the params:
 
-    - `networkIdToTokens` -- The Ethereum address which be hundled assets.
+    - `networkIdToTokens` -- The Ethereum address which be hundled assets of ERC721.(default CryptoKitties) More information of the other assets can be [found here](https://github.com/block-base/satellites/wiki/ERC721-Asset-List).
 
-    - `addressToFee` -- The Ethereum address which should be specified as the fee recipient in orders your relayer accepts.
+    - `recipientAddress` -- The Ethereum address which you receive the fee recipient in orders your relayer.
 
-    - `ratio` -- The flat taker fee you'd like to receive for filled orders hosted by you
+    - `feeRatio` -- The percentage of the fee recipient of you.
 
 2. Open the `nuxt.config.ts`file and edit service name etc.
 
-## Community
-- [Discord](https://discord.gg/swnEJUf)
+## Supporting Satellites
+Satellite is an open source project. This is an independent project.
+When using satellites, a fee of the marketplace sales (default 1%) will be provided to satellites development funds.
+The money is distributed to contributors and maintainers. And If you use Satellites please consider becoming a backer:
+
+[![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/block-base/satellites)
+
+## More Infomation
+- [Discord](https://discord.gg/tdTegPC)
+- [Twitter](https://twitter.com/satellites_js)
+- [Medium](https://medium.com/blockbase)
 
 ## License
 [Apache license 2.0](./LICENSE)

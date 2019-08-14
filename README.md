@@ -3,7 +3,7 @@
 
 :tada: Satellites - Launch a DEX Marketplace of NFT
 
-:earth_americas: The satellite uses the 0x protocol and the original extension contract.
+:earth_americas: The Satellites use the [0x protocol](https://0x.org/) and the [Original Extension Contracts](https://medium.com/blockbase/development-of-new-0x-extensions-passer-and-distributor-contract-4b169ad8c607).
 
 :mega: The Satellites team uses [IssueHunt](https://issuehunt.io/) for a sustainable open-source ecosystem.
 
@@ -29,13 +29,14 @@ $ npm run dev
 
     - `recipientAddress` -- The Ethereum address which you receive the fee recipient in orders your relayer.
 
-    - `feeRatio` -- The percentage of the fee recipient of you.
+    - `feeRatio` -- The percentage of the fee which you receive.
 
 2. Open the `nuxt.config.ts`file and edit service name etc.
 
 ## Supporting Satellites
-Satellite is an open source project. This is an independent project.
-When using satellites, a fee of the marketplace sales (default 1%) will be provided to satellites development funds.
+Satellites is an open source project. This is an independent project.
+When using Satellites, a fee of the marketplace sales (default 1%) will be provided to Satellites development funds.
+
 The money is distributed to contributors and maintainers. And If you use Satellites please consider becoming a backer:
 
 [![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/block-base/satellites)

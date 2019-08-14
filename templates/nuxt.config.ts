@@ -5,7 +5,7 @@ const nuxtConfig: NuxtConfiguration = {
 
   env: {
     NETWORK_ID: process.env.NETWORK_ID || '1',
-    RELAYER: process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
+    RELAYER: process.env.RELAYER || 'https://relayer-mainnet.nftsatellites.com/v2/'
   },
   /*
    ** Headers of the page
@@ -16,16 +16,16 @@ const nuxtConfig: NuxtConfiguration = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Bazaaar.io, the 0x satellites NFT market place.' },
-      { hid: 'og:site_name', property: 'og:site_name', content: 'Bazaaar.io' },
+      { hid: 'description', name: 'description', content: 'Satellites, the satellites NFT market place.' },
+      { hid: 'og:site_name', property: 'og:site_name', content: 'Satellites' },
       { hid: 'og:type', property: 'og:type', content: 'website' },
-      { hid: 'og:url', property: 'og:url', content: 'https://bazaaar.io' },
-      { hid: 'og:title', property: 'og:title', content: 'Bazaaar.io' },
-      { hid: 'og:description', property: 'og:description', content: 'Bazaaar.io, the 0x satellites NFT market place.' },
+      { hid: 'og:url', property: 'og:url', content: '' },
+      { hid: 'og:title', property: 'og:title', content: 'Satellites' },
+      { hid: 'og:description', property: 'og:description', content: 'Satellites, the satellites NFT market place.' },
       {
         hid: 'og:image',
         property: 'og:image',
-        content: 'https://ipfs.io/ipfs/QmQP7vu6piKFCT9CKrN7NyNZL3P2sw9E6pR4sRnFx2gWWc'
+        content: 'https://ipfs.io/ipfs/QmQ5ryYFY7oQnE2meQhGvLE9BmYWzke79ZT4ZeFkm3JakT'
       },
       { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image' }
     ],

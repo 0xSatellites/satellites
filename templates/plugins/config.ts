@@ -1,6 +1,6 @@
 const NETWORK_ID = Number(process.env.NETWORK_ID) || 1
-const RELAYER = process.env.RELAYER || 'https://mainnet.ookimaki.com/v2/'
-const recipientAddress = process.env.RECIPIENT_ADDRESS || '0x6183e0EA3727E40c770A28ebaD62A4F008543fe4'
+const RELAYER = process.env.RELAYER || 'https://relayer-mainnet.nftsatellites.com/v2/'
+const recipientAddress = process.env.RECIPIENT_ADDRESS || '0x5926824315aF6016f98E83De841C5B28b959DF51'
 const feeRatio = Number(process.env.FEE_RARIO) || 900
 
 const networkIdToInfura: { [networkId: number]: string } = {

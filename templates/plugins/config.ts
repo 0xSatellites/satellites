@@ -1,12 +1,12 @@
-const networkId = Number(process.env.NETWORK_ID) || 1
-const relayer = process.env.RELAYER || 'http://relayer-mainnet.nftsatellites.com/v2/'
-const ga = process.env.GA || 'UA-130401695-4'
-const feeBase = process.env.FEE_BASE || 10000
-const feePer = process.env.FEE_PER || 100
+const networkId = 4
+const relayer = 'http://localhost:3000/v2/'
+const ga = 'UA-130401695-4'
+const feeBase = 10000
+const feePer = 100
 const satellitesAddress = '0x764Fe0b6dF8575b30bCfd0c9Bb2A7ADb390b5359'
-const satellitesFeeRatio = process.env.SATELLITES_FEE_RATIO || 100
-const ownerAddress = process.env.OWNER_ADDRESS || satellitesAddress
-const ownerFeeRatio = Number(process.env.OWNER_FEE_RARIO) || 900
+const satellitesFeeRatio = 100
+const ownerAddress = satellitesAddress
+const ownerFeeRatio = 900
 
 const networkIdToInfura: { [networkId: number]: string } = {
   1: 'https://mainnet.infura.io/',
@@ -43,11 +43,11 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
 const feeDistribution = [
   // first fee recipient is satellites address. This Fee goes to issueHunt and is returned to the developer.
   {
-    recipients: satellitesAddress,
+    recipient: satellitesAddress,
     ratio: satellitesFeeRatio
   },
   {
-    recipients: ownerAddress,
+    recipient: ownerAddress,
     ratio: ownerFeeRatio
   }
 ]

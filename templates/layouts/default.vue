@@ -35,3 +35,9 @@ export default class DefaultLayout extends Vue {
   }
 }
 </script>
+
+<style>
+a {
+  text-decoration: none;
+}
+</style>

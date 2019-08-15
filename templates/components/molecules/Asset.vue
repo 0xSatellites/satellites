@@ -44,10 +44,6 @@ export default class Asset extends Vue {
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-}
-
 .opacity {
   opacity: 0.6;
 }

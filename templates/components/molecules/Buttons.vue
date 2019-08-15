@@ -96,8 +96,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-const contracts = {}
-
 @Component
 export default class Buttons extends Vue {
   dialogDisplay = false
@@ -108,7 +106,7 @@ export default class Buttons extends Vue {
 
   @Prop() asset
   computeFee() {
-    return this.$config.defaultRatio / this.$config.perBase
+    return this.$config.defaultRatio / this.$config.feePer
   }
   openDialog(dialogKey) {
     this.dialogDisplay = true
@@ -132,26 +130,11 @@ export default class Buttons extends Vue {
     this.openDialog(6)
   }
   async sell() {
-    let approved = false
-    if (!this.$config.exceptions[this.asset.asset_contract.address]) {
-      approved = await this.$satellites.erc721Token.isApprovedForAllAsync(
-        this.asset.asset_contract.address,
-        this.$store.state.address,
-        this.$satellites.contractAddresses.erc721Proxy
-      )
-    } else {
-      const name = this.$config.exceptions[this.asset.asset_contract.address][0].name
-      if (!contracts[this.asset.asset_contract.address]) {
-        const contract = new this.$web3.eth.Contract(
-          this.$config.exceptions[this.asset.asset_contract.address],
-          this.asset.asset_contract.address
-        )
-        contracts[this.asset.asset_contract.address] = contract
-      }
-      const operator = await contracts[this.asset.asset_contract.address].methods[name](this.asset.token_id).call()
-      approved = operator.toLowerCase() === this.$satellites.contractAddresses.erc721Proxy
-    }
-
+    const approved = await this.$satellites.erc721Token.isApprovedForAllAsync(
+      this.asset.asset_contract.address,
+      this.$store.state.address,
+      this.$satellites.contractAddresses.erc721Proxy
+    )
     if (!approved) {
       await this.executeApprove()
     } else {
@@ -172,57 +155,28 @@ export default class Buttons extends Vue {
 
   async executeApprove() {
     this.openDialog(3)
-    if (!this.$config.exceptions[this.asset.asset_contract.address]) {
-      const txhash = await this.$satellites.erc721Token.setApprovalForAllAsync(
-        this.asset.asset_contract.address,
-        this.$store.state.address,
-        this.$satellites.contractAddresses.erc721Proxy,
-        true
-      )
-      this.etherscan = `${this.$config.etherscan}${txhash}`
-      this.openDialog(6)
-    } else {
-      const name = this.$config.exceptions[this.asset.asset_contract.address][1].name
-      if (!contracts[this.asset.asset_contract.address]) {
-        const contract = new this.$web3.eth.Contract(
-          this.$config.exceptions[this.asset.asset_contract.address],
-          this.asset.asset_contract.address
-        )
-        contracts[this.asset.asset_contract.address] = contract
-      }
-      const self = this
-      await contracts[this.asset.asset_contract.address].methods[name](
-        this.$satellites.contractAddresses.erc721Proxy,
-        this.asset.token_id
-      )
-        .send({ from: this.$store.state.address })
-        .on('transactionHash', function(txhash) {
-          self.etherscan = self.$config.etherscan + txhash
-          self.openDialog(6)
-        })
-    }
+    const txhash = await this.$satellites.erc721Token.setApprovalForAllAsync(
+      this.asset.asset_contract.address,
+      this.$store.state.address,
+      this.$satellites.contractAddresses.erc721Proxy,
+      true
+    )
+    this.etherscan = `${this.$config.etherscan}${txhash}`
+    this.openDialog(6)
   }
 
   async executeBuy() {
     this.openDialog(4)
-    // let recipients: string[] | undefined
-    // let fees: string[] | undefined
-    // const keys = Object.keys(this.$config.addressToFee)
-    // for (let i = 0; i < keys.length; i++) {
-    //   const feeRatio = this.$config.addressToFee[i].ratio / this.$config.feeBase
-    //   const fee = this.asset.order.takerAssetAmount.times(feeRatio)
-    //   fees.push(fee)
-    //   recipients.push(this.$config.addressToFee[i].recipients)
-    // }
+    const fees: number[] = []
+    const recipients: string[] = []
 
-    const feeRatio0 = this.$config.addressToFee[0].ratio / this.$config.feeBase
-    const fee0 = this.asset.order.takerAssetAmount.times(feeRatio0)
-    const feeRatio1 = this.$config.addressToFee[1].ratio / this.$config.feeBase
-    const fee1 = this.asset.order.takerAssetAmount.times(feeRatio1)
-    const fees = [fee0, fee1]
-    const recipients = [this.$config.addressToFee[0].recipients, this.$config.addressToFee[1].recipients]
-    console.log(fees)
-    console.log(recipients)
+    for (let i = 0; i < this.$config.feeDistribution.length; i++) {
+      const ratio = this.$config.feeDistribution[i].ratio / this.$config.feeBase
+      const fee = this.asset.order.takerAssetAmount.times(ratio)
+      fees.push(fee)
+      recipients.push(this.$config.feeDistribution[i].recipient)
+    }
+
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)
     this.etherscan = `${this.$config.etherscan}${txhash}`
     this.openDialog(6)
@@ -236,9 +190,3 @@ export default class Buttons extends Vue {
   }
 }
 </script>
-
-<style scoped>
-a {
-  text-decoration: none;
-}
-</style>

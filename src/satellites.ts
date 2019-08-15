@@ -178,8 +178,8 @@ export class Satellites {
     for (const order of orders.records) {
       const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
       const tokenId = assetData.tokenId.toString()
-      if(!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
-        if(!tokenAddresses || tokenAddresses.length === 0 || tokenAddresses.includes(assetData.tokenAddress)) {
+      if (!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
+        if (!tokenAddresses || tokenAddresses.length === 0 || tokenAddresses.includes(assetData.tokenAddress)) {
           if (!refinedOrders[assetData.tokenAddress]) {
             refinedOrders[assetData.tokenAddress] = {}
           }
@@ -198,7 +198,7 @@ export class Satellites {
   async getOrder(assetContractAddress: string, tokenId: number) {
     let order: SignedOrder | undefined
     let price: BigNumber
-    if(!this.whitelists || this.whitelists.includes(assetContractAddress)) {
+    if (!this.whitelists || this.whitelists.includes(assetContractAddress)) {
       const assetData = assetDataUtils.encodeERC721AssetData(assetContractAddress, new BigNumber(tokenId))
       const orderbookRequest = {
         baseAssetData: assetData,
@@ -218,5 +218,4 @@ export class Satellites {
     }
     return order
   }
-
 }

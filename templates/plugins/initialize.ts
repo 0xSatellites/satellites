@@ -9,7 +9,6 @@ export default async function({ store, isServer }, inject) {
   }
 
   inject('config', config)
-
   const web3 = (window as any).web3
   const ethereum = (window as any).ethereum
 

@@ -1,4 +1,5 @@
-import Satellites from 'satellites.js'
+import Satellites from '../../src'
+//  import Satellites from 'satellites.js'
 import { config } from './config'
 const Web3 = require('web3')
 
@@ -14,12 +15,7 @@ export default async function({ store, isServer }, inject) {
 
   if (!ethereum && !web3) {
     inject('web3', new Web3(store.$config.infura))
-    const satellites = new Satellites(
-      store.$config.networkId,
-      store.$web3.currentProvider,
-      store.$config.relayer,
-      store.$config.whitelists
-    )
+    const satellites = new Satellites(store.$config.networkId, store.$web3.currentProvider, store.$config.relayer)
     inject('satellites', satellites)
     return
   }
@@ -35,12 +31,7 @@ export default async function({ store, isServer }, inject) {
     inject('web3', new Web3(web3.currentProvider))
   }
 
-  const satellites = new Satellites(
-    store.$config.networkId,
-    store.$web3.currentProvider,
-    store.$config.relayer,
-    store.$config.whitelists
-  )
+  const satellites = new Satellites(store.$config.networkId, store.$web3.currentProvider, store.$config.relayer)
   inject('satellites', satellites)
 
   const accounts = await store.$web3.eth.getAccounts()

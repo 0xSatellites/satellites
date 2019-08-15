@@ -34,7 +34,6 @@ export default class Index extends Vue {
   async getAssetDataForOrders(refinedOrders) {
     const assets: any = []
     const promisses: any = []
-    console.log(refinedOrders)
     for (const tokenAddress in refinedOrders) {
       const baseURL = `${this.$config.api}assets?asset_contract_addresses=${tokenAddress}`
       for (const tokenId in refinedOrders[tokenAddress]) {

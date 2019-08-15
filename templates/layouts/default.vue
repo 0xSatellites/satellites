@@ -18,5 +18,20 @@ import Footer from '~/components/organisms/Footer.vue'
     Footer
   }
 })
-export default class DefaultLayout extends Vue {}
+export default class DefaultLayout extends Vue {
+  mounted() {
+    console.log('️🛰️ Welcome　to satellites! 🛰️')
+    /* eslint-disable */
+    /*
+      " ____                  __               ___       ___              __                       \n" +
+      "/\  _`\               /\ \__           /\_ \     /\_ \      __    /\ \__                    \n" +
+      "\ \,\L\_\      __     \ \ ,_\     __   \//\ \    \//\ \    /\_\   \ \ ,_\     __     ____   \n" +
+      " \/_\__ \    /'__`\    \ \ \/   /'__`\   \ \ \     \ \ \   \/\ \   \ \ \/   /'__`\  /',__\  \n" +
+      "   /\ \L\ \ /\ \L\.\_   \ \ \_ /\  __/    \_\ \_    \_\ \_  \ \ \   \ \ \_ /\  __/ /\__, `\ \n" +
+      "   \ `\____\\ \__/.\_\   \ \__\\ \____\   /\____\   /\____\  \ \_\   \ \__\\ \____\\/\____/ \n" +
+      "    \/_____/ \/__/\/_/    \/__/ \/____/   \/____/   \/____/   \/_/    \/__/ \/____/ \/___/  \n"
+      */
+    /* eslint-enable */
+  }
+}
 </script>

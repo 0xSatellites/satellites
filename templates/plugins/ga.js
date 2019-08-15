@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { config } from './config'
 
 export default ({ app }) => {
     /*
@@ -15,7 +16,7 @@ export default ({ app }) => {
     /*
     ** Set the current page
     */
-    ga('create', 'UA-130401695-4', 'auto')
+    ga('create', config.ga, 'auto')
     /*
     ** Every time the route changes (fired on initialization too)
     */

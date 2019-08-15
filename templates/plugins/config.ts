@@ -1,7 +1,12 @@
-const NETWORK_ID = Number(process.env.NETWORK_ID) || 1
-const RELAYER = process.env.RELAYER || 'https://relayer-mainnet.nftsatellites.com/v2/'
-const recipientAddress = process.env.RECIPIENT_ADDRESS || '0x5926824315aF6016f98E83De841C5B28b959DF51'
-const feeRatio = Number(process.env.FEE_RARIO) || 900
+const networkId = Number(process.env.NETWORK_ID) || 1
+const relayer = process.env.RELAYER || 'http://relayer-mainnet.nftsatellites.com/v2/'
+const ga = process.env.GA || 'UA-130401695-4'
+const feeBase = process.env.FEE_BASE || 10000
+const feePer = process.env.FEE_PER || 100
+const satellitesAddress = '0x764Fe0b6dF8575b30bCfd0c9Bb2A7ADb390b5359'
+const satellitesFeeRatio = process.env.SATELLITES_FEE_RATIO || 100
+const ownerAddress = process.env.OWNER_ADDRESS || satellitesAddress
+const ownerFeeRatio = Number(process.env.OWNER_FEE_RARIO) || 900
 
 const networkIdToInfura: { [networkId: number]: string } = {
   1: 'https://mainnet.infura.io/',
@@ -21,171 +26,54 @@ const networkIdToAPI: { [networkId: number]: string } = {
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
     {
-      contract: '0x06012c8cf97bead5deae237070f9587f8e7a266d',
-      symbol: 'CK',
-      name: 'CryptoKitties'
+      contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
+      symbol: 'MCHH',
+      name: 'MyCryptoHeroes:Hero'
     }
   ],
   4: [
     {
-      contract: '0x16baf0de678e52367adc69fd067e5edd1d33e3bf',
-      symbol: 'CK',
-      name: 'CryptoKitties'
+      contract: '0x84f6261350151dc9cbf5b33c5354fe9a82166e26',
+      symbol: 'BBB',
+      name: 'BB Batch'
     }
   ]
 }
 
-const networkIdToExceptions = {
-  1: {
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'kittyIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ],
-    '0x1a94fce7ef36bc90959e206ba569a12afbc91ca1': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'entityIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ]
+const feeDistribution = [
+  // first fee recipient is satellites address. This Fee goes to issueHunt and is returned to the developer.
+  {
+    recipients: satellitesAddress,
+    ratio: satellitesFeeRatio
   },
-  4: {
-    '0x16baf0de678e52367adc69fd067e5edd1d33e3bf': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'kittyIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ],
-    '0x587ae915d4ccaa5c2220c638069f2605e1f7404c': [
-      {
-        constant: true,
-        inputs: [{ name: '', type: 'uint256' }],
-        name: 'entityIndexToApproved',
-        outputs: [{ name: '', type: 'address' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function'
-      },
-      {
-        constant: false,
-        inputs: [
-          {
-            name: '_approved',
-            type: 'address'
-          },
-          {
-            name: '_tokenId',
-            type: 'uint256'
-          }
-        ],
-        name: 'approve',
-        outputs: [],
-        payable: true,
-        stateMutability: 'payable',
-        type: 'function'
-      }
-    ]
+  {
+    recipients: ownerAddress,
+    ratio: ownerFeeRatio
   }
-}
+]
 
-const addressToFee = {
-  // 0 is satellitesAddress. This Fee goes to issueHunt and is returned to the developer.
-  '0': {
-    recipients: '0x5926824315aF6016f98E83De841C5B28b959DF51',
-    ratio: 100
-  },
-  '1': {
-    recipients: recipientAddress,
-    ratio: feeRatio
-  }
+let defaultRatio = 0
+
+for (let i = 0; i < feeDistribution.length; i++) {
+  defaultRatio += Number(feeDistribution[i].ratio)
 }
 
 const whitelists: any[] = []
-for (let i = 0; i < networkIdToTokens[NETWORK_ID].length; i++) {
-  whitelists.push(networkIdToTokens[NETWORK_ID][i].contract)
+for (let i = 0; i < networkIdToTokens[networkId].length; i++) {
+  whitelists.push(networkIdToTokens[networkId][i].contract)
 }
 
 export const config = {
-  networkId: NETWORK_ID,
-  relayer: RELAYER,
-  exceptions: networkIdToExceptions[NETWORK_ID],
-  infura: networkIdToInfura[NETWORK_ID],
-  etherscan: networkIdToEtherscan[NETWORK_ID],
-  api: networkIdToAPI[NETWORK_ID],
-  tokens: networkIdToTokens[NETWORK_ID],
+  networkId: networkId,
+  relayer: relayer,
+  ga: ga,
+  infura: networkIdToInfura[networkId],
+  etherscan: networkIdToEtherscan[networkId],
+  api: networkIdToAPI[networkId],
+  tokens: networkIdToTokens[networkId],
   whitelists: whitelists,
-  addressToFee: addressToFee,
-  defaultRatio: feeRatio + addressToFee[0].ratio,
-  feeBase: 10000,
-  perBase: 100
+  feeDistribution: feeDistribution,
+  defaultRatio: defaultRatio,
+  feeBase: feeBase,
+  feePer: feePer
 }

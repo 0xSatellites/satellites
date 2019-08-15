@@ -42,7 +42,6 @@ export default class Index extends Vue {
         assetContractAddressesQuery = assetContractAddressesQuery + base + assetContractAddress
       }
     }
-    console.log(`${this.$config.api}assets?owner=${owner}&asset_contract_address=${assetContractAddressesQuery}`)
     const assets = await this.$axios.get(
       `${this.$config.api}assets?owner=${owner}&asset_contract_address=${assetContractAddressesQuery}`
     )

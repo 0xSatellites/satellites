@@ -13,6 +13,8 @@
 # install repository
 $ git clone https://github.com/block-base/satellites.git
 
+$ git checkout master
+
 $ cd templates
 
 # install dependencies
@@ -32,6 +34,11 @@ $ npm run dev
     - `feeRatio` -- The percentage of the fee which you receive.
 
 2. Open the `nuxt.config.ts`file and edit service name etc.
+
+3. Launch a [0x-launch-kit-backend](https://github.com/0xProject/0x-launch-kit-backend). If you want to open Market quicly, you can use Satellites relayer.
+    -  mainnet : `https://relayer-mainnet.nftsatellites.com/v2/`
+    - rinkeby : `https://relayer-rinkeby.nftsatellites.com/v2/`
+
 
 ## Supporting Satellites
 Satellites is an open source project. This is an independent project.

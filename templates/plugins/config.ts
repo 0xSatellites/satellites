@@ -1,5 +1,5 @@
 const networkId = 1
-const relayer = 'https://relayer-mainnet.nftsatellites.com/'
+const relayer = 'https://relayer-mainnet.nftsatellites.com/v2/'
 const ga = 'UA-130401695-4'
 const feeBase = 10000
 const feePer = 100
@@ -26,9 +26,9 @@ const networkIdToAPI: { [networkId: number]: string } = {
 const networkIdToTokens: { [networkId: number]: any[] } = {
   1: [
     {
-      contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
-      symbol: 'MCHH',
-      name: 'MyCryptoHeroes:Hero'
+      contract: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d',
+      symbol: 'AXIE',
+      name: 'AXIE'
     }
   ],
   4: [

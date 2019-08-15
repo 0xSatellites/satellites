@@ -1,5 +1,5 @@
-import Satellites from '../../src'
-//  import Satellites from 'satellites.js'
+//  import Satellites from '../../src'
+import Satellites from 'satellites.js'
 import { config } from './config'
 const Web3 = require('web3')
 

@@ -44,7 +44,10 @@ $ npm run dev
 Satellites is an open source project. This is an independent project.
 When using Satellites, a fee of the marketplace sales (default 1%) will be provided to Satellites development funds.
 
-The money is distributed to contributors and maintainers. And If you use Satellites please consider becoming a backer:
+The money is distributed to contributors and maintainers.
+More information of the Ecosystem can be [found here](https://github.com/block-base/satellites/wiki/Ecosystem).
+
+And If you use Satellites please consider becoming a backer:
 
 [![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/block-base/satellites)
 

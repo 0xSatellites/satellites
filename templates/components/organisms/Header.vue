@@ -1,6 +1,6 @@
 <template>
   <v-toolbar absolute flat clipped-left app class="white">
-    <nuxt-link to="/"> Satellites </nuxt-link>
+    <a :href="`/`"><v-btn flat color="primary">Satellites</v-btn></a>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn v-if="this.$store.state.address" flat color="primary" to="/mypage">
@@ -30,9 +30,3 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class Header extends Vue {}
 </script>
-
-<style scoped>
-a {
-  text-decoration: none;
-}
-</style>

@@ -13,9 +13,11 @@
         ><v-btn v-if="asset.order" color="secondary" class="opacity" small
           ><v-icon small left>label</v-icon>{{ computePrice(asset.order.takerAssetAmount) }} ETH</v-btn
         >
+        <!--
         <a :href="`https://opensea.io/assets/${asset.asset_contract.address}/${asset.token_id}`"
           ><v-img id="opensea" class="pa-2" :src="opensea"></v-img
         ></a>
+        -->
       </v-img>
       <v-card-title class="justify-center">
         <span class="grey--text">{{ asset.name }}</span>
@@ -26,12 +28,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-const opensea = require('~/assets/img/opensea-logomark-flat-colored-blue.png')
+//  const opensea = require('~/assets/img/opensea-logomark-flat-colored-blue.png')
 
 @Component
 export default class Asset extends Vue {
   @Prop() asset
-  opensea = opensea
+  //  opensea = opensea
   computePrice(price) {
     const feeRatio = this.$config.defaultRatio / this.$config.feeBase
     const fee = price.times(feeRatio)
@@ -42,17 +44,15 @@ export default class Asset extends Vue {
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-}
-
 .opacity {
   opacity: 0.6;
 }
 
+/*
 #opensea {
   position: absolute;
   bottom: 1%;
   right: 1%;
 }
+*/
 </style>

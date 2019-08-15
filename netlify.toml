@@ -1,5 +1,5 @@
 
 [build]
-  base = "example"
-  publish = "example/dist/"
+  base = "templates"
+  publish = "templates/dist/"
   command = "npm run generate"

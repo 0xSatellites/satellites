@@ -1,5 +1,5 @@
-const networkId = 4
-const relayer = 'http://localhost:3000/v2/'
+const networkId = 1
+const relayer = 'https://relayer-mainnet.nftsatellites.com/'
 const ga = 'UA-130401695-4'
 const feeBase = 10000
 const feePer = 100

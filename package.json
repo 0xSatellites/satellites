@@ -1,6 +1,6 @@
 {
   "name": "satellites.js",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "0x satelite library",
   "main": "dist/index.js",
   "author": "BlockBase, Inc.",

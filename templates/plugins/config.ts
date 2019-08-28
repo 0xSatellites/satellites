@@ -29,6 +29,16 @@ const networkIdToTokens: { [networkId: number]: any[] } = {
       contract: '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d',
       symbol: 'AXIE',
       name: 'AXIE'
+    },
+    {
+      contract: '0x273f7f8e6489682df756151f5525576e322d51a3',
+      symbol: 'MCHH',
+      name: 'MyCryptoHeroes:Hero'
+    },
+    {
+      contract: '0xdceaf1652a131f32a821468dc03a92df0edd86ea',
+      symbol: 'MCHE',
+      name: 'MyCryptoHeroes:Extensions'
     }
   ],
   4: [

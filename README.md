@@ -13,7 +13,7 @@
 # install repository
 $ git clone https://github.com/block-base/satellites.git
 
-$ git checkout master
+$ cd satellites
 
 $ cd templates
 
@@ -29,9 +29,9 @@ $ npm run dev
 
     - `networkIdToTokens` -- The Ethereum address which be hundled assets of ERC721.(default CryptoKitties) More information of the other assets can be [found here](https://github.com/block-base/satellites/wiki/ERC721-Asset-List).
 
-    - `recipientAddress` -- The Ethereum address which you receive the fee recipient in orders your relayer.
+    - `ownerAddress` -- The Ethereum address which you receive the fee recipient in orders your relayer.
 
-    - `feeRatio` -- The percentage of the fee which you receive.
+    - `ownerFeeRatio` -- The percentage of the fee which you receive.
 
 2. Open the `nuxt.config.ts`file and edit service name etc.
 

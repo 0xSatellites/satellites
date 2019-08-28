@@ -13,7 +13,7 @@
 # install repository
 $ git clone https://github.com/block-base/satellites.git
 
-$ git checkout master
+$ cd satellites
 
 $ cd templates
 

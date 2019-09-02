@@ -30,6 +30,9 @@ export default async function({ store, isServer }, inject) {
     inject('web3', new Web3(web3.currentProvider))
   }
 
+  const netId = await store.$web3.eth.net.getId()
+  if (netId !== 1) alert('Your wallet is connected to the test network. Please connect main network!')
+
   const satellites = new Satellites(store.$config.networkId, store.$web3.currentProvider, store.$config.relayer)
   inject('satellites', satellites)
 

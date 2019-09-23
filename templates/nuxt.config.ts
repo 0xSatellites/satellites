@@ -43,7 +43,9 @@ const nuxtConfig: NuxtConfiguration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/initialize.ts', { src: '@/plugins/ga.js', ssr: false }],
+  plugins: ['@/plugins/initialize.ts',
+    { src: '@/plugins/ga.js', ssr: false },
+    '@/plugins/vue-paginate.ts'],
   /*
    ** Nuxt.js modules
    */

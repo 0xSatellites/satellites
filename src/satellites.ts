@@ -77,7 +77,7 @@ export class Satellites {
     const takerAssetData = assetDataUtils.encodeERC20AssetData(
       networkToSatellitesContractAddresses[this.networkId].passer
     )
-    const expiration = new BigNumber(Math.round(9999999999999 / 1000) - 1)
+    const expiration = new BigNumber(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 270)
     const salt = generatePseudoRandomSalt()
     const makerAssetAmount = new BigNumber(1)
     const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(new BigNumber(price), DECIMALS)
@@ -175,23 +175,30 @@ export class Satellites {
   async getOrders(tokenAddresses?: string[]) {
     const orders = await this.httpClient.getOrdersAsync({ networkId: this.networkId })
     const refinedOrders: RefinedOrders = {}
-    for (const order of orders.records) {
-      const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
-      const tokenId = assetData.tokenId.toString()
-      if (!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
-        if (!tokenAddresses || tokenAddresses.length === 0 || tokenAddresses.includes(assetData.tokenAddress)) {
-          if (!refinedOrders[assetData.tokenAddress]) {
-            refinedOrders[assetData.tokenAddress] = {}
+      for (const order of orders.records) {
+        try{
+          const assetData = assetDataUtils.decodeERC721AssetData(order.order.makerAssetData)
+          const tokenId = assetData.tokenId.toString()
+          const takerAssetDate = assetDataUtils.decodeERC20AssetData(order.order.takerAssetData)
+          const takerAssetAddress = takerAssetDate.tokenAddress
+          if(takerAssetAddress == networkToSatellitesContractAddresses[this.networkId].passer){
+            if (!this.whitelists || this.whitelists.includes(assetData.tokenAddress)) {
+              if (!tokenAddresses || tokenAddresses.length === 0 || tokenAddresses.includes(assetData.tokenAddress)) {
+                if (!refinedOrders[assetData.tokenAddress]) {
+                  refinedOrders[assetData.tokenAddress] = {}
+                }
+                if (
+                  !refinedOrders[assetData.tokenAddress][tokenId] ||
+                  refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
+                ) {
+                  refinedOrders[assetData.tokenAddress][tokenId] = order.order
+                }
+              }
+            }
           }
-          if (
-            !refinedOrders[assetData.tokenAddress][tokenId] ||
-            refinedOrders[assetData.tokenAddress][tokenId].takerAssetAmount > order.order.takerAssetAmount
-          ) {
-            refinedOrders[assetData.tokenAddress][tokenId] = order.order
-          }
+        }catch{
         }
       }
-    }
     return refinedOrders
   }
 

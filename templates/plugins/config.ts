@@ -1,5 +1,5 @@
 const networkId = 1
-const relayer = 'https://relayer-mainnet.nftsatellites.com/v2/'
+const relayer = 'https://api.0x.org/sra/'
 const ga = 'UA-130401695-4'
 const feeBase = 10000
 const feePer = 100

@@ -36,8 +36,8 @@ $ npm run dev
 2. Open the `nuxt.config.ts`file and edit service name etc.
 
 3. Launch a [0x-launch-kit-backend](https://github.com/0xProject/0x-launch-kit-backend). If you want to open Market quicly, you can use Satellites relayer.
-    -  mainnet : `https://relayer-mainnet.nftsatellites.com/v2/`
-    - rinkeby : `https://relayer-rinkeby.nftsatellites.com/v2/`
+    -  mainnet : `https://api.0x.org/sra/`
+    - kovan : `https://kovan.api.0x.org/`
 
 
 ## Supporting Satellites

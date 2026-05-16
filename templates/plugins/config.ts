@@ -7,6 +7,7 @@ const satellitesAddress = '0x764Fe0b6dF8575b30bCfd0c9Bb2A7ADb390b5359'
 const satellitesFeeRatio = 100
 const ownerAddress = satellitesAddress
 const ownerFeeRatio = 900
+const referralFeeRatio = 100
 
 const networkIdToInfura: { [networkId: number]: string } = {
   1: 'https://mainnet.infura.io/',
@@ -73,6 +74,8 @@ export const config = {
   tokens: networkIdToTokens[networkId],
   whitelists: whitelists,
   feeDistribution: feeDistribution,
+  ownerAddress: ownerAddress,
+  referralFeeRatio: referralFeeRatio,
   defaultRatio: defaultRatio,
   feeBase: feeBase,
   feePer: feePer

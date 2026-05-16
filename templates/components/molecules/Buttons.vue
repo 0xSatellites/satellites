@@ -95,6 +95,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+const {
+  createReferralFeeDistribution,
+  getReferralAddressFromRoute
+} = require('../../plugins/referral')
 
 @Component
 export default class Buttons extends Vue {
@@ -107,6 +111,14 @@ export default class Buttons extends Vue {
   @Prop() asset
   computeFee() {
     return this.$config.defaultRatio / this.$config.feePer
+  }
+  getFeeDistribution() {
+    return createReferralFeeDistribution(
+      this.$config.feeDistribution,
+      getReferralAddressFromRoute(this.$route),
+      this.$config.ownerAddress,
+      this.$config.referralFeeRatio
+    )
   }
   openDialog(dialogKey) {
     this.dialogDisplay = true
@@ -170,11 +182,13 @@ export default class Buttons extends Vue {
     const fees: number[] = []
     const recipients: string[] = []
 
-    for (let i = 0; i < this.$config.feeDistribution.length; i++) {
-      const ratio = this.$config.feeDistribution[i].ratio / this.$config.feeBase
+    const feeDistribution = this.getFeeDistribution()
+
+    for (let i = 0; i < feeDistribution.length; i++) {
+      const ratio = feeDistribution[i].ratio / this.$config.feeBase
       const fee = this.asset.order.takerAssetAmount.times(ratio)
       fees.push(fee)
-      recipients.push(this.$config.feeDistribution[i].recipient)
+      recipients.push(feeDistribution[i].recipient)
     }
 
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)

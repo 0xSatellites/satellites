@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsc -b && prettier --write dist/index.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "node tests/referral-fees.test.js"
   },
   "dependencies": {
     "0x.js": "^6.0.12",

@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc -b && prettier --write dist/index.js",
+    "test": "node tests/pagination.test.js",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

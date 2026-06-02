@@ -27,7 +27,7 @@ $ npm run dev
 #### Customization
 1. Open the `plugins/config.ts` file and edit the params:
 
-    - `networkIdToTokens` -- The Ethereum address which be hundled assets of ERC721.(default CryptoKitties) More information of the other assets can be [found here](https://github.com/block-base/satellites/wiki/ERC721-Asset-List).
+    - `networkIdToTokens` -- The Ethereum address which be bundled assets of ERC721.(default CryptoKitties) More information of the other assets can be [found here](https://github.com/block-base/satellites/wiki/ERC721-Asset-List).
 
     - `ownerAddress` -- The Ethereum address which you receive the fee recipient in orders your relayer.
 

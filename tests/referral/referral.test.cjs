@@ -92,6 +92,15 @@ if (!baseline) {
     assert.equal(store.state.referrer, null)
     assert.equal(module.state().referrer, null)
   })
+  test('actual operator defaults split the owner slot even when platform and owner addresses coincide', () => {
+    const settings = load('templates/plugins/config.ts').config
+    const routing = load('templates/nuxt.config.ts').default.router
+    assert.ok(routing.middleware.includes('referral'))
+    assert.equal(settings.feeDistribution[0].recipient, settings.feeDistribution[1].recipient)
+    const result = buildPurchaseFees(new BigNumber(10012), settings, referrer, buyer)
+    assert.equal(result.recipients[2], referrer)
+    assert.deepEqual(result.fees.map(fee => fee.toFixed()), ['100', '451', '450'])
+  })
 }
 
 test('actual Vue purchase method passes conserved referral fees to transaction boundary', async () => {

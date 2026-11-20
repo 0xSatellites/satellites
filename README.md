@@ -40,6 +40,16 @@ $ npm run dev
     - rinkeby : `https://relayer-rinkeby.nftsatellites.com/v2/`
 
 
+## Referral links
+
+Append `ref=0x...` to a marketplace or asset URL, using `?ref=...` or `&ref=...` as appropriate. The value must be a single nonzero 20-byte hex address. The Nuxt middleware retains it during the current SPA visit, including navigation to an asset. An explicit invalid or repeated `ref` parameter clears it; it is not stored in cookies or persisted across reloads without the parameter. Address hex syntax is checked, not an EIP-55 checksum.
+
+`templates/plugins/config.ts` sets `referralOwnerFeeIndex` to the owner entry (index 1 by default) and `referralShareBps` to 5000, meaning half of that entry's fee, not an extra buyer charge. Operators can choose a value from 0 to 10000. Index 0 is reserved for the platform allocation and cannot be selected. The code splits the already-rounded owner amount, with the rounding remainder staying with the owner. All fees are integer base units; the sum remains the same as the existing configured fee schedule rounded down per recipient. Self-referrals and addresses already in the fee schedule do not redirect fees. The configured schedule is never mutated.
+
+The referral is passed to the existing distributor transaction path. No additional contract, account, key or signing flow is introduced. An actual payment is not proven merely by constructing these parameters.
+
+Offline regression instructions and verification boundaries are in [tests/referral/README.md](tests/referral/README.md).
+
 ## Supporting Satellites
 Satellites is an open source project. This is an independent project.
 When using Satellites, a fee of the marketplace sales (default 1%) will be provided to Satellites development funds.

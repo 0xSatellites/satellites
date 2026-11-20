@@ -95,6 +95,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { buildPurchaseFees } from '~/utils/referral'
 
 @Component
 export default class Buttons extends Vue {
@@ -167,15 +168,12 @@ export default class Buttons extends Vue {
 
   async executeBuy() {
     this.openDialog(4)
-    const fees: number[] = []
-    const recipients: string[] = []
-
-    for (let i = 0; i < this.$config.feeDistribution.length; i++) {
-      const ratio = this.$config.feeDistribution[i].ratio / this.$config.feeBase
-      const fee = this.asset.order.takerAssetAmount.times(ratio)
-      fees.push(fee)
-      recipients.push(this.$config.feeDistribution[i].recipient)
-    }
+    const { recipients, fees } = buildPurchaseFees(
+      this.asset.order.takerAssetAmount,
+      this.$config,
+      this.$store.state.referrer,
+      this.$store.state.address
+    )
 
     const txhash = await this.$satellites.buy(this.$store.state.address, this.asset.order, recipients, fees)
     this.etherscan = `${this.$config.etherscan}${txhash}`

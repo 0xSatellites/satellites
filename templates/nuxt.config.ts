@@ -2,6 +2,7 @@ import NuxtConfiguration from '@nuxt/config'
 
 const nuxtConfig: NuxtConfiguration = {
   mode: 'spa',
+  router: { middleware: ['referral'] },
   /*
    ** Headers of the page
    */

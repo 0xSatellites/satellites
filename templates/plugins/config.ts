@@ -73,6 +73,8 @@ export const config = {
   tokens: networkIdToTokens[networkId],
   whitelists: whitelists,
   feeDistribution: feeDistribution,
+  referralOwnerFeeIndex: 1,
+  referralShareBps: 5000,
   defaultRatio: defaultRatio,
   feeBase: feeBase,
   feePer: feePer
